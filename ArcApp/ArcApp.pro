@@ -14,14 +14,17 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    databasemanager.cpp
+    databasemanager.cpp \
+    loginprompt.cpp
 
 HEADERS  += mainwindow.h \
     databasemanager.h \
     shared.h \
-    dbconfig.h
+    dbconfig.h \
+    loginprompt.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    loginprompt.ui
 
 RESOURCES += qdarkstyle/styling.qrc
 

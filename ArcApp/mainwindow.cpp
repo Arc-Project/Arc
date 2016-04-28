@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->endCalendar->hide();
     ui->listWidget->hide();
     ui->makeBookingButton->hide();
+    //mw = this;
 }
 
 MainWindow::~MainWindow()
@@ -72,7 +73,7 @@ void MainWindow::on_adminButton_clicked()
 
 }
 
-void MainWindow::on_pushButton_3_clicked()
+void MainWindow::on_sCalButton_clicked()
 {
     ui->listWidget->hide();
     if(sCal){
@@ -88,7 +89,7 @@ void MainWindow::on_pushButton_3_clicked()
 
 }
 
-void MainWindow::on_pushButton_4_clicked()
+void MainWindow::on_eCalButton_clicked()
 {
     ui->listWidget->hide();
     if(eCal){
@@ -124,9 +125,23 @@ void MainWindow::on_bookingSearchButton_clicked()
     ui->endCalendar->hide();
     ui->makeBookingButton->show();
     ui->listWidget->show();
+    eCal = false;
+    sCal = false;
 }
 
 void MainWindow::on_makeBookingButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(3);
+
+}
+
+void MainWindow::on_EditUserButton_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(6);
+}
+
+void MainWindow::on_EditProgramButton_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(7);
+
 }
