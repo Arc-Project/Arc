@@ -65,3 +65,15 @@ void MainWindow::on_adminButton_clicked()
     ui->stackedWidget->setCurrentIndex(5);
 
 }
+
+
+
+void MainWindow::on_EditUserButton_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(6);
+}
+
+void MainWindow::on_EditProgramButton_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(7);
+}

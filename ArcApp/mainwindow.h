@@ -39,6 +39,11 @@ private slots:
 
     void on_adminButton_clicked();
 
+
+    void on_EditUserButton_clicked();
+
+    void on_EditProgramButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 };
