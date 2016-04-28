@@ -39,6 +39,18 @@ private slots:
 
     void on_adminButton_clicked();
 
+    void on_pushButton_3_clicked();
+
+    void on_pushButton_4_clicked();
+
+    void on_startCalendar_clicked(const QDate &date);
+
+    void on_endCalendar_clicked(const QDate &date);
+
+    void on_bookingSearchButton_clicked();
+
+    void on_makeBookingButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 };
