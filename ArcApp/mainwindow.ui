@@ -372,8 +372,6 @@
        </item>
       </layout>
      </widget>
-     <zorder>label_5</zorder>
-     <zorder>gridLayoutWidget</zorder>
     </widget>
     <widget class="QWidget" name="editUsers">
      <widget class="QWidget" name="gridLayoutWidget_2">
@@ -450,6 +448,18 @@
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
+       <item row="2" column="1">
+        <widget class="QPushButton" name="EditRoomButton">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Edit</string>
+         </property>
+        </widget>
+       </item>
        <item row="2" column="0">
         <widget class="QPushButton" name="AddRoomButton">
          <property name="font">
@@ -462,17 +472,8 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
-        <widget class="QPushButton" name="EditRoomButton">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Edit</string>
-         </property>
-        </widget>
+       <item row="3" column="0" colspan="3">
+        <widget class="QColumnView" name="columnView_2"/>
        </item>
        <item row="2" column="2">
         <widget class="QPushButton" name="RoomButton">
@@ -486,23 +487,7 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0" colspan="3">
-        <widget class="QColumnView" name="columnView_2"/>
-       </item>
-       <item row="1" column="0">
-        <widget class="QPushButton" name="pushButton_3">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>PushButton</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1" colspan="2">
+       <item row="1" column="0" colspan="3">
         <widget class="QLabel" name="label_6">
          <property name="font">
           <font>
@@ -521,6 +506,8 @@
        </item>
       </layout>
      </widget>
+     <zorder>gridLayoutWidget_3</zorder>
+     <zorder>label_6</zorder>
     </widget>
     <widget class="QWidget" name="caseFile">
      <widget class="QLabel" name="label_8">
@@ -589,6 +576,28 @@
      <string>Logout</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_8">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>10</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>← BACK</string>
+    </property>
+   </widget>
+   <zorder>testDbConnBtn</zorder>
+   <zorder>testQueryBtn</zorder>
+   <zorder>stackedWidget</zorder>
+   <zorder>pushButton</zorder>
+   <zorder>pushButton_2</zorder>
+   <zorder>pushButton_3</zorder>
+   <zorder>label_6</zorder>
+   <zorder>AddRoomButton</zorder>
+   <zorder>pushButton_8</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
