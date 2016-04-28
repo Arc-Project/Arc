@@ -6,134 +6,39 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>868</width>
-    <height>656</height>
+    <width>400</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QTabWidget" name="tabWidget">
+   <widget class="QPushButton" name="testDbConnBtn">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>861</width>
-      <height>611</height>
+      <x>20</x>
+      <y>190</y>
+      <width>141</width>
+      <height>28</height>
      </rect>
     </property>
-    <property name="currentIndex">
-     <number>0</number>
+    <property name="text">
+     <string>Test DB Connection</string>
     </property>
-    <widget class="QWidget" name="tab">
-     <attribute name="title">
-      <string>Main</string>
-     </attribute>
-     <widget class="QPushButton" name="bookButton">
-      <property name="geometry">
-       <rect>
-        <x>130</x>
-        <y>200</y>
-        <width>93</width>
-        <height>81</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Book Room</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="moveButton">
-      <property name="geometry">
-       <rect>
-        <x>370</x>
-        <y>200</y>
-        <width>93</width>
-        <height>81</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Move Room</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="chartButton">
-      <property name="geometry">
-       <rect>
-        <x>610</x>
-        <y>200</y>
-        <width>93</width>
-        <height>81</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Client Chart</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_4">
-      <property name="geometry">
-       <rect>
-        <x>130</x>
-        <y>390</y>
-        <width>93</width>
-        <height>81</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>PushButton</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="adminButton">
-      <property name="geometry">
-       <rect>
-        <x>370</x>
-        <y>390</y>
-        <width>93</width>
-        <height>81</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Admin</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_6">
-      <property name="geometry">
-       <rect>
-        <x>610</x>
-        <y>390</y>
-        <width>93</width>
-        <height>81</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>PushButton</string>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="tab_2">
-     <attribute name="title">
-      <string>Client Search</string>
-     </attribute>
-    </widget>
-    <widget class="QWidget" name="tab_3">
-     <attribute name="title">
-      <string>Room Search</string>
-     </attribute>
-    </widget>
-    <widget class="QWidget" name="tab_4">
-     <attribute name="title">
-      <string>Book Room</string>
-     </attribute>
-    </widget>
-    <widget class="QWidget" name="tab_6">
-     <attribute name="title">
-      <string>Move Room</string>
-     </attribute>
-    </widget>
-    <widget class="QWidget" name="tab_5">
-     <attribute name="title">
-      <string>Admin</string>
-     </attribute>
-    </widget>
+   </widget>
+   <widget class="QPushButton" name="testQueryBtn">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>190</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Test Query</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -141,8 +46,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>868</width>
-     <height>26</height>
+     <width>400</width>
+     <height>21</height>
     </rect>
    </property>
   </widget>

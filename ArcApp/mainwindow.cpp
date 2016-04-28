@@ -13,12 +13,23 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_bookButton_clicked()
+
+/*void MainWindow::on_bookButton_clicked()
 {
-    ui->tabWidget->setCurrentIndex(1);
+    //ui->tabWidget->setCurrentIndex(1);
 }
 
 void MainWindow::on_moveButton_clicked()
 {
-    ui->tabWidget->setCurrentIndex(4);
+    //ui->tabWidget->setCurrentIndex(4);
+}*/
+void MainWindow::on_testDbConnBtn_clicked()
+{
+    QSqlQuery results= dbManager->selectAll("Test");
+    dbManager->printAll(results);
+}
+
+void MainWindow::on_testQueryBtn_clicked()
+{
+
 }

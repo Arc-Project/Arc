@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QDebug>
+#include "databasemanager.h"
+
 
 namespace Ui {
 class MainWindow;
@@ -16,9 +19,10 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_bookButton_clicked();
 
-    void on_moveButton_clicked();
+    void on_testDbConnBtn_clicked();
+
+    void on_testQueryBtn_clicked();
 
 private:
     Ui::MainWindow *ui;
