@@ -23,6 +23,6 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
-RESOURCES +=
+RESOURCES += qdarkstyle/styling.qrc
 
 DISTFILES +=

@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include <QApplication>
-
+#include <QFile>
+#include <QByteArray>
 DatabaseManager* dbManager;
 
 int main(int argc, char *argv[])
@@ -9,6 +10,15 @@ int main(int argc, char *argv[])
     MainWindow w;
     dbManager = new DatabaseManager();
     w.show();
-
+    QFile styleFile(":qdarkstyle/style.qss");
+    styleFile.open(QFile::ReadOnly | QFile::Text);
+    QByteArray bt = styleFile.readAll();
+    QString style(bt);
+    a.setStyleSheet(style);
     return a.exec();
 }
+
+
+
+
+
