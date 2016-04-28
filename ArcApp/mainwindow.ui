@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>877</width>
+    <height>488</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <widget class="QPushButton" name="testDbConnBtn">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>190</y>
+      <x>160</x>
+      <y>340</y>
       <width>141</width>
       <height>28</height>
      </rect>
@@ -30,8 +30,8 @@
    <widget class="QPushButton" name="testQueryBtn">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>190</y>
+      <x>390</x>
+      <y>350</y>
       <width>93</width>
       <height>28</height>
      </rect>
@@ -40,14 +40,265 @@
      <string>Test Query</string>
     </property>
    </widget>
+   <widget class="QStackedWidget" name="stackedWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>40</y>
+      <width>871</width>
+      <height>401</height>
+     </rect>
+    </property>
+    <widget class="QWidget" name="mainMenu">
+     <widget class="QPushButton" name="bookButton">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>60</y>
+        <width>191</width>
+        <height>151</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Book Room</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="caseButton">
+      <property name="geometry">
+       <rect>
+        <x>340</x>
+        <y>230</y>
+        <width>191</width>
+        <height>151</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Case Files</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="editbookButton">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>230</y>
+        <width>191</width>
+        <height>151</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Edit Booking</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="clientButton">
+      <property name="geometry">
+       <rect>
+        <x>340</x>
+        <y>60</y>
+        <width>191</width>
+        <height>151</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Client Lookup</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="paymentButton">
+      <property name="geometry">
+       <rect>
+        <x>580</x>
+        <y>60</y>
+        <width>191</width>
+        <height>151</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Manage Payment</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="adminButton">
+      <property name="geometry">
+       <rect>
+        <x>580</x>
+        <y>230</y>
+        <width>191</width>
+        <height>151</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Admin</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="clientLookup">
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>10</y>
+        <width>111</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Client Lookup</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="bookingLookup">
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>111</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Booking lookup</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="bookingPage">
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>10</y>
+        <width>121</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Make booking page</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="paymentPage">
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>121</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Payment Page</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="adminPage">
+     <widget class="QLabel" name="label_5">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>151</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Admin Page</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="editUsers">
+     <widget class="QLabel" name="label_6">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>121</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Edit Users</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="editRooms">
+     <widget class="QLabel" name="label_7">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>81</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Edit Rooms</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="caseFile">
+     <widget class="QLabel" name="label_8">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>101</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Case Files</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="editBooking">
+     <widget class="QLabel" name="label_9">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>81</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Edit Booking</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>0</y>
+      <width>201</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Main Menu</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_2">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>0</y>
+      <width>201</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Logout</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
-     <height>21</height>
+     <width>877</width>
+     <height>26</height>
     </rect>
    </property>
   </widget>

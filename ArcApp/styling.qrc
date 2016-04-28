@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>../../Comm-Audio/Client/qdarkstyle/style.qss</file>
+        <file>../../Comm-Audio/Client/qdarkstyle/style.qrc</file>
+    </qresource>
+</RCC>

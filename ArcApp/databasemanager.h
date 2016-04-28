@@ -7,7 +7,6 @@
 #include <cstdarg>
 #include "shared.h"
 #include "dbconfig.h"
-
 class DatabaseManager
 {
 public:
