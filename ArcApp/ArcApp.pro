@@ -19,6 +19,7 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     databasemanager.h \
     shared.h \
+    dbconfig.h \
     dbconfig.h
 
 FORMS    += mainwindow.ui
