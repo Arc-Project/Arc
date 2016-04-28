@@ -12,3 +12,13 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+void MainWindow::on_testDbConnBtn_clicked()
+{
+    QSqlQuery results= dbManager->selectAll("Test");
+    dbManager->printAll(results);
+}
+
+void MainWindow::on_testQueryBtn_clicked()
+{
+}
