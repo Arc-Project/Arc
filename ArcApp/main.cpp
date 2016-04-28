@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "loginprompt.h"
 #include <QApplication>
 #include <QFile>
 #include <QByteArray>
@@ -7,7 +8,7 @@ DatabaseManager* dbManager;
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    MainWindow w;
+    LoginPrompt w; //
     dbManager = new DatabaseManager();
     w.show();
     QFile styleFile(":qdarkstyle/style.qss");
