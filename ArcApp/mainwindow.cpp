@@ -12,3 +12,13 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+void MainWindow::on_bookButton_clicked()
+{
+    ui->tabWidget->setCurrentIndex(1);
+}
+
+void MainWindow::on_moveButton_clicked()
+{
+    ui->tabWidget->setCurrentIndex(4);
+}
