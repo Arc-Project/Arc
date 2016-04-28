@@ -22,3 +22,7 @@ HEADERS  += mainwindow.h \
     dbconfig.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += qdarkstyle/styling.qrc
+
+DISTFILES +=
