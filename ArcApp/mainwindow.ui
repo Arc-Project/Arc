@@ -18,7 +18,7 @@
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -179,7 +179,6 @@
        <zorder>clientButton</zorder>
        <zorder>paymentButton</zorder>
        <zorder>adminButton</zorder>
-       <zorder>gridLayoutWidget_4</zorder>
       </widget>
       <widget class="QWidget" name="clientLookup">
        <layout class="QGridLayout" name="gridLayout_7">
@@ -228,6 +227,15 @@
           <width>151</width>
           <height>22</height>
          </rect>
+        </property>
+        <property name="frame">
+         <bool>true</bool>
+        </property>
+        <property name="buttonSymbols">
+         <enum>QAbstractSpinBox::UpDownArrows</enum>
+        </property>
+        <property name="calendarPopup">
+         <bool>true</bool>
         </property>
        </widget>
        <widget class="QDateEdit" name="endDateEdit">
