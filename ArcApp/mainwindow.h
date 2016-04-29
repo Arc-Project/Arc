@@ -52,8 +52,6 @@ private slots:
 
     void on_actionDB_Connection_triggered();
 
-    void on_startDateEdit_dateChanged(const QDate &date);
-
 private:
     Ui::MainWindow *ui;
 };
