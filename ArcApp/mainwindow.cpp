@@ -141,10 +141,3 @@ void MainWindow::on_actionDB_Connection_triggered()
     QSqlQuery results= dbManager->selectAll("Test");
     dbManager->printAll(results);
 }
-
-void MainWindow::on_startDateEdit_dateChanged(const QDate &date)
-{
-    ui->startDateEdit->setCalendarPopup(true);
-    qDebug() << "in";
-
-}
