@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/Images">
+        <file>salvationarmylogo.png</file>
+    </qresource>
+</RCC>
