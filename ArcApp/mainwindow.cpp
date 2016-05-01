@@ -8,6 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setCentralWidget(ui->stackedWidget);
+
     ui->startCalendar->hide();
     ui->endCalendar->hide();
     ui->listWidget->hide();
@@ -19,20 +21,6 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-
-
-void MainWindow::on_testDbConnBtn_clicked()
-{
-    QSqlQuery results= dbManager->selectAll("Test");
-    dbManager->printAll(results);
-}
-
-void MainWindow::on_testQueryBtn_clicked()
-{
-
-}
-
-
 
 void MainWindow::on_bookButton_clicked()
 {
@@ -55,12 +43,6 @@ void MainWindow::on_editbookButton_clicked()
 
 }
 
-void MainWindow::on_pushButton_clicked()
-{
-    ui->stackedWidget->setCurrentIndex(0);
-
-}
-
 void MainWindow::on_caseButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(8);
@@ -75,6 +57,8 @@ void MainWindow::on_adminButton_clicked()
 
 void MainWindow::on_sCalButton_clicked()
 {
+    QDateTimeEdit *q = new QDateTimeEdit;
+    q->calendarPopup();
     ui->listWidget->hide();
     if(sCal){
         ui->startCalendar->hide();
@@ -144,4 +128,16 @@ void MainWindow::on_EditProgramButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(7);
 
+}
+
+void MainWindow::on_actionMain_Menu_triggered()
+{
+    ui->stackedWidget->setCurrentIndex(0);
+}
+
+
+void MainWindow::on_actionDB_Connection_triggered()
+{
+    QSqlQuery results= dbManager->selectAll("Test");
+    dbManager->printAll(results);
 }

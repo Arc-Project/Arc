@@ -20,11 +20,6 @@ public:
 
 private slots:
 
-    void on_testDbConnBtn_clicked();
-
-    void on_testQueryBtn_clicked();
-
-
     void on_bookButton_clicked();
 
     void on_clientButton_clicked();
@@ -32,8 +27,6 @@ private slots:
     void on_paymentButton_clicked();
 
     void on_editbookButton_clicked();
-
-    void on_pushButton_clicked();
 
     void on_caseButton_clicked();
 
@@ -54,6 +47,10 @@ private slots:
     void on_EditUserButton_clicked();
 
     void on_EditProgramButton_clicked();
+
+    void on_actionMain_Menu_triggered();
+
+    void on_actionDB_Connection_triggered();
 
 private:
     Ui::MainWindow *ui;
