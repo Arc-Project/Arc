@@ -141,3 +141,14 @@ void MainWindow::on_actionDB_Connection_triggered()
     QSqlQuery results= dbManager->selectAll("Test");
     dbManager->printAll(results);
 }
+
+
+void MainWindow::on_pushButton_RegisterClient_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(10);
+}
+
+void MainWindow::on_button_cancle_Register_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(0);
+}
