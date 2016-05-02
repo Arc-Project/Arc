@@ -685,190 +685,441 @@
        </widget>
       </widget>
       <widget class="QWidget" name="registerClient">
-       <widget class="QGraphicsView" name="graphicsView">
-        <property name="geometry">
-         <rect>
-          <x>470</x>
-          <y>40</y>
-          <width>161</width>
-          <height>221</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QGroupBox" name="groupBox_3">
-        <property name="geometry">
-         <rect>
-          <x>50</x>
-          <y>39</y>
-          <width>341</width>
-          <height>261</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>11</pointsize>
-         </font>
-        </property>
-        <property name="title">
-         <string>General Information</string>
-        </property>
-        <widget class="QLabel" name="label_cl_lName">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>145</y>
-           <width>101</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Last     Name</string>
-         </property>
-        </widget>
-        <widget class="QLineEdit" name="lineEdit_cl_dob">
-         <property name="geometry">
-          <rect>
-           <x>140</x>
-           <y>189</y>
-           <width>171</width>
-           <height>31</height>
-          </rect>
-         </property>
-        </widget>
-        <widget class="QLabel" name="label_cl_dob">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>195</y>
-           <width>101</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Date Of Birth</string>
-         </property>
-        </widget>
-        <widget class="QLabel" name="label_cl_fName">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>45</y>
-           <width>101</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>First    Name</string>
-         </property>
-        </widget>
-        <widget class="QLabel" name="label_cl_mName">
-         <property name="geometry">
-          <rect>
-           <x>20</x>
-           <y>95</y>
-           <width>101</width>
-           <height>21</height>
-          </rect>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Middle Name</string>
-         </property>
-        </widget>
-        <widget class="QLineEdit" name="lineEdit_cl_fName">
-         <property name="geometry">
-          <rect>
-           <x>140</x>
-           <y>39</y>
-           <width>171</width>
-           <height>31</height>
-          </rect>
-         </property>
-        </widget>
-        <widget class="QLineEdit" name="lineEdit_cl_mName">
-         <property name="geometry">
-          <rect>
-           <x>140</x>
-           <y>90</y>
-           <width>171</width>
-           <height>31</height>
-          </rect>
-         </property>
-        </widget>
-        <widget class="QLineEdit" name="lineEdit_cl_lName">
-         <property name="geometry">
-          <rect>
-           <x>140</x>
-           <y>140</y>
-           <width>171</width>
-           <height>31</height>
-          </rect>
-         </property>
-        </widget>
-       </widget>
-       <widget class="QPushButton" name="button_takepicutre">
-        <property name="geometry">
-         <rect>
-          <x>470</x>
-          <y>270</y>
-          <width>161</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>Take a Picture</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="button_register_client">
-        <property name="geometry">
-         <rect>
-          <x>390</x>
-          <y>390</y>
-          <width>111</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Register Client</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="button_cancle_Register">
-        <property name="geometry">
-         <rect>
-          <x>530</x>
-          <y>390</y>
-          <width>121</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Cancel Client</string>
-        </property>
-       </widget>
+       <layout class="QGridLayout" name="gridLayout_14">
+        <item row="4" column="2">
+         <widget class="QPushButton" name="button_takepicutre">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Change a Picture</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>2</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="0" colspan="3">
+         <widget class="QLabel" name="label_19">
+          <property name="font">
+           <font>
+            <pointsize>16</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Register Client</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QGraphicsView" name="graphicsView">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" rowspan="3" colspan="2">
+         <widget class="QGroupBox" name="groupBox_3">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
+          <property name="title">
+           <string>General Information</string>
+          </property>
+          <widget class="QLabel" name="label_cl_lName">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>70</y>
+             <width>101</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Last    Name</string>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEdit_cl_dob">
+           <property name="geometry">
+            <rect>
+             <x>120</x>
+             <y>100</y>
+             <width>121</width>
+             <height>21</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_cl_dob">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>100</y>
+             <width>101</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Date Of Birth</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_cl_fName">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>40</y>
+             <width>101</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>First    Name</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_cl_mName">
+           <property name="geometry">
+            <rect>
+             <x>310</x>
+             <y>40</y>
+             <width>101</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Middle Initials</string>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEdit_cl_fName">
+           <property name="geometry">
+            <rect>
+             <x>120</x>
+             <y>40</y>
+             <width>151</width>
+             <height>21</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEdit_cl_mName">
+           <property name="geometry">
+            <rect>
+             <x>410</x>
+             <y>40</y>
+             <width>151</width>
+             <height>21</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEdit_cl_lName">
+           <property name="geometry">
+            <rect>
+             <x>120</x>
+             <y>70</y>
+             <width>151</width>
+             <height>21</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_cl_SIN">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>170</y>
+             <width>91</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>SIN Number</string>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEdit_cl_SIN">
+           <property name="geometry">
+            <rect>
+             <x>120</x>
+             <y>170</y>
+             <width>151</width>
+             <height>21</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEdit_cl_GANum">
+           <property name="geometry">
+            <rect>
+             <x>120</x>
+             <y>210</y>
+             <width>151</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_cl_GANum">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>210</y>
+             <width>91</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>GA Number</string>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_cl_GANum_2">
+           <property name="geometry">
+            <rect>
+             <x>20</x>
+             <y>250</y>
+             <width>91</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Case Worker</string>
+           </property>
+          </widget>
+          <widget class="QComboBox" name="comboBox_3">
+           <property name="geometry">
+            <rect>
+             <x>120</x>
+             <y>250</y>
+             <width>151</width>
+             <height>22</height>
+            </rect>
+           </property>
+          </widget>
+          <widget class="Line" name="line">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>130</y>
+             <width>561</width>
+             <height>20</height>
+            </rect>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_cl_GANum_3">
+           <property name="geometry">
+            <rect>
+             <x>320</x>
+             <y>160</y>
+             <width>141</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Is Parolee?</string>
+           </property>
+          </widget>
+          <widget class="QCheckBox" name="checkBox">
+           <property name="geometry">
+            <rect>
+             <x>490</x>
+             <y>160</y>
+             <width>70</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_cl_GANum_4">
+           <property name="geometry">
+            <rect>
+             <x>320</x>
+             <y>190</y>
+             <width>151</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Allow Communication?</string>
+           </property>
+          </widget>
+          <widget class="QCheckBox" name="checkBox_2">
+           <property name="geometry">
+            <rect>
+             <x>490</x>
+             <y>190</y>
+             <width>70</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+          <widget class="Line" name="line_2">
+           <property name="geometry">
+            <rect>
+             <x>280</x>
+             <y>150</y>
+             <width>20</width>
+             <height>161</height>
+            </rect>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_cl_ruleSign">
+           <property name="geometry">
+            <rect>
+             <x>320</x>
+             <y>230</y>
+             <width>141</width>
+             <height>16</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Date Rules Signed</string>
+           </property>
+          </widget>
+          <widget class="QDateEdit" name="dateEdit">
+           <property name="geometry">
+            <rect>
+             <x>340</x>
+             <y>250</y>
+             <width>121</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::ClickFocus</enum>
+           </property>
+           <property name="displayFormat">
+            <string>MMM/dd/yyyy</string>
+           </property>
+           <property name="calendarPopup">
+            <bool>true</bool>
+           </property>
+           <property name="date">
+            <date>
+             <year>2016</year>
+             <month>5</month>
+             <day>1</day>
+            </date>
+           </property>
+          </widget>
+          <zorder>label_cl_lName</zorder>
+          <zorder>lineEdit_cl_dob</zorder>
+          <zorder>label_cl_dob</zorder>
+          <zorder>label_cl_fName</zorder>
+          <zorder>label_cl_mName</zorder>
+          <zorder>lineEdit_cl_fName</zorder>
+          <zorder>lineEdit_cl_mName</zorder>
+          <zorder>lineEdit_cl_lName</zorder>
+          <zorder>button_takepicutre</zorder>
+          <zorder>label_cl_SIN</zorder>
+          <zorder>lineEdit_cl_SIN</zorder>
+          <zorder>lineEdit_cl_GANum</zorder>
+          <zorder>label_cl_GANum</zorder>
+          <zorder>label_cl_GANum_2</zorder>
+          <zorder>comboBox_3</zorder>
+          <zorder>line</zorder>
+          <zorder>label_cl_GANum_3</zorder>
+          <zorder>checkBox</zorder>
+          <zorder>label_cl_GANum_4</zorder>
+          <zorder>checkBox_2</zorder>
+          <zorder>line_2</zorder>
+          <zorder>label_cl_ruleSign</zorder>
+          <zorder>dateEdit</zorder>
+         </widget>
+        </item>
+        <item row="5" column="2">
+         <widget class="QPushButton" name="button_register_client">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Register Client</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QPushButton" name="button_cancle_Register">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Cancel</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
