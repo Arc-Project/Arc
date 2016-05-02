@@ -18,7 +18,7 @@
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>10</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -684,6 +684,92 @@
         </property>
        </widget>
       </widget>
+      <widget class="QWidget" name="registerClient">
+       <widget class="QLabel" name="label_cl_fName">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>90</y>
+          <width>101</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>First    Name</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_cl_mName">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>130</y>
+          <width>101</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Middle Name</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_cl_lName">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>170</y>
+          <width>101</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Last     Name</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_cl_fName">
+        <property name="geometry">
+         <rect>
+          <x>140</x>
+          <y>90</y>
+          <width>141</width>
+          <height>20</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_cl_mName">
+        <property name="geometry">
+         <rect>
+          <x>140</x>
+          <y>130</y>
+          <width>141</width>
+          <height>20</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_cl_lName">
+        <property name="geometry">
+         <rect>
+          <x>140</x>
+          <y>170</y>
+          <width>141</width>
+          <height>20</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -694,7 +780,7 @@
      <x>0</x>
      <y>0</y>
      <width>914</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="acceptDrops">
