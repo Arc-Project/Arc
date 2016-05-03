@@ -15,7 +15,7 @@ LoginPrompt::~LoginPrompt()
 }
 
 // login button
-void LoginPrompt::on_pushButton_clicked()
+void LoginPrompt::on_btn_login_clicked()
 {
     //qDebug("SDfSDF");
 
