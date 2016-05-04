@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "takephoto.h"
+
 #include <QDebug>
 bool sCal = false;
 bool eCal = false;
@@ -151,4 +153,26 @@ void MainWindow::on_pushButton_RegisterClient_clicked()
 void MainWindow::on_button_cancle_Register_clicked()
 {
     ui->stackedWidget->setCurrentIndex(0);
+}
+
+void MainWindow::on_button_cl_takePic_clicked()
+{
+    TakePhoto *camDialog = new TakePhoto();
+
+    connect(camDialog, SIGNAL(showPic(QImage)), this, SLOT(addPic(QImage)));
+    camDialog->show();
+}
+
+
+
+void MainWindow::addPic(QImage pict){
+
+  //  qDebug()<<"ADDPIC";
+
+    QPixmap item = QPixmap::fromImage(pict);
+    QPixmap scaled = QPixmap(item.scaledToWidth((int)(ui->graphicsView_cl_pic->width()*0.9), Qt::SmoothTransformation));
+    QGraphicsScene *scene = new QGraphicsScene();
+    scene->addPixmap(QPixmap(scaled));
+    ui->graphicsView_cl_pic->setScene(scene);
+    ui->graphicsView_cl_pic->show();
 }
