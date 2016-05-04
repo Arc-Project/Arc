@@ -155,6 +155,9 @@ void MainWindow::on_button_cancle_Register_clicked()
     ui->stackedWidget->setCurrentIndex(0);
 }
 
+
+
+//Client Regiter widget [TAKE A PICTURE] button
 void MainWindow::on_button_cl_takePic_clicked()
 {
     TakePhoto *camDialog = new TakePhoto();
@@ -163,8 +166,7 @@ void MainWindow::on_button_cl_takePic_clicked()
     camDialog->show();
 }
 
-
-
+//add picture into graphicview (after taking picture in pic dialog
 void MainWindow::addPic(QImage pict){
 
   //  qDebug()<<"ADDPIC";
@@ -176,3 +178,6 @@ void MainWindow::addPic(QImage pict){
     ui->graphicsView_cl_pic->setScene(scene);
     ui->graphicsView_cl_pic->show();
 }
+
+
+

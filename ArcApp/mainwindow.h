@@ -61,6 +61,8 @@ private slots:
     void addPic(QImage pict);
 
 
+    void on_pushButton_search_client_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

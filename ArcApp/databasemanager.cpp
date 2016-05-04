@@ -33,6 +33,13 @@ QSqlQuery DatabaseManager::selectAll(QString tableName)
     return query;
 }
 
+QSqlQuery DatabaseManager::execQuery(QString queryString)
+{
+    QSqlQuery query(db);
+    query.exec(queryString);
+    return query;
+}
+
 void DatabaseManager::printAll(QSqlQuery queryResults)
 {
     int numCols = queryResults.record().count();

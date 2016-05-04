@@ -13,7 +13,9 @@ public:
     DatabaseManager();
     void print();
     QSqlQuery selectAll(QString tableName);
+    QSqlQuery execQuery(QString queryString);
     void printAll(QSqlQuery queryResults);
+
 
 private:
     QSqlDatabase db;

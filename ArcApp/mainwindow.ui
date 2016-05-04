@@ -58,7 +58,7 @@ QWidget#wdg_mainScreen QPushButton {
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>10</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -970,6 +970,12 @@ Lunches</string>
              <height>21</height>
             </rect>
            </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
           </widget>
           <widget class="QLineEdit" name="lineEdit_cl_mName">
            <property name="geometry">
@@ -980,6 +986,12 @@ Lunches</string>
              <height>21</height>
             </rect>
            </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
           </widget>
           <widget class="QLineEdit" name="lineEdit_cl_lName">
            <property name="geometry">
@@ -989,6 +1001,12 @@ Lunches</string>
              <width>151</width>
              <height>21</height>
             </rect>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
           </widget>
           <widget class="QLabel" name="label_cl_SIN">
@@ -1027,6 +1045,12 @@ Lunches</string>
              <width>151</width>
              <height>21</height>
             </rect>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
            <property name="text">
             <string/>
@@ -1076,6 +1100,12 @@ Lunches</string>
              <width>151</width>
              <height>22</height>
             </rect>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
           </widget>
           <widget class="QLabel" name="label_cl_parolee">
@@ -1167,6 +1197,12 @@ Lunches</string>
              <height>21</height>
             </rect>
            </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="focusPolicy">
             <enum>Qt::ClickFocus</enum>
            </property>
@@ -1192,6 +1228,12 @@ Lunches</string>
              <width>151</width>
              <height>22</height>
             </rect>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
            <property name="focusPolicy">
             <enum>Qt::ClickFocus</enum>
