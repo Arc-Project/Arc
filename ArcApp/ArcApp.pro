@@ -30,6 +30,8 @@ FORMS    += mainwindow.ui \
     loginprompt.ui \
     takephoto.ui
 
-RESOURCES += qdarkstyle/styling.qrc
+RESOURCES += arcstyle/styling.qrc
+
+RC_FILE = ArcApp.rc
 
 DISTFILES +=

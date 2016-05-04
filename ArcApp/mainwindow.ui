@@ -6,179 +6,349 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>914</width>
-    <height>516</height>
+    <width>1228</width>
+    <height>499</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>ARC Management</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QAction, QToolBar, QStackedWidget, QStatusBar{
+	background-color: white;
+}
+
+QPushButton {
+	color: white;
+	background-color: #f90000;
+}
+
+QPushButton:pressed {
+	background-color: #d80101;
+}
+
+QPushButton:hover {
+	background-color: #ff2626;
+}
+
+QWidget#wdg_mainScreen QPushButton{
+	border: 2px solid #ab0000;
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa0a0, stop: 1 #f90000);
+}
+
+QWidget#wdg_mainScreen QPushButton:hover {
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ff9090, stop: 1 #f80000);
+}
+
+QWidget#wdg_mainScreen QPushButton:pressed{
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #f90000, stop: 1 #ffa0a0);
+}
+
+QWidget#wdg_mainScreen QPushButton {
+		border-radius: 10px;
+}
+
+
+
+
+</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_6">
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>10</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
         <item row="0" column="0">
-         <widget class="QPushButton" name="bookButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>250</width>
-            <height>151</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>250</width>
-            <height>151</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>15</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Book Room</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QPushButton" name="clientButton">
-          <property name="minimumSize">
-           <size>
-            <width>250</width>
-            <height>151</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>250</width>
-            <height>151</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>15</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Client Lookup</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QPushButton" name="paymentButton">
-          <property name="minimumSize">
-           <size>
-            <width>250</width>
-            <height>151</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>250</width>
-            <height>151</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>15</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Manage Payment</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QPushButton" name="editbookButton">
-          <property name="minimumSize">
-           <size>
-            <width>250</width>
-            <height>151</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>250</width>
-            <height>151</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>15</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Edit Booking</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QPushButton" name="caseButton">
-          <property name="minimumSize">
-           <size>
-            <width>250</width>
-            <height>151</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>250</width>
-            <height>151</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>15</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Case Files</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="QPushButton" name="adminButton">
-          <property name="minimumSize">
-           <size>
-            <width>250</width>
-            <height>151</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>250</width>
-            <height>151</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>15</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Admin</string>
-          </property>
+         <widget class="QWidget" name="wdg_mainScreen" native="true">
+          <layout class="QGridLayout" name="gridLayout_8">
+           <item row="0" column="2">
+            <widget class="QPushButton" name="clientButton">
+             <property name="minimumSize">
+              <size>
+               <width>250</width>
+               <height>151</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>437</width>
+               <height>264</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>15</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Client Lookup</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QPushButton" name="editbookButton">
+             <property name="minimumSize">
+              <size>
+               <width>250</width>
+               <height>151</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>437</width>
+               <height>264</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>15</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Edit Booking</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="6">
+            <widget class="QPushButton" name="reportsButton">
+             <property name="minimumSize">
+              <size>
+               <width>250</width>
+               <height>151</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>437</width>
+               <height>264</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>15</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Reports</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QPushButton" name="swlButton">
+             <property name="minimumSize">
+              <size>
+               <width>250</width>
+               <height>151</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>437</width>
+               <height>264</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>15</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Storage
+Wakeups
+Lunches</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="6">
+            <widget class="QPushButton" name="adminButton">
+             <property name="minimumSize">
+              <size>
+               <width>250</width>
+               <height>151</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>437</width>
+               <height>264</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>15</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Admin</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QPushButton" name="bookButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>250</width>
+               <height>151</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>437</width>
+               <height>264</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>15</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Book Room</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="4">
+            <widget class="QPushButton" name="paymentButton">
+             <property name="minimumSize">
+              <size>
+               <width>250</width>
+               <height>151</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>437</width>
+               <height>264</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>15</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Manage Payment</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="4">
+            <widget class="QPushButton" name="caseButton">
+             <property name="minimumSize">
+              <size>
+               <width>250</width>
+               <height>151</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>437</width>
+               <height>264</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>15</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Case Files</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="0" column="3">
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="1" column="1">
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="0" column="5">
+            <spacer name="horizontalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </widget>
         </item>
        </layout>
-       <zorder>bookButton</zorder>
-       <zorder>caseButton</zorder>
-       <zorder>editbookButton</zorder>
-       <zorder>clientButton</zorder>
-       <zorder>paymentButton</zorder>
-       <zorder>adminButton</zorder>
       </widget>
       <widget class="QWidget" name="clientLookup">
        <layout class="QGridLayout" name="gridLayout_7">
@@ -1389,8 +1559,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>914</width>
-     <height>21</height>
+     <width>1228</width>
+     <height>26</height>
     </rect>
    </property>
    <property name="acceptDrops">
