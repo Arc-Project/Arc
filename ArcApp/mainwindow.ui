@@ -19,20 +19,22 @@
 }
 
 QPushButton {
-	color: white;
-	background-color: #f90000;
-}
-
-QPushButton:pressed {
-	background-color: #d80101;
+	border: 1px solid grey; 
 }
 
 QPushButton:hover {
-	background-color: #ff2626;
+	color: #ffffff;
+	background-color: #cc0000;
 }
+
+QPushButton:pressed {
+	background-color: #a50000;
+}
+
 
 QWidget#wdg_mainScreen QPushButton{
 	border: 2px solid #ab0000;
+	color: white;
 	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa0a0, stop: 1 #f90000);
 }
 
@@ -58,7 +60,7 @@ QWidget#wdg_mainScreen QPushButton {
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -1681,7 +1683,7 @@ Lunches</string>
      <x>0</x>
      <y>0</y>
      <width>1228</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="acceptDrops">
