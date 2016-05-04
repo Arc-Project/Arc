@@ -19,16 +19,16 @@
 }
 
 QPushButton {
-	color: white;
-	background-color: #f90000;
-}
-
-QPushButton:pressed {
-	background-color: #d80101;
+	border: 1px solid grey; 
 }
 
 QPushButton:hover {
-	background-color: #ff2626;
+	color: #ffffff;
+	background-color: #cc0000;
+}
+
+QPushButton:pressed {
+	background-color: #a50000;
 }
 
 QWidget#wdg_mainScreen QPushButton{
@@ -55,10 +55,10 @@ QWidget#wdg_mainScreen QPushButton {
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_6">
-    <item row="0" column="0">
+    <item row="1" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>11</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -1267,6 +1267,69 @@ Lunches</string>
          </widget>
         </item>
        </layout>
+      </widget>
+      <widget class="QWidget" name="page">
+       <widget class="QWidget" name="widget" native="true">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>271</width>
+          <height>351</height>
+         </rect>
+        </property>
+        <widget class="QPushButton" name="pushButton">
+         <property name="geometry">
+          <rect>
+           <x>90</x>
+           <y>40</y>
+           <width>93</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="text">
+          <string>PushButton</string>
+         </property>
+         <property name="default">
+          <bool>false</bool>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_2">
+         <property name="geometry">
+          <rect>
+           <x>80</x>
+           <y>90</y>
+           <width>93</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>PushButton</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_4">
+         <property name="geometry">
+          <rect>
+           <x>80</x>
+           <y>150</y>
+           <width>93</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>PushButton</string>
+         </property>
+        </widget>
+       </widget>
       </widget>
      </widget>
     </item>
