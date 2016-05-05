@@ -180,6 +180,7 @@ QString MainWindow::browse()
 void MainWindow::on_pushButton_RegisterClient_clicked()
 {
     ui->stackedWidget->setCurrentIndex(10);
+    ui->dateEdit_cl_rulesign->setDate(QDate::currentDate());
 }
 
 void MainWindow::on_button_cancle_Register_clicked()
@@ -216,17 +217,16 @@ void MainWindow::addPic(QImage pict){
 //search client
 void MainWindow::on_pushButton_search_client_clicked()
 {
+
        qDebug() <<"START SEARCH CLIENT";
     QString clientName = ui->lineEdit_search_clientName->text();
-    QString searchQuery = "SELECT FirstName, LastName, Dob FROM Client WHERE LastName LIKE '%"+clientName+"%'";
+    QString searchQuery = "SELECT FirstName, LastName, Dob FROM Client WHERE LastName LIKE '%"+clientName+"%' OR FirstName Like '%"+clientName+"%'";
 
 
     QSqlQuery results = dbManager->execQuery(searchQuery);
     dbManager->printAll(results);
 
     //dbManager->execQuery("INSERT INTO Client (FirstName, MiddleName, LastName, Dob) VALUES ('test',NULL, 'testsur', '2000-10-10'");
-   // dbManager->execQuery("INSERT INTO Client (DEFAULT, 'asd', , 'abbbbb'', '2000/10/11', DEFAULT");
-
 
 }
 
@@ -246,3 +246,43 @@ void MainWindow::setup_searchClientTable(QSqlQuery query){
     }
 }
 
+//Client information input and register click
+void MainWindow::on_button_register_client_clicked()
+{
+    if(check_register_form()){
+        qDebug()<<ui->lineEdit_cl_fName->text();
+        qDebug()<<ui->lineEdit_cl_mName->text();
+        qDebug()<<ui->lineEdit_cl_lName->text();
+        qDebug()<<"DATE function : "<<ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd");
+        dbManager->execQuery("INSERT INTO Client (FirstName, MiddleName, LastName, Dob, Balance) VALUES ('"
+                             + ui->lineEdit_cl_fName->text()+"', '"
+                             + ui->lineEdit_cl_mName->text()+"', '"
+                             + ui->lineEdit_cl_lName->text()+"', '"
+                             + ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd")
+                             + "', DEFAULT)");
+        qDebug()<<"REGISTER FINISHED";
+        ui->stackedWidget->setCurrentIndex(1);
+    }
+
+}
+
+//check if the value is valid or not
+bool MainWindow::check_register_form(){
+    if(ui->lineEdit_cl_fName->text().isEmpty()){
+        ui->lineEdit_cl_fName->cursor();
+        qDebug()<< "NameIsEmpty";
+        return false;
+    }
+    else if(ui->lineEdit_cl_lName->text().isEmpty()){
+        ui->lineEdit_cl_lName->cursor();
+        qDebug()<<" Last Name Empty";
+        return false;
+    }
+    else if(ui->dateEdit_cl_dob->date() == QDate::currentDate()){
+        ui->dateEdit_cl_dob->cursor();
+        qDebug()<<"Wrong Date";
+        return false;
+    }
+
+    return true;
+}

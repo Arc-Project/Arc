@@ -90,3 +90,5 @@ QSqlQuery DatabaseManager::execQuery(QString queryString)
 {
     QSqlQuery query(db);
     query.exec(queryString);
+    return query;
+}

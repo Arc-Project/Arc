@@ -70,6 +70,10 @@ private slots:
 
     void on_pushButton_search_client_clicked();
 
+    void on_button_register_client_clicked();
+
+    bool check_register_form();
+
 private:
     Ui::MainWindow *ui;
 };
