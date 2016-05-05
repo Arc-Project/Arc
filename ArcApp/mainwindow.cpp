@@ -295,7 +295,7 @@ void MainWindow::on_pushButton_RegisterClient_clicked()
     ui->dateEdit_cl_rulesign->setDate(QDate::currentDate());
 }
 
-void MainWindow::on_button_cancle_Register_clicked()
+void MainWindow::on_button_cancel_client_register_clicked()
 {
     ui->stackedWidget->setCurrentIndex(0);
 }
@@ -346,30 +346,22 @@ void MainWindow::on_pushButton_search_client_clicked()
     QString searchQuery = "SELECT FirstName, LastName, Dob FROM Client WHERE LastName LIKE '%"+clientName+"%' OR FirstName Like '%"+clientName+"%'";
 
     QSqlQuery results = dbManager->execQuery(searchQuery);
+    setup_searchClientTable(results);
     dbManager->printAll(results);
 
 }
 
 void MainWindow::setup_searchClientTable(QSqlQuery query){
-    QStandardItemModel *clientSearchModel = new QStandardItemModel(3,20,this);
-    ui->tableView_search_client->setModel(clientSearchModel);
-    for(int row = 0; row <20; row++){
-       // for(int col =0; col < 3; col++){
-            QModelIndex col0 = clientSearchModel->index(row, 0, QModelIndex());
-            QModelIndex col1 = clientSearchModel->index(row, 0, QModelIndex());
-            QModelIndex col2 = clientSearchModel->index(row, 0, QModelIndex());
-
-            clientSearchModel->setData(col0,query.value("FirstName"));
-            clientSearchModel->setData(col1,query.value("LastName"));
-            clientSearchModel->setData(col2,query.value("Dob"));
-       // }
-    }
+    QSqlQueryModel *clientModel = new QSqlQueryModel();
+    clientModel->setQuery(query);
+    ui->tableView_search_client->setModel(clientModel);
+    qDebug()<< clientModel->rowCount();
 }
 
 //Client information input and register click
 void MainWindow::on_button_register_client_clicked()
 {
-    if(check_register_form()){
+    if(check_client_register_form()){
         qDebug()<<ui->lineEdit_cl_fName->text();
         qDebug()<<ui->lineEdit_cl_mName->text();
         qDebug()<<ui->lineEdit_cl_lName->text();
@@ -381,13 +373,38 @@ void MainWindow::on_button_register_client_clicked()
                              + ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd")
                              + "', DEFAULT)");
         qDebug()<<"REGISTER FINISHED";
+        clear_client_register_form();
         ui->stackedWidget->setCurrentIndex(1);
     }
-
+}
+void MainWindow::on_button_clear_client_regForm_clicked()
+{
+    clear_client_register_form();
 }
 
+void MainWindow::clear_client_register_form(){
+    ui->lineEdit_cl_fName->clear();
+    ui->lineEdit_cl_mName->clear();
+    ui->lineEdit_cl_lName->clear();
+    ui->lineEdit_cl_SIN->clear();
+    ui->lineEdit_cl_GANum->clear();
+    ui->lineEdit_cl_nok_name->clear();
+    ui->lineEdit_cl_nok_relationship->clear();
+    ui->lineEdit_cl_nok_loc->clear();
+    ui->lineEdit_cl_nok_ContactNo->clear();
+    ui->lineEdit_cl_phys_name->clear();
+    ui->lineEdit_cl_phys_ContactNo->clear();
+    ui->lineEdit_cl_Msd_Name->clear();
+    ui->lineEdit_cl_Msd_ContactNo->clear();
+    ui->plainTextEdit_cl_comments->clear();
+    QDate defaultDob= QDate::fromString("1990-01-01","yyyy-MM-dd");
+    ui->dateEdit_cl_dob->setDate(defaultDob);
+    ui->dateEdit_cl_rulesign->setDate(QDate::currentDate());
+}
+
+
 //check if the value is valid or not
-bool MainWindow::check_register_form(){
+bool MainWindow::check_client_register_form(){
     if(ui->lineEdit_cl_fName->text().isEmpty()){
         ui->lineEdit_cl_fName->cursor();
         qDebug()<< "NameIsEmpty";
@@ -427,4 +444,7 @@ void MainWindow::on_pushButton_7_clicked()
         }
     }
 }
+
+
+
 
