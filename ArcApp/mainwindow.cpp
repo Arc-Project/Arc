@@ -366,17 +366,24 @@ void MainWindow::on_button_register_client_clicked()
         qDebug()<<ui->lineEdit_cl_fName->text();
         qDebug()<<ui->lineEdit_cl_mName->text();
         qDebug()<<ui->lineEdit_cl_lName->text();
-
+        bool parolee;
+        bool allowComm = ui->checkBox_cl_comm->isChecked();
+        if(parolee = ui->checkBox_cl_parolee->isChecked())
+            qDebug()<<"parolee is checked : " << QString::number(parolee);
+        else
+            qDebug()<<"parolee is not checked : " << parolee;
         qDebug()<<"DATE function : "<<ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd");
-        dbManager->execQuery("INSERT INTO Client (FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, DateRulesSigned, Status) VALUES ('"
+        dbManager->execQuery("INSERT INTO Client (FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned, Status) VALUES ('"
                              + ui->lineEdit_cl_fName->text()+"', '"
                              + ui->lineEdit_cl_mName->text()+"', '"
                              + ui->lineEdit_cl_lName->text()+"', '"
                              + ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd") //+"', '"
                              + "',DEFAULT,'"
                              + ui->lineEdit_cl_SIN->text()+"', '"
-                             + ui->lineEdit_cl_GANum->text()+"', '"
-                            // + (ui->checkBox_cl_parolee->isChecked()?1:0)+", "
+                             + ui->lineEdit_cl_GANum->text()+"', "
+                             + QString::number(parolee) + ","
+                             + QString::number(allowComm)+ ", '"
+                             // + (ui->checkBox_cl_parolee->isChecked()?1:0)+", "
                           //   + (ui->checkBox_cl_comm->isChecked()?1:0)+", '"
                              + ui->dateEdit_cl_rulesign->date().toString("yyyy-MM-dd")
                              +"',DEFAULT)");
