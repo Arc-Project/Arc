@@ -95,6 +95,8 @@ private slots:
     void on_pushButton_7_clicked();
 
 
+    void on_btn_createNewUser_clicked();
+
 private:
     Ui::MainWindow *ui;
     MainWindow * mw;
