@@ -17,8 +17,11 @@ public:
     QSqlQuery selectAll(QString tableName);
     QSqlQuery loginSelect(QString username, QString password);
     void printAll(QSqlQuery queryResults);
+    QSqlQuery getLatestFileUploadEntry(QString tableName);
     bool uploadCaseFile(QString filepath);
     QSqlQuery execQuery(QString queryString);
+
+    bool downloadLatestCaseFile();
 
 private:
     QSqlDatabase db;

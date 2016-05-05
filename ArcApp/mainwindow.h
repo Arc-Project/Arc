@@ -59,6 +59,8 @@ private slots:
 
     QString browse();
 
+    void on_actionDownload_Latest_Upload_triggered();
+
     void on_pushButton_RegisterClient_clicked();
 
     void on_button_cancle_Register_clicked();

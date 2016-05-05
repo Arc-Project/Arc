@@ -71,12 +71,16 @@ bool DatabaseManager::uploadCaseFile(QString filepath)
     qDebug() << "Filename w/ extension:\t" <<fileInfo.fileName();
     qDebug() << "Filename:\t\t" <<fileInfo.baseName();
     qDebug() << "Extension:\t\t" <<fileInfo.suffix();
+    qDebug() << "Size:\t\t\t" <<fileInfo.size();
     byte = file.readAll();
     file.close();
 
     QSqlQuery query(db);
-    query.prepare("INSERT INTO FileTest(doc) VALUES(:doc)");
+    query.prepare("INSERT INTO FileTest1(doc, fileName, extension, fileSize) VALUES(:doc, :fname, :fext, :fsize)");
     query.bindValue(":doc", byte, QSql::In | QSql::Binary);
+    query.bindValue(":fname", fileInfo.fileName());
+    query.bindValue(":fext", fileInfo.suffix());
+    query.bindValue(":fsize", fileInfo.size());
 
     if (query.exec())
     {
@@ -91,4 +95,29 @@ QSqlQuery DatabaseManager::execQuery(QString queryString)
     QSqlQuery query(db);
     query.exec(queryString);
     return query;
+}
+
+QSqlQuery DatabaseManager::getLatestFileUploadEntry(QString tableName)
+{
+    QSqlQuery query(db);
+    query.exec("SELECT TOP 1 * FROM " + tableName + " ORDER BY id DESC");
+    return query;
+}
+
+bool DatabaseManager::downloadLatestCaseFile()
+{
+    QSqlQuery queryResults = DatabaseManager::getLatestFileUploadEntry("FileTest1");
+    queryResults.next();
+    QString filename = queryResults.value(3).toString();
+    QByteArray data = queryResults.value(2).toByteArray();
+    qDebug() << filename;
+
+    QFile file("..\\Downloads\\" + filename);
+    if (file.open(QIODevice::WriteOnly))
+    {
+        file.write(data);
+        file.close();
+        return true;
+    }
+    return false;
 }

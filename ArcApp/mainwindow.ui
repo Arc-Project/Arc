@@ -1670,6 +1670,7 @@ Lunches</string>
     <addaction name="actionDB_Connection"/>
     <addaction name="actionTest_Query"/>
     <addaction name="actionFile_Upload"/>
+    <addaction name="actionDownload_Latest_Upload"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -1730,6 +1731,11 @@ Lunches</string>
   <action name="actionFile_Upload">
    <property name="text">
     <string>File Upload</string>
+   </property>
+  </action>
+  <action name="actionDownload_Latest_Upload">
+   <property name="text">
+    <string>Download Latest Upload</string>
    </property>
   </action>
  </widget>
