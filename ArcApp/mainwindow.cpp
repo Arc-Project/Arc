@@ -1,11 +1,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "takephoto.h"
-
 #include <QTableView>
 #include <QItemDelegate>
 #include <QStandardItemModel>
 #include <QDebug>
+#include "payment.h"
 bool firstTime = true;
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -396,4 +396,16 @@ bool MainWindow::check_register_form(){
     }
 
     return true;
+}
+
+
+void MainWindow::on_paymentButton_2_clicked()
+{
+    trans = new transaction();
+    double owed;
+    //owed = curBook->cost;
+    payment * pay = new payment(this, trans, 500.0, 30.0);
+    pay->exec();
+    qDebug() << "Done";
+
 }

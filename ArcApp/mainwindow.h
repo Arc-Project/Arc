@@ -17,7 +17,7 @@
 #include "bookingmanager.h"
 #include <QTableWidgetItem>
 #include "booking.h"
-
+#include "transaction.h"
 namespace Ui {
 class MainWindow;
 }
@@ -90,10 +90,15 @@ private slots:
 
     bool check_register_form();
 
+
+
+    void on_paymentButton_2_clicked();
+
 private:
     Ui::MainWindow *ui;
     MainWindow * mw;
     Booking * curBook;
+    transaction * trans;
 };
 
 #endif // MAINWINDOW_H

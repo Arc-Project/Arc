@@ -77,7 +77,7 @@ QWidget#wdg_cashTotal QLabel, QWidget#wdg_debitTotal QLabel, QWidget#wdg_cheqTot
     <item row="0" column="1">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -885,6 +885,19 @@ Lunches</string>
         </property>
         <property name="text">
          <string/>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="paymentButton_2">
+        <property name="geometry">
+         <rect>
+          <x>540</x>
+          <y>340</y>
+          <width>93</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Add Payment</string>
         </property>
        </widget>
       </widget>
@@ -2032,11 +2045,6 @@ Lunches</string>
               </item>
              </layout>
             </widget>
-            <zorder>grpBox_reports</zorder>
-            <zorder>swdg_reports</zorder>
-            <zorder>swdg_reports</zorder>
-            <zorder>swdg_reports</zorder>
-            <zorder>swdg_reports</zorder>
            </widget>
           </item>
          </layout>
@@ -2480,7 +2488,7 @@ Lunches</string>
      <x>0</x>
      <y>0</y>
      <width>1228</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="acceptDrops">
