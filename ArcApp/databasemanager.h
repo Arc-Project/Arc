@@ -14,7 +14,10 @@ public:
     void print();
     QSqlQuery selectAll(QString tableName);
     void printAll(QSqlQuery queryResults);
-
+    QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);
+    QSqlQuery getPrograms();
+    bool insertBookingTable(QString insert);
+    int getMonthlyRate(QString room, QString program);
 private:
     QSqlDatabase db;
 };

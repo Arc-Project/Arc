@@ -15,13 +15,17 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     databasemanager.cpp \
-    loginprompt.cpp
+    loginprompt.cpp \
+    bookingmanager.cpp \
+    booking.cpp
 
 HEADERS  += mainwindow.h \
     databasemanager.h \
     shared.h \
     dbconfig.h \
-    loginprompt.h
+    loginprompt.h \
+    bookingmanager.h \
+    booking.h
 
 FORMS    += mainwindow.ui \
     loginprompt.ui
