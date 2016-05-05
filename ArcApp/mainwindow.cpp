@@ -173,6 +173,18 @@ QString MainWindow::browse()
     return strFilePath;
 }
 
+void MainWindow::on_actionDownload_Latest_Upload_triggered()
+{
+    if (dbManager->downloadLatestCaseFile())
+    {
+        qDebug() << "file downloaded";
+    }
+    else
+    {
+        qDebug() << "could not download file";
+    }
+}
+
 void MainWindow::on_pushButton_RegisterClient_clicked()
 {
     ui->stackedWidget->setCurrentIndex(10);
