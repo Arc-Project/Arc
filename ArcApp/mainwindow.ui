@@ -77,7 +77,7 @@ QWidget#wdg_cashTotal QLabel, QWidget#wdg_debitTotal QLabel, QWidget#wdg_cheqTot
     <item row="0" column="1">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>11</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -378,32 +378,32 @@ Lunches</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="1">
+        <item row="5" column="1">
          <widget class="QPushButton" name="pushButton_RegisterClient">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string>Register Client</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="0">
+        <item row="5" column="0">
          <widget class="QPushButton" name="pushButton_3">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string>Book a room</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="2">
-         <widget class="QPushButton" name="pushButton_5">
-          <property name="text">
-           <string>Process Payment</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="3" rowspan="3">
+        <item row="1" column="3" rowspan="4">
          <widget class="QTableView" name="tableView"/>
-        </item>
-        <item row="3" column="0" colspan="3">
-         <widget class="QColumnView" name="columnView"/>
         </item>
         <item row="1" column="0" rowspan="2" colspan="2">
          <widget class="QLineEdit" name="lineEdit_search_clientName">
@@ -421,10 +421,32 @@ Lunches</string>
           </property>
          </widget>
         </item>
+        <item row="5" column="2">
+         <widget class="QPushButton" name="pushButton_5">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Process Payment</string>
+          </property>
+         </widget>
+        </item>
         <item row="1" column="2" rowspan="2">
          <widget class="QPushButton" name="pushButton_search_client">
           <property name="text">
            <string>Search</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" colspan="3">
+         <widget class="QTableView" name="tableView_search_client">
+          <property name="font">
+           <font>
+            <family>MS Shell Dlg 2</family>
+            <pointsize>10</pointsize>
+           </font>
           </property>
          </widget>
         </item>
@@ -1067,7 +1089,7 @@ Lunches</string>
                      <enum>Qt::ClickFocus</enum>
                     </property>
                     <property name="displayFormat">
-                     <string>MMM/dd/yyyy</string>
+                     <string>yyyy-MM-dd</string>
                     </property>
                     <property name="calendarPopup">
                      <bool>true</bool>
@@ -2206,7 +2228,7 @@ Lunches</string>
      <x>0</x>
      <y>0</y>
      <width>1228</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="acceptDrops">
@@ -2231,6 +2253,8 @@ Lunches</string>
     </property>
     <addaction name="actionDB_Connection"/>
     <addaction name="actionTest_Query"/>
+    <addaction name="actionFile_Upload"/>
+    <addaction name="actionDownload_Latest_Upload"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -2292,6 +2316,16 @@ Lunches</string>
   <action name="actionExport_to_PDF">
    <property name="text">
     <string>Export to PDF</string>
+   </property>
+  </action>
+  <action name="actionFile_Upload">
+   <property name="text">
+    <string>File Upload</string>
+   </property>
+  </action>
+  <action name="actionDownload_Latest_Upload">
+   <property name="text">
+    <string>Download Latest Upload</string>
    </property>
   </action>
  </widget>
