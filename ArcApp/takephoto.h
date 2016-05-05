@@ -26,7 +26,7 @@ class TakePhoto : public QDialog
 public:
     explicit TakePhoto(QWidget *parent = 0);
     ~TakePhoto();
-
+    bool cameraon = false;
 
     QCameraViewfinder * vf;
     QCameraImageCapture * cic;

@@ -2,7 +2,11 @@
 #include "ui_mainwindow.h"
 #include "takephoto.h"
 
+#include <QTableView>
+#include <QItemDelegate>
+#include <QStandardItemModel>
 #include <QDebug>
+
 bool sCal = false;
 bool eCal = false;
 MainWindow::MainWindow(QWidget *parent) :
@@ -180,4 +184,37 @@ void MainWindow::addPic(QImage pict){
 }
 
 
+
+//search client
+void MainWindow::on_pushButton_search_client_clicked()
+{
+       qDebug() <<"START SEARCH CLIENT";
+    QString clientName = ui->lineEdit_search_clientName->text();
+    QString searchQuery = "SELECT FirstName, LastName, Dob FROM Client WHERE LastName LIKE '%"+clientName+"%'";
+
+
+    QSqlQuery results = dbManager->execQuery(searchQuery);
+    dbManager->printAll(results);
+
+    //dbManager->execQuery("INSERT INTO Client (FirstName, MiddleName, LastName, Dob) VALUES ('test',NULL, 'testsur', '2000-10-10'");
+   // dbManager->execQuery("INSERT INTO Client (DEFAULT, 'asd', , 'abbbbb'', '2000/10/11', DEFAULT");
+
+
+}
+
+void MainWindow::setup_searchClientTable(QSqlQuery query){
+    QStandardItemModel *clientSearchModel = new QStandardItemModel(3,20,this);
+    ui->tableView_search_client->setModel(clientSearchModel);
+    for(int row = 0; row <20; row++){
+       // for(int col =0; col < 3; col++){
+            QModelIndex col0 = clientSearchModel->index(row, 0, QModelIndex());
+            QModelIndex col1 = clientSearchModel->index(row, 0, QModelIndex());
+            QModelIndex col2 = clientSearchModel->index(row, 0, QModelIndex());
+
+            clientSearchModel->setData(col0,query.value("FirstName"));
+            clientSearchModel->setData(col1,query.value("LastName"));
+            clientSearchModel->setData(col2,query.value("Dob"));
+       // }
+    }
+}
 

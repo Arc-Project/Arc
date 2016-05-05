@@ -18,6 +18,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    void setup_searchClientTable(QSqlQuery query);
+
+
 private slots:
 
     void on_bookButton_clicked();
