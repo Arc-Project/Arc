@@ -434,27 +434,39 @@ bool MainWindow::check_client_register_form(){
     return true;
 }
 
-// the add user button
-void MainWindow::on_pushButton_7_clicked()
+
+void MainWindow::on_btn_createNewUser_clicked()
 {
     // temporary disable stuff
-    if (true) {
+    // obtain username and pw and role from UI
+    QString uname = ui->le_userName->text();
+    QString pw = ui->le_password->text();
 
+    if (uname.length() == 0) {
+        ui->lbl_editUserWarning->setText("Enter a Username");
+        return;
+    }
+
+    if (pw.length() == 0) {
+        ui->lbl_editUserWarning->setText("Enter a Password");
+        return;
+    }
+
+    // first, check to see if the username is taken
+    QSqlQuery queryResults = dbManager->findUser(uname);
+    int numrows = queryResults.numRowsAffected();
+
+    if (numrows > 0) {
+        ui->lbl_editUserWarning->setText("This username is already taken");
+        return;
     } else {
-        // obtain username and pw and role from UI
-
-        // first, check to see if the username is taken
-        QSqlQuery queryResults = dbManager->findUser("username");
+        QSqlQuery queryResults = dbManager->addNewEmployee(uname, pw, ui->comboBox->currentText());
         int numrows = queryResults.numRowsAffected();
 
-        if (numrows > 0) {
-            // this username is taken, display something?
+        if (numrows != 0) {
+            ui->lbl_editUserWarning->setText("Employee added");
         } else {
-            // QSqlQuery queryResults = dbManager->addNewEmployee("Joseph", "hasaproblem", "CASE WORKER");
+            ui->lbl_editUserWarning->setText("Something went wrong - please try again");
         }
     }
 }
-
-
-
-

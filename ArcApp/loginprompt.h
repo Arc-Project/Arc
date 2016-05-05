@@ -19,6 +19,8 @@ private slots:
 
     void on_btn_login_clicked();
 
+    void on_btn_cancelLogin_clicked();
+
 private:
     Ui::LoginPrompt *ui;
 };
