@@ -76,6 +76,8 @@ private slots:
 
     bool check_register_form();
 
+    void on_button_cl_delPic_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

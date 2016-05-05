@@ -224,6 +224,15 @@ void MainWindow::addPic(QImage pict){
     ui->graphicsView_cl_pic->show();
 }
 
+void MainWindow::on_button_cl_delPic_clicked()
+{
+    QGraphicsScene *scene = new QGraphicsScene();
+    scene->clear();
+    ui->graphicsView_cl_pic->setScene(scene);
+
+    //delete picture function to database
+
+}
 
 
 //search client
@@ -295,3 +304,4 @@ bool MainWindow::check_register_form(){
 
     return true;
 }
+
