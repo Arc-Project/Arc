@@ -390,6 +390,15 @@ Lunches</string>
           <property name="frameShape">
            <enum>QFrame::VLine</enum>
           </property>
+          <property name="dragDropOverwriteMode">
+           <bool>false</bool>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SingleSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
           <attribute name="horizontalHeaderCascadingSectionResizes">
            <bool>true</bool>
           </attribute>
@@ -2917,7 +2926,7 @@ Lunches</string>
      <x>0</x>
      <y>0</y>
      <width>1228</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="acceptDrops">
