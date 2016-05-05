@@ -17,6 +17,10 @@ public:
     QSqlQuery selectAll(QString tableName);
     QSqlQuery loginSelect(QString username, QString password);
     void printAll(QSqlQuery queryResults);
+    QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);
+    QSqlQuery getPrograms();
+    bool insertBookingTable(QString insert);
+    int getMonthlyRate(QString room, QString program);
     QSqlQuery getLatestFileUploadEntry(QString tableName);
     bool uploadCaseFile(QString filepath);
     QSqlQuery execQuery(QString queryString);
