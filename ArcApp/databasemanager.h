@@ -13,6 +13,7 @@ public:
     DatabaseManager();
     void print();
     QSqlQuery selectAll(QString tableName);
+    QSqlQuery loginSelect(QString username, QString password);
     void printAll(QSqlQuery queryResults);
 
 private:
