@@ -397,3 +397,24 @@ bool MainWindow::check_register_form(){
 
     return true;
 }
+
+// the add user button
+void MainWindow::on_pushButton_7_clicked()
+{
+    // temporary disable stuff
+    if (true) {
+
+    } else {
+        // obtain username and pw and role from UI
+
+        // first, check to see if the username is taken
+        QSqlQuery queryResults = dbManager->findUser("username");
+        int numrows = queryResults.numRowsAffected();
+
+        if (numrows > 0) {
+            // this username is taken, display something?
+        } else {
+            // QSqlQuery queryResults = dbManager->addNewEmployee("Joseph", "hasaproblem", "CASE WORKER");
+        }
+    }
+}

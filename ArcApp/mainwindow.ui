@@ -77,7 +77,7 @@ QWidget#wdg_cashTotal QLabel, QWidget#wdg_debitTotal QLabel, QWidget#wdg_cheqTot
     <item row="0" column="1">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -1060,6 +1060,16 @@ Lunches</string>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_2">
+         <item row="1" column="1">
+          <widget class="QPushButton" name="pushButton_6">
+           <property name="text">
+            <string>Search</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLineEdit" name="lineEdit"/>
+         </item>
          <item row="0" column="0" colspan="2">
           <widget class="QLabel" name="label_5">
            <property name="font">
@@ -1074,16 +1084,6 @@ Lunches</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLineEdit" name="lineEdit"/>
-         </item>
-         <item row="1" column="1">
-          <widget class="QPushButton" name="pushButton_6">
-           <property name="text">
-            <string>Search</string>
            </property>
           </widget>
          </item>
@@ -2032,11 +2032,6 @@ Lunches</string>
               </item>
              </layout>
             </widget>
-            <zorder>grpBox_reports</zorder>
-            <zorder>swdg_reports</zorder>
-            <zorder>swdg_reports</zorder>
-            <zorder>swdg_reports</zorder>
-            <zorder>swdg_reports</zorder>
            </widget>
           </item>
          </layout>

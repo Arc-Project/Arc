@@ -16,6 +16,8 @@ public:
     void print();
     QSqlQuery selectAll(QString tableName);
     QSqlQuery loginSelect(QString username, QString password);
+    QSqlQuery findUser(QString username);
+    QSqlQuery addNewEmployee(QString username, QString password, QString role);
     void printAll(QSqlQuery queryResults);
     QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);
     QSqlQuery getPrograms();

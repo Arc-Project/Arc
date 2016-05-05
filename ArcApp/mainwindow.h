@@ -90,6 +90,8 @@ private slots:
 
     bool check_register_form();
 
+    void on_pushButton_7_clicked();
+
 private:
     Ui::MainWindow *ui;
     MainWindow * mw;
