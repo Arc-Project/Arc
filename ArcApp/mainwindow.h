@@ -90,7 +90,10 @@ private slots:
 
     bool check_register_form();
 
+    void on_button_cl_delPic_clicked();
+
     void on_pushButton_7_clicked();
+
 
 private:
     Ui::MainWindow *ui;
