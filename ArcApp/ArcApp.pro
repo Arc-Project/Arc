@@ -5,6 +5,7 @@
 #-------------------------------------------------
 QT       += sql
 QT       += core gui
+QT       += multimedia multimediawidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -15,17 +16,22 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     databasemanager.cpp \
-    loginprompt.cpp
+    loginprompt.cpp \
+    takephoto.cpp
 
 HEADERS  += mainwindow.h \
     databasemanager.h \
     shared.h \
     dbconfig.h \
-    loginprompt.h
+    loginprompt.h \
+    takephoto.h
 
 FORMS    += mainwindow.ui \
-    loginprompt.ui
+    loginprompt.ui \
+    takephoto.ui
 
-RESOURCES += qdarkstyle/styling.qrc
+RESOURCES += arcstyle/styling.qrc
+
+RC_FILE = ArcApp.rc
 
 DISTFILES +=

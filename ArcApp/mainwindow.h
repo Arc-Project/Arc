@@ -52,6 +52,15 @@ private slots:
 
     void on_actionDB_Connection_triggered();
 
+    void on_pushButton_RegisterClient_clicked();
+
+    void on_button_cancle_Register_clicked();
+
+    void on_button_cl_takePic_clicked();
+
+    void addPic(QImage pict);
+
+
 private:
     Ui::MainWindow *ui;
 };
