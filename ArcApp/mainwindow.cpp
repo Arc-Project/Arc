@@ -297,6 +297,7 @@ void MainWindow::on_pushButton_RegisterClient_clicked()
 
 void MainWindow::on_button_cancel_client_register_clicked()
 {
+    clear_client_register_form();
     ui->stackedWidget->setCurrentIndex(0);
 }
 
@@ -365,13 +366,22 @@ void MainWindow::on_button_register_client_clicked()
         qDebug()<<ui->lineEdit_cl_fName->text();
         qDebug()<<ui->lineEdit_cl_mName->text();
         qDebug()<<ui->lineEdit_cl_lName->text();
+
         qDebug()<<"DATE function : "<<ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd");
-        dbManager->execQuery("INSERT INTO Client (FirstName, MiddleName, LastName, Dob, Balance) VALUES ('"
+        dbManager->execQuery("INSERT INTO Client (FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, DateRulesSigned, Status) VALUES ('"
                              + ui->lineEdit_cl_fName->text()+"', '"
                              + ui->lineEdit_cl_mName->text()+"', '"
                              + ui->lineEdit_cl_lName->text()+"', '"
-                             + ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd")
-                             + "', DEFAULT)");
+                             + ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd") //+"', '"
+                             + "',DEFAULT,'"
+                             + ui->lineEdit_cl_SIN->text()+"', '"
+                             + ui->lineEdit_cl_GANum->text()+"', '"
+                            // + (ui->checkBox_cl_parolee->isChecked()?1:0)+", "
+                          //   + (ui->checkBox_cl_comm->isChecked()?1:0)+", '"
+                             + ui->dateEdit_cl_rulesign->date().toString("yyyy-MM-dd")
+                             +"',DEFAULT)");
+                             //+"DEFAULT)");
+//        qDebug()<<"    CHECK parolee " + (ui->checkBox_cl_parolee->isChecked()?1:0);
         qDebug()<<"REGISTER FINISHED";
         clear_client_register_form();
         ui->stackedWidget->setCurrentIndex(1);
