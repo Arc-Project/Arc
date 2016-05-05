@@ -144,6 +144,34 @@ void MainWindow::on_actionDB_Connection_triggered()
     dbManager->printAll(results);
 }
 
+void MainWindow::on_actionFile_Upload_triggered()
+{
+    QString strFilePath = MainWindow::browse();
+    if (!strFilePath.isEmpty())
+    {
+        if (dbManager->uploadCaseFile(strFilePath))
+        {
+            qDebug() << "Case file uploaded";
+        }
+        else
+        {
+            qDebug() << "Could not upload case file";
+        }
+    }
+    else
+    {
+        qDebug() << "Empty file path";
+    }
+}
+
+QString MainWindow::browse()
+{
+    QFileDialog dialog(this);
+    dialog.setFileMode(QFileDialog::DirectoryOnly);
+    QString strFilePath = dialog.getOpenFileName(this, tr("SelectFile"), "", tr("All Files (*.*)"));
+
+    return strFilePath;
+}
 
 void MainWindow::on_pushButton_RegisterClient_clicked()
 {
