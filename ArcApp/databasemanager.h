@@ -16,6 +16,8 @@ public:
     void print();
     QSqlQuery selectAll(QString tableName);
     QSqlQuery loginSelect(QString username, QString password);
+    QSqlQuery findUser(QString username);
+    QSqlQuery addNewEmployee(QString username, QString password, QString role);
     void printAll(QSqlQuery queryResults);
     QSqlQuery getLatestFileUploadEntry(QString tableName);
     bool uploadCaseFile(QString filepath);

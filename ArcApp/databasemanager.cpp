@@ -41,6 +41,20 @@ QSqlQuery DatabaseManager::loginSelect(QString username, QString password) {
     return query;
 }
 
+QSqlQuery DatabaseManager::findUser(QString username) {
+    QSqlQuery query(db);
+    query.exec("SELECT Username FROM Employee WHERE Username='" + username + "'");
+    return query;
+}
+
+QSqlQuery DatabaseManager::addNewEmployee(QString username, QString password, QString role) {
+    QSqlQuery query(db);
+
+    query.exec("INSERT INTO Employee VALUES ('" + username + "', '" + password + "', '" + role + "')");
+
+    return query;
+}
+
 void DatabaseManager::printAll(QSqlQuery queryResults)
 {
     int numCols = queryResults.record().count();
