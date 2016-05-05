@@ -5,6 +5,8 @@
 #include <QtSql/QtSql>
 #include <stdio.h>
 #include <cstdarg>
+#include <iostream>
+#include <fstream>
 #include "shared.h"
 #include "dbconfig.h"
 class DatabaseManager
@@ -13,11 +15,18 @@ public:
     DatabaseManager();
     void print();
     QSqlQuery selectAll(QString tableName);
+    QSqlQuery loginSelect(QString username, QString password);
     void printAll(QSqlQuery queryResults);
     QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);
     QSqlQuery getPrograms();
     bool insertBookingTable(QString insert);
     int getMonthlyRate(QString room, QString program);
+    QSqlQuery getLatestFileUploadEntry(QString tableName);
+    bool uploadCaseFile(QString filepath);
+    QSqlQuery execQuery(QString queryString);
+
+    bool downloadLatestCaseFile();
+
 private:
     QSqlDatabase db;
 };

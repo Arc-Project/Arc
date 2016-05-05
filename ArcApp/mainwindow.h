@@ -29,11 +29,15 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
     bookingManager book;
     void getProgramCodes();
     void bookingSetup();
     void populateBooking();
     void setBooking(int row);
+    void setup_searchClientTable(QSqlQuery query);
+
+
 private slots:
 
     void on_bookButton_clicked();
@@ -60,11 +64,31 @@ private slots:
 
     void on_actionDB_Connection_triggered();
 
-    void on_bookingTable_itemClicked(QTableWidgetItem *item);
 
     void on_makeBookingButton_2_clicked();
 
     void on_monthCheck_stateChanged(int arg1);
+    void on_actionFile_Upload_triggered();
+
+    QString browse();
+
+    void on_actionDownload_Latest_Upload_triggered();
+
+    void on_pushButton_RegisterClient_clicked();
+
+    void on_button_cancle_Register_clicked();
+
+    void on_button_cl_takePic_clicked();
+
+    void addPic(QImage pict);
+
+    void on_reportsButton_clicked();
+
+    void on_pushButton_search_client_clicked();
+
+    void on_button_register_client_clicked();
+
+    bool check_register_form();
 
 private:
     Ui::MainWindow *ui;

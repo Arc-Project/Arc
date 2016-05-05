@@ -69,6 +69,14 @@ bool DatabaseManager::insertBookingTable(QString insert){
     return true;
 }
 
+
+
+QSqlQuery DatabaseManager::loginSelect(QString username, QString password) {
+    QSqlQuery query(db);
+    query.exec("SELECT TOP 1 Role FROM Employee WHERE Username='" + username + "' AND Password='" + password + "'");
+    return query;
+}
+
 void DatabaseManager::printAll(QSqlQuery queryResults)
 {
     int numCols = queryResults.record().count();
@@ -83,3 +91,69 @@ void DatabaseManager::printAll(QSqlQuery queryResults)
     }
 }
 
+bool DatabaseManager::uploadCaseFile(QString filepath)
+{
+    QByteArray byte;
+
+    QFile file(filepath);
+    if(!file.open(QIODevice::ReadOnly))
+    {
+        qDebug("failed to open file");
+        return false;
+    }
+
+    QFileInfo fileInfo(file);
+    qDebug() << "Path:\t\t\t" << fileInfo.path();
+    qDebug() << "Filename w/ extension:\t" <<fileInfo.fileName();
+    qDebug() << "Filename:\t\t" <<fileInfo.baseName();
+    qDebug() << "Extension:\t\t" <<fileInfo.suffix();
+    qDebug() << "Size:\t\t\t" <<fileInfo.size();
+    byte = file.readAll();
+    file.close();
+
+    QSqlQuery query(db);
+    query.prepare("INSERT INTO FileTest1(doc, fileName, extension, fileSize) VALUES(:doc, :fname, :fext, :fsize)");
+    query.bindValue(":doc", byte, QSql::In | QSql::Binary);
+    query.bindValue(":fname", fileInfo.fileName());
+    query.bindValue(":fext", fileInfo.suffix());
+    query.bindValue(":fsize", fileInfo.size());
+
+    if (query.exec())
+    {
+        return true;
+    }
+    return false;
+}
+
+
+QSqlQuery DatabaseManager::execQuery(QString queryString)
+{
+    QSqlQuery query(db);
+    query.exec(queryString);
+    return query;
+}
+
+QSqlQuery DatabaseManager::getLatestFileUploadEntry(QString tableName)
+{
+    QSqlQuery query(db);
+    query.exec("SELECT TOP 1 * FROM " + tableName + " ORDER BY id DESC");
+    return query;
+}
+
+bool DatabaseManager::downloadLatestCaseFile()
+{
+    QSqlQuery queryResults = DatabaseManager::getLatestFileUploadEntry("FileTest1");
+    queryResults.next();
+    QString filename = queryResults.value(3).toString();
+    QByteArray data = queryResults.value(2).toByteArray();
+    qDebug() << filename;
+
+    QFile file("..\\Downloads\\" + filename);
+    if (file.open(QIODevice::WriteOnly))
+    {
+        file.write(data);
+        file.close();
+        return true;
+    }
+    return false;
+}

@@ -16,6 +16,7 @@ int main(int argc, char *argv[])
     QByteArray bt = styleFile.readAll();
     QString style(bt);
     a.setStyleSheet(style);*/
+
     return a.exec();
 }
 
