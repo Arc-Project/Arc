@@ -69,6 +69,7 @@ private slots:
 
     void addPic(QImage pict);
 
+    void on_reportsButton_clicked();
 
     void on_pushButton_search_client_clicked();
 

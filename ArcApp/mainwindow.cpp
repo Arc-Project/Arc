@@ -200,7 +200,10 @@ void MainWindow::on_button_cancle_Register_clicked()
     ui->stackedWidget->setCurrentIndex(0);
 }
 
-
+void MainWindow::on_reportsButton_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(11);
+}
 
 //Client Regiter widget [TAKE A PICTURE] button
 void MainWindow::on_button_cl_takePic_clicked()
@@ -223,7 +226,6 @@ void MainWindow::addPic(QImage pict){
     ui->graphicsView_cl_pic->setScene(scene);
     ui->graphicsView_cl_pic->show();
 }
-
 
 
 //search client
