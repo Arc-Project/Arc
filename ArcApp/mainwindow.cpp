@@ -234,11 +234,8 @@ void MainWindow::on_pushButton_search_client_clicked()
     QString clientName = ui->lineEdit_search_clientName->text();
     QString searchQuery = "SELECT FirstName, LastName, Dob FROM Client WHERE LastName LIKE '%"+clientName+"%' OR FirstName Like '%"+clientName+"%'";
 
-
     QSqlQuery results = dbManager->execQuery(searchQuery);
     dbManager->printAll(results);
-
-    //dbManager->execQuery("INSERT INTO Client (FirstName, MiddleName, LastName, Dob) VALUES ('test',NULL, 'testsur', '2000-10-10'");
 
 }
 
