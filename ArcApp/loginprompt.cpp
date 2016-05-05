@@ -48,3 +48,7 @@ void LoginPrompt::on_btn_login_clicked()
     }
 }
 
+void LoginPrompt::on_btn_cancelLogin_clicked()
+{
+    close();
+}
