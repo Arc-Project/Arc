@@ -19,6 +19,10 @@ public:
     QSqlQuery findUser(QString username);
     QSqlQuery addNewEmployee(QString username, QString password, QString role);
     void printAll(QSqlQuery queryResults);
+    QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);
+    QSqlQuery getPrograms();
+    bool insertBookingTable(QString insert);
+    int getMonthlyRate(QString room, QString program);
     QSqlQuery getLatestFileUploadEntry(QString tableName);
     bool uploadCaseFile(QString filepath);
     QSqlQuery execQuery(QString queryString);
