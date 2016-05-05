@@ -80,15 +80,11 @@ bool DatabaseManager::uploadCaseFile(QString filepath)
     query.bindValue(":fext", fileInfo.suffix());
     query.bindValue(":fsize", fileInfo.size());
 
-//    if (query.exec())
-//    {
-//        return true;
-//    }
-
-      DatabaseManager::downloadLatestCaseFile();
-
-      return true;
-//    return false;
+    if (query.exec())
+    {
+        return true;
+    }
+    return false;
 }
 
 QSqlQuery DatabaseManager::getLatestFileUploadEntry(QString tableName)
@@ -107,7 +103,11 @@ bool DatabaseManager::downloadLatestCaseFile()
     qDebug() << filename;
 
     QFile file("..\\Downloads\\" + filename);
-    file.open(QIODevice::WriteOnly);
-    file.write(data);
-    file.close();
+    if (file.open(QIODevice::WriteOnly))
+    {
+        file.write(data);
+        file.close();
+        return true;
+    }
+    return false;
 }
