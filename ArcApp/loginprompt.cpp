@@ -17,8 +17,6 @@ LoginPrompt::~LoginPrompt()
 // login button
 void LoginPrompt::on_pushButton_clicked()
 {
-    //qDebug("SDfSDF");
-
     bool validLogin = false;
 
     QString username = ui->lineEdit_Uname->text();
@@ -29,15 +27,17 @@ void LoginPrompt::on_pushButton_clicked()
     } else if (pw.isEmpty()) {
         ui->label_LoginError->setText("Please enter a password");
     } else {
-        bool validCredentials = true; // true for testing
-        // validation - go to database and check uname and pw; set validLogin here later and remove validCredentials
+        QSqlQuery queryResults = dbManager->loginSelect(username, pw);
 
+        int numrows = queryResults.numRowsAffected();
 
-        if (!validCredentials) {
-            ui->label_LoginError->setText("Invalid login credentials");
-        } else {
-            // temp for testing
+        if (numrows != 0) {
             validLogin = true;
+            qDebug("valid login");
+        } else {
+            validLogin = false;
+            qDebug("invalid login");
+            ui->label_LoginError->setText("Invalid login credentials");
         }
     }
 

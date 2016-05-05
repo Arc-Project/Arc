@@ -33,6 +33,12 @@ QSqlQuery DatabaseManager::selectAll(QString tableName)
     return query;
 }
 
+QSqlQuery DatabaseManager::loginSelect(QString username, QString password) {
+    QSqlQuery query(db);
+    query.exec("SELECT TOP 1 Role FROM Employee WHERE Username='" + username + "' AND Password='" + password + "'");
+    return query;
+}
+
 void DatabaseManager::printAll(QSqlQuery queryResults)
 {
     int numCols = queryResults.record().count();
