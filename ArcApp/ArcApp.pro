@@ -17,6 +17,8 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     databasemanager.cpp \
     loginprompt.cpp \
+    bookingmanager.cpp \
+    booking.cpp \
     takephoto.cpp
 
 HEADERS  += mainwindow.h \
@@ -24,6 +26,8 @@ HEADERS  += mainwindow.h \
     shared.h \
     dbconfig.h \
     loginprompt.h \
+    bookingmanager.h \
+    booking.h \
     takephoto.h
 
 FORMS    += mainwindow.ui \

@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/qss_icons">
+        <file>img/calendar.png</file>
         <file>img/logo.png</file>
         <file>img/up_arrow_disabled.png</file>
         <file>img/Hmovetoolbar.png</file>
