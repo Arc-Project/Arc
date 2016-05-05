@@ -33,6 +33,8 @@ QSqlQuery DatabaseManager::selectAll(QString tableName)
     return query;
 }
 
+
+
 QSqlQuery DatabaseManager::loginSelect(QString username, QString password) {
     QSqlQuery query(db);
     query.exec("SELECT TOP 1 Role FROM Employee WHERE Username='" + username + "' AND Password='" + password + "'");
@@ -85,6 +87,14 @@ bool DatabaseManager::uploadCaseFile(QString filepath)
         return true;
     }
     return false;
+}
+
+
+QSqlQuery DatabaseManager::execQuery(QString queryString)
+{
+    QSqlQuery query(db);
+    query.exec(queryString);
+    return query;
 }
 
 QSqlQuery DatabaseManager::getLatestFileUploadEntry(QString tableName)

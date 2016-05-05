@@ -18,6 +18,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    void setup_searchClientTable(QSqlQuery query);
+
+
 private slots:
 
     void on_bookButton_clicked();
@@ -66,6 +69,12 @@ private slots:
 
     void addPic(QImage pict);
 
+
+    void on_pushButton_search_client_clicked();
+
+    void on_button_register_client_clicked();
+
+    bool check_register_form();
 
 private:
     Ui::MainWindow *ui;
