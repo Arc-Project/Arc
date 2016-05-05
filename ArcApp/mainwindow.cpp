@@ -176,3 +176,8 @@ void MainWindow::addPic(QImage pict){
     ui->graphicsView_cl_pic->setScene(scene);
     ui->graphicsView_cl_pic->show();
 }
+
+void MainWindow::on_reportsButton_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(11);
+}

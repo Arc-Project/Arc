@@ -61,6 +61,8 @@ private slots:
     void addPic(QImage pict);
 
 
+    void on_reportsButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 };
