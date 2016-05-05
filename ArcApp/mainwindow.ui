@@ -60,7 +60,7 @@ QWidget#wdg_mainScreen QPushButton {
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>10</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -1563,13 +1563,8 @@ Lunches</string>
     <rect>
      <x>0</x>
      <y>0</y>
-<<<<<<< HEAD
-     <width>914</width>
-     <height>21</height>
-=======
      <width>1294</width>
      <height>26</height>
->>>>>>> 92eaeaec20ba59721879fdf41e88085624bab1c4
     </rect>
    </property>
    <property name="acceptDrops">
