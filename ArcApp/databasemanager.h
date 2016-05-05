@@ -5,6 +5,8 @@
 #include <QtSql/QtSql>
 #include <stdio.h>
 #include <cstdarg>
+#include <iostream>
+#include <fstream>
 #include "shared.h"
 #include "dbconfig.h"
 class DatabaseManager
@@ -13,9 +15,10 @@ public:
     DatabaseManager();
     void print();
     QSqlQuery selectAll(QString tableName);
-    QSqlQuery execQuery(QString queryString);
+    QSqlQuery loginSelect(QString username, QString password);
     void printAll(QSqlQuery queryResults);
-
+    bool uploadCaseFile(QString filepath);
+    QSqlQuery execQuery(QString queryString);
 
 private:
     QSqlDatabase db;

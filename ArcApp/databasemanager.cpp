@@ -33,10 +33,11 @@ QSqlQuery DatabaseManager::selectAll(QString tableName)
     return query;
 }
 
-QSqlQuery DatabaseManager::execQuery(QString queryString)
-{
+
+
+QSqlQuery DatabaseManager::loginSelect(QString username, QString password) {
     QSqlQuery query(db);
-    query.exec(queryString);
+    query.exec("SELECT TOP 1 Role FROM Employee WHERE Username='" + username + "' AND Password='" + password + "'");
     return query;
 }
 
@@ -54,3 +55,38 @@ void DatabaseManager::printAll(QSqlQuery queryResults)
     }
 }
 
+bool DatabaseManager::uploadCaseFile(QString filepath)
+{
+    QByteArray byte;
+
+    QFile file(filepath);
+    if(!file.open(QIODevice::ReadOnly))
+    {
+        qDebug("failed to open file");
+        return false;
+    }
+
+    QFileInfo fileInfo(file);
+    qDebug() << "Path:\t\t\t" << fileInfo.path();
+    qDebug() << "Filename w/ extension:\t" <<fileInfo.fileName();
+    qDebug() << "Filename:\t\t" <<fileInfo.baseName();
+    qDebug() << "Extension:\t\t" <<fileInfo.suffix();
+    byte = file.readAll();
+    file.close();
+
+    QSqlQuery query(db);
+    query.prepare("INSERT INTO FileTest(doc) VALUES(:doc)");
+    query.bindValue(":doc", byte, QSql::In | QSql::Binary);
+
+    if (query.exec())
+    {
+        return true;
+    }
+    return false;
+}
+
+
+QSqlQuery DatabaseManager::execQuery(QString queryString)
+{
+    QSqlQuery query(db);
+    query.exec(queryString);
