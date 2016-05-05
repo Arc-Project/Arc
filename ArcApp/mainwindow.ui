@@ -1564,7 +1564,7 @@ Lunches</string>
      <x>0</x>
      <y>0</y>
      <width>1294</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="acceptDrops">
@@ -1589,6 +1589,7 @@ Lunches</string>
     </property>
     <addaction name="actionDB_Connection"/>
     <addaction name="actionTest_Query"/>
+    <addaction name="actionFile_Upload"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -1644,6 +1645,11 @@ Lunches</string>
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionFile_Upload">
+   <property name="text">
+    <string>File Upload</string>
    </property>
   </action>
  </widget>

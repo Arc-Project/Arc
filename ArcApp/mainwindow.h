@@ -52,6 +52,10 @@ private slots:
 
     void on_actionDB_Connection_triggered();
 
+    void on_actionFile_Upload_triggered();
+
+    QString browse();
+
     void on_pushButton_RegisterClient_clicked();
 
     void on_button_cancle_Register_clicked();
