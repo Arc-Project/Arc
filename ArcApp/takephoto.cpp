@@ -48,6 +48,7 @@ void TakePhoto::on_pushButtons_camstart_clicked()
         cam->start();
         cameraon = true;
         ui->pushButtons_camstart->setText("Cam OFF");
+        ui->pushButton_piccapture->setEnabled(true);
     }
     else{
         ui->verticalLayout->removeWidget(vf);
@@ -56,6 +57,7 @@ void TakePhoto::on_pushButtons_camstart_clicked()
         cam->destroyed();
         cameraon = false;
         ui->pushButtons_camstart->setText("Cam ON");
+        ui->pushButton_piccapture->setEnabled(false);
     }
 
 }
