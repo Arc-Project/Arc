@@ -276,6 +276,11 @@ void MainWindow::on_actionDownload_Latest_Upload_triggered()
     QtConcurrent::run(dbManager, &DatabaseManager::downloadThread);
 }
 
+void MainWindow::on_actionPrint_Db_Connections_triggered()
+{
+    dbManager->printDbConnections();
+}
+
 void MainWindow::on_pushButton_RegisterClient_clicked()
 {
     ui->stackedWidget->setCurrentIndex(10);
