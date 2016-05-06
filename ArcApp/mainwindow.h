@@ -42,6 +42,24 @@ public:
 
 private slots:
 
+    /*==========================================================================
+    DEV TESTING BUTTONS
+    ==========================================================================*/
+    void on_actionDB_Connection_triggered();
+    void on_actionTest_Query_triggered();
+    void on_actionFile_Upload_triggered();
+    void on_actionDownload_Latest_Upload_triggered();
+    void on_actionPrint_Db_Connections_triggered();
+    void on_actionUpload_Display_Picture_triggered();
+    void on_actionDownload_Profile_Picture_triggered();
+    
+    /*==========================================================================
+    DEV TESTING AUXILIARY FUNCTIONS
+    ==========================================================================*/
+    QString browse();
+
+
+
     void on_bookButton_clicked();
 
     void on_clientButton_clicked();
@@ -64,18 +82,9 @@ private slots:
 
     void on_actionMain_Menu_triggered();
 
-    void on_actionDB_Connection_triggered();
-
     void on_makeBookingButton_2_clicked();
 
     void on_monthCheck_stateChanged(int arg1);
-    void on_actionFile_Upload_triggered();
-
-    QString browse();
-
-    void on_actionDownload_Latest_Upload_triggered();
-
-    void on_actionPrint_Db_Connections_triggered();
 
     void on_pushButton_RegisterClient_clicked();
 
