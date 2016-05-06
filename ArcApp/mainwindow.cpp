@@ -1,11 +1,12 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "takephoto.h"
-
 #include <QTableView>
 #include <QItemDelegate>
 #include <QStandardItemModel>
 #include <QDebug>
+#include "payment.h"
+
 bool firstTime = true;
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -441,7 +442,25 @@ bool MainWindow::check_client_register_form(){
     return true;
 }
 
+void MainWindow::on_paymentButton_2_clicked()
+{
+    trans = new transaction();
+    double owed;
+    //owed = curBook->cost;
+    curClient = new Client();
+    curClient->balance = 50.0;
+    curClient->clientId = "1";
+    curClient->fName = "Spenser";
+    curClient->mName ="Joseph";
+    curClient->lName = "Lee";
 
+    payment * pay = new payment(this, trans, 500.0, 30.0, curClient);
+    pay->exec();
+    qDebug() << "Done";
+
+}
+
+// the add user button
 void MainWindow::on_btn_createNewUser_clicked()
 {
     // temporary disable stuff

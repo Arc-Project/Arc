@@ -916,6 +916,19 @@ Lunches</string>
          <string/>
         </property>
        </widget>
+       <widget class="QPushButton" name="paymentButton_2">
+        <property name="geometry">
+         <rect>
+          <x>540</x>
+          <y>340</y>
+          <width>93</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Add Payment</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="paymentPage">
        <widget class="QLabel" name="label_4">
