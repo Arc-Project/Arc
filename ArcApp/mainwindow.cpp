@@ -70,7 +70,80 @@ void MainWindow::on_adminButton_clicked()
 
 }
 
+/*==============================================================================
+DEV TESTING BUTTONS (START)
+==============================================================================*/
+void MainWindow::on_actionDB_Connection_triggered()
+{
+    QSqlQuery results= dbManager->selectAll("Test");
+    dbManager->printAll(results);
+}
 
+void MainWindow::on_actionTest_Query_triggered()
+{
+
+}
+
+void MainWindow::on_actionFile_Upload_triggered()
+{
+    QString strFilePath = MainWindow::browse();
+    if (!strFilePath.isEmpty())
+    {
+        QtConcurrent::run(dbManager, &DatabaseManager::uploadThread, strFilePath);
+    }
+    else
+    {
+        qDebug() << "Empty file path";
+    }
+}
+
+void MainWindow::on_actionDownload_Latest_Upload_triggered()
+{
+    QtConcurrent::run(dbManager, &DatabaseManager::downloadThread);
+}
+
+void MainWindow::on_actionPrint_Db_Connections_triggered()
+{
+    dbManager->printDbConnections();
+}
+
+void MainWindow::on_actionUpload_Display_Picture_triggered()
+{
+    QString strFilePath = MainWindow::browse();
+    if (!strFilePath.isEmpty())
+    {
+        QtConcurrent::run(dbManager, &DatabaseManager::uploadProfilePicThread, strFilePath);
+    }
+    else
+    {
+        qDebug() << "Empty file path";
+    }
+}
+
+void MainWindow::on_actionDownload_Profile_Picture_triggered()
+{
+    QImage* img = new QImage();
+    dbManager->downloadProfilePic(img);
+
+    MainWindow::addPic(*img);
+}
+/*==============================================================================
+DEV TESTING BUTTONS (END)
+==============================================================================*/
+/*==============================================================================
+DEV TESTING AUXILIARY FUNCTIONS (START)
+==============================================================================*/
+QString MainWindow::browse()
+{
+    QFileDialog dialog(this);
+    dialog.setFileMode(QFileDialog::DirectoryOnly);
+    QString strFilePath = dialog.getOpenFileName(this, tr("SelectFile"), "", tr("All Files (*.*)"));
+
+    return strFilePath;
+}
+/*==============================================================================
+DEV TESTING AUXILIARY FUNCTIONS (END)
+==============================================================================*/
 void MainWindow::bookingSetup(){
 
     ui->bookingTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -189,14 +262,6 @@ void MainWindow::on_actionMain_Menu_triggered()
     ui->stackedWidget->setCurrentIndex(MAINMENU);
 }
 
-
-void MainWindow::on_actionDB_Connection_triggered()
-{
-    QSqlQuery results= dbManager->selectAll("Test");
-    dbManager->printAll(results);
-}
-
-
 void MainWindow::on_makeBookingButton_2_clicked()
 {
     ui->makeBookingButton_2->setEnabled(false);
@@ -248,37 +313,6 @@ void MainWindow::on_monthCheck_stateChanged(int arg1)
         month = month.addMonths(1);
         ui->endDateEdit->setDate(month);
     }
-}
-void MainWindow::on_actionFile_Upload_triggered()
-{
-    QString strFilePath = MainWindow::browse();
-    if (!strFilePath.isEmpty())
-    {
-        QtConcurrent::run(dbManager, &DatabaseManager::uploadThread, strFilePath);
-    }
-    else
-    {
-        qDebug() << "Empty file path";
-    }
-}
-
-QString MainWindow::browse()
-{
-    QFileDialog dialog(this);
-    dialog.setFileMode(QFileDialog::DirectoryOnly);
-    QString strFilePath = dialog.getOpenFileName(this, tr("SelectFile"), "", tr("All Files (*.*)"));
-
-    return strFilePath;
-}
-
-void MainWindow::on_actionDownload_Latest_Upload_triggered()
-{
-    QtConcurrent::run(dbManager, &DatabaseManager::downloadThread);
-}
-
-void MainWindow::on_actionPrint_Db_Connections_triggered()
-{
-    dbManager->printDbConnections();
 }
 
 void MainWindow::on_pushButton_RegisterClient_clicked()

@@ -2967,6 +2967,8 @@ Lunches</string>
     <addaction name="actionFile_Upload"/>
     <addaction name="actionDownload_Latest_Upload"/>
     <addaction name="actionPrint_Db_Connections"/>
+    <addaction name="actionUpload_Display_Picture"/>
+    <addaction name="actionDownload_Profile_Picture"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -3043,6 +3045,16 @@ Lunches</string>
   <action name="actionPrint_Db_Connections">
    <property name="text">
     <string>Print Db Connections</string>
+   </property>
+  </action>
+  <action name="actionUpload_Display_Picture">
+   <property name="text">
+    <string>Upload Display Picture</string>
+   </property>
+  </action>
+  <action name="actionDownload_Profile_Picture">
+   <property name="text">
+    <string>Download Profile Picture</string>
    </property>
   </action>
  </widget>
