@@ -128,6 +128,8 @@ private slots:
 
     void on_btn_floatCount_clicked();
 
+    void on_btn_listAllUsers_2_clicked();
+
 private:
     Ui::MainWindow *ui;
     MainWindow * mw;

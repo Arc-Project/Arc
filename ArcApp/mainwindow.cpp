@@ -541,3 +541,13 @@ void MainWindow::on_btn_floatCount_clicked()
 {
     ui->swdg_reports->setCurrentIndex(FLOATCOUNT);
 }
+
+// list all button, admin screen
+void MainWindow::on_btn_listAllUsers_2_clicked()
+{
+    QSqlQuery query = dbManager->execQuery("SELECT Username, Password, Role FROM Employee");
+    QSqlQueryModel *clientModel = new QSqlQueryModel();
+    clientModel->setQuery(query);
+    // set tableview
+    //ui->tableView_search_client->setModel(clientModel);
+}
