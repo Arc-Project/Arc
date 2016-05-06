@@ -16,23 +16,33 @@
 class DatabaseManager
 {
 public:
+    /*==========================================================================
+    DATABASE MANAGER SETUP
+    ==========================================================================*/
     DatabaseManager();
-    void print();
+    bool createDatabase(QSqlDatabase* tempDbPtr, QString connName);
+
+    /*==========================================================================
+    GENERAL QUERYS
+    ==========================================================================*/
     QSqlQuery selectAll(QString tableName);
-    QSqlQuery loginSelect(QString username, QString password);
-    QSqlQuery findUser(QString username);
-    QSqlQuery addNewEmployee(QString username, QString password, QString role);
     void printAll(QSqlQuery queryResults);
-    QSqlQuery getLatestFileUploadEntry(QSqlDatabase* tempDbPtr, QString tableName);
+
+    /*==========================================================================
+    FILE DOWNLOAD AND UPLOAD RELATED FUNCTIONS
+    ==========================================================================*/
     bool uploadCaseFile(QSqlDatabase* tempDbPtr, QString connName, QString filepath);
     bool downloadLatestCaseFile(QSqlDatabase* tempDbPtr, QString connName);
-    bool createDatabase(QSqlDatabase* tempDbPtr, QString connName);
-    void printDbConnections();
+    QSqlQuery getLatestFileUploadEntry(QSqlDatabase* tempDbPtr, QString tableName);
     int getDbCounter();
     void downloadThread();
     void uploadThread(QString strFilePath);
-    static QMutex mutex;  
-    static int dbCounter;
+    void printDbConnections();
+    
+    void print();
+    QSqlQuery loginSelect(QString username, QString password);
+    QSqlQuery findUser(QString username);
+    QSqlQuery addNewEmployee(QString username, QString password, QString role);
     QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);
     QSqlQuery getPrograms();
     bool insertBookingTable(QString insert);
@@ -42,6 +52,8 @@ public:
     bool downloadLatestCaseFile();
 private:
     QSqlDatabase db = QSqlDatabase::database();
+    static QMutex mutex;  
+    static int dbCounter;
 };
 
 extern DatabaseManager* dbManager;
