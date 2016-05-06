@@ -17,18 +17,29 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     databasemanager.cpp \
     loginprompt.cpp \
-    takephoto.cpp
+    bookingmanager.cpp \
+    booking.cpp \
+    takephoto.cpp \
+    transaction.cpp \
+    payment.cpp \
+    client.cpp
 
 HEADERS  += mainwindow.h \
     databasemanager.h \
     shared.h \
     dbconfig.h \
     loginprompt.h \
-    takephoto.h
+    bookingmanager.h \
+    booking.h \
+    takephoto.h \
+    transaction.h \
+    payment.h \
+    client.h
 
 FORMS    += mainwindow.ui \
     loginprompt.ui \
-    takephoto.ui
+    takephoto.ui \
+    payment.ui
 
 RESOURCES += arcstyle/styling.qrc
 

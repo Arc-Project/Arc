@@ -20,30 +20,45 @@ void TakePhoto::processImage(int i, QImage img)
 {
     qDebug()<<"processImg";
     emit showPic(img);
+
     cam->stop();
     close();
 }
 
 void TakePhoto::on_pushButtons_camstart_clicked()
 {
-    vf = new QCameraViewfinder(ui->verticalLayoutWidget);
-    ui->verticalLayout->addWidget(vf);
+    if(!cameraon){
+        vf = new QCameraViewfinder(ui->verticalLayoutWidget);
+        ui->verticalLayout->addWidget(vf);
 
-    foreach(QCameraInfo info, QCameraInfo::availableCameras())
-    {
-            cam = new QCamera(info);
+        foreach(QCameraInfo info, QCameraInfo::availableCameras())
+        {
+                cam = new QCamera(info);
+        }
+        qDebug()<<"CAMERA STATUS 1: " <<cam->status();
+        cam->setViewfinder(vf);
+        qDebug()<<"CAMERA STATUS 2: " <<cam->status();
+        cic = new QCameraImageCapture(cam);
+        connect(cam, SIGNAL(stateChanged(QCamera::State)),this, SLOT(checkCam(QCamera::Status)));
+        connect(cic,SIGNAL(imageCaptured(int,QImage)),this,SLOT(processImage(int,QImage)));
+
+        cam->setCaptureMode(QCamera::CaptureStillImage);
+        qDebug()<<"CAMERA STATUS 3: " <<cam->status();
+
+        cam->start();
+        cameraon = true;
+        ui->pushButtons_camstart->setText("Cam OFF");
+        ui->pushButton_piccapture->setEnabled(true);
     }
-    qDebug()<<"CAMERA STATUS 1: " <<cam->status();
-    cam->setViewfinder(vf);
-    qDebug()<<"CAMERA STATUS 2: " <<cam->status();
-    cic = new QCameraImageCapture(cam);
-    connect(cam, SIGNAL(stateChanged(QCamera::State)),this, SLOT(checkCam(QCamera::Status)));
-    connect(cic,SIGNAL(imageCaptured(int,QImage)),this,SLOT(processImage(int,QImage)));
-
-    cam->setCaptureMode(QCamera::CaptureStillImage);
-    qDebug()<<"CAMERA STATUS 3: " <<cam->status();
-
-    cam->start();
+    else{
+        ui->verticalLayout->removeWidget(vf);
+        vf->close();
+        cic->destroyed();
+        cam->destroyed();
+        cameraon = false;
+        ui->pushButtons_camstart->setText("Cam ON");
+        ui->pushButton_piccapture->setEnabled(false);
+    }
 
 }
 

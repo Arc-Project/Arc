@@ -24,6 +24,54 @@ QSqlQuery DatabaseManager::selectAll(QString tableName)
     query.exec("SELECT * FROM " + tableName);
     return query;
 }
+QSqlQuery DatabaseManager::getPrograms(){
+    QSqlQuery query(db);
+    QString q = "SELECT DISTINCT ProgramCodes from Space";
+    query.exec(q);
+    return query;
+}
+bool DatabaseManager::addPayment(QString values){
+    QSqlQuery query(db);
+    QString q = "INSERT INTO Transac Values( " + values + ")";
+    qDebug() << q;
+    if(query.exec(q)){
+        return true;
+    }
+    return false;
+}
+
+int DatabaseManager::getMonthlyRate(QString room, QString program){
+    QSqlQuery query(db);
+    QString q = "SELECT cost FROM Space WHERE SpaceId = '" + room + "'";
+    if(query.exec(q)){
+        return query.value(0).toInt();
+    }
+    else{
+        return -1;
+    }
+}
+
+QSqlQuery DatabaseManager::getCurrentBooking(QDate start, QDate end, QString program){
+    QSqlQuery query(db);
+    QString q = "SELECT Space.SpaceId, Space.Location, Space.ProgramCodes, Space.type, Space.cost, Space.Monthly FROM Space"
+                " LEFT JOIN (SELECT * from Booking WHERE Date >= '" + start.toString(Qt::ISODate) + "' AND Date <= '"
+                + end.toString(Qt::ISODate) + "') AS a on Space.SpaceId = a.SpaceId WHERE BookingID IS NULL AND Space.ProgramCodes = '" + program + "'";
+
+    query.exec(q);
+    return query;
+}
+bool DatabaseManager::insertBookingTable(QString insert){
+    QSqlQuery query(db);
+    QString q = "INSERT INTO Booking VALUES(" + insert + ")";
+    qDebug() << q;
+    if(!query.exec(q)){
+        qDebug() << "INSERT FAILED";
+        return false;
+    }
+    return true;
+}
+
+
 
 QSqlQuery DatabaseManager::loginSelect(QString username, QString password) {
     QSqlQuery query(db);
@@ -64,6 +112,20 @@ void DatabaseManager::printDbConnections()
         QString current = *it;
         qDebug() << "[[" << current << "]]";
     }
+}
+
+QSqlQuery DatabaseManager::findUser(QString username) {
+    QSqlQuery query(db);
+    query.exec("SELECT Username FROM Employee WHERE Username='" + username + "'");
+    return query;
+}
+
+QSqlQuery DatabaseManager::addNewEmployee(QString username, QString password, QString role) {
+    QSqlQuery query(db);
+
+    query.exec("INSERT INTO Employee VALUES ('" + username + "', '" + password + "', '" + role + "')");
+
+    return query;
 }
 
 void DatabaseManager::printAll(QSqlQuery queryResults)
@@ -145,6 +207,13 @@ bool DatabaseManager::downloadLatestCaseFile(QSqlDatabase* tempDbPtr, QString co
         return true;
     }
     return false;
+}
+
+QSqlQuery DatabaseManager::execQuery(QString queryString)
+{
+    QSqlQuery query(db);
+    query.exec(queryString);
+    return query;
 }
 
 QSqlQuery DatabaseManager::getLatestFileUploadEntry(QSqlDatabase* tempDbPtr, QString tableName)
