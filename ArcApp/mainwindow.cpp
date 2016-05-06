@@ -603,3 +603,32 @@ void MainWindow::on_btn_floatCount_clicked()
 {
     ui->swdg_reports->setCurrentIndex(FLOATCOUNT);
 }
+
+void MainWindow::on_btn_listAllUsers_clicked()
+{
+    QSqlQuery query = dbManager->execQuery("SELECT Username, Password, Role FROM Employee");
+    QSqlQueryModel *model = new QSqlQueryModel();
+    model->setQuery(query);
+    ui->tableView_3->setModel(model);
+    ui->tableView_3->horizontalHeader()->model()->setHeaderData(0, Qt::Horizontal, "Username");
+    ui->tableView_3->horizontalHeader()->model()->setHeaderData(1, Qt::Horizontal, "Password");
+    ui->tableView_3->horizontalHeader()->model()->setHeaderData(2, Qt::Horizontal, "Role");
+}
+
+void MainWindow::on_btn_searchUsers_clicked()
+{
+    QString ename = ui->le_users->text();
+    QSqlQuery results = dbManager->execQuery("SELECT Username, Password, Role FROM Employee WHERE Username LIKE '%"+ ename +"%'");
+    QSqlQueryModel *model = new QSqlQueryModel();
+    model->setQuery(results);
+    ui->tableView_3->setModel(model);
+    ui->tableView_3->horizontalHeader()->model()->setHeaderData(0, Qt::Horizontal, "Username");
+    ui->tableView_3->horizontalHeader()->model()->setHeaderData(1, Qt::Horizontal, "Password");
+    ui->tableView_3->horizontalHeader()->model()->setHeaderData(2, Qt::Horizontal, "Role");
+}
+
+// double clicked employee
+void MainWindow::on_tableView_3_doubleClicked(const QModelIndex &index)
+{
+    // populate the fields on the right
+}
