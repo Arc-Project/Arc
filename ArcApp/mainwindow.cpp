@@ -296,8 +296,9 @@ void MainWindow::on_pushButton_RegisterClient_clicked()
     ui->dateEdit_cl_rulesign->setDate(QDate::currentDate());
 }
 
-void MainWindow::on_button_cancle_Register_clicked()
+void MainWindow::on_button_cancel_client_register_clicked()
 {
+    clear_client_register_form();
     ui->stackedWidget->setCurrentIndex(0);
 }
 
@@ -347,48 +348,81 @@ void MainWindow::on_pushButton_search_client_clicked()
     QString searchQuery = "SELECT FirstName, LastName, Dob FROM Client WHERE LastName LIKE '%"+clientName+"%' OR FirstName Like '%"+clientName+"%'";
 
     QSqlQuery results = dbManager->execQuery(searchQuery);
+    setup_searchClientTable(results);
     dbManager->printAll(results);
 
 }
 
 void MainWindow::setup_searchClientTable(QSqlQuery query){
-    QStandardItemModel *clientSearchModel = new QStandardItemModel(3,20,this);
-    ui->tableView_search_client->setModel(clientSearchModel);
-    for(int row = 0; row <20; row++){
-       // for(int col =0; col < 3; col++){
-            QModelIndex col0 = clientSearchModel->index(row, 0, QModelIndex());
-            QModelIndex col1 = clientSearchModel->index(row, 0, QModelIndex());
-            QModelIndex col2 = clientSearchModel->index(row, 0, QModelIndex());
-
-            clientSearchModel->setData(col0,query.value("FirstName"));
-            clientSearchModel->setData(col1,query.value("LastName"));
-            clientSearchModel->setData(col2,query.value("Dob"));
-       // }
-    }
+    QSqlQueryModel *clientModel = new QSqlQueryModel();
+    clientModel->setQuery(query);
+    ui->tableView_search_client->setModel(clientModel);
+    qDebug()<< clientModel->rowCount();
 }
 
 //Client information input and register click
 void MainWindow::on_button_register_client_clicked()
 {
-    if(check_register_form()){
+    if(check_client_register_form()){
         qDebug()<<ui->lineEdit_cl_fName->text();
         qDebug()<<ui->lineEdit_cl_mName->text();
         qDebug()<<ui->lineEdit_cl_lName->text();
+        bool parolee;
+        bool allowComm = ui->checkBox_cl_comm->isChecked();
+        if(parolee = ui->checkBox_cl_parolee->isChecked())
+            qDebug()<<"parolee is checked : " << QString::number(parolee);
+        else
+            qDebug()<<"parolee is not checked : " << parolee;
         qDebug()<<"DATE function : "<<ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd");
-        dbManager->execQuery("INSERT INTO Client (FirstName, MiddleName, LastName, Dob, Balance) VALUES ('"
+        dbManager->execQuery("INSERT INTO Client (FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned, Status) VALUES ('"
                              + ui->lineEdit_cl_fName->text()+"', '"
                              + ui->lineEdit_cl_mName->text()+"', '"
                              + ui->lineEdit_cl_lName->text()+"', '"
-                             + ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd")
-                             + "', DEFAULT)");
+                             + ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd") //+"', '"
+                             + "',DEFAULT,'"
+                             + ui->lineEdit_cl_SIN->text()+"', '"
+                             + ui->lineEdit_cl_GANum->text()+"', "
+                             + QString::number(parolee) + ","
+                             + QString::number(allowComm)+ ", '"
+                             // + (ui->checkBox_cl_parolee->isChecked()?1:0)+", "
+                          //   + (ui->checkBox_cl_comm->isChecked()?1:0)+", '"
+                             + ui->dateEdit_cl_rulesign->date().toString("yyyy-MM-dd")
+                             +"',DEFAULT)");
+                             //+"DEFAULT)");
+//        qDebug()<<"    CHECK parolee " + (ui->checkBox_cl_parolee->isChecked()?1:0);
         qDebug()<<"REGISTER FINISHED";
+        clear_client_register_form();
         ui->stackedWidget->setCurrentIndex(1);
     }
-
+}
+void MainWindow::on_button_clear_client_regForm_clicked()
+{
+    clear_client_register_form();
 }
 
+void MainWindow::clear_client_register_form(){
+    ui->lineEdit_cl_fName->clear();
+    ui->lineEdit_cl_mName->clear();
+    ui->lineEdit_cl_lName->clear();
+    ui->lineEdit_cl_SIN->clear();
+    ui->lineEdit_cl_GANum->clear();
+    ui->lineEdit_cl_nok_name->clear();
+    ui->lineEdit_cl_nok_relationship->clear();
+    ui->lineEdit_cl_nok_loc->clear();
+    ui->lineEdit_cl_nok_ContactNo->clear();
+    ui->lineEdit_cl_phys_name->clear();
+    ui->lineEdit_cl_phys_ContactNo->clear();
+    ui->lineEdit_cl_Msd_Name->clear();
+    ui->lineEdit_cl_Msd_ContactNo->clear();
+    ui->plainTextEdit_cl_comments->clear();
+    QDate defaultDob= QDate::fromString("1990-01-01","yyyy-MM-dd");
+    ui->dateEdit_cl_dob->setDate(defaultDob);
+    ui->dateEdit_cl_rulesign->setDate(QDate::currentDate());
+}
+
+
 //check if the value is valid or not
-bool MainWindow::check_register_form(){
+bool MainWindow::check_client_register_form(){
     if(ui->lineEdit_cl_fName->text().isEmpty()){
         ui->lineEdit_cl_fName->cursor();
         qDebug()<< "NameIsEmpty";
@@ -407,8 +441,6 @@ bool MainWindow::check_register_form(){
 
     return true;
 }
-
-
 
 void MainWindow::on_paymentButton_2_clicked()
 {
@@ -429,23 +461,38 @@ void MainWindow::on_paymentButton_2_clicked()
 }
 
 // the add user button
-void MainWindow::on_pushButton_7_clicked()
+void MainWindow::on_btn_createNewUser_clicked()
 {
     // temporary disable stuff
-    if (true) {
+    // obtain username and pw and role from UI
+    QString uname = ui->le_userName->text();
+    QString pw = ui->le_password->text();
 
+    if (uname.length() == 0) {
+        ui->lbl_editUserWarning->setText("Enter a Username");
+        return;
+    }
+
+    if (pw.length() == 0) {
+        ui->lbl_editUserWarning->setText("Enter a Password");
+        return;
+    }
+
+    // first, check to see if the username is taken
+    QSqlQuery queryResults = dbManager->findUser(uname);
+    int numrows = queryResults.numRowsAffected();
+
+    if (numrows > 0) {
+        ui->lbl_editUserWarning->setText("This username is already taken");
+        return;
     } else {
-        // obtain username and pw and role from UI
-
-        // first, check to see if the username is taken
-        QSqlQuery queryResults = dbManager->findUser("username");
+        QSqlQuery queryResults = dbManager->addNewEmployee(uname, pw, ui->comboBox->currentText());
         int numrows = queryResults.numRowsAffected();
 
-        if (numrows > 0) {
-            // this username is taken, display something?
+        if (numrows != 0) {
+            ui->lbl_editUserWarning->setText("Employee added");
         } else {
-            // QSqlQuery queryResults = dbManager->addNewEmployee("Joseph", "hasaproblem", "CASE WORKER");
+            ui->lbl_editUserWarning->setText("Something went wrong - please try again");
         }
     }
 }
-

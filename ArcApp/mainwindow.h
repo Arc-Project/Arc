@@ -77,7 +77,7 @@ private slots:
 
     void on_pushButton_RegisterClient_clicked();
 
-    void on_button_cancle_Register_clicked();
+    void on_button_cancel_client_register_clicked();
 
     void on_button_cl_takePic_clicked();
 
@@ -89,13 +89,20 @@ private slots:
 
     void on_button_register_client_clicked();
 
-    bool check_register_form();
+    bool check_client_register_form();
+
+    void clear_client_register_form();
 
     void on_paymentButton_2_clicked();
 
     void on_button_cl_delPic_clicked();
 
-    void on_pushButton_7_clicked();
+   // void on_pushButton_7_clicked();
+
+
+    void on_btn_createNewUser_clicked();
+
+    void on_button_clear_client_regForm_clicked();
 
 
 private:
