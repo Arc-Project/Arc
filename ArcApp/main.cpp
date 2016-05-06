@@ -8,7 +8,8 @@ DatabaseManager* dbManager;
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    LoginPrompt w; //
+    MainWindow w;
+    //LoginPrompt w; //
     dbManager = new DatabaseManager();
     w.show();
     /*QFile styleFile(":qdarkstyle/style.qss");
