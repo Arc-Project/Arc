@@ -38,7 +38,14 @@ public:
     void downloadThread();
     void uploadThread(QString strFilePath);
     void printDbConnections();
-    
+
+    /*==========================================================================
+    PROFILE PICTURE UPLOAD AND DOWNLOAD RELATED FUNCTIONS
+    ==========================================================================*/
+    bool uploadProfilePic(QSqlDatabase* tempDbPtr, QString connName, QImage profilePic);
+    void uploadProfilePicThread(QString strFilePath);
+    bool downloadProfilePic(QImage* img);
+
     void print();
     QSqlQuery loginSelect(QString username, QString password);
     QSqlQuery findUser(QString username);
@@ -49,6 +56,7 @@ public:
     int getMonthlyRate(QString room, QString program);
     QSqlQuery execQuery(QString queryString);
     bool addPayment(QString values);
+    QSqlQuery getActiveBooking(QString user, bool userLook);
     bool downloadLatestCaseFile();
 private:
     QSqlDatabase db = QSqlDatabase::database();

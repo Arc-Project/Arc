@@ -287,6 +287,73 @@ void DatabaseManager::printDbConnections()
 FILE DOWLOAD AND UPLOAD RELATED FUNCTIONS (END)
 ==============================================================================*/
 
+/*==============================================================================
+PROFILE PICTURE UPLOAD AND DOWNLOAD RELATED FUNCTIONS (START)
+==============================================================================*/
+bool DatabaseManager::uploadProfilePic(QSqlDatabase* tempDbPtr, QString connName, QImage profilePic)
+{
+    if (!DatabaseManager::createDatabase(tempDbPtr, connName))
+    {
+        qDebug() << "failed to create connection: " << connName;
+        return false;
+    }
+
+    QByteArray ba;
+    QBuffer buffer(&ba);
+    buffer.open(QIODevice::WriteOnly);
+    profilePic.save(&buffer, "PNG");  // writes image into ba in PNG format
+
+    QSqlQuery query(*tempDbPtr);
+    query.prepare("UPDATE Client SET ProfilePic = :profilePic WHERE ClientId = 6");
+    query.bindValue(":profilePic", ba, QSql::In | QSql::Binary);
+    
+    if (query.exec())
+    {
+        return true;
+    }
+    return false;
+}
+
+void DatabaseManager::uploadProfilePicThread(QString strFilePath)
+{
+    QSqlDatabase tempDb = QSqlDatabase::database();
+
+    QString dbConnName = QString::number(DatabaseManager::getDbCounter());
+
+    QImage img(strFilePath);
+
+    if (dbManager->uploadProfilePic(&tempDb, dbConnName, img))
+    {
+        qDebug() << "Profile pic uploaded";
+    }
+    else
+    {
+        qDebug() << "Could not upload profile pic";
+    }
+    tempDb.close();
+    QSqlDatabase::removeDatabase(dbConnName);
+}
+
+bool DatabaseManager::downloadProfilePic(QImage* img)
+{
+    QSqlQuery query(db);
+    if (!query.exec("SELECT ProfilePic FROM Client WHERE ClientId = 6"))
+    {
+        qDebug() << "downloadProfilePic query failed";
+        return false;
+    }
+
+    query.next();
+    QByteArray data = query.value(0).toByteArray();
+    *img = QImage::fromData(data, "PNG");
+
+    return true;
+}
+/*==============================================================================
+PROFILE PICTURE UPLOAD AND DOWNLOAD RELATED FUNCTIONS (END)
+==============================================================================*/
+
+
 QSqlQuery DatabaseManager::getPrograms(){
     QSqlQuery query(db);
     QString q = "SELECT DISTINCT ProgramCodes from Space";
@@ -360,3 +427,42 @@ QSqlQuery DatabaseManager::execQuery(QString queryString)
     query.exec(queryString);
     return query;
 }
+
+QSqlQuery DatabaseManager::getActiveBooking(QString user, bool userLook){
+    QSqlQuery query(db);
+    QString date = QDate::currentDate().toString(Qt::ISODate);
+    QString q;
+    if(!userLook){
+         q = "SELECT * FROM BOOKING WHERE FirstBook = 'YES' AND EndDate >= '" + date + "'";
+    }
+    else{
+         q = "SELECT * FROM BOOKING WHERE FirstBook = 'YES' AND EndDate >= '" + date + "' AND ClientName LIKE '%" + user + "%'";
+
+    }
+    if(query.exec(q)){
+
+    }
+    else{
+        qDebug() << "ERROR TRYING TO GET BOOKING";
+    }
+    return query;
+}
+
+//bool DatabaseManager::downloadLatestCaseFile()
+//{
+//    QSqlQuery queryResults = DatabaseManager::getLatestFileUploadEntry("FileTest1");
+//    queryResults.next();
+//    QString filename = queryResults.value(3).toString();
+//    QByteArray data = queryResults.value(2).toByteArray();
+//    qDebug() << filename;
+
+//    QFile file("..\\Downloads\\" + filename);
+//    if (file.open(QIODevice::WriteOnly))
+//    {
+//        file.write(data);
+//        file.close();
+//        return true;
+//    }
+//    return false;
+//}
+
