@@ -131,7 +131,9 @@ private slots:
 
     void on_btn_floatCount_clicked();
 
-    void on_btn_listAllUsers_2_clicked();
+    void on_btn_listAllUsers_clicked();
+
+    void on_btn_searchUsers_clicked();
 
 private:
     Ui::MainWindow *ui;
