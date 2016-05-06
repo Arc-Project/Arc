@@ -916,6 +916,19 @@ Lunches</string>
          <string/>
         </property>
        </widget>
+       <widget class="QPushButton" name="paymentButton_2">
+        <property name="geometry">
+         <rect>
+          <x>540</x>
+          <y>340</y>
+          <width>93</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Add Payment</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="paymentPage">
        <widget class="QLabel" name="label_4">
@@ -2926,7 +2939,7 @@ Lunches</string>
      <x>0</x>
      <y>0</y>
      <width>1228</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="acceptDrops">
@@ -2953,6 +2966,7 @@ Lunches</string>
     <addaction name="actionTest_Query"/>
     <addaction name="actionFile_Upload"/>
     <addaction name="actionDownload_Latest_Upload"/>
+    <addaction name="actionPrint_Db_Connections"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -3024,6 +3038,11 @@ Lunches</string>
   <action name="actionDownload_Latest_Upload">
    <property name="text">
     <string>Download Latest Upload</string>
+   </property>
+  </action>
+  <action name="actionPrint_Db_Connections">
+   <property name="text">
+    <string>Print Db Connections</string>
    </property>
   </action>
  </widget>

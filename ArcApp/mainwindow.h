@@ -13,11 +13,13 @@
 #define EDITBOOKING 9
 #include <QMainWindow>
 #include <QDebug>
+#include <QtConcurrent/QtConcurrent>
 #include "databasemanager.h"
 #include "bookingmanager.h"
 #include <QTableWidgetItem>
 #include "booking.h"
-
+#include "transaction.h"
+#include "client.h"
 namespace Ui {
 class MainWindow;
 }
@@ -64,7 +66,6 @@ private slots:
 
     void on_actionDB_Connection_triggered();
 
-
     void on_makeBookingButton_2_clicked();
 
     void on_monthCheck_stateChanged(int arg1);
@@ -73,6 +74,8 @@ private slots:
     QString browse();
 
     void on_actionDownload_Latest_Upload_triggered();
+
+    void on_actionPrint_Db_Connections_triggered();
 
     void on_pushButton_RegisterClient_clicked();
 
@@ -92,6 +95,8 @@ private slots:
 
     void clear_client_register_form();
 
+    void on_paymentButton_2_clicked();
+
     void on_button_cl_delPic_clicked();
 
    // void on_pushButton_7_clicked();
@@ -106,6 +111,8 @@ private:
     Ui::MainWindow *ui;
     MainWindow * mw;
     Booking * curBook;
+    transaction * trans;
+    Client * curClient;
 };
 
 #endif // MAINWINDOW_H
