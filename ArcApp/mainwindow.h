@@ -11,6 +11,7 @@
 #define EDITPROGRAM 7
 #define CASEFILE 8
 #define EDITBOOKING 9
+#define CONFIRMBOOKING 12
 #include <QMainWindow>
 #include <QDebug>
 #include "databasemanager.h"
@@ -37,7 +38,7 @@ public:
     void populateBooking();
     void setBooking(int row);
     void setup_searchClientTable(QSqlQuery query);
-
+    void populateConfirm();
 
 private slots:
 
@@ -104,6 +105,8 @@ private slots:
 
     void on_button_clear_client_regForm_clicked();
 
+
+    void on_editSearch_clicked();
 
 private:
     Ui::MainWindow *ui;

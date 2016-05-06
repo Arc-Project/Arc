@@ -8,15 +8,17 @@ payment::payment(QWidget *parent) :
 {
     ui->setupUi(this);
 }
-payment::payment(QWidget *parent, transaction * trans, double balance, double cost, Client * client ) :
+payment::payment(QWidget *parent, transaction * trans, double balance, double cost, Client * client, Booking * book ) :
     QDialog(parent),
     ui(new Ui::payment)
 {
     ui->setupUi(this);
     transact = trans;
+    curBook = book;
     this->client = client;
     ui->balanceLabel->setText(QString::number(balance));
     ui->transactionLabel->setText(QString::number(cost));
+    ui->owedLabel->setText(QString::number(cost - balance));
 }
 
 
@@ -30,8 +32,11 @@ bool payment::makePayment(){
     values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
             + "','" + QString::number(transact->amount) + "','" + "6" + "','" + transact->type + "','" + transact->notes
             + "','" + transact->chequeNo + "','" + transact->MSQ + "'";
-    if(dbManager->addPayment(values))
+    if(dbManager->addPayment(values)){
+        curBook->paidTotal+= transact->amount;
         return true;
+
+    }
     return false;
 }
 void payment::addTransaction(){

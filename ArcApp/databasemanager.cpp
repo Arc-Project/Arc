@@ -163,6 +163,25 @@ QSqlQuery DatabaseManager::getLatestFileUploadEntry(QString tableName)
     query.exec("SELECT TOP 1 * FROM " + tableName + " ORDER BY id DESC");
     return query;
 }
+QSqlQuery DatabaseManager::getActiveBooking(QString user, bool userLook){
+    QSqlQuery query(db);
+    QString date = QDate::currentDate().toString(Qt::ISODate);
+    QString q;
+    if(!userLook){
+         q = "SELECT * FROM BOOKING WHERE FirstBook = 'YES' AND EndDate >= '" + date + "'";
+    }
+    else{
+         q = "SELECT * FROM BOOKING WHERE FirstBook = 'YES' AND EndDate >= '" + date + "' AND ClientName LIKE '%" + user + "%'";
+
+    }
+    if(query.exec(q)){
+
+    }
+    else{
+        qDebug() << "ERROR TRYING TO GET BOOKING";
+    }
+    return query;
+}
 
 bool DatabaseManager::downloadLatestCaseFile()
 {

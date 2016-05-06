@@ -27,7 +27,7 @@ public:
     bool uploadCaseFile(QString filepath);
     QSqlQuery execQuery(QString queryString);
     bool addPayment(QString values);
-
+    QSqlQuery getActiveBooking(QString user, bool userLook);
     bool downloadLatestCaseFile();
 
 private:
