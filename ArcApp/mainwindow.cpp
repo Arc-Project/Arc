@@ -502,3 +502,8 @@ void MainWindow::on_btn_dailyLog_clicked()
 {
     ui->swdg_reports->setCurrentIndex(DAILYLOG);
 }
+
+void MainWindow::on_btn_floatCount_clicked()
+{
+    ui->swdg_reports->setCurrentIndex(FLOATCOUNT);
+}

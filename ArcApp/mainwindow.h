@@ -14,6 +14,7 @@
 #define DAILYREPORT 0
 #define SHIFTREPORT 1
 #define DAILYLOG 2
+#define FLOATCOUNT 3
 #include <QMainWindow>
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
@@ -113,6 +114,10 @@ private slots:
     void on_btn_dailyReport_clicked();
 
     void on_btn_shiftReport_clicked();
+
+    void on_btn_dailyLog_clicked();
+
+    void on_btn_floatCount_clicked();
 
 private:
     Ui::MainWindow *ui;
