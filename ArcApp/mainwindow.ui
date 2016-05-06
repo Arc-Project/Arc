@@ -1198,16 +1198,6 @@ Lunches</string>
              </item>
             </layout>
            </item>
-           <item row="1" column="0">
-            <widget class="QColumnView" name="columnView">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
            <item row="2" column="0">
             <layout class="QHBoxLayout" name="horizontalLayout_13">
              <item>
@@ -1260,6 +1250,9 @@ Lunches</string>
               </widget>
              </item>
             </layout>
+           </item>
+           <item row="1" column="0">
+            <widget class="QTableView" name="tableView_3"/>
            </item>
           </layout>
          </widget>
