@@ -254,14 +254,7 @@ void MainWindow::on_actionFile_Upload_triggered()
     QString strFilePath = MainWindow::browse();
     if (!strFilePath.isEmpty())
     {
-        if (dbManager->uploadCaseFile(strFilePath))
-        {
-            qDebug() << "Case file uploaded";
-        }
-        else
-        {
-            qDebug() << "Could not upload case file";
-        }
+        QtConcurrent::run(dbManager, &DatabaseManager::uploadThread, strFilePath);
     }
     else
     {
@@ -280,14 +273,7 @@ QString MainWindow::browse()
 
 void MainWindow::on_actionDownload_Latest_Upload_triggered()
 {
-    if (dbManager->downloadLatestCaseFile())
-    {
-        qDebug() << "file downloaded";
-    }
-    else
-    {
-        qDebug() << "could not download file";
-    }
+    QtConcurrent::run(dbManager, &DatabaseManager::downloadThread);
 }
 
 void MainWindow::on_pushButton_RegisterClient_clicked()

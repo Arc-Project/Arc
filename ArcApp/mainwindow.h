@@ -13,6 +13,7 @@
 #define EDITBOOKING 9
 #include <QMainWindow>
 #include <QDebug>
+#include <QtConcurrent/QtConcurrent>
 #include "databasemanager.h"
 #include "bookingmanager.h"
 #include <QTableWidgetItem>
