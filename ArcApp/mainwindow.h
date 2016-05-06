@@ -11,6 +11,7 @@
 #define EDITPROGRAM 7
 #define CASEFILE 8
 #define EDITBOOKING 9
+#define CONFIRMBOOKING 13
 #define DAILYREPORT 0
 #define SHIFTREPORT 1
 #define DAILYLOG 2
@@ -42,7 +43,7 @@ public:
     void populateBooking();
     void setBooking(int row);
     void setup_searchClientTable(QSqlQuery query);
-
+    void populateConfirm();
 
 private slots:
 
@@ -120,6 +121,8 @@ private slots:
     void on_button_clear_client_regForm_clicked();
 
 
+
+    void on_editSearch_clicked();
     void on_btn_dailyReport_clicked();
 
     void on_btn_shiftReport_clicked();
