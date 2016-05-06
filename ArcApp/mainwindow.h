@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QDebug>
+#include <QtConcurrent/QtConcurrent>
 #include "databasemanager.h"
 
 
