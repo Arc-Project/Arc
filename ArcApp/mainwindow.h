@@ -66,7 +66,6 @@ private slots:
 
     void on_actionDB_Connection_triggered();
 
-
     void on_makeBookingButton_2_clicked();
 
     void on_monthCheck_stateChanged(int arg1);
@@ -75,6 +74,8 @@ private slots:
     QString browse();
 
     void on_actionDownload_Latest_Upload_triggered();
+
+    void on_actionPrint_Db_Connections_triggered();
 
     void on_pushButton_RegisterClient_clicked();
 
