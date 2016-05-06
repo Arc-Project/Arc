@@ -373,10 +373,52 @@ Lunches</string>
       </widget>
       <widget class="QWidget" name="clientLookup">
        <layout class="QGridLayout" name="gridLayout_7">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label">
+        <item row="3" column="0" colspan="3">
+         <widget class="QTableView" name="tableView_search_client">
+          <property name="minimumSize">
+           <size>
+            <width>320</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>MS Shell Dlg 2</family>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::VLine</enum>
+          </property>
+          <property name="dragDropOverwriteMode">
+           <bool>false</bool>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SingleSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <attribute name="horizontalHeaderCascadingSectionResizes">
+           <bool>true</bool>
+          </attribute>
+          <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+           <bool>true</bool>
+          </attribute>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QPushButton" name="pushButton_3">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
           <property name="text">
-           <string>Client Lookup</string>
+           <string>Book a room</string>
           </property>
          </widget>
         </item>
@@ -392,34 +434,20 @@ Lunches</string>
           </property>
          </widget>
         </item>
-        <item row="5" column="0">
-         <widget class="QPushButton" name="pushButton_3">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label">
           <property name="text">
-           <string>Book a room</string>
+           <string>Client Lookup</string>
           </property>
          </widget>
         </item>
         <item row="1" column="3" rowspan="4">
          <widget class="QTableView" name="tableView"/>
         </item>
-        <item row="1" column="0" rowspan="2" colspan="2">
-         <widget class="QLineEdit" name="lineEdit_search_clientName">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>400</width>
-            <height>16777215</height>
-           </size>
+        <item row="1" column="2" rowspan="2">
+         <widget class="QPushButton" name="pushButton_search_client">
+          <property name="text">
+           <string>Search</string>
           </property>
          </widget>
         </item>
@@ -435,20 +463,19 @@ Lunches</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="2" rowspan="2">
-         <widget class="QPushButton" name="pushButton_search_client">
-          <property name="text">
-           <string>Search</string>
+        <item row="1" column="0" rowspan="2" colspan="2">
+         <widget class="QLineEdit" name="lineEdit_search_clientName">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-         </widget>
-        </item>
-        <item row="3" column="0" colspan="3">
-         <widget class="QTableView" name="tableView_search_client">
-          <property name="font">
-           <font>
-            <family>MS Shell Dlg 2</family>
-            <pointsize>10</pointsize>
-           </font>
+          <property name="maximumSize">
+           <size>
+            <width>400</width>
+            <height>16777215</height>
+           </size>
           </property>
          </widget>
         </item>
@@ -887,6 +914,19 @@ Lunches</string>
         </property>
         <property name="text">
          <string/>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="paymentButton_2">
+        <property name="geometry">
+         <rect>
+          <x>540</x>
+          <y>340</y>
+          <width>93</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Add Payment</string>
         </property>
        </widget>
       </widget>
@@ -1695,7 +1735,7 @@ Lunches</string>
              <item>
               <layout class="QGridLayout" name="gridLayout_44">
                <item row="0" column="0">
-                <widget class="QLabel" name="lbl_userName_3">
+                <widget class="QLabel" name="lbl_roomNo">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -1719,7 +1759,7 @@ Lunches</string>
                 </widget>
                </item>
                <item row="0" column="1">
-                <widget class="QLineEdit" name="le_userName_3">
+                <widget class="QLineEdit" name="le_roomNo">
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
@@ -1729,7 +1769,7 @@ Lunches</string>
                 </widget>
                </item>
                <item row="2" column="0">
-                <widget class="QLabel" name="lbl_password_3">
+                <widget class="QLabel" name="lbl_roomType">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -1757,6 +1797,9 @@ Lunches</string>
                  <property name="orientation">
                   <enum>Qt::Vertical</enum>
                  </property>
+                 <property name="sizeType">
+                  <enum>QSizePolicy::Minimum</enum>
+                 </property>
                  <property name="sizeHint" stdset="0">
                   <size>
                    <width>20</width>
@@ -1765,20 +1808,13 @@ Lunches</string>
                  </property>
                 </spacer>
                </item>
-               <item row="2" column="1">
-                <widget class="QLineEdit" name="le_password_3">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>28</height>
-                  </size>
-                 </property>
-                </widget>
-               </item>
                <item row="3" column="1">
                 <spacer name="verticalSpacer_14">
                  <property name="orientation">
                   <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeType">
+                  <enum>QSizePolicy::Minimum</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -1789,7 +1825,7 @@ Lunches</string>
                 </spacer>
                </item>
                <item row="4" column="1">
-                <widget class="QComboBox" name="comboBox_7">
+                <widget class="QComboBox" name="cbox_roomLoc">
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
@@ -1800,30 +1836,15 @@ Lunches</string>
                   <bool>false</bool>
                  </property>
                  <property name="currentText">
-                  <string>STANDARD</string>
+                  <string/>
                  </property>
                  <property name="maxVisibleItems">
                   <number>20</number>
                  </property>
-                 <item>
-                  <property name="text">
-                   <string>STANDARD</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>CASE WORKER</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>ADMIN</string>
-                  </property>
-                 </item>
                 </widget>
                </item>
                <item row="4" column="0">
-                <widget class="QLabel" name="lbl_role_3">
+                <widget class="QLabel" name="lbl_roomLoc">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -1847,7 +1868,7 @@ Lunches</string>
                 </widget>
                </item>
                <item row="2" column="2">
-                <widget class="QPushButton" name="pushButton_18">
+                <widget class="QPushButton" name="btn_modRoomType">
                  <property name="minimumSize">
                   <size>
                    <width>60</width>
@@ -1865,7 +1886,7 @@ Lunches</string>
                 </widget>
                </item>
                <item row="4" column="2">
-                <widget class="QPushButton" name="pushButton_19">
+                <widget class="QPushButton" name="btn_modRoomLoc">
                  <property name="minimumSize">
                   <size>
                    <width>60</width>
@@ -1882,6 +1903,16 @@ Lunches</string>
                  </property>
                 </widget>
                </item>
+               <item row="2" column="1">
+                <widget class="QComboBox" name="cbox_roomType">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>28</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </item>
              <item>
@@ -1892,7 +1923,7 @@ Lunches</string>
                <widget class="QWidget" name="page_4">
                 <layout class="QGridLayout" name="gridLayout_42">
                  <item row="0" column="0">
-                  <widget class="QListWidget" name="listWidget">
+                  <widget class="QListWidget" name="list_roomTypeLoc">
                    <property name="frameShape">
                     <enum>QFrame::StyledPanel</enum>
                    </property>
@@ -1901,7 +1932,7 @@ Lunches</string>
                  <item row="1" column="0">
                   <layout class="QHBoxLayout" name="horizontalLayout_32">
                    <item>
-                    <widget class="QLineEdit" name="lineEdit">
+                    <widget class="QLineEdit" name="le_newTypeLoc">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                        <horstretch>0</horstretch>
@@ -1917,7 +1948,7 @@ Lunches</string>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="pushButton_16">
+                    <widget class="QPushButton" name="btn_newTypeLoc">
                      <property name="minimumSize">
                       <size>
                        <width>80</width>
@@ -1935,7 +1966,7 @@ Lunches</string>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="pushButton_17">
+                    <widget class="QPushButton" name="btn_delTypeLoc">
                      <property name="minimumSize">
                       <size>
                        <width>70</width>
@@ -1955,10 +1986,6 @@ Lunches</string>
                   </layout>
                  </item>
                 </layout>
-                <zorder>listWidget</zorder>
-                <zorder>lineEdit</zorder>
-                <zorder>pushButton_17</zorder>
-                <zorder>pushButton_16</zorder>
                </widget>
                <widget class="QWidget" name="page_9"/>
               </widget>
@@ -2282,8 +2309,8 @@ Lunches</string>
                     </property>
                     <property name="date">
                      <date>
-                      <year>2016</year>
-                      <month>5</month>
+                      <year>1990</year>
+                      <month>1</month>
                       <day>1</day>
                      </date>
                     </property>
@@ -2352,7 +2379,7 @@ Lunches</string>
                      <enum>Qt::ClickFocus</enum>
                     </property>
                     <property name="displayFormat">
-                     <string>MMM/dd/yyyy</string>
+                     <string>yyyy-MM-dd</string>
                     </property>
                     <property name="calendarPopup">
                      <bool>true</bool>
@@ -2513,17 +2540,17 @@ Lunches</string>
                       <widget class="QLineEdit" name="lineEdit_cl_nok_loc"/>
                      </item>
                      <item row="5" column="1">
-                      <widget class="QLineEdit" name="lineEdit_cl_nok_num"/>
+                      <widget class="QLineEdit" name="lineEdit_cl_nok_ContactNo"/>
                      </item>
                      <item row="5" column="0">
-                      <widget class="QLabel" name="label_cl_nok_num">
+                      <widget class="QLabel" name="label_cl_nok_ContactNo">
                        <property name="font">
                         <font>
                          <pointsize>10</pointsize>
                         </font>
                        </property>
                        <property name="text">
-                        <string>Conatct Number</string>
+                        <string>Contact Number</string>
                        </property>
                       </widget>
                      </item>
@@ -2558,7 +2585,7 @@ Lunches</string>
                       </widget>
                      </item>
                      <item row="1" column="0">
-                      <widget class="QLabel" name="label_cl_phys_num">
+                      <widget class="QLabel" name="label_cl_phys_ContactNo">
                        <property name="font">
                         <font>
                          <pointsize>10</pointsize>
@@ -2573,7 +2600,7 @@ Lunches</string>
                       <widget class="QLineEdit" name="lineEdit_cl_phys_name"/>
                      </item>
                      <item row="1" column="1">
-                      <widget class="QLineEdit" name="lineEdit_cl_phys_num"/>
+                      <widget class="QLineEdit" name="lineEdit_cl_phys_ContactNo"/>
                      </item>
                     </layout>
                    </item>
@@ -2594,7 +2621,7 @@ Lunches</string>
                    <item>
                     <layout class="QFormLayout" name="formLayout_4">
                      <item row="0" column="0">
-                      <widget class="QLabel" name="label_cl_phys_name_2">
+                      <widget class="QLabel" name="label_cl_phys_Msd_Name">
                        <property name="font">
                         <font>
                          <pointsize>10</pointsize>
@@ -2606,7 +2633,7 @@ Lunches</string>
                       </widget>
                      </item>
                      <item row="1" column="0">
-                      <widget class="QLabel" name="label_cl_phys_num_2">
+                      <widget class="QLabel" name="label_cl_phys_Msd_ContactNo">
                        <property name="font">
                         <font>
                          <pointsize>10</pointsize>
@@ -2618,10 +2645,10 @@ Lunches</string>
                       </widget>
                      </item>
                      <item row="0" column="1">
-                      <widget class="QLineEdit" name="lineEdit_cl_phys_name_2"/>
+                      <widget class="QLineEdit" name="lineEdit_cl_Msd_Name"/>
                      </item>
                      <item row="1" column="1">
-                      <widget class="QLineEdit" name="lineEdit_cl_phys_num_2"/>
+                      <widget class="QLineEdit" name="lineEdit_cl_Msd_ContactNo"/>
                      </item>
                     </layout>
                    </item>
@@ -2682,7 +2709,7 @@ Lunches</string>
                  </widget>
                 </item>
                 <item row="2" column="0" colspan="2">
-                 <widget class="QPlainTextEdit" name="plainTextEdit">
+                 <widget class="QPlainTextEdit" name="plainTextEdit_cl_comments">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                     <horstretch>0</horstretch>
@@ -2816,7 +2843,7 @@ Lunches</string>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="button_cancle_Register">
+              <widget class="QPushButton" name="button_cancel_client_register">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -2851,6 +2878,24 @@ Lunches</string>
                 </size>
                </property>
               </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="button_clear_client_regForm">
+               <property name="minimumSize">
+                <size>
+                 <width>80</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>12</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>Clear Form</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>

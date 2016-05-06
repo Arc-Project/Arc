@@ -38,6 +38,16 @@ QSqlQuery DatabaseManager::getPrograms(){
     query.exec(q);
     return query;
 }
+bool DatabaseManager::addPayment(QString values){
+    QSqlQuery query(db);
+    QString q = "INSERT INTO Transac Values( " + values + ")";
+    qDebug() << q;
+    if(query.exec(q)){
+        return true;
+    }
+    return false;
+}
+
 int DatabaseManager::getMonthlyRate(QString room, QString program){
     QSqlQuery query(db);
     QString q = "SELECT cost FROM Space WHERE SpaceId = '" + room + "'";

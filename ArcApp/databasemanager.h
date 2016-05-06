@@ -26,6 +26,7 @@ public:
     QSqlQuery getLatestFileUploadEntry(QString tableName);
     bool uploadCaseFile(QString filepath);
     QSqlQuery execQuery(QString queryString);
+    bool addPayment(QString values);
 
     bool downloadLatestCaseFile();
 
