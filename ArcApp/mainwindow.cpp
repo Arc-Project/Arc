@@ -487,3 +487,18 @@ void MainWindow::on_btn_createNewUser_clicked()
         }
     }
 }
+
+void MainWindow::on_btn_dailyReport_clicked()
+{
+    ui->swdg_reports->setCurrentIndex(DAILYREPORT);
+}
+
+void MainWindow::on_btn_shiftReport_clicked()
+{
+    ui->swdg_reports->setCurrentIndex(SHIFTREPORT);
+}
+
+void MainWindow::on_btn_dailyLog_clicked()
+{
+    ui->swdg_reports->setCurrentIndex(DAILYLOG);
+}

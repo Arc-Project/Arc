@@ -11,6 +11,9 @@
 #define EDITPROGRAM 7
 #define CASEFILE 8
 #define EDITBOOKING 9
+#define DAILYREPORT 0
+#define SHIFTREPORT 1
+#define DAILYLOG 2
 #include <QMainWindow>
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
@@ -106,6 +109,10 @@ private slots:
 
     void on_button_clear_client_regForm_clicked();
 
+
+    void on_btn_dailyReport_clicked();
+
+    void on_btn_shiftReport_clicked();
 
 private:
     Ui::MainWindow *ui;
