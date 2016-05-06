@@ -56,6 +56,7 @@ public:
     int getMonthlyRate(QString room, QString program);
     QSqlQuery execQuery(QString queryString);
     bool addPayment(QString values);
+    QSqlQuery getActiveBooking(QString user, bool userLook);
     bool downloadLatestCaseFile();
 private:
     QSqlDatabase db = QSqlDatabase::database();

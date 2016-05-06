@@ -9,6 +9,7 @@ public:
     QString clientId;
     QString fName, mName, lName;
     double balance;
+    QString fullName;
 
 };
 
