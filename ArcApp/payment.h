@@ -2,6 +2,7 @@
 #define PAYMENT_H
 #include <QDialog>
 #include "transaction.h"
+#include "client.h";
 #include "booking.h"
 
 namespace Ui {
@@ -14,15 +15,18 @@ class payment : public QDialog
 
 public:
     explicit payment(QWidget *parent = 0);
-    payment(QWidget *parent, transaction * trans, double balance, double cost);
+    payment(QWidget *parent, transaction * trans, double balance, double cost, Client * client);
     ~payment();
-
+    bool makePayment();
 private slots:
     void on_paymentBox_accepted();
+    void addTransaction();
+    void on_addPaymentButton_clicked();
 
 private:
     Ui::payment *ui;
     transaction * transact;
+    Client * client;
 };
 
 #endif // PAYMENT_H

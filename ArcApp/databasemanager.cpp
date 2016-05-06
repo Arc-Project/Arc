@@ -38,6 +38,16 @@ QSqlQuery DatabaseManager::getPrograms(){
     query.exec(q);
     return query;
 }
+bool DatabaseManager::addPayment(QString values){
+    QSqlQuery query(db);
+    QString q = "INSERT INTO Transac Values( " + values + ")";
+    qDebug() << q;
+    if(query.exec(q)){
+        return true;
+    }
+    return false;
+}
+
 int DatabaseManager::getMonthlyRate(QString room, QString program){
     QSqlQuery query(db);
     QString q = "SELECT cost FROM Space WHERE SpaceId = '" + room + "'";
@@ -74,6 +84,20 @@ bool DatabaseManager::insertBookingTable(QString insert){
 QSqlQuery DatabaseManager::loginSelect(QString username, QString password) {
     QSqlQuery query(db);
     query.exec("SELECT TOP 1 Role FROM Employee WHERE Username='" + username + "' AND Password='" + password + "'");
+    return query;
+}
+
+QSqlQuery DatabaseManager::findUser(QString username) {
+    QSqlQuery query(db);
+    query.exec("SELECT Username FROM Employee WHERE Username='" + username + "'");
+    return query;
+}
+
+QSqlQuery DatabaseManager::addNewEmployee(QString username, QString password, QString role) {
+    QSqlQuery query(db);
+
+    query.exec("INSERT INTO Employee VALUES ('" + username + "', '" + password + "', '" + role + "')");
+
     return query;
 }
 

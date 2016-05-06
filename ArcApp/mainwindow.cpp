@@ -6,6 +6,7 @@
 #include <QStandardItemModel>
 #include <QDebug>
 #include "payment.h"
+
 bool firstTime = true;
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -327,6 +328,15 @@ void MainWindow::addPic(QImage pict){
     ui->graphicsView_cl_pic->show();
 }
 
+void MainWindow::on_button_cl_delPic_clicked()
+{
+    QGraphicsScene *scene = new QGraphicsScene();
+    scene->clear();
+    ui->graphicsView_cl_pic->setScene(scene);
+
+    //delete picture function to database
+
+}
 
 //search client
 void MainWindow::on_pushButton_search_client_clicked()
@@ -399,13 +409,43 @@ bool MainWindow::check_register_form(){
 }
 
 
+
 void MainWindow::on_paymentButton_2_clicked()
 {
     trans = new transaction();
     double owed;
     //owed = curBook->cost;
-    payment * pay = new payment(this, trans, 500.0, 30.0);
+    curClient = new Client();
+    curClient->balance = 50.0;
+    curClient->clientId = "1";
+    curClient->fName = "Spenser";
+    curClient->mName ="Joseph";
+    curClient->lName = "Lee";
+
+    payment * pay = new payment(this, trans, 500.0, 30.0, curClient);
     pay->exec();
     qDebug() << "Done";
 
 }
+
+// the add user button
+void MainWindow::on_pushButton_7_clicked()
+{
+    // temporary disable stuff
+    if (true) {
+
+    } else {
+        // obtain username and pw and role from UI
+
+        // first, check to see if the username is taken
+        QSqlQuery queryResults = dbManager->findUser("username");
+        int numrows = queryResults.numRowsAffected();
+
+        if (numrows > 0) {
+            // this username is taken, display something?
+        } else {
+            // QSqlQuery queryResults = dbManager->addNewEmployee("Joseph", "hasaproblem", "CASE WORKER");
+        }
+    }
+}
+

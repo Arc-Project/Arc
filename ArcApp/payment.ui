@@ -232,6 +232,19 @@
     <string>TextLabel</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="addPaymentButton">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>420</y>
+     <width>93</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Add Payment</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections>
