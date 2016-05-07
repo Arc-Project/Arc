@@ -506,3 +506,43 @@ QSqlQuery DatabaseManager::execQuery(QString queryString)
     query.exec(queryString);
     return query;
 }
+
+
+QSqlQuery DatabaseManager::getActiveBooking(QString user, bool userLook){
+    QSqlQuery query(db);
+    QString date = QDate::currentDate().toString(Qt::ISODate);
+    QString q;
+    if(!userLook){
+         q = "SELECT * FROM BOOKING WHERE FirstBook = 'YES' AND EndDate >= '" + date + "'";
+    }
+    else{
+         q = "SELECT * FROM BOOKING WHERE FirstBook = 'YES' AND EndDate >= '" + date + "' AND ClientName LIKE '%" + user + "%'";
+
+    }
+    if(query.exec(q)){
+
+    }
+    else{
+        qDebug() << "ERROR TRYING TO GET BOOKING";
+    }
+    return query;
+}
+
+//bool DatabaseManager::downloadLatestCaseFile()
+//{
+//    QSqlQuery queryResults = DatabaseManager::getLatestFileUploadEntry("FileTest1");
+//    queryResults.next();
+//    QString filename = queryResults.value(3).toString();
+//    QByteArray data = queryResults.value(2).toByteArray();
+//    qDebug() << filename;
+
+//    QFile file("..\\Downloads\\" + filename);
+//    if (file.open(QIODevice::WriteOnly))
+//    {
+//        file.write(data);
+//        file.close();
+//        return true;
+//    }
+//    return false;
+//}
+

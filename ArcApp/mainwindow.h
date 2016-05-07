@@ -11,6 +11,7 @@
 #define EDITPROGRAM 7
 #define CASEFILE 8
 #define EDITBOOKING 9
+#define CONFIRMBOOKING 13
 #define DAILYREPORT 0
 #define SHIFTREPORT 1
 #define DAILYLOG 2
@@ -45,6 +46,8 @@ public:
     void displayPicThread(QString val);
     void displayClientInfoThread(QString val);
     void clientSearchedInfo();
+    void populateConfirm();
+
 private slots:
 
     /*==========================================================================
@@ -124,6 +127,8 @@ private slots:
 
     void on_btn_createNewUser_clicked();
 
+
+    void on_editSearch_clicked();
     void on_btn_dailyReport_clicked();
 
     void on_btn_shiftReport_clicked();
@@ -134,7 +139,9 @@ private slots:
 
     void on_pushButton_editClientInfo_clicked();
 
+    void on_btn_listAllUsers_clicked();
 
+    void on_btn_searchUsers_clicked();
 
 private:
     Ui::MainWindow *ui;

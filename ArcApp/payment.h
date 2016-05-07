@@ -15,7 +15,7 @@ class payment : public QDialog
 
 public:
     explicit payment(QWidget *parent = 0);
-    payment(QWidget *parent, transaction * trans, double balance, double cost, Client * client);
+    payment(QWidget *parent, transaction * trans, double balance, double cost, Client * client, Booking * book);
     ~payment();
     bool makePayment();
 private slots:
@@ -27,6 +27,7 @@ private:
     Ui::payment *ui;
     transaction * transact;
     Client * client;
+    Booking * curBook;
 };
 
 #endif // PAYMENT_H
