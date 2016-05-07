@@ -123,6 +123,7 @@ void MainWindow::on_actionUpload_Display_Picture_triggered()
 void MainWindow::on_actionDownload_Profile_Picture_triggered()
 {
     QImage* img = new QImage();
+    img->scaledToWidth(300);
     dbManager->downloadProfilePic(img);
 
     MainWindow::addPic(*img);
@@ -342,7 +343,16 @@ void MainWindow::on_monthCheck_stateChanged(int arg1)
 void MainWindow::on_pushButton_RegisterClient_clicked()
 {
     ui->stackedWidget->setCurrentIndex(10);
+    ui->label_cl_infoedit_title->setText("Register Client");
+    ui->button_register_client->setText("Register");
     ui->dateEdit_cl_rulesign->setDate(QDate::currentDate());
+}
+
+void MainWindow::on_pushButton_editClientInfo_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(10);
+    ui->label_cl_infoedit_title->setText("Edit Client Information");
+    ui->button_register_client->setText("Edit");
 }
 
 void MainWindow::on_button_cancel_client_register_clicked()
@@ -356,6 +366,9 @@ void MainWindow::on_reportsButton_clicked()
     ui->stackedWidget->setCurrentIndex(11);
 }
 
+/*===================================================================
+  registration page
+  ===================================================================*/
 //Client Regiter widget [TAKE A PICTURE] button
 void MainWindow::on_button_cl_takePic_clicked()
 {
@@ -364,12 +377,13 @@ void MainWindow::on_button_cl_takePic_clicked()
     connect(camDialog, SIGNAL(showPic(QImage)), this, SLOT(addPic(QImage)));
     camDialog->show();
 }
-
-//add picture into graphicview (after taking picture in pic dialog
+/*------------------------------------------------------------------
+  add picture into graphicview (after taking picture in pic dialog
+  ------------------------------------------------------------------*/
 void MainWindow::addPic(QImage pict){
 
   //  qDebug()<<"ADDPIC";
-
+    profilePic = pict.copy();
     QPixmap item = QPixmap::fromImage(pict);
     QPixmap scaled = QPixmap(item.scaledToWidth((int)(ui->graphicsView_cl_pic->width()*0.9), Qt::SmoothTransformation));
     QGraphicsScene *scene = new QGraphicsScene();
@@ -382,6 +396,7 @@ void MainWindow::on_button_cl_delPic_clicked()
 {
     QGraphicsScene *scene = new QGraphicsScene();
     scene->clear();
+    profilePic = (QImage)NULL;
     ui->graphicsView_cl_pic->setScene(scene);
 
     //delete picture function to database
@@ -394,25 +409,92 @@ void MainWindow::on_pushButton_search_client_clicked()
 
        qDebug() <<"START SEARCH CLIENT";
     QString clientName = ui->lineEdit_search_clientName->text();
-    QString searchQuery = "SELECT FirstName, LastName, Dob FROM Client WHERE LastName LIKE '%"+clientName+"%' OR FirstName Like '%"+clientName+"%'";
+    QString searchQuery = "SELECT ClientId, FirstName, LastName, Dob FROM Client WHERE LastName LIKE '%"+clientName+"%' OR FirstName Like '%"+clientName+"%'";
 
     QSqlQuery results = dbManager->execQuery(searchQuery);
     setup_searchClientTable(results);
     dbManager->printAll(results);
 
+    QItemSelectionModel *selectedCl = ui->tableView_search_client->selectionModel();
+    connect(selectedCl, SIGNAL(currentRowChanged(QModelIndex,QModelIndex)), this, SLOT(selected_client_info(QModelIndex,QModelIndex)));
+
+
 }
+
+void MainWindow::selected_client_info(QModelIndex idx1,QModelIndex idx2)
+{
+    if(!pic_available || !table_available)
+        return;
+
+
+    QModelIndex data = idx1.sibling(idx1.row(), 0);
+    QString val = data.data().toString();
+    qDebug()<<"GET DATA:" << val;
+//    QString getInfoQuery = "SELECT * FROM Client WHERE ClientId = "+ val;
+//    QSqlQuery resultQ = dbManager->execQuery(getInfoQuery);
+
+
+    pic_available = false;
+    QtConcurrent::run(this, &displayPicThread, val);
+    table_available = false;
+    QtConcurrent::run(this, &displayClientInfoThread, val);
+
+    qDebug()<<"Finish Select Query to tableview";
+
+}
+
+void MainWindow::clientSearchedInfo(){
+
+    QGraphicsScene *scene = new QGraphicsScene();
+    scene->clear();
+    ui->graphicsView_getInfo->setScene(scene);
+}
+
+void MainWindow::displayClientInfoThread(QString val){
+    QString getInfoQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId = "+ val;
+    QSqlQuery resultQ = dbManager->execQuery(getInfoQuery);
+    QSqlQueryModel *clientModel2 = new QSqlQueryModel();
+    clientModel2->setQuery(resultQ);
+    ui->tableView_clientInfo->setModel(clientModel2);
+    table_available = true;
+
+}
+
+void MainWindow::displayPicThread(QString val)
+{
+    qDebug()<<"displayPicThread";
+    QImage *ClientFace = new QImage();
+    if(dbManager->downloadProfilePic2(ClientFace, val)){
+    QPixmap item2 = QPixmap::fromImage(*ClientFace);
+    QPixmap scaled = QPixmap(item2.scaledToWidth((int)(ui->graphicsView_getInfo->width()*0.9), Qt::SmoothTransformation));
+    QGraphicsScene *scene2 = new QGraphicsScene();
+    scene2->addPixmap(QPixmap(scaled));
+    ui->graphicsView_getInfo->setScene(scene2);
+    ui->graphicsView_getInfo->show();
+    pic_available=true;
+    }
+}
+
+
 
 void MainWindow::setup_searchClientTable(QSqlQuery query){
     QSqlQueryModel *clientModel = new QSqlQueryModel();
     clientModel->setQuery(query);
+    clientModel->setHeaderData(0, Qt::Horizontal, QObject::tr("ID"));
+    clientModel->setHeaderData(3, Qt::Horizontal, QObject::tr("Birthday"));
+    ui->tableView_search_client->setColumnWidth(0,0);
     ui->tableView_search_client->setModel(clientModel);
     qDebug()<< clientModel->rowCount();
+
+
 }
 
 //Client information input and register click
 void MainWindow::on_button_register_client_clicked()
 {
+
     if(check_client_register_form()){
+    if(ui->label_cl_infoedit_title->text() == "Register Client"){
         qDebug()<<ui->lineEdit_cl_fName->text();
         qDebug()<<ui->lineEdit_cl_mName->text();
         qDebug()<<ui->lineEdit_cl_lName->text();
@@ -423,7 +505,7 @@ void MainWindow::on_button_register_client_clicked()
         else
             qDebug()<<"parolee is not checked : " << parolee;
         qDebug()<<"DATE function : "<<ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd");
-        dbManager->execQuery("INSERT INTO Client (FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned, Status) VALUES ('"
+/*        dbManager->execQuery("INSERT INTO Client (FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned, Status,ProfilePic) VALUES ('"
                              + ui->lineEdit_cl_fName->text()+"', '"
                              + ui->lineEdit_cl_mName->text()+"', '"
                              + ui->lineEdit_cl_lName->text()+"', '"
@@ -433,13 +515,30 @@ void MainWindow::on_button_register_client_clicked()
                              + ui->lineEdit_cl_GANum->text()+"', "
                              + QString::number(parolee) + ","
                              + QString::number(allowComm)+ ", '"
-                             // + (ui->checkBox_cl_parolee->isChecked()?1:0)+", "
-                          //   + (ui->checkBox_cl_comm->isChecked()?1:0)+", '"
                              + ui->dateEdit_cl_rulesign->date().toString("yyyy-MM-dd")
-                             +"',DEFAULT)");
-                             //+"DEFAULT)");
-//        qDebug()<<"    CHECK parolee " + (ui->checkBox_cl_parolee->isChecked()?1:0);
+                             +"',DEFAULT, :profilePic)");
         qDebug()<<"REGISTER FINISHED";
+        */
+        QString registerQuery = "INSERT INTO Client (FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned, Status,ProfilePic";
+
+        registerQuery.append(") VALUES ('"
+                             + ui->lineEdit_cl_fName->text()+"', '"
+                             + ui->lineEdit_cl_mName->text()+"', '"
+                             + ui->lineEdit_cl_lName->text()+"', '"
+                             + ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd") //+"', '"
+                             + "',DEFAULT,'"
+                             + ui->lineEdit_cl_SIN->text()+"', '"
+                             + ui->lineEdit_cl_GANum->text()+"', "
+                             + QString::number(parolee) + ","
+                             + QString::number(allowComm)+ ", '"
+                             + ui->dateEdit_cl_rulesign->date().toString("yyyy-MM-dd")
+                             +"',DEFAULT, :profilePic)");
+
+        dbManager->insertClientWithPic(registerQuery, profilePic);
+
+    }
+    else
+        qDebug()<<"Edit Client";
         clear_client_register_form();
         ui->stackedWidget->setCurrentIndex(1);
     }
@@ -467,7 +566,9 @@ void MainWindow::clear_client_register_form(){
     QDate defaultDob= QDate::fromString("1990-01-01","yyyy-MM-dd");
     ui->dateEdit_cl_dob->setDate(defaultDob);
     ui->dateEdit_cl_rulesign->setDate(QDate::currentDate());
+    on_button_cl_delPic_clicked();
 }
+
 
 
 //check if the value is valid or not
@@ -604,6 +705,7 @@ void MainWindow::on_btn_floatCount_clicked()
     ui->swdg_reports->setCurrentIndex(FLOATCOUNT);
 }
 
+
 void MainWindow::on_btn_listAllUsers_clicked()
 {
     QSqlQuery query = dbManager->execQuery("SELECT Username, Password, Role FROM Employee");
@@ -632,3 +734,4 @@ void MainWindow::on_tableView_3_doubleClicked(const QModelIndex &index)
 {
     // populate the fields on the right
 }
+
