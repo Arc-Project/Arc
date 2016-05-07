@@ -12,7 +12,7 @@ public:
     QString stringEnd;
     QString program;
     bool monthly;
-    int cost;
+    double cost;
     QString lunch;
     QString room;
     QString clientId;

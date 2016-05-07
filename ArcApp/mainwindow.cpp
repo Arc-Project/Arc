@@ -174,6 +174,10 @@ void MainWindow::on_bookingSearchButton_clicked()
         ui->bookingTable->insertRow(x);
         for (int i = 0; i < numCols; ++i)
         {
+            if(i == 4){
+                ui->bookingTable->setItem(x,i, new QTableWidgetItem(QString::number(result.value(i).toString().toDouble(), 'f', 2)));
+                continue;
+            }
             ui->bookingTable->setItem(x,i, new QTableWidgetItem(result.value(i).toString()));
 
 
@@ -195,13 +199,25 @@ void MainWindow::setBooking(int row){
     curBook->monthly = ui->monthCheck->isChecked();
     curBook->program = ui->bookingTable->item(row, 2)->text();
     curBook->room = ui->bookingTable->item(row,0)->text();
+    curBook->stayLength = ui->endDateEdit->date().toJulianDay() - ui->startDateEdit->date().toJulianDay();
+    double potentialCost = 999999;
+    double dailyCost = 0;
+    QString dayCost = QString::number(ui->bookingTable->item(row, 4)->text().toDouble(), 'f', 2);
+    dailyCost = dayCost.toDouble();
+    dailyCost = curBook->stayLength * dailyCost;
     if(ui->monthCheck->isChecked()){
-        curBook->cost = ui->bookingTable->item(row, 5)->text().toInt();
+
+        potentialCost = ui->bookingTable->item(row, 5)->text().toInt();
+        if(dailyCost < potentialCost){
+            curBook->cost = dailyCost;
+        }
+        else{
+            curBook->cost = potentialCost;
+        }
     }
     else{
-        curBook->cost = (ui->endDateEdit->date().toJulianDay() - ui->startDateEdit->date().toJulianDay()) * ui->bookingTable->item(row, 4)->text().toInt();
+        curBook->cost = dailyCost;
     }
-    curBook->stayLength = ui->endDateEdit->date().toJulianDay() - ui->startDateEdit->date().toJulianDay();
 
 }
 
@@ -231,6 +247,7 @@ void MainWindow::populateBooking(){
     ui->lengthOfStayLabel->setText(QString::number(curBook->stayLength));
     ui->wakeupCheck->setChecked(false);
     ui->lunchCheck->setChecked(false);
+    ui->stayLabel->setText(QString::number(curClient->balance - curBook->cost + curBook->paidTotal, 'f', 2));
     if(curBook->monthly){
         ui->monthLabel->setText("YES");
     }
@@ -285,7 +302,7 @@ void MainWindow::on_makeBookingButton_2_clicked()
     else{
         month = "NO";
     }
-    int cost = ui->costInput->text().toInt();
+    double cost = QString::number(ui->costInput->text().toDouble(), 'f', 2).toDouble();
     QDate today = QDate::currentDate();
     QString values;
     QString todayDate = today.toString(Qt::ISODate);
@@ -314,7 +331,7 @@ void MainWindow::on_makeBookingButton_2_clicked()
  }
 
 void MainWindow::populateConfirm(){
-    ui->confirmCost->setText(QString::number(curBook->cost));
+    ui->confirmCost->setText(QString::number(curBook->cost, 'f', 2));
     ui->confirmEnd->setText(curBook->stringEnd);
     ui->confirmStart->setText(curBook->stringStart);
     ui->confirmLength->setText(QString::number(curBook->stayLength));
@@ -335,7 +352,10 @@ void MainWindow::on_monthCheck_stateChanged(int arg1)
     if(arg1)
     {
         QDate month = ui->startDateEdit->date();
-        month = month.addMonths(1);
+        //month = month.addMonths(1);
+        int days = month.daysInMonth();
+        days = days - month.day();
+        month = month.addDays(days);
         ui->endDateEdit->setDate(month);
     }
 }
@@ -604,10 +624,12 @@ void MainWindow::on_paymentButton_2_clicked()
     curClient->mName ="Joseph";
     curClient->lName = "Lee";
     curClient->fullName = "Spenser Joseph Lee";
-
-    payment * pay = new payment(this, trans, 500.0, 30.0, curClient, curBook);
+    owed = ui->costInput->text().toDouble();
+    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, curBook);
     pay->exec();
+    ui->stayLabel->setText(QString::number(curClient->balance - curBook->cost + curBook->paidTotal, 'f', 2));
     qDebug() << "Done";
+
 
 }
 
@@ -705,6 +727,40 @@ void MainWindow::on_btn_floatCount_clicked()
     ui->swdg_reports->setCurrentIndex(FLOATCOUNT);
 }
 
+void MainWindow::on_confirmationFinal_clicked()
+{
+    delete(curBook);
+    delete(curClient);
+    delete(trans);
+    ui->stackedWidget->setCurrentIndex(MAINMENU);
+}
+
+
+void MainWindow::on_editButton_clicked()
+{
+    curBook = new Booking();
+    popBookFromRow();
+}
+void MainWindow::popBookFromRow(){
+    int row = ui->editLookupTable->selectionModel()->currentIndex().row();
+    if(row == - 1){
+        return;
+    }
+    curBook->cost = ui->editLookupTable->item(row,7)->text().toDouble();
+    curBook->startDate = QDate::fromString(ui->editLookupTable->item(row, 1)->text(), "yyyy-MM-dd)");
+    curBook->endDate = QDate::fromString(ui->editLookupTable->item(row, 2)->text(), "yyyy-MM-dd)");
+    curBook->lunch = ui->editLookupTable->item(row,8)->text();
+    if(ui->editLookupTable->item(row,3)->text() == "YES"){
+      curBook->monthly = true;
+         }
+     else{
+         curBook->monthly = false;
+     }
+
+    curBook->program = ui->editLookupTable->item(row,6)->text();
+    curBook->room = ui->editLookupTable->item(row,4)->text();
+    curBook->wakeTime = ui->editLookupTable->item(row,9)->text();
+}
 
 void MainWindow::on_btn_listAllUsers_clicked()
 {

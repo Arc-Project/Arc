@@ -915,12 +915,12 @@ Lunches</string>
          <rect>
           <x>40</x>
           <y>200</y>
-          <width>71</width>
+          <width>81</width>
           <height>16</height>
          </rect>
         </property>
         <property name="text">
-         <string>Stay Type</string>
+         <string>Balance</string>
         </property>
        </widget>
        <widget class="QLabel" name="stayLabel">
@@ -2226,6 +2226,19 @@ Lunches</string>
         <column/>
         <column/>
         <column/>
+       </widget>
+       <widget class="QPushButton" name="editButton">
+        <property name="geometry">
+         <rect>
+          <x>1050</x>
+          <y>500</y>
+          <width>93</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Edit</string>
+        </property>
        </widget>
       </widget>
       <widget class="QWidget" name="registerClient">
@@ -5399,6 +5412,19 @@ Lunches</string>
         </property>
         <property name="text">
          <string>TextLabel</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="confirmationFinal">
+        <property name="geometry">
+         <rect>
+          <x>520</x>
+          <y>340</y>
+          <width>93</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Done</string>
         </property>
        </widget>
       </widget>

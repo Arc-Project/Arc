@@ -137,6 +137,10 @@ private slots:
 
     void on_btn_floatCount_clicked();
 
+    void on_confirmationFinal_clicked();
+
+    void on_editButton_clicked();
+    void popBookFromRow();
     void on_pushButton_editClientInfo_clicked();
 
     void on_btn_listAllUsers_clicked();
