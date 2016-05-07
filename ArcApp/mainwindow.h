@@ -143,6 +143,8 @@ private slots:
 
     void on_btn_searchUsers_clicked();
 
+    void on_tableView_3_doubleClicked(const QModelIndex &index);
+
 private:
     Ui::MainWindow *ui;
     MainWindow * mw;
