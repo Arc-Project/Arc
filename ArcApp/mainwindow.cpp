@@ -60,7 +60,7 @@ void MainWindow::on_editbookButton_clicked()
 
 void MainWindow::on_caseButton_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(CASEFILE);
+    ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
 
 }
 
@@ -800,3 +800,8 @@ void MainWindow::on_tableView_3_doubleClicked(const QModelIndex &index)
     // populate the fields on the right
 }
 
+
+void MainWindow::on_pushButton_CaseFiles_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(CASEFILE);
+}
