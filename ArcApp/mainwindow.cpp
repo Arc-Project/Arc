@@ -423,6 +423,9 @@ void MainWindow::on_button_cl_delPic_clicked()
 
 }
 
+/*==============================================================================
+SEARCH CLIENTS USING NAME
+==============================================================================*/
 //search client
 void MainWindow::on_pushButton_search_client_clicked()
 {
@@ -441,6 +444,7 @@ void MainWindow::on_pushButton_search_client_clicked()
 
 }
 
+//get client information after searching
 void MainWindow::selected_client_info(QModelIndex idx1,QModelIndex idx2)
 {
     if(!pic_available || !table_available)
@@ -450,15 +454,15 @@ void MainWindow::selected_client_info(QModelIndex idx1,QModelIndex idx2)
     QModelIndex data = idx1.sibling(idx1.row(), 0);
     QString val = data.data().toString();
     qDebug()<<"GET DATA:" << val;
-//    QString getInfoQuery = "SELECT * FROM Client WHERE ClientId = "+ val;
-//    QSqlQuery resultQ = dbManager->execQuery(getInfoQuery);
+    QString getInfoQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId = "+ val;
+    QSqlQuery resultQ = dbManager->execQuery(getInfoQuery);
 
-
+/*
     pic_available = false;
     QtConcurrent::run(this, &displayPicThread, val);
     table_available = false;
     QtConcurrent::run(this, &displayClientInfoThread, val);
-
+*/
     qDebug()<<"Finish Select Query to tableview";
 
 }
@@ -563,6 +567,11 @@ void MainWindow::on_button_register_client_clicked()
         ui->stackedWidget->setCurrentIndex(1);
     }
 }
+
+
+/*==============================================================================
+CLIENT REGISTER FORM
+==============================================================================*/
 void MainWindow::on_button_clear_client_regForm_clicked()
 {
     clear_client_register_form();
