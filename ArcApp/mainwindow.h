@@ -149,6 +149,8 @@ private slots:
 
     void on_tableView_3_doubleClicked(const QModelIndex &index);
 
+    void on_pushButton_CaseFiles_clicked();
+
 private:
     Ui::MainWindow *ui;
     MainWindow * mw;
