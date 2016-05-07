@@ -108,7 +108,7 @@ QWidget#wdg_transTotal {
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>6</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -1312,7 +1312,7 @@ Lunches</string>
               <bool>false</bool>
              </property>
              <attribute name="horizontalHeaderVisible">
-              <bool>true</bool>
+              <bool>false</bool>
              </attribute>
              <attribute name="horizontalHeaderCascadingSectionResizes">
               <bool>true</bool>
@@ -1324,7 +1324,7 @@ Lunches</string>
               <bool>true</bool>
              </attribute>
              <attribute name="verticalHeaderVisible">
-              <bool>true</bool>
+              <bool>false</bool>
              </attribute>
             </widget>
            </item>
