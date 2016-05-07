@@ -22,6 +22,9 @@ private slots:
     void on_paymentBox_accepted();
     void addTransaction();
     void on_addPaymentButton_clicked();
+    void hideCheque();
+    void showCheque();
+    void on_paymentDrop_currentIndexChanged(const QString &arg1);
 
 private:
     Ui::payment *ui;

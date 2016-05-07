@@ -131,6 +131,10 @@ private slots:
 
     void on_btn_floatCount_clicked();
 
+    void on_confirmationFinal_clicked();
+
+    void on_editButton_clicked();
+    void popBookFromRow();
 private:
     Ui::MainWindow *ui;
     MainWindow * mw;

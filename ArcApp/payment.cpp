@@ -7,6 +7,7 @@ payment::payment(QWidget *parent) :
     ui(new Ui::payment)
 {
     ui->setupUi(this);
+
 }
 payment::payment(QWidget *parent, transaction * trans, double balance, double cost, Client * client, Booking * book ) :
     QDialog(parent),
@@ -14,8 +15,10 @@ payment::payment(QWidget *parent, transaction * trans, double balance, double co
 {
     ui->setupUi(this);
     transact = trans;
+    hideCheque();
     curBook = book;
     this->client = client;
+    ui->chequeDate->setDate(QDate::currentDate());
     ui->balanceLabel->setText(QString::number(balance));
     ui->transactionLabel->setText(QString::number(cost));
     ui->owedLabel->setText(QString::number(cost - balance));
@@ -28,10 +31,16 @@ payment::~payment()
 }
 bool payment::makePayment(){
     QString values;
-
+    if(ui->paymentDrop->currentIndex() == 1){
+        values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
+                + "','" + QString::number(transact->amount) + "','" + "6" + "','" + transact->type + "','" + transact->notes
+                + "','" + transact->chequeNo + "','" + transact->MSQ + "','" + transact->issuedString + "'";
+    }
+    else{
     values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
             + "','" + QString::number(transact->amount) + "','" + "6" + "','" + transact->type + "','" + transact->notes
-            + "','" + transact->chequeNo + "','" + transact->MSQ + "'";
+            + "', NULL, NULL, NULL";
+    }
     if(dbManager->addPayment(values)){
         curBook->paidTotal+= transact->amount;
         return true;
@@ -42,7 +51,11 @@ bool payment::makePayment(){
 void payment::addTransaction(){
     transact->chequeNo = "NULL";
     transact->notes = "NONE";
-    transact->MSQ = "NO";
+    transact->MSQ = "NO";\
+    if(ui->paymentDrop->currentIndex() == 1){
+        transact->issuedString = ui->chequeDate->date().toString(Qt::ISODate);
+    }
+
     double amt;
     if(!(amt = ui->paymentInput->text().toDouble())){
         qDebug() << "Invalid string";
@@ -66,6 +79,7 @@ void payment::addTransaction(){
 void payment::on_paymentBox_accepted()
 {
     qDebug() << "Anthony hates his project";
+
 }
 
 void payment::on_addPaymentButton_clicked()
@@ -75,4 +89,31 @@ void payment::on_addPaymentButton_clicked()
         ui->addPaymentButton->setEnabled(false);
     }
 
+}
+
+void payment::on_paymentDrop_currentIndexChanged(const QString &arg1)
+{
+    qDebug() << arg1;
+    if(ui->paymentDrop->currentIndex() == 1){
+       showCheque();
+    }
+    else{
+       hideCheque();
+    }
+}
+void payment::showCheque(){
+    ui->chequeDate->show();
+    ui->chequeInput->show();
+    ui->msqCheck->show();
+    ui->chequeLabel->show();
+    ui->dateLabel->show();
+}
+void payment::hideCheque(){
+    ui->chequeDate->hide();
+    ui->chequeLabel->hide();
+    ui->dateLabel->hide();
+    ui->chequeInput->hide();
+    ui->msqCheck->hide();
+    ui->chequeInput->setText("");
+    ui->msqCheck->setChecked(false);
 }
