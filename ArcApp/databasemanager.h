@@ -45,6 +45,10 @@ public:
     bool uploadProfilePic(QSqlDatabase* tempDbPtr, QString connName, QImage profilePic);
     void uploadProfilePicThread(QString strFilePath);
     bool downloadProfilePic(QImage* img);
+    bool downloadProfilePic2(QImage* img,QString idNum);
+
+    void testuploadProfilePicThread(QString strFilePath);
+    bool insertClientWithPic(QString queryStr, QImage profilePic);
 
     void print();
     QSqlQuery loginSelect(QString username, QString password);
@@ -58,6 +62,7 @@ public:
     bool addPayment(QString values);
     QSqlQuery getActiveBooking(QString user, bool userLook);
     bool downloadLatestCaseFile();
+
 private:
     QSqlDatabase db = QSqlDatabase::database();
     static QMutex mutex;  
