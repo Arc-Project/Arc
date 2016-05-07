@@ -38,7 +38,18 @@ public:
     void downloadThread();
     void uploadThread(QString strFilePath);
     void printDbConnections();
-    
+
+    /*==========================================================================
+    PROFILE PICTURE UPLOAD AND DOWNLOAD RELATED FUNCTIONS
+    ==========================================================================*/
+    bool uploadProfilePic(QSqlDatabase* tempDbPtr, QString connName, QImage profilePic);
+    void uploadProfilePicThread(QString strFilePath);
+    bool downloadProfilePic(QImage* img);
+    bool downloadProfilePic2(QImage* img,QString idNum);
+
+    void testuploadProfilePicThread(QString strFilePath);
+    bool insertClientWithPic(QString queryStr, QImage profilePic);
+
     void print();
     QSqlQuery loginSelect(QString username, QString password);
     QSqlQuery findUser(QString username);
@@ -50,6 +61,7 @@ public:
     QSqlQuery execQuery(QString queryString);
     bool addPayment(QString values);
     bool downloadLatestCaseFile();
+
 private:
     QSqlDatabase db = QSqlDatabase::database();
     static QMutex mutex;  

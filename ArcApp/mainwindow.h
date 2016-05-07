@@ -11,6 +11,10 @@
 #define EDITPROGRAM 7
 #define CASEFILE 8
 #define EDITBOOKING 9
+#define DAILYREPORT 0
+#define SHIFTREPORT 1
+#define DAILYLOG 2
+#define FLOATCOUNT 3
 #include <QMainWindow>
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
@@ -38,9 +42,28 @@ public:
     void populateBooking();
     void setBooking(int row);
     void setup_searchClientTable(QSqlQuery query);
-
-
+    void displayPicThread(QString val);
+    void displayClientInfoThread(QString val);
+    void clientSearchedInfo();
 private slots:
+
+    /*==========================================================================
+    DEV TESTING BUTTONS
+    ==========================================================================*/
+    void on_actionDB_Connection_triggered();
+    void on_actionTest_Query_triggered();
+    void on_actionFile_Upload_triggered();
+    void on_actionDownload_Latest_Upload_triggered();
+    void on_actionPrint_Db_Connections_triggered();
+    void on_actionUpload_Display_Picture_triggered();
+    void on_actionDownload_Profile_Picture_triggered();
+    
+    /*==========================================================================
+    DEV TESTING AUXILIARY FUNCTIONS
+    ==========================================================================*/
+    QString browse();
+
+
 
     void on_bookButton_clicked();
 
@@ -64,47 +87,53 @@ private slots:
 
     void on_actionMain_Menu_triggered();
 
-    void on_actionDB_Connection_triggered();
-
     void on_makeBookingButton_2_clicked();
 
     void on_monthCheck_stateChanged(int arg1);
-    void on_actionFile_Upload_triggered();
-
-    QString browse();
-
-    void on_actionDownload_Latest_Upload_triggered();
-
-    void on_actionPrint_Db_Connections_triggered();
 
     void on_pushButton_RegisterClient_clicked();
 
     void on_button_cancel_client_register_clicked();
 
-    void on_button_cl_takePic_clicked();
-
-    void addPic(QImage pict);
-
     void on_reportsButton_clicked();
 
     void on_pushButton_search_client_clicked();
+    void selected_client_info(QModelIndex idx1,QModelIndex idx2);
 
     void on_button_register_client_clicked();
+
+    /*==========================================================================
+    CLIENT REGISTRATION FUNCTION
+    ==========================================================================*/
 
     bool check_client_register_form();
 
     void clear_client_register_form();
 
-    void on_paymentButton_2_clicked();
+    void on_button_clear_client_regForm_clicked();
+
+    void on_button_cl_takePic_clicked();
 
     void on_button_cl_delPic_clicked();
 
-   // void on_pushButton_7_clicked();
+    void addPic(QImage pict);
 
+    /*========================================================================*/
+
+    void on_paymentButton_2_clicked();
 
     void on_btn_createNewUser_clicked();
 
-    void on_button_clear_client_regForm_clicked();
+    void on_btn_dailyReport_clicked();
+
+    void on_btn_shiftReport_clicked();
+
+    void on_btn_dailyLog_clicked();
+
+    void on_btn_floatCount_clicked();
+
+    void on_pushButton_editClientInfo_clicked();
+
 
 
 private:
@@ -113,6 +142,10 @@ private:
     Booking * curBook;
     transaction * trans;
     Client * curClient;
+    QImage profilePic;
+    bool pic_available = true;
+    bool table_available = true;
+
 };
 
 #endif // MAINWINDOW_H
