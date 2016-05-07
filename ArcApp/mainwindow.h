@@ -43,6 +43,9 @@ public:
     void populateBooking();
     void setBooking(int row);
     void setup_searchClientTable(QSqlQuery query);
+    void displayPicThread(QString val);
+    void displayClientInfoThread(QString val);
+    void clientSearchedInfo();
     void populateConfirm();
 
 private slots:
@@ -95,31 +98,34 @@ private slots:
 
     void on_button_cancel_client_register_clicked();
 
-    void on_button_cl_takePic_clicked();
-
-    void addPic(QImage pict);
-
     void on_reportsButton_clicked();
 
     void on_pushButton_search_client_clicked();
+    void selected_client_info(QModelIndex idx1,QModelIndex idx2);
 
     void on_button_register_client_clicked();
+
+    /*==========================================================================
+    CLIENT REGISTRATION FUNCTION
+    ==========================================================================*/
 
     bool check_client_register_form();
 
     void clear_client_register_form();
 
-    void on_paymentButton_2_clicked();
+    void on_button_clear_client_regForm_clicked();
+
+    void on_button_cl_takePic_clicked();
 
     void on_button_cl_delPic_clicked();
 
-   // void on_pushButton_7_clicked();
+    void addPic(QImage pict);
 
+    /*========================================================================*/
+
+    void on_paymentButton_2_clicked();
 
     void on_btn_createNewUser_clicked();
-
-    void on_button_clear_client_regForm_clicked();
-
 
 
     void on_editSearch_clicked();
@@ -131,6 +137,8 @@ private slots:
 
     void on_btn_floatCount_clicked();
 
+    void on_pushButton_editClientInfo_clicked();
+
     void on_btn_listAllUsers_clicked();
 
     void on_btn_searchUsers_clicked();
@@ -141,6 +149,10 @@ private:
     Booking * curBook;
     transaction * trans;
     Client * curClient;
+    QImage profilePic;
+    bool pic_available = true;
+    bool table_available = true;
+
 };
 
 #endif // MAINWINDOW_H

@@ -32,6 +32,7 @@ public:
     QCameraImageCapture * cic;
     QCamera * cam;
 
+
 signals:
      void showPic(QImage img);
 
