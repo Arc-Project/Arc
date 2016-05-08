@@ -682,6 +682,7 @@ void MainWindow::on_editSearch_clicked()
     ui->editLookupTable->setHorizontalHeaderLabels(QStringList()
                                                 << "Created" << "Start" << "End" << "Monthly" << "Room" << "Client" << "Program" << "Cost"
                                                  << "Lunch" << "Wakeup");
+    ui->editLookupTable->setColumnHidden(10, tue);
     QSqlQuery result;
     QString user = "";
     if(ui->editClient->text() != ""){
@@ -696,8 +697,8 @@ void MainWindow::on_editSearch_clicked()
         QStringList row;
         row << result.value(1).toString() << result.value(7).toString() << result.value(8).toString() << result.value(12).toString()
             << result.value(3).toString() << result.value(13).toString() << result.value(5).toString() << result.value(6).toString()
-                  << result.value(9).toString() << result.value(10).toString();
-        for (int i = 0; i < 10; ++i)
+                  << result.value(9).toString() << result.value(10).toString() << result.value(4).toString();
+        for (int i = 0; i < 11; ++i)
         {
             ui->editLookupTable->setItem(x,i, new QTableWidgetItem(row.at(i)));
 
@@ -756,7 +757,7 @@ void MainWindow::popBookFromRow(){
      else{
          curBook->monthly = false;
      }
-
+    curBook->clientId = ui->editLookupTable->item(row, 10)->text();
     curBook->program = ui->editLookupTable->item(row,6)->text();
     curBook->room = ui->editLookupTable->item(row,4)->text();
     curBook->wakeTime = ui->editLookupTable->item(row,9)->text();
