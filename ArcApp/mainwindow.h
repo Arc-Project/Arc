@@ -11,6 +11,7 @@
 #define EDITPROGRAM 7
 #define CASEFILE 8
 #define EDITBOOKING 9
+#define EDITROOM 12
 #define CONFIRMBOOKING 13
 #define DAILYREPORT 0
 #define SHIFTREPORT 1
@@ -47,6 +48,7 @@ public:
     void displayClientInfoThread(QString val);
     void clientSearchedInfo();
     void populateConfirm();
+    QImage profilePic;
 
 private slots:
 
@@ -109,6 +111,8 @@ private slots:
     CLIENT REGISTRATION FUNCTION
     ==========================================================================*/
 
+    void getListRegisterFields(QStringList* fieldList);
+    
     bool check_client_register_form();
 
     void clear_client_register_form();
@@ -120,6 +124,8 @@ private slots:
     void on_button_cl_delPic_clicked();
 
     void addPic(QImage pict);
+
+    void defaultRegisterOptions();
 
     /*========================================================================*/
 
@@ -149,13 +155,17 @@ private slots:
 
     void on_tableView_3_doubleClicked(const QModelIndex &index);
 
+    void on_pushButton_CaseFiles_clicked();
+
+    void on_EditRoomsButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     MainWindow * mw;
     Booking * curBook;
     transaction * trans;
     Client * curClient;
-    QImage profilePic;
+    
     bool pic_available = true;
     bool table_available = true;
 

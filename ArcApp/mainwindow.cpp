@@ -60,7 +60,7 @@ void MainWindow::on_editbookButton_clicked()
 
 void MainWindow::on_caseButton_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(CASEFILE);
+    ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
 
 }
 
@@ -81,6 +81,13 @@ void MainWindow::on_actionDB_Connection_triggered()
 
 void MainWindow::on_actionTest_Query_triggered()
 {
+    QStringList fieldList;
+    getListRegisterFields(&fieldList);
+
+    for(int i = 0; i < fieldList.size(); ++i)
+    {
+        qDebug() << fieldList.at(i);
+    }
 
 }
 
@@ -362,10 +369,12 @@ void MainWindow::on_monthCheck_stateChanged(int arg1)
 
 void MainWindow::on_pushButton_RegisterClient_clicked()
 {
+
     ui->stackedWidget->setCurrentIndex(10);
     ui->label_cl_infoedit_title->setText("Register Client");
     ui->button_register_client->setText("Register");
     ui->dateEdit_cl_rulesign->setDate(QDate::currentDate());
+    defaultRegisterOptions();
 }
 
 void MainWindow::on_pushButton_editClientInfo_clicked()
@@ -423,6 +432,139 @@ void MainWindow::on_button_cl_delPic_clicked()
 
 }
 
+void MainWindow::on_button_clear_client_regForm_clicked()
+{
+    clear_client_register_form();
+}
+
+void MainWindow::getListRegisterFields(QStringList* fieldList)
+{
+    *fieldList << ui->lineEdit_cl_fName->text()
+               << ui->lineEdit_cl_mName->text()
+               << ui->lineEdit_cl_lName->text()
+               << ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd")
+               << ui->lineEdit_cl_SIN->text()
+               << ui->lineEdit_cl_GANum->text()
+               << 0//ui->comboBox_cl_caseWorker->currentText() //grab value from case worker dropdown I don't know how to do it
+               << QString::number(ui->checkBox_cl_comm->isChecked())
+               << QString::number(ui->checkBox_cl_parolee->isChecked())
+               << ui->dateEdit_cl_rulesign->date().toString("yyyy-MM-dd")
+               << ui->lineEdit_cl_nok_name->text()
+               << ui->lineEdit_cl_nok_relationship->text()
+               << ui->lineEdit_cl_nok_loc->text()
+               << ui->lineEdit_cl_nok_ContactNo->text()
+               << ui->lineEdit_cl_phys_name->text()
+               << ui->lineEdit_cl_phys_ContactNo->text()
+               << ui->lineEdit_cl_Msd_Name->text()
+               << ui->lineEdit_cl_Msd_ContactNo->text()
+               << ui->comboBox_cl_status->currentText()//"green" //grab value from status dropdown
+               << ui->plainTextEdit_cl_comments->toPlainText();
+
+    qDebug()<<"get item from combobox 1: "<<ui->comboBox_cl_caseWorker->currentText() << "2: " <<ui->comboBox_cl_status->currentText();
+}
+
+void MainWindow::clear_client_register_form(){
+    ui->lineEdit_cl_fName->clear();
+    ui->lineEdit_cl_mName->clear();
+    ui->lineEdit_cl_lName->clear();
+    ui->lineEdit_cl_SIN->clear();
+    ui->lineEdit_cl_GANum->clear();
+    ui->comboBox_cl_caseWorker->setCurrentIndex(0);
+    ui->lineEdit_cl_nok_name->clear();
+    ui->lineEdit_cl_nok_relationship->clear();
+    ui->lineEdit_cl_nok_loc->clear();
+    ui->lineEdit_cl_nok_ContactNo->clear();
+    ui->lineEdit_cl_phys_name->clear();
+    ui->lineEdit_cl_phys_ContactNo->clear();
+    ui->lineEdit_cl_Msd_Name->clear();
+    ui->lineEdit_cl_Msd_ContactNo->clear();
+    ui->comboBox_cl_status->setCurrentIndex(0);
+    ui->plainTextEdit_cl_comments->clear();
+    QDate defaultDob= QDate::fromString("1990-01-01","yyyy-MM-dd");
+    ui->dateEdit_cl_dob->setDate(defaultDob);
+    ui->dateEdit_cl_rulesign->setDate(QDate::currentDate());
+    on_button_cl_delPic_clicked();
+}
+
+//Client information input and register click
+void MainWindow::on_button_register_client_clicked()
+{
+    if (MainWindow::check_client_register_form())
+    {
+        if(ui->label_cl_infoedit_title->text() == "Register Client")
+        {
+            QStringList registerFieldList;
+            MainWindow::getListRegisterFields(&registerFieldList);
+            if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
+            {
+                qDebug() << "Client registered successfully";
+            }
+            else
+            {
+                qDebug() << "Could not register client";
+            }
+        }
+        else
+        {
+            qDebug() << "Edit Client";
+        }
+        clear_client_register_form();
+        ui->stackedWidget->setCurrentIndex(1);
+    }
+    else
+    {
+        qDebug() << "Register form check was false";
+    }
+}
+
+
+//check if the value is valid or not
+bool MainWindow::check_client_register_form(){
+    if(ui->lineEdit_cl_fName->text().isEmpty()){
+        ui->lineEdit_cl_fName->cursor();
+        qDebug()<< "NameIsEmpty";
+        return false;
+    }
+    else if(ui->lineEdit_cl_lName->text().isEmpty()){
+        ui->lineEdit_cl_lName->cursor();
+        qDebug()<<" Last Name Empty";
+        return false;
+    }
+    else if(ui->dateEdit_cl_dob->date() == QDate::currentDate()){
+        ui->dateEdit_cl_dob->cursor();
+        qDebug()<<"Wrong Date";
+        return false;
+    }
+
+    return true;
+}
+
+void MainWindow::defaultRegisterOptions(){
+    //add caseWorker Name
+    QString caseWorkerquery = "SELECT Username FROM Employee WHERE Role = 'CASE WORKER' ORDER BY Username";
+    QSqlQuery caseWorkers = dbManager->execQuery(caseWorkerquery);
+    //dbManager->printAll(caseWorkers);
+    if(ui->comboBox_cl_caseWorker->findText("NONE")==-1){
+        ui->comboBox_cl_caseWorker->addItem("NONE");
+
+    }
+    while(caseWorkers.next()){
+        qDebug()<<"CASEWORKER: " <<caseWorkers.value(0).toString();
+        if(ui->comboBox_cl_caseWorker->findText(caseWorkers.value(0).toString())==-1)
+            ui->comboBox_cl_caseWorker->addItem(caseWorkers.value(0).toString());
+    }
+    if(ui->comboBox_cl_status->findText("Green")==-1){
+        ui->comboBox_cl_status->addItem("Green");
+        ui->comboBox_cl_status->addItem("Yellow");
+        ui->comboBox_cl_status->addItem("Red");
+    }
+
+}
+
+
+/*==============================================================================
+SEARCH CLIENTS USING NAME
+==============================================================================*/
 //search client
 void MainWindow::on_pushButton_search_client_clicked()
 {
@@ -441,6 +583,7 @@ void MainWindow::on_pushButton_search_client_clicked()
 
 }
 
+//get client information after searching
 void MainWindow::selected_client_info(QModelIndex idx1,QModelIndex idx2)
 {
     if(!pic_available || !table_available)
@@ -450,15 +593,15 @@ void MainWindow::selected_client_info(QModelIndex idx1,QModelIndex idx2)
     QModelIndex data = idx1.sibling(idx1.row(), 0);
     QString val = data.data().toString();
     qDebug()<<"GET DATA:" << val;
-//    QString getInfoQuery = "SELECT * FROM Client WHERE ClientId = "+ val;
-//    QSqlQuery resultQ = dbManager->execQuery(getInfoQuery);
+    QString getInfoQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId = "+ val;
+    QSqlQuery resultQ = dbManager->execQuery(getInfoQuery);
 
-
+/*
     pic_available = false;
     QtConcurrent::run(this, &displayPicThread, val);
-    table_available = false;
+   table_available = false;
     QtConcurrent::run(this, &displayClientInfoThread, val);
-
+*/
     qDebug()<<"Finish Select Query to tableview";
 
 }
@@ -509,108 +652,13 @@ void MainWindow::setup_searchClientTable(QSqlQuery query){
 
 }
 
-//Client information input and register click
-void MainWindow::on_button_register_client_clicked()
-{
-
-    if(check_client_register_form()){
-    if(ui->label_cl_infoedit_title->text() == "Register Client"){
-        qDebug()<<ui->lineEdit_cl_fName->text();
-        qDebug()<<ui->lineEdit_cl_mName->text();
-        qDebug()<<ui->lineEdit_cl_lName->text();
-        bool parolee;
-        bool allowComm = ui->checkBox_cl_comm->isChecked();
-        if(parolee = ui->checkBox_cl_parolee->isChecked())
-            qDebug()<<"parolee is checked : " << QString::number(parolee);
-        else
-            qDebug()<<"parolee is not checked : " << parolee;
-        qDebug()<<"DATE function : "<<ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd");
-/*        dbManager->execQuery("INSERT INTO Client (FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned, Status,ProfilePic) VALUES ('"
-                             + ui->lineEdit_cl_fName->text()+"', '"
-                             + ui->lineEdit_cl_mName->text()+"', '"
-                             + ui->lineEdit_cl_lName->text()+"', '"
-                             + ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd") //+"', '"
-                             + "',DEFAULT,'"
-                             + ui->lineEdit_cl_SIN->text()+"', '"
-                             + ui->lineEdit_cl_GANum->text()+"', "
-                             + QString::number(parolee) + ","
-                             + QString::number(allowComm)+ ", '"
-                             + ui->dateEdit_cl_rulesign->date().toString("yyyy-MM-dd")
-                             +"',DEFAULT, :profilePic)");
-        qDebug()<<"REGISTER FINISHED";
-        */
-        QString registerQuery = "INSERT INTO Client (FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned, Status,ProfilePic";
-
-        registerQuery.append(") VALUES ('"
-                             + ui->lineEdit_cl_fName->text()+"', '"
-                             + ui->lineEdit_cl_mName->text()+"', '"
-                             + ui->lineEdit_cl_lName->text()+"', '"
-                             + ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd") //+"', '"
-                             + "',DEFAULT,'"
-                             + ui->lineEdit_cl_SIN->text()+"', '"
-                             + ui->lineEdit_cl_GANum->text()+"', "
-                             + QString::number(parolee) + ","
-                             + QString::number(allowComm)+ ", '"
-                             + ui->dateEdit_cl_rulesign->date().toString("yyyy-MM-dd")
-                             +"',DEFAULT, :profilePic)");
-
-        dbManager->insertClientWithPic(registerQuery, profilePic);
-
-    }
-    else
-        qDebug()<<"Edit Client";
-        clear_client_register_form();
-        ui->stackedWidget->setCurrentIndex(1);
-    }
-}
-void MainWindow::on_button_clear_client_regForm_clicked()
-{
-    clear_client_register_form();
-}
-
-void MainWindow::clear_client_register_form(){
-    ui->lineEdit_cl_fName->clear();
-    ui->lineEdit_cl_mName->clear();
-    ui->lineEdit_cl_lName->clear();
-    ui->lineEdit_cl_SIN->clear();
-    ui->lineEdit_cl_GANum->clear();
-    ui->lineEdit_cl_nok_name->clear();
-    ui->lineEdit_cl_nok_relationship->clear();
-    ui->lineEdit_cl_nok_loc->clear();
-    ui->lineEdit_cl_nok_ContactNo->clear();
-    ui->lineEdit_cl_phys_name->clear();
-    ui->lineEdit_cl_phys_ContactNo->clear();
-    ui->lineEdit_cl_Msd_Name->clear();
-    ui->lineEdit_cl_Msd_ContactNo->clear();
-    ui->plainTextEdit_cl_comments->clear();
-    QDate defaultDob= QDate::fromString("1990-01-01","yyyy-MM-dd");
-    ui->dateEdit_cl_dob->setDate(defaultDob);
-    ui->dateEdit_cl_rulesign->setDate(QDate::currentDate());
-    on_button_cl_delPic_clicked();
-}
 
 
 
-//check if the value is valid or not
-bool MainWindow::check_client_register_form(){
-    if(ui->lineEdit_cl_fName->text().isEmpty()){
-        ui->lineEdit_cl_fName->cursor();
-        qDebug()<< "NameIsEmpty";
-        return false;
-    }
-    else if(ui->lineEdit_cl_lName->text().isEmpty()){
-        ui->lineEdit_cl_lName->cursor();
-        qDebug()<<" Last Name Empty";
-        return false;
-    }
-    else if(ui->dateEdit_cl_dob->date() == QDate::currentDate()){
-        ui->dateEdit_cl_dob->cursor();
-        qDebug()<<"Wrong Date";
-        return false;
-    }
 
-    return true;
-}
+
+
+
 
 void MainWindow::on_paymentButton_2_clicked()
 {
@@ -792,3 +840,13 @@ void MainWindow::on_tableView_3_doubleClicked(const QModelIndex &index)
     // populate the fields on the right
 }
 
+
+void MainWindow::on_pushButton_CaseFiles_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(CASEFILE);
+}
+
+void MainWindow::on_EditRoomsButton_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(EDITROOM);
+}
