@@ -47,6 +47,7 @@ public:
     void displayClientInfoThread(QString val);
     void clientSearchedInfo();
     void populateConfirm();
+    QImage profilePic;
 
 private slots:
 
@@ -109,6 +110,8 @@ private slots:
     CLIENT REGISTRATION FUNCTION
     ==========================================================================*/
 
+    void getListRegisterFields(QStringList* fieldList);
+    
     bool check_client_register_form();
 
     void clear_client_register_form();
@@ -157,7 +160,7 @@ private:
     Booking * curBook;
     transaction * trans;
     Client * curClient;
-    QImage profilePic;
+    
     bool pic_available = true;
     bool table_available = true;
 
