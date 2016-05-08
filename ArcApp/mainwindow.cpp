@@ -60,7 +60,7 @@ void MainWindow::on_editbookButton_clicked()
 
 void MainWindow::on_caseButton_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(CASEFILE);
+    ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
 
 }
 
@@ -81,6 +81,13 @@ void MainWindow::on_actionDB_Connection_triggered()
 
 void MainWindow::on_actionTest_Query_triggered()
 {
+    QStringList fieldList;
+    getListRegisterFields(&fieldList);
+
+    for(int i = 0; i < fieldList.size(); ++i)
+    {
+        qDebug() << fieldList.at(i);
+    }
 
 }
 
@@ -123,6 +130,7 @@ void MainWindow::on_actionUpload_Display_Picture_triggered()
 void MainWindow::on_actionDownload_Profile_Picture_triggered()
 {
     QImage* img = new QImage();
+    img->scaledToWidth(300);
     dbManager->downloadProfilePic(img);
 
     MainWindow::addPic(*img);
@@ -173,6 +181,10 @@ void MainWindow::on_bookingSearchButton_clicked()
         ui->bookingTable->insertRow(x);
         for (int i = 0; i < numCols; ++i)
         {
+            if(i == 4){
+                ui->bookingTable->setItem(x,i, new QTableWidgetItem(QString::number(result.value(i).toString().toDouble(), 'f', 2)));
+                continue;
+            }
             ui->bookingTable->setItem(x,i, new QTableWidgetItem(result.value(i).toString()));
 
 
@@ -194,13 +206,25 @@ void MainWindow::setBooking(int row){
     curBook->monthly = ui->monthCheck->isChecked();
     curBook->program = ui->bookingTable->item(row, 2)->text();
     curBook->room = ui->bookingTable->item(row,0)->text();
+    curBook->stayLength = ui->endDateEdit->date().toJulianDay() - ui->startDateEdit->date().toJulianDay();
+    double potentialCost = 999999;
+    double dailyCost = 0;
+    QString dayCost = QString::number(ui->bookingTable->item(row, 4)->text().toDouble(), 'f', 2);
+    dailyCost = dayCost.toDouble();
+    dailyCost = curBook->stayLength * dailyCost;
     if(ui->monthCheck->isChecked()){
-        curBook->cost = ui->bookingTable->item(row, 5)->text().toInt();
+
+        potentialCost = ui->bookingTable->item(row, 5)->text().toInt();
+        if(dailyCost < potentialCost){
+            curBook->cost = dailyCost;
+        }
+        else{
+            curBook->cost = potentialCost;
+        }
     }
     else{
-        curBook->cost = (ui->endDateEdit->date().toJulianDay() - ui->startDateEdit->date().toJulianDay()) * ui->bookingTable->item(row, 4)->text().toInt();
+        curBook->cost = dailyCost;
     }
-    curBook->stayLength = ui->endDateEdit->date().toJulianDay() - ui->startDateEdit->date().toJulianDay();
 
 }
 
@@ -230,6 +254,7 @@ void MainWindow::populateBooking(){
     ui->lengthOfStayLabel->setText(QString::number(curBook->stayLength));
     ui->wakeupCheck->setChecked(false);
     ui->lunchCheck->setChecked(false);
+    ui->stayLabel->setText(QString::number(curClient->balance - curBook->cost + curBook->paidTotal, 'f', 2));
     if(curBook->monthly){
         ui->monthLabel->setText("YES");
     }
@@ -284,7 +309,7 @@ void MainWindow::on_makeBookingButton_2_clicked()
     else{
         month = "NO";
     }
-    int cost = ui->costInput->text().toInt();
+    double cost = QString::number(ui->costInput->text().toDouble(), 'f', 2).toDouble();
     QDate today = QDate::currentDate();
     QString values;
     QString todayDate = today.toString(Qt::ISODate);
@@ -313,7 +338,7 @@ void MainWindow::on_makeBookingButton_2_clicked()
  }
 
 void MainWindow::populateConfirm(){
-    ui->confirmCost->setText(QString::number(curBook->cost));
+    ui->confirmCost->setText(QString::number(curBook->cost, 'f', 2));
     ui->confirmEnd->setText(curBook->stringEnd);
     ui->confirmStart->setText(curBook->stringStart);
     ui->confirmLength->setText(QString::number(curBook->stayLength));
@@ -334,7 +359,10 @@ void MainWindow::on_monthCheck_stateChanged(int arg1)
     if(arg1)
     {
         QDate month = ui->startDateEdit->date();
-        month = month.addMonths(1);
+        //month = month.addMonths(1);
+        int days = month.daysInMonth();
+        days = days - month.day();
+        month = month.addDays(days);
         ui->endDateEdit->setDate(month);
     }
 }
@@ -342,7 +370,16 @@ void MainWindow::on_monthCheck_stateChanged(int arg1)
 void MainWindow::on_pushButton_RegisterClient_clicked()
 {
     ui->stackedWidget->setCurrentIndex(10);
+    ui->label_cl_infoedit_title->setText("Register Client");
+    ui->button_register_client->setText("Register");
     ui->dateEdit_cl_rulesign->setDate(QDate::currentDate());
+}
+
+void MainWindow::on_pushButton_editClientInfo_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(10);
+    ui->label_cl_infoedit_title->setText("Edit Client Information");
+    ui->button_register_client->setText("Edit");
 }
 
 void MainWindow::on_button_cancel_client_register_clicked()
@@ -356,6 +393,9 @@ void MainWindow::on_reportsButton_clicked()
     ui->stackedWidget->setCurrentIndex(11);
 }
 
+/*===================================================================
+  registration page
+  ===================================================================*/
 //Client Regiter widget [TAKE A PICTURE] button
 void MainWindow::on_button_cl_takePic_clicked()
 {
@@ -364,12 +404,13 @@ void MainWindow::on_button_cl_takePic_clicked()
     connect(camDialog, SIGNAL(showPic(QImage)), this, SLOT(addPic(QImage)));
     camDialog->show();
 }
-
-//add picture into graphicview (after taking picture in pic dialog
+/*------------------------------------------------------------------
+  add picture into graphicview (after taking picture in pic dialog
+  ------------------------------------------------------------------*/
 void MainWindow::addPic(QImage pict){
 
   //  qDebug()<<"ADDPIC";
-
+    profilePic = pict.copy();
     QPixmap item = QPixmap::fromImage(pict);
     QPixmap scaled = QPixmap(item.scaledToWidth((int)(ui->graphicsView_cl_pic->width()*0.9), Qt::SmoothTransformation));
     QGraphicsScene *scene = new QGraphicsScene();
@@ -382,71 +423,136 @@ void MainWindow::on_button_cl_delPic_clicked()
 {
     QGraphicsScene *scene = new QGraphicsScene();
     scene->clear();
+    profilePic = (QImage)NULL;
     ui->graphicsView_cl_pic->setScene(scene);
 
     //delete picture function to database
 
 }
 
+/*==============================================================================
+SEARCH CLIENTS USING NAME
+==============================================================================*/
 //search client
 void MainWindow::on_pushButton_search_client_clicked()
 {
 
        qDebug() <<"START SEARCH CLIENT";
     QString clientName = ui->lineEdit_search_clientName->text();
-    QString searchQuery = "SELECT FirstName, LastName, Dob FROM Client WHERE LastName LIKE '%"+clientName+"%' OR FirstName Like '%"+clientName+"%'";
+    QString searchQuery = "SELECT ClientId, FirstName, LastName, Dob FROM Client WHERE LastName LIKE '%"+clientName+"%' OR FirstName Like '%"+clientName+"%'";
 
     QSqlQuery results = dbManager->execQuery(searchQuery);
     setup_searchClientTable(results);
     dbManager->printAll(results);
 
+    QItemSelectionModel *selectedCl = ui->tableView_search_client->selectionModel();
+    connect(selectedCl, SIGNAL(currentRowChanged(QModelIndex,QModelIndex)), this, SLOT(selected_client_info(QModelIndex,QModelIndex)));
+
+
 }
+
+//get client information after searching
+void MainWindow::selected_client_info(QModelIndex idx1,QModelIndex idx2)
+{
+    if(!pic_available || !table_available)
+        return;
+
+
+    QModelIndex data = idx1.sibling(idx1.row(), 0);
+    QString val = data.data().toString();
+    qDebug()<<"GET DATA:" << val;
+    QString getInfoQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId = "+ val;
+    QSqlQuery resultQ = dbManager->execQuery(getInfoQuery);
+
+/*
+    pic_available = false;
+    QtConcurrent::run(this, &displayPicThread, val);
+    table_available = false;
+    QtConcurrent::run(this, &displayClientInfoThread, val);
+*/
+    qDebug()<<"Finish Select Query to tableview";
+
+}
+
+void MainWindow::clientSearchedInfo(){
+
+    QGraphicsScene *scene = new QGraphicsScene();
+    scene->clear();
+    ui->graphicsView_getInfo->setScene(scene);
+}
+
+void MainWindow::displayClientInfoThread(QString val){
+    QString getInfoQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId = "+ val;
+    QSqlQuery resultQ = dbManager->execQuery(getInfoQuery);
+    QSqlQueryModel *clientModel2 = new QSqlQueryModel();
+    clientModel2->setQuery(resultQ);
+    ui->tableView_clientInfo->setModel(clientModel2);
+    table_available = true;
+
+}
+
+void MainWindow::displayPicThread(QString val)
+{
+    qDebug()<<"displayPicThread";
+    QImage *ClientFace = new QImage();
+    if(dbManager->downloadProfilePic2(ClientFace, val)){
+    QPixmap item2 = QPixmap::fromImage(*ClientFace);
+    QPixmap scaled = QPixmap(item2.scaledToWidth((int)(ui->graphicsView_getInfo->width()*0.9), Qt::SmoothTransformation));
+    QGraphicsScene *scene2 = new QGraphicsScene();
+    scene2->addPixmap(QPixmap(scaled));
+    ui->graphicsView_getInfo->setScene(scene2);
+    ui->graphicsView_getInfo->show();
+    pic_available=true;
+    }
+}
+
+
 
 void MainWindow::setup_searchClientTable(QSqlQuery query){
     QSqlQueryModel *clientModel = new QSqlQueryModel();
     clientModel->setQuery(query);
+    clientModel->setHeaderData(0, Qt::Horizontal, QObject::tr("ID"));
+    clientModel->setHeaderData(3, Qt::Horizontal, QObject::tr("Birthday"));
+    ui->tableView_search_client->setColumnWidth(0,0);
     ui->tableView_search_client->setModel(clientModel);
     qDebug()<< clientModel->rowCount();
+
+
 }
 
-//Client information input and register click
-void MainWindow::on_button_register_client_clicked()
-{
-    if(check_client_register_form()){
-        qDebug()<<ui->lineEdit_cl_fName->text();
-        qDebug()<<ui->lineEdit_cl_mName->text();
-        qDebug()<<ui->lineEdit_cl_lName->text();
-        bool parolee;
-        bool allowComm = ui->checkBox_cl_comm->isChecked();
-        if(parolee = ui->checkBox_cl_parolee->isChecked())
-            qDebug()<<"parolee is checked : " << QString::number(parolee);
-        else
-            qDebug()<<"parolee is not checked : " << parolee;
-        qDebug()<<"DATE function : "<<ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd");
-        dbManager->execQuery("INSERT INTO Client (FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned, Status) VALUES ('"
-                             + ui->lineEdit_cl_fName->text()+"', '"
-                             + ui->lineEdit_cl_mName->text()+"', '"
-                             + ui->lineEdit_cl_lName->text()+"', '"
-                             + ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd") //+"', '"
-                             + "',DEFAULT,'"
-                             + ui->lineEdit_cl_SIN->text()+"', '"
-                             + ui->lineEdit_cl_GANum->text()+"', "
-                             + QString::number(parolee) + ","
-                             + QString::number(allowComm)+ ", '"
-                             // + (ui->checkBox_cl_parolee->isChecked()?1:0)+", "
-                          //   + (ui->checkBox_cl_comm->isChecked()?1:0)+", '"
-                             + ui->dateEdit_cl_rulesign->date().toString("yyyy-MM-dd")
-                             +"',DEFAULT)");
-                             //+"DEFAULT)");
-//        qDebug()<<"    CHECK parolee " + (ui->checkBox_cl_parolee->isChecked()?1:0);
-        qDebug()<<"REGISTER FINISHED";
-        clear_client_register_form();
-        ui->stackedWidget->setCurrentIndex(1);
-    }
-}
+
+
+
+/*==============================================================================
+CLIENT REGISTER FORM
+==============================================================================*/
 void MainWindow::on_button_clear_client_regForm_clicked()
 {
     clear_client_register_form();
+}
+
+void MainWindow::getListRegisterFields(QStringList* fieldList)
+{
+    *fieldList << ui->lineEdit_cl_fName->text()
+               << ui->lineEdit_cl_mName->text()
+               << ui->lineEdit_cl_lName->text()
+               << ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd")
+               << ui->lineEdit_cl_SIN->text()
+               << ui->lineEdit_cl_GANum->text()
+               << 0 //grab value from case worker dropdown I don't know how to do it
+               << QString::number(ui->checkBox_cl_comm->isChecked())
+               << QString::number(ui->checkBox_cl_parolee->isChecked())
+               << ui->dateEdit_cl_rulesign->date().toString("yyyy-MM-dd")
+               << ui->lineEdit_cl_nok_name->text()
+               << ui->lineEdit_cl_nok_relationship->text()
+               << ui->lineEdit_cl_nok_loc->text()
+               << ui->lineEdit_cl_nok_ContactNo->text()
+               << ui->lineEdit_cl_phys_name->text()
+               << ui->lineEdit_cl_phys_ContactNo->text()
+               << ui->lineEdit_cl_Msd_Name->text()
+               << ui->lineEdit_cl_Msd_ContactNo->text()
+               << "green" //grab value from status dropdown
+               << ui->plainTextEdit_cl_comments->toPlainText();
 }
 
 void MainWindow::clear_client_register_form(){
@@ -467,6 +573,38 @@ void MainWindow::clear_client_register_form(){
     QDate defaultDob= QDate::fromString("1990-01-01","yyyy-MM-dd");
     ui->dateEdit_cl_dob->setDate(defaultDob);
     ui->dateEdit_cl_rulesign->setDate(QDate::currentDate());
+    on_button_cl_delPic_clicked();
+}
+
+//Client information input and register click
+void MainWindow::on_button_register_client_clicked()
+{
+    if (MainWindow::check_client_register_form())
+    {       
+        if(ui->label_cl_infoedit_title->text() == "Register Client")
+        {
+            QStringList registerFieldList;
+            MainWindow::getListRegisterFields(&registerFieldList);
+            if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
+            {
+                qDebug() << "Client registered successfully";
+            }
+            else
+            {
+                qDebug() << "Could not register client";
+            }
+        }
+        else
+        {
+            qDebug() << "Edit Client";
+        }
+        clear_client_register_form();
+        ui->stackedWidget->setCurrentIndex(1);
+    }
+    else
+    {
+        qDebug() << "Register form check was false";
+    }
 }
 
 
@@ -503,10 +641,12 @@ void MainWindow::on_paymentButton_2_clicked()
     curClient->mName ="Joseph";
     curClient->lName = "Lee";
     curClient->fullName = "Spenser Joseph Lee";
-
-    payment * pay = new payment(this, trans, 500.0, 30.0, curClient, curBook);
+    owed = ui->costInput->text().toDouble();
+    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, curBook);
     pay->exec();
+    ui->stayLabel->setText(QString::number(curClient->balance - curBook->cost + curBook->paidTotal, 'f', 2));
     qDebug() << "Done";
+
 
 }
 
@@ -602,4 +742,74 @@ void MainWindow::on_btn_dailyLog_clicked()
 void MainWindow::on_btn_floatCount_clicked()
 {
     ui->swdg_reports->setCurrentIndex(FLOATCOUNT);
+}
+
+void MainWindow::on_confirmationFinal_clicked()
+{
+    delete(curBook);
+    delete(curClient);
+    delete(trans);
+    ui->stackedWidget->setCurrentIndex(MAINMENU);
+}
+
+
+void MainWindow::on_editButton_clicked()
+{
+    curBook = new Booking();
+    popBookFromRow();
+}
+void MainWindow::popBookFromRow(){
+    int row = ui->editLookupTable->selectionModel()->currentIndex().row();
+    if(row == - 1){
+        return;
+    }
+    curBook->cost = ui->editLookupTable->item(row,7)->text().toDouble();
+    curBook->startDate = QDate::fromString(ui->editLookupTable->item(row, 1)->text(), "yyyy-MM-dd)");
+    curBook->endDate = QDate::fromString(ui->editLookupTable->item(row, 2)->text(), "yyyy-MM-dd)");
+    curBook->lunch = ui->editLookupTable->item(row,8)->text();
+    if(ui->editLookupTable->item(row,3)->text() == "YES"){
+      curBook->monthly = true;
+         }
+     else{
+         curBook->monthly = false;
+     }
+
+    curBook->program = ui->editLookupTable->item(row,6)->text();
+    curBook->room = ui->editLookupTable->item(row,4)->text();
+    curBook->wakeTime = ui->editLookupTable->item(row,9)->text();
+}
+
+void MainWindow::on_btn_listAllUsers_clicked()
+{
+    QSqlQuery query = dbManager->execQuery("SELECT Username, Password, Role FROM Employee");
+    QSqlQueryModel *model = new QSqlQueryModel();
+    model->setQuery(query);
+    ui->tableView_3->setModel(model);
+    ui->tableView_3->horizontalHeader()->model()->setHeaderData(0, Qt::Horizontal, "Username");
+    ui->tableView_3->horizontalHeader()->model()->setHeaderData(1, Qt::Horizontal, "Password");
+    ui->tableView_3->horizontalHeader()->model()->setHeaderData(2, Qt::Horizontal, "Role");
+}
+
+void MainWindow::on_btn_searchUsers_clicked()
+{
+    QString ename = ui->le_users->text();
+    QSqlQuery results = dbManager->execQuery("SELECT Username, Password, Role FROM Employee WHERE Username LIKE '%"+ ename +"%'");
+    QSqlQueryModel *model = new QSqlQueryModel();
+    model->setQuery(results);
+    ui->tableView_3->setModel(model);
+    ui->tableView_3->horizontalHeader()->model()->setHeaderData(0, Qt::Horizontal, "Username");
+    ui->tableView_3->horizontalHeader()->model()->setHeaderData(1, Qt::Horizontal, "Password");
+    ui->tableView_3->horizontalHeader()->model()->setHeaderData(2, Qt::Horizontal, "Role");
+}
+
+// double clicked employee
+void MainWindow::on_tableView_3_doubleClicked(const QModelIndex &index)
+{
+    // populate the fields on the right
+}
+
+
+void MainWindow::on_pushButton_CaseFiles_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(CASEFILE);
 }

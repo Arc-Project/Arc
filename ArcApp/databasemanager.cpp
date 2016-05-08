@@ -94,9 +94,10 @@ void DatabaseManager::printAll(QSqlQuery queryResults)
         QString record = "";
         for (int i = 0; i < numCols; ++i)
         {
-            record += queryResults.value(i).toString() + " ";
+           qDebug() << i << " : " << queryResults.value(i).toString();
+            // record += queryResults.value(i).toString() + " ";
         }
-        qDebug() << record;
+        //qDebug() << record;
     }
 }
 /*==============================================================================
@@ -314,7 +315,64 @@ bool DatabaseManager::uploadProfilePic(QSqlDatabase* tempDbPtr, QString connName
     return false;
 }
 
+bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage* profilePic)//QObject sth, QImage profilePic)
+{
+    QByteArray ba;
+    QBuffer buffer(&ba);
+    buffer.open(QIODevice::WriteOnly);
+    profilePic->save(&buffer, "PNG");  // writes image into ba in PNG format
+
+    QSqlQuery query(db);
+
+    query.prepare(QString("INSERT INTO Client ")
+        + QString("(FirstName, MiddleName, LastName, Dob, SinNo, GaNo, EmpId, ")
+        + QString("IsParolee, AllowComm, DateRulesSigned, NokName, NokRelationship, ")
+        + QString("NokLocation, NokContactNo, PhysName, PhysContactNo, MsdWorkerName, ")
+        + QString("MsdWorkerContactNo, Status, Comments, ProfilePic) ")
+        + QString("VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+
+    for (int i = 0; i < registerFieldList->size(); ++i)
+    {
+        if (registerFieldList->at(i) != NULL)
+        {
+            query.addBindValue(registerFieldList->at(i));    
+        }
+        else
+        {
+            query.addBindValue(QVariant(QVariant::String));
+        }
+    }
+
+    query.addBindValue(ba, QSql::In | QSql::Binary);
+
+    if (query.exec())
+    {
+        return true;
+    }
+    return false;
+}
+
 void DatabaseManager::uploadProfilePicThread(QString strFilePath)
+{
+    QSqlDatabase tempDb = QSqlDatabase::database();
+
+    QString dbConnName = QString::number(DatabaseManager::getDbCounter());
+
+    QImage img(strFilePath);
+
+    if (dbManager->uploadProfilePic(&tempDb, dbConnName, img))
+    {
+        qDebug() << "Profile pic uploaded";
+    }
+    else
+    {
+        qDebug() << "Could not upload profile pic";
+    }
+    tempDb.close();
+    QSqlDatabase::removeDatabase(dbConnName);
+}
+
+void DatabaseManager::testuploadProfilePicThread(QString strFilePath)
 {
     QSqlDatabase tempDb = QSqlDatabase::database();
 
@@ -337,7 +395,7 @@ void DatabaseManager::uploadProfilePicThread(QString strFilePath)
 bool DatabaseManager::downloadProfilePic(QImage* img)
 {
     QSqlQuery query(db);
-    if (!query.exec("SELECT ProfilePic FROM Client WHERE ClientId = 6"))
+    if (!query.exec("SELECT ProfilePic FROM Client WHERE ClientId = 7"))
     {
         qDebug() << "downloadProfilePic query failed";
         return false;
@@ -349,6 +407,23 @@ bool DatabaseManager::downloadProfilePic(QImage* img)
 
     return true;
 }
+
+bool DatabaseManager::downloadProfilePic2(QImage* img, QString idNum)
+{
+    QSqlQuery query(db);
+    if (!query.exec("SELECT ProfilePic FROM Client WHERE ClientId =" + idNum))
+    {
+        qDebug() << "downloadProfilePic query failed";
+        return false;
+    }
+
+    query.next();
+    QByteArray data = query.value(0).toByteArray();
+    *img = QImage::fromData(data, "PNG");
+printAll(query);
+    return true;
+}
+
 /*==============================================================================
 PROFILE PICTURE UPLOAD AND DOWNLOAD RELATED FUNCTIONS (END)
 ==============================================================================*/
@@ -427,6 +502,7 @@ QSqlQuery DatabaseManager::execQuery(QString queryString)
     query.exec(queryString);
     return query;
 }
+
 
 QSqlQuery DatabaseManager::getActiveBooking(QString user, bool userLook){
     QSqlQuery query(db);

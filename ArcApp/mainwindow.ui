@@ -108,7 +108,7 @@ QWidget#wdg_transTotal {
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -402,7 +402,7 @@ Lunches</string>
       </widget>
       <widget class="QWidget" name="clientLookup">
        <layout class="QGridLayout" name="gridLayout_7">
-        <item row="3" column="0" colspan="3">
+        <item row="3" column="0" colspan="5">
          <widget class="QTableView" name="tableView_search_client">
           <property name="minimumSize">
            <size>
@@ -418,6 +418,21 @@ Lunches</string>
           </property>
           <property name="frameShape">
            <enum>QFrame::VLine</enum>
+          </property>
+          <property name="lineWidth">
+           <number>1</number>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="sizeAdjustPolicy">
+           <enum>QAbstractScrollArea::AdjustToContents</enum>
+          </property>
+          <property name="autoScrollMargin">
+           <number>12</number>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
           </property>
           <property name="dragDropOverwriteMode">
            <bool>false</bool>
@@ -439,17 +454,36 @@ Lunches</string>
           </attribute>
          </widget>
         </item>
-        <item row="5" column="0">
-         <widget class="QPushButton" name="pushButton_3">
+        <item row="5" column="2">
+         <widget class="QPushButton" name="pushButton_editClientInfo">
           <property name="font">
            <font>
             <pointsize>10</pointsize>
            </font>
           </property>
           <property name="text">
-           <string>Book a room</string>
+           <string>Edit Client</string>
           </property>
          </widget>
+        </item>
+        <item row="3" column="6">
+         <widget class="QGraphicsView" name="graphicsView_getInfo">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>150</width>
+            <height>120</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="5" rowspan="4">
+         <widget class="QTableView" name="tableView_clientInfo"/>
         </item>
         <item row="5" column="1">
          <widget class="QPushButton" name="pushButton_RegisterClient">
@@ -463,6 +497,13 @@ Lunches</string>
           </property>
          </widget>
         </item>
+        <item row="1" column="3" rowspan="2" colspan="2">
+         <widget class="QPushButton" name="pushButton_search_client">
+          <property name="text">
+           <string>Search</string>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label">
           <property name="text">
@@ -470,17 +511,7 @@ Lunches</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="3" rowspan="4">
-         <widget class="QTableView" name="tableView"/>
-        </item>
-        <item row="1" column="2" rowspan="2">
-         <widget class="QPushButton" name="pushButton_search_client">
-          <property name="text">
-           <string>Search</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="2">
+        <item row="5" column="3">
          <widget class="QPushButton" name="pushButton_5">
           <property name="font">
            <font>
@@ -492,7 +523,19 @@ Lunches</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0" rowspan="2" colspan="2">
+        <item row="5" column="0">
+         <widget class="QPushButton" name="pushButton_3">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Book a room</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" rowspan="2" colspan="3">
          <widget class="QLineEdit" name="lineEdit_search_clientName">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -505,6 +548,13 @@ Lunches</string>
             <width>400</width>
             <height>16777215</height>
            </size>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="4">
+         <widget class="QPushButton" name="pushButton_CaseFiles">
+          <property name="text">
+           <string>Case Files</string>
           </property>
          </widget>
         </item>
@@ -951,12 +1001,12 @@ Lunches</string>
          <rect>
           <x>40</x>
           <y>200</y>
-          <width>71</width>
+          <width>81</width>
           <height>16</height>
          </rect>
         </property>
         <property name="text">
-         <string>Stay Type</string>
+         <string>Balance</string>
         </property>
        </widget>
        <widget class="QLabel" name="stayLabel">
@@ -1331,7 +1381,38 @@ Lunches</string>
             </layout>
            </item>
            <item row="1" column="0">
-            <widget class="QTableView" name="tableView_3"/>
+            <widget class="QTableView" name="tableView_3">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::SingleSelection</enum>
+             </property>
+             <property name="selectionBehavior">
+              <enum>QAbstractItemView::SelectRows</enum>
+             </property>
+             <property name="showGrid">
+              <bool>false</bool>
+             </property>
+             <attribute name="horizontalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="horizontalHeaderCascadingSectionResizes">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="horizontalHeaderDefaultSectionSize">
+              <number>175</number>
+             </attribute>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -2232,6 +2313,19 @@ Lunches</string>
         <column/>
         <column/>
        </widget>
+       <widget class="QPushButton" name="editButton">
+        <property name="geometry">
+         <rect>
+          <x>1050</x>
+          <y>500</y>
+          <width>93</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Edit</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="registerClient">
        <layout class="QGridLayout" name="gridLayout_10">
@@ -2245,7 +2339,7 @@ Lunches</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_9">
            <item row="0" column="0">
-            <widget class="QLabel" name="label_19">
+            <widget class="QLabel" name="label_cl_infoedit_title">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -2884,7 +2978,7 @@ Lunches</string>
                 </font>
                </property>
                <property name="text">
-                <string>Register Client</string>
+                <string>Register</string>
                </property>
               </widget>
              </item>
@@ -5406,6 +5500,19 @@ Lunches</string>
          <string>TextLabel</string>
         </property>
        </widget>
+       <widget class="QPushButton" name="confirmationFinal">
+        <property name="geometry">
+         <rect>
+          <x>520</x>
+          <y>340</y>
+          <width>93</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Done</string>
+        </property>
+       </widget>
       </widget>
      </widget>
     </item>
@@ -5417,7 +5524,7 @@ Lunches</string>
      <x>0</x>
      <y>0</y>
      <width>1388</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="acceptDrops">
