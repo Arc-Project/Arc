@@ -81,6 +81,13 @@ void MainWindow::on_actionDB_Connection_triggered()
 
 void MainWindow::on_actionTest_Query_triggered()
 {
+    QStringList fieldList;
+    getListRegisterFields(&fieldList);
+
+    for(int i = 0; i < fieldList.size(); ++i)
+    {
+        qDebug() << fieldList.at(i);
+    }
 
 }
 
@@ -513,60 +520,7 @@ void MainWindow::setup_searchClientTable(QSqlQuery query){
 
 }
 
-//Client information input and register click
-void MainWindow::on_button_register_client_clicked()
-{
 
-    if(check_client_register_form()){
-    if(ui->label_cl_infoedit_title->text() == "Register Client"){
-        qDebug()<<ui->lineEdit_cl_fName->text();
-        qDebug()<<ui->lineEdit_cl_mName->text();
-        qDebug()<<ui->lineEdit_cl_lName->text();
-        bool parolee;
-        bool allowComm = ui->checkBox_cl_comm->isChecked();
-        if(parolee = ui->checkBox_cl_parolee->isChecked())
-            qDebug()<<"parolee is checked : " << QString::number(parolee);
-        else
-            qDebug()<<"parolee is not checked : " << parolee;
-        qDebug()<<"DATE function : "<<ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd");
-/*        dbManager->execQuery("INSERT INTO Client (FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned, Status,ProfilePic) VALUES ('"
-                             + ui->lineEdit_cl_fName->text()+"', '"
-                             + ui->lineEdit_cl_mName->text()+"', '"
-                             + ui->lineEdit_cl_lName->text()+"', '"
-                             + ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd") //+"', '"
-                             + "',DEFAULT,'"
-                             + ui->lineEdit_cl_SIN->text()+"', '"
-                             + ui->lineEdit_cl_GANum->text()+"', "
-                             + QString::number(parolee) + ","
-                             + QString::number(allowComm)+ ", '"
-                             + ui->dateEdit_cl_rulesign->date().toString("yyyy-MM-dd")
-                             +"',DEFAULT, :profilePic)");
-        qDebug()<<"REGISTER FINISHED";
-        */
-        QString registerQuery = "INSERT INTO Client (FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned, Status,ProfilePic";
-
-        registerQuery.append(") VALUES ('"
-                             + ui->lineEdit_cl_fName->text()+"', '"
-                             + ui->lineEdit_cl_mName->text()+"', '"
-                             + ui->lineEdit_cl_lName->text()+"', '"
-                             + ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd") //+"', '"
-                             + "',DEFAULT,'"
-                             + ui->lineEdit_cl_SIN->text()+"', '"
-                             + ui->lineEdit_cl_GANum->text()+"', "
-                             + QString::number(parolee) + ","
-                             + QString::number(allowComm)+ ", '"
-                             + ui->dateEdit_cl_rulesign->date().toString("yyyy-MM-dd")
-                             +"',DEFAULT, :profilePic)");
-
-        dbManager->insertClientWithPic(registerQuery, profilePic);
-
-    }
-    else
-        qDebug()<<"Edit Client";
-        clear_client_register_form();
-        ui->stackedWidget->setCurrentIndex(1);
-    }
-}
 
 
 /*==============================================================================
@@ -575,6 +529,30 @@ CLIENT REGISTER FORM
 void MainWindow::on_button_clear_client_regForm_clicked()
 {
     clear_client_register_form();
+}
+
+void MainWindow::getListRegisterFields(QStringList* fieldList)
+{
+    *fieldList << ui->lineEdit_cl_fName->text()
+               << ui->lineEdit_cl_mName->text()
+               << ui->lineEdit_cl_lName->text()
+               << ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd")
+               << ui->lineEdit_cl_SIN->text()
+               << ui->lineEdit_cl_GANum->text()
+               << 0 //grab value from case worker dropdown I don't know how to do it
+               << QString::number(ui->checkBox_cl_comm->isChecked())
+               << QString::number(ui->checkBox_cl_parolee->isChecked())
+               << ui->dateEdit_cl_rulesign->date().toString("yyyy-MM-dd")
+               << ui->lineEdit_cl_nok_name->text()
+               << ui->lineEdit_cl_nok_relationship->text()
+               << ui->lineEdit_cl_nok_loc->text()
+               << ui->lineEdit_cl_nok_ContactNo->text()
+               << ui->lineEdit_cl_phys_name->text()
+               << ui->lineEdit_cl_phys_ContactNo->text()
+               << ui->lineEdit_cl_Msd_Name->text()
+               << ui->lineEdit_cl_Msd_ContactNo->text()
+               << "green" //grab value from status dropdown
+               << ui->plainTextEdit_cl_comments->toPlainText();
 }
 
 void MainWindow::clear_client_register_form(){
@@ -598,6 +576,36 @@ void MainWindow::clear_client_register_form(){
     on_button_cl_delPic_clicked();
 }
 
+//Client information input and register click
+void MainWindow::on_button_register_client_clicked()
+{
+    if (MainWindow::check_client_register_form())
+    {       
+        if(ui->label_cl_infoedit_title->text() == "Register Client")
+        {
+            QStringList registerFieldList;
+            MainWindow::getListRegisterFields(&registerFieldList);
+            if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
+            {
+                qDebug() << "Client registered successfully";
+            }
+            else
+            {
+                qDebug() << "Could not register client";
+            }
+        }
+        else
+        {
+            qDebug() << "Edit Client";
+        }
+        clear_client_register_form();
+        ui->stackedWidget->setCurrentIndex(1);
+    }
+    else
+    {
+        qDebug() << "Register form check was false";
+    }
+}
 
 
 //check if the value is valid or not

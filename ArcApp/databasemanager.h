@@ -48,7 +48,7 @@ public:
     bool downloadProfilePic2(QImage* img,QString idNum);
 
     void testuploadProfilePicThread(QString strFilePath);
-    bool insertClientWithPic(QString queryStr, QImage profilePic);
+    bool insertClientWithPic(QStringList* registerFieldList, QImage* profilePic);
 
     void print();
     QSqlQuery loginSelect(QString username, QString password);
