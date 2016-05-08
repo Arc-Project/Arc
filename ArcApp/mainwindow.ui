@@ -2839,7 +2839,11 @@ QWidget#wdg_transTotal {
                  </widget>
                 </item>
                 <item row="4" column="1">
-                 <widget class="QLineEdit" name="lineEdit_cl_SIN"/>
+                 <widget class="QLineEdit" name="lineEdit_cl_SIN">
+                  <property name="inputMethodHints">
+                   <set>Qt::ImhNone</set>
+                  </property>
+                 </widget>
                 </item>
                 <item row="5" column="1">
                  <widget class="QLineEdit" name="lineEdit_cl_GANum">
@@ -2849,7 +2853,7 @@ QWidget#wdg_transTotal {
                  </widget>
                 </item>
                 <item row="6" column="1">
-                 <widget class="QComboBox" name="comboBox_3"/>
+                 <widget class="QComboBox" name="comboBox_cl_caseWorker"/>
                 </item>
                 <item row="7" column="0">
                  <widget class="QLabel" name="label_cl_parolee">
@@ -3216,7 +3220,7 @@ QWidget#wdg_transTotal {
                </widget>
               </item>
               <item row="0" column="1">
-               <widget class="QComboBox" name="comboBox_4"/>
+               <widget class="QComboBox" name="comboBox_cl_status"/>
               </item>
               <item row="1" column="0" colspan="2">
                <widget class="QLabel" name="label_cl_status_2">

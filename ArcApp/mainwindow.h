@@ -125,6 +125,8 @@ private slots:
 
     void addPic(QImage pict);
 
+    void defaultRegisterOptions();
+
     /*========================================================================*/
 
     void on_paymentButton_2_clicked();

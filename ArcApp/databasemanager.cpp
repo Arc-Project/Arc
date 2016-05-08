@@ -94,10 +94,10 @@ void DatabaseManager::printAll(QSqlQuery queryResults)
         QString record = "";
         for (int i = 0; i < numCols; ++i)
         {
-           qDebug() << i << " : " << queryResults.value(i).toString();
-            // record += queryResults.value(i).toString() + " ";
+           //qDebug() << i << " : " << queryResults.value(i).toString();
+             record += queryResults.value(i).toString() + " ";
         }
-        //qDebug() << record;
+        qDebug() << record;
     }
 }
 /*==============================================================================
@@ -335,7 +335,8 @@ bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage
     {
         if (registerFieldList->at(i) != NULL)
         {
-            query.addBindValue(registerFieldList->at(i));    
+            qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
+            query.addBindValue(registerFieldList->at(i));
         }
         else
         {
@@ -418,6 +419,13 @@ bool DatabaseManager::downloadProfilePic2(QImage* img, QString idNum)
     }
 
     query.next();
+    if(query.value(0).isNull()){
+        qDebug()<<"picture value is NULL";
+        return false;
+    }
+    qDebug()<<"pic value is not null";
+    qDebug()<<"what hold in pic field" <<query.value(0).toString();
+
     QByteArray data = query.value(0).toByteArray();
     *img = QImage::fromData(data, "PNG");
 printAll(query);
