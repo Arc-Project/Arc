@@ -94,10 +94,10 @@ void DatabaseManager::printAll(QSqlQuery queryResults)
         QString record = "";
         for (int i = 0; i < numCols; ++i)
         {
-           qDebug() << i << " : " << queryResults.value(i).toString();
-            // record += queryResults.value(i).toString() + " ";
+           //qDebug() << i << " : " << queryResults.value(i).toString();
+             record += queryResults.value(i).toString() + " ";
         }
-        //qDebug() << record;
+        qDebug() << record;
     }
 }
 /*==============================================================================
@@ -335,7 +335,8 @@ bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage
     {
         if (registerFieldList->at(i) != NULL)
         {
-            query.addBindValue(registerFieldList->at(i));    
+            qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
+            query.addBindValue(registerFieldList->at(i));
         }
         else
         {
