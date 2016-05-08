@@ -315,50 +315,45 @@ bool DatabaseManager::uploadProfilePic(QSqlDatabase* tempDbPtr, QString connName
     return false;
 }
 
-bool DatabaseManager::insertClientWithPic(QString queryStr, QImage profilePic)//QObject sth, QImage profilePic)
+bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage* profilePic)//QObject sth, QImage profilePic)
 {
-
-    QSqlQuery query(db);
-
-
     QByteArray ba;
     QBuffer buffer(&ba);
     buffer.open(QIODevice::WriteOnly);
-    profilePic.save(&buffer, "PNG");  // writes image into ba in PNG format
+    profilePic->save(&buffer, "PNG");  // writes image into ba in PNG format
 
-  //  QSqlQuery query(*tempDbPtr);
-    query.prepare(queryStr);
-//    query.prepare("UPDATE Client SET ProfilePic = :profilePic WHERE ClientId = 6");
+    QSqlQuery query(db);
 
-/*
-    bool parolee= sth->ui->checkBox_cl_parolee->isChecked();
-    bool allowComm = sth->ui->checkBox_cl_comm->isChecked();
-    qDebug()<<"DATE function : "<<sth->ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd");
-    query.prepare("INSERT INTO Client (FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned, Status, ProfilePic) VALUES ('"
-                         + sth->ui->lineEdit_cl_fName->text()+"', '"
-                         + sth->ui->lineEdit_cl_mName->text()+"', '"
-                         + sth->ui->lineEdit_cl_lName->text()+"', '"
-                         + sth->ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd") //+"', '"
-                         + "',DEFAULT,'"
-                         + sth->ui->lineEdit_cl_SIN->text()+"', '"
-                         + sth->ui->lineEdit_cl_GANum->text()+"', "
-                         + QString::number(parolee) + ","
-                         + QString::number(allowComm)+ ", '"
-                         + sth->ui->dateEdit_cl_rulesign->date().toString("yyyy-MM-dd")
-                         +"',DEFAULT, :profilePic)");
-                         */
-    query.bindValue(":profilePic", ba, QSql::In | QSql::Binary);
-    //    query.exec(queryString);
+    query.prepare(QString("INSERT INTO Client ")
+        + QString("(FirstName, MiddleName, LastName, Dob, SinNo, GaNo, EmpId, ")
+        + QString("IsParolee, AllowComm, DateRulesSigned, NokName, NokRelationship, ")
+        + QString("NokLocation, NokContactNo, PhysName, PhysContactNo, MsdWorkerName, ")
+        + QString("MsdWorkerContactNo, Status, Comments, ProfilePic) ")
+        + QString("VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+
+    for (int i = 0; i < registerFieldList->size(); ++i)
+    {
+        if (registerFieldList->at(i) != NULL)
+        {
+            query.addBindValue(registerFieldList->at(i));    
+        }
+        else
+        {
+            query.addBindValue(QVariant(QVariant::String));
+        }
+    }
+
+    query.addBindValue(ba, QSql::In | QSql::Binary);
+
     if (query.exec())
     {
         return true;
     }
     return false;
 }
+
 void DatabaseManager::uploadProfilePicThread(QString strFilePath)
 {
-
-
     QSqlDatabase tempDb = QSqlDatabase::database();
 
     QString dbConnName = QString::number(DatabaseManager::getDbCounter());
@@ -376,6 +371,7 @@ void DatabaseManager::uploadProfilePicThread(QString strFilePath)
     tempDb.close();
     QSqlDatabase::removeDatabase(dbConnName);
 }
+
 void DatabaseManager::testuploadProfilePicThread(QString strFilePath)
 {
     QSqlDatabase tempDb = QSqlDatabase::database();
