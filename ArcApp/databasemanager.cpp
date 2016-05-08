@@ -422,6 +422,13 @@ bool DatabaseManager::downloadProfilePic2(QImage* img, QString idNum)
     }
 
     query.next();
+    if(query.value(0).isNull()){
+        qDebug()<<"picture value is NULL";
+        return false;
+    }
+    qDebug()<<"pic value is not null";
+    qDebug()<<"what hold in pic field" <<query.value(0).toString();
+
     QByteArray data = query.value(0).toByteArray();
     *img = QImage::fromData(data, "PNG");
 printAll(query);
