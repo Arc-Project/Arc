@@ -844,3 +844,8 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
 {
     ui->stackedWidget->setCurrentIndex(CASEFILE);
 }
+
+void MainWindow::on_EditRoomsButton_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(EDITROOM);
+}
