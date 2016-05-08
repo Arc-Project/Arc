@@ -11,6 +11,7 @@
 #define EDITPROGRAM 7
 #define CASEFILE 8
 #define EDITBOOKING 9
+#define EDITROOM 12
 #define CONFIRMBOOKING 13
 #define DAILYREPORT 0
 #define SHIFTREPORT 1
@@ -153,6 +154,8 @@ private slots:
     void on_tableView_3_doubleClicked(const QModelIndex &index);
 
     void on_pushButton_CaseFiles_clicked();
+
+    void on_EditRoomsButton_clicked();
 
 private:
     Ui::MainWindow *ui;
