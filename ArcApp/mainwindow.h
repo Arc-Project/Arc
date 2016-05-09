@@ -207,6 +207,10 @@ private slots:
 
     void on_btn_searchUsers_2_clicked();
 
+    void on_pushButton_25_clicked();
+
+    void on_tableWidget_2_clicked(const QModelIndex &index);
+
 private:
     Ui::MainWindow *ui;
     MainWindow * mw;

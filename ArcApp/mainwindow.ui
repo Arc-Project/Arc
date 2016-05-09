@@ -2939,24 +2939,6 @@ QWidget#wdg_transTotal {
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="btn_displayUser_2">
-             <property name="minimumSize">
-              <size>
-               <width>70</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Display</string>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QPushButton" name="pushButton_25">
              <property name="minimumSize">
               <size>
@@ -2983,6 +2965,9 @@ QWidget#wdg_transTotal {
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
            </property>
           </widget>
          </item>

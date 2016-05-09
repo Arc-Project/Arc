@@ -1681,3 +1681,47 @@ void MainWindow::on_btn_searchUsers_2_clicked()
         x++;
     }
 }
+
+// delete program
+void MainWindow::on_pushButton_25_clicked()
+{
+    QString pcode = ui->le_userName_2->text();
+
+    if (pcode.length() == 0) {
+        ui->lbl_editUserWarning->setText("Please make sure a valid Program is selected");
+        return;
+    }
+
+    QSqlQuery queryResults = dbManager->execQuery("DELETE FROM Program WHERE ProgramCode='" + pcode + "'");
+    int numrows = queryResults.numRowsAffected();
+
+    if (numrows != 0) {
+        ui->lbl_editUserWarning_2->setText("Program Deleted");
+        QStandardItemModel * model = new QStandardItemModel(0,0);
+        model->clear();
+        ui->tableWidget_2->clear();
+        ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
+        ui->tableWidget_2->setColumnCount(3);
+        ui->tableWidget_2->setRowCount(0);
+        ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
+
+        ui->comboBox->setCurrentIndex(0);
+        ui->le_userName->setText("");
+        ui->le_password->setText("");
+        ui->le_users->setText("");
+    } else {
+        ui->lbl_editUserWarning_2->setText("Program Not Found");
+    }
+    return;
+}
+
+// program clicked + selected
+void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
+{
+    // populate the fields on the right
+    QString pcode = ui->tableWidget_2->model()->data(ui->tableWidget_2->model()->index(index.row(), 0)).toString();
+    QString description = ui->tableWidget_2->model()->data(ui->tableWidget_2->model()->index(index.row(), 1)).toString();
+
+    ui->le_userName_2->setText(pcode);
+    ui->textEdit->setText(description);
+}
