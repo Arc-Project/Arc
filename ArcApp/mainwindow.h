@@ -19,12 +19,15 @@
 #define SHIFTREPORT 1
 #define DAILYLOG 2
 #define FLOATCOUNT 3
+#define MONTHLYREPORT 4
+#define RESTRICTIONS 5
 #include <QMainWindow>
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
 #include "databasemanager.h"
 #include "bookingmanager.h"
 #include <QTableWidgetItem>
+#include <QMap>
 #include "booking.h"
 #include "transaction.h"
 #include "client.h"
@@ -51,14 +54,20 @@ public:
     void populateBooking();
     void setBooking(int row);
     void setup_searchClientTable(QSqlQuery results);
-    void displayPicThread(QString val);
     void displayClientInfoThread(QString val);
     void clientSearchedInfo();
+    void initClientLookupInfo();
     void populateConfirm();
     QImage profilePic;
     void popEditPage();
 
+
+signals:
+    void displayPic(QByteArray a);
+
 private slots:
+
+    void displayPicThread();
 
     void initCurrentWidget(int idx);
     void resizeEvent(QResizeEvent *event);
@@ -265,10 +274,19 @@ private slots:
 
     void on_pushButton_24_clicked();
 
+    void on_btn_monthlyReport_clicked();
+
+    void on_btn_restrictedList_clicked();
+
+    void on_btn_payDelete_clicked();
+    void getTransactionFromRow(int row);
+    void on_btn_payOutstanding_clicked();
+    void updateCheque(int row);
 
 
 
 private:
+
     Ui::MainWindow *ui;
     MainWindow * mw;
     Booking * curBook;
@@ -278,6 +296,8 @@ private:
     
     bool pic_available = true;
     bool table_available = true;
+
+    QMap <QString, int> caseWorkerList;    //caseworker list
 
     QDir dir;
 

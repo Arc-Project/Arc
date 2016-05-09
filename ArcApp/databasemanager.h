@@ -44,7 +44,7 @@ public:
 
     bool searchClientList(QSqlQuery* query, QString ClientId);
 
-    QSqlQuery searchClientInfo(QSqlQuery* quer, QString ClientId);
+    QSqlQuery searchClientInfo(QString ClientId);
 
     /*==========================================================================
     PROFILE PICTURE UPLOAD AND DOWNLOAD RELATED FUNCTIONS
@@ -55,6 +55,7 @@ public:
     bool downloadProfilePic2(QImage* img,QString idNum);
     void testuploadProfilePicThread(QString strFilePath);
     bool insertClientWithPic(QStringList* registerFieldList, QImage* profilePic);
+    bool updateClientWithPic(QStringList* registerFieldList, QString clientId, QImage* profilePic);
 
     /*==========================================================================
     REPORT QUERYS
@@ -84,6 +85,9 @@ public:
     bool updateBalance(double d, QString id);
     QSqlQuery AddProgram(QString pcode, QString pdesc);
     QSqlQuery updateProgram(QString pcode, QString pdesc);
+    bool removeTransaction(QString id);
+    bool setPaid(QString id);
+    QSqlQuery getOutstanding();
 
 private:
     QSqlDatabase db = QSqlDatabase::database();

@@ -42,8 +42,10 @@ private slots:
     void on_pushButton_piccapture_clicked();
 
     void processImage(int i, QImage img);
+    void deleteImage(int id, QString fileName);
+    void readyForCapture(bool available);
+    void checkCam(QCamera::Error error);
 
-    void checkCam(QCamera::Status);
 
 private:
     Ui::TakePhoto *ui;
