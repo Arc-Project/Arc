@@ -36,6 +36,7 @@
 #include "casefile.h"
 #include "mymodel.h"
 #include "report.h"
+#include "mycalendar.h"
 
 namespace Ui {
 class MainWindow;
@@ -83,6 +84,7 @@ private slots:
     void on_actionUpload_Display_Picture_triggered();
     void on_actionDownload_Profile_Picture_triggered();
     void displayPicThread();
+    void updateDailyReportStats(QList<int> list);
 
     /*==========================================================================
     DETECT WIDGET CHANGING SIGNAL
@@ -283,9 +285,21 @@ private slots:
     void on_btn_payDelete_clicked();
     void getTransactionFromRow(int row);
     void on_btn_payOutstanding_clicked();
+    void handleNewPayment(int row);
     void updateCheque(int row);
 
-    
+
+    void on_actionBack_triggered();
+
+    void on_actionForward_triggered();
+
+    void addHistory(int n);
+
+    void on_pushButton_processPaymeent_clicked();
+
+    void on_lunchCheck_clicked();
+
+    void on_startDateEdit_dateChanged(const QDate &date);
 
 private:
 
@@ -305,6 +319,7 @@ private:
     
     void setupReportsScreen();
     void updateReportTables(QDate date = QDate::currentDate());
+    void getDailyReportStats(QDate date = QDate::currentDate());
 
 };
 

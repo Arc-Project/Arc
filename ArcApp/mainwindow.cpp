@@ -9,6 +9,8 @@
 //MyModel* checkoutModel;
 Report *checkoutReport, *vacancyReport, *lunchReport, *wakeupReport;
 bool firstTime = true;
+QStack<int> backStack;
+QStack<int> forwardStack;
 
 QFuture<void> displayPicFuture;
 std::vector<QTableWidget*> pcp_tables;
@@ -26,7 +28,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //default signal of stackedWidget
     //detect if the widget is changed
+    qDebug() << "test";
     connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(initCurrentWidget(int)));
+    //connect(this, SIGNAL(DatabaseManager::dailyReportStatsChanged(QList<int>)), this, SLOT(updateDailyReportStats(QList<int>)));
     curClient = 0;
     curBook = 0;
     trans = 0;
@@ -96,6 +100,7 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case REPORTS:    //WIDGET 11
             MainWindow::updateReportTables();
+            MainWindow::getDailyReportStats();
             break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
@@ -109,6 +114,8 @@ DASHBOARD - slots
 void MainWindow::on_bookButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
+    addHistory(MAINMENU);
+    qDebug() << "pushed page " << MAINMENU;
     ui->startDateEdit->setDate(QDate::currentDate());
     ui->endDateEdit->setDate(QDate::currentDate().addDays(1));
     if(firstTime){
@@ -124,33 +131,44 @@ void MainWindow::on_bookButton_clicked()
 void MainWindow::on_clientButton_clicked()
 {
      ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
+     addHistory(MAINMENU);
+     qDebug() << "pushed page " << MAINMENU;
 }
 
 void MainWindow::on_paymentButton_clicked()
 {
      ui->stackedWidget->setCurrentIndex(PAYMENTPAGE);
+     addHistory(MAINMENU);
+     qDebug() << "pushed page " << MAINMENU;
 }
 
 void MainWindow::on_adminButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(ADMINPAGE);
-
+    addHistory(MAINMENU);
+    qDebug() << "pushed page " << MAINMENU;
 }
 
 void MainWindow::on_editbookButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(EDITBOOKING);
-
+    addHistory(MAINMENU);
+    qDebug() << "pushed page " << MAINMENU;
 }
 
 void MainWindow::on_reportsButton_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(11);
+    ui->stackedWidget->setCurrentIndex(REPORTS);
+    addHistory(MAINMENU);
+    qDebug() << "pushed page " << MAINMENU;
 }
+
 
 void MainWindow::on_caseButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
+    addHistory(MAINMENU);
+    qDebug() << "pushed page " << MAINMENU;
 }
 /*==============================================================================
 DASHBOARD - slots (END)
@@ -166,7 +184,12 @@ void MainWindow::on_actionDB_Connection_triggered()
 
 void MainWindow::on_actionTest_Query_triggered()
 {
-    ui->stackedWidget->setCurrentIndex(11);
+    qDebug() << "query test";
+    // qDebug() << dbManager->getEspVacancies(QDate::currentDate());
+    // qDebug() << dbManager->getTotalVacancies(QDate::currentDate());
+    // qDebug() << dbManager->getEspCheckouts(QDate::currentDate());
+    // qDebug() << dbManager->getTotalCheckouts(QDate::currentDate());
+    // // updateDailyReportStats();
 }
 
 
@@ -279,7 +302,7 @@ void MainWindow::on_bookingSearchButton_clicked()
     ui->makeBookingButton->show();
 }
 void MainWindow::setBooking(int row){
-    curBook->clientId = "1";
+    curBook->clientId = curClient->clientId;
     curBook->startDate = ui->startDateEdit->date();
     curBook->endDate = ui->endDateEdit->date();
     curBook->stringStart = ui->startDateEdit->date().toString(Qt::ISODate);
@@ -316,7 +339,7 @@ void MainWindow::on_makeBookingButton_clicked()
         return;
     }
     //curClient = new Client();
-    popClientFromId("1");
+   //popClientFromId("1");
     ui->stackedWidget->setCurrentIndex(BOOKINGPAGE);
     int rowNum = ui->bookingTable->columnCount();
     QStringList data;
@@ -359,17 +382,22 @@ void MainWindow::getProgramCodes(){
 void MainWindow::on_EditUserButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(EDITUSERS);
+    addHistory(ADMINPAGE);
+    qDebug() << "pushed page " << ADMINPAGE;
 
 }
 
 void MainWindow::on_EditProgramButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(EDITPROGRAM);
+    addHistory(ADMINPAGE);
+    qDebug() << "pushed page " << ADMINPAGE;
 
 }
 
 void MainWindow::on_actionMain_Menu_triggered()
 {
+    addHistory(ui->stackedWidget->currentIndex());
     ui->stackedWidget->setCurrentIndex(MAINMENU);
 }
 
@@ -400,8 +428,8 @@ void MainWindow::on_makeBookingButton_2_clicked()
     QString values;
     QString todayDate = today.toString(Qt::ISODate);
     values = "'" + today.toString(Qt::ISODate) + "','" + curBook->stringStart + "','" + curBook->room + "','" +
-             curBook->clientId + "','" + curBook->program + "','" + QString::number(cost) + "','" + curBook->stringStart
-             + "','" + curBook->stringEnd + "','" + curBook->lunch + "','" + curBook->wakeTime + "'," + "'YES'" + ",'" + month + "','" + "Eunwon'";
+             curClient->clientId + "','" + curBook->program + "','" + QString::number(cost) + "','" + curBook->stringStart
+             + "','" + curBook->stringEnd + "','" + curBook->lunch + "','" + curBook->wakeTime + "'," + "'YES'" + ",'" + month + "','" + curClient->fullName +"'";
     QDate next = curBook->startDate;
     //QDate::fromString(ui->startLabel->text(), "yyyy-MM-dd");
     curBook->cost = cost;
@@ -451,15 +479,16 @@ void MainWindow::on_monthCheck_stateChanged(int arg1)
         //month = month.addMonths(1);
         int days = month.daysInMonth();
         days = days - month.day();
-        month = month.addDays(days);
+        month = month.addDays(days + 1);
         ui->endDateEdit->setDate(month);
     }
 }
 
 void MainWindow::on_pushButton_RegisterClient_clicked()
 {
+    addHistory(CLIENTLOOKUP);
     curClientID = "";
-    ui->stackedWidget->setCurrentIndex(10);
+    ui->stackedWidget->setCurrentIndex(CLIENTREGISTER);
     ui->label_cl_infoedit_title->setText("Register Client");
     ui->button_register_client->setText("Register");
     ui->dateEdit_cl_rulesign->setDate(QDate::currentDate());
@@ -468,7 +497,8 @@ void MainWindow::on_pushButton_RegisterClient_clicked()
 
 void MainWindow::on_pushButton_editClientInfo_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(10);
+    addHistory(CLIENTLOOKUP);
+    ui->stackedWidget->setCurrentIndex(CLIENTREGISTER);
     ui->label_cl_infoedit_title->setText("Edit Client Information");
     ui->button_register_client->setText("Edit");
     int nRow = ui->tableWidget_search_client->currentRow();
@@ -479,7 +509,7 @@ void MainWindow::on_pushButton_editClientInfo_clicked()
 void MainWindow::on_button_cancel_client_register_clicked()
 {
     clear_client_register_form();
-    ui->stackedWidget->setCurrentIndex(0);
+    ui->stackedWidget->setCurrentIndex(MAINMENU);
 }
 
 /*===================================================================
@@ -878,7 +908,8 @@ void MainWindow::on_paymentButton_2_clicked()
     double owed;
     //owed = curBook->cost;
     owed = ui->costInput->text().toDouble();
-    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, curBook, true);
+    QString note = "Booking: " + curBook->stringStart + " to " + curBook->stringEnd + " Cost: " + QString::number(curBook->cost, 'f', 2);
+    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, true);
     pay->exec();
     ui->stayLabel->setText(QString::number(curClient->balance, 'f', 2));
     qDebug() << "Done";
@@ -1249,6 +1280,7 @@ void MainWindow::on_tableWidget_3_doubleClicked(const QModelIndex &index)
 
 void MainWindow::on_pushButton_CaseFiles_clicked()
 {
+    addHistory(CLIENTLOOKUP);
     ui->stackedWidget->setCurrentIndex(CASEFILE);
 
     double width = ui->tw_pcpRela->size().width();
@@ -1264,6 +1296,8 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
 void MainWindow::on_EditRoomsButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(EDITROOM);
+    addHistory(ADMINPAGE);
+    qDebug() << "pushed page " << ADMINPAGE;
 }
 
 void MainWindow::on_editUpdate_clicked()
@@ -1404,8 +1438,9 @@ void MainWindow::on_editManagePayment_clicked()
 
     owed = ui->editRefundAmt->text().toDouble();
     bool type;
-    owed <= 0 ? type = false : type = true;
-    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, curBook, type);
+    owed < 0 ? type = false : type = true;
+    QString note = "";
+    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, type);
     pay->exec();
 }
 
@@ -1450,6 +1485,7 @@ void MainWindow::on_editRoom_clicked()
 
 void MainWindow::on_pushButton_bookRoom_clicked()
 {
+    addHistory(CLIENTLOOKUP);
     curClient = new Client();
     int nRow = ui->tableWidget_search_client->currentRow();
     if (nRow <0)
@@ -1727,13 +1763,13 @@ void MainWindow::populateATable(QTableWidget * table, QStringList headers, QStri
 
 void MainWindow::on_btn_payListAllUsers_clicked()
 {
+    ui->btn_payDelete->setText("Add Payment");
     QStringList cols;
     QStringList heads;
-    QDate sDate = QDate::fromString("1970-01-01", "yyyy-MM-dd");
-    QDate eDate = QDate::fromString("2222-01-01", "yyyy-MM-dd");
-    QSqlQuery tempSql = dbManager->getTransactions(sDate, eDate);
-    heads << "Date" << "Amount" << "First" << "Last" << "Type" << "Method" << "Notes" << "MSD" << "" << "";
-    cols << "Date" << "Amount" << "FirstName" << "LastName" << "TransType" << "Type" << "Notes" << "MSQ" << "TransacId" << "ClientId";
+    QSqlQuery tempSql = dbManager->getOwingClients();
+    heads << "First" << "Last" << "DOB" << "Balance" << "";
+    cols << "FirstName" << "LastName" << "Dob" << "Balance" << "ClientId";
+    ui->mpTable->setColumnHidden(4, true);
     populateATable(ui->mpTable, heads, cols, tempSql, false);
 
 // list all rooms
@@ -2125,14 +2161,36 @@ void MainWindow::on_btn_payDelete_clicked()
             return;
         updateCheque(index);
     }
-    else{
+    else if(ui->btn_payDelete->text() == "Delete"){
         int index = ui->mpTable->selectionModel()->currentIndex().row();
         if(index == -1)
             return;
 
         getTransactionFromRow(index);
     }
+    else{
+        int index = ui->mpTable->selectionModel()->currentIndex().row();
+        if(index == -1)
+            return;
+        handleNewPayment(index);
+    }
 }
+void MainWindow::handleNewPayment(int row){
+    curClient = new Client();
+    trans = new transaction();
+    curClient->clientId = ui->mpTable->item(row,4)->text();
+    double balance = ui->mpTable->item(row, 3)->text().toDouble();
+    curClient->balance = balance;
+    QString note = "Paying Outstanding Balance";
+
+    payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true);
+    pay->exec();
+    ui->mpTable->removeRow(row);
+
+
+
+}
+
 void MainWindow::updateCheque(int row){
     QString transId = ui->mpTable->item(row, 6)->text();
     double retAmt = ui->mpTable->item(row, 3)->text().toDouble();
@@ -2221,6 +2279,21 @@ void MainWindow::on_reportsSetCurrentDate_Btn_clicked()
 {
     ui->lbl_shiftReportDateVal_2->setText(QDate::currentDate().toString("yyyy-MM-dd"));
 }
+
+void MainWindow::getDailyReportStats(QDate date)
+{
+    qDebug() << "getDailyReportStats  called";
+    QtConcurrent::run(dbManager, &DatabaseManager::getDailyReportStatsThread, date);
+}
+
+void MainWindow::updateDailyReportStats(QList<int> list)
+{
+    qDebug() << "updateDailyReportStats slot";
+    foreach(int val, list)
+    {
+        qDebug() << val;
+    }
+}
 /*==============================================================================
 REPORTS (END)
 ==============================================================================*/
@@ -2228,3 +2301,55 @@ REPORTS (END)
 
 
 
+void MainWindow::on_actionBack_triggered()
+{
+    if (!backStack.isEmpty()){
+        int page = backStack.pop();
+        forwardStack.push(ui->stackedWidget->currentIndex());
+        ui->stackedWidget->setCurrentIndex(page);
+        ui->actionForward->setEnabled(true);
+    }
+}
+
+void MainWindow::on_actionForward_triggered()
+{
+    if (!forwardStack.isEmpty()) {
+        int page = forwardStack.pop();
+        backStack.push(ui->stackedWidget->currentIndex());
+        ui->stackedWidget->setCurrentIndex(page);
+
+    }
+}
+
+void MainWindow::addHistory(int n){
+    backStack.push(n);
+    forwardStack.clear();
+    ui->actionForward->setEnabled(false);
+}
+
+
+
+void MainWindow::on_pushButton_processPaymeent_clicked()
+{
+    addHistory(CLIENTLOOKUP);
+}
+
+void MainWindow::on_lunchCheck_clicked()
+{
+   QDate testDate = QDate::currentDate();
+   testDate = testDate.addDays(32);
+   QDate otherDate = testDate.addDays(35);
+  //curClient = new Client();
+   //curClient->clientId = "1";
+
+//   MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient);
+//   mc->exec();
+}
+
+void MainWindow::on_startDateEdit_dateChanged(const QDate &date)
+{
+    if(ui->startDateEdit->date() > ui->endDateEdit->date()){
+        QDate newD = ui->startDateEdit->date().addDays(1);
+        ui->endDateEdit->setDate(newD);
+    }
+}
