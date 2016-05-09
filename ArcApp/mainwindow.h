@@ -168,8 +168,6 @@ private slots:
 
     void on_btn_searchUsers_clicked();
 
-    void on_tableView_3_doubleClicked(const QModelIndex &index);
-
     void on_pushButton_CaseFiles_clicked();
 
     void on_EditRoomsButton_clicked();
@@ -192,6 +190,16 @@ private slots:
 
     void on_pushButton_bookRoom_clicked();
     void on_editRoom_clicked();
+
+    void on_pushButton_4_clicked();
+
+    void on_btn_displayUser_clicked();
+
+    void on_pushButton_6_clicked();
+
+    void on_tableWidget_3_clicked(const QModelIndex &index);
+
+    void on_tableWidget_3_doubleClicked(const QModelIndex &index);
 
 private:
     Ui::MainWindow *ui;
