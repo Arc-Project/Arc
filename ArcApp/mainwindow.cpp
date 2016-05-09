@@ -1687,7 +1687,7 @@ void MainWindow::on_btn_listAllUsers_2_clicked()
     while (result.next()) {
         ui->tableWidget_2->insertRow(x);
         QStringList row;
-        row << result.value(0).toString() << result.value(1).toString());
+        row << result.value(0).toString() << result.value(1).toString();
         for (int i = 0; i < 2; ++i)
         {
             ui->tableWidget_2->setItem(x, i, new QTableWidgetItem(row.at(i)));
