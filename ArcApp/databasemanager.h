@@ -69,6 +69,7 @@ public:
     QSqlQuery findUser(QString username);
     QSqlQuery addNewEmployee(QString username, QString password, QString role);
     QSqlQuery updateEmployee(QString username, QString password, QString role);
+    QSqlQuery deleteEmployee(QString username, QString password, QString role);
     QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);
     QSqlQuery getPrograms();
     bool insertBookingTable(QString insert);

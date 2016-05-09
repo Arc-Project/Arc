@@ -1454,8 +1454,6 @@ void MainWindow::on_btn_displayUser_clicked()
     model->clear();
     ui->tableView_3->setModel(model);
 
-
-
     ui->comboBox->setCurrentIndex(0);
     ui->le_userName->setText("");
     ui->le_password->setText("");
@@ -1490,4 +1488,41 @@ void MainWindow::on_tableView_3_clicked(const QModelIndex &index)
 
     ui->le_userName->setText(uname);
     ui->le_password->setText(pw);
+}
+
+// delete button
+void MainWindow::on_pushButton_6_clicked()
+{
+    QString uname = ui->le_userName->text();
+    QString pw = ui->le_password->text();
+
+    if (uname.length() == 0) {
+        ui->lbl_editUserWarning->setText("Please make sure a valid employee is selected");
+        return;
+    }
+
+    if (pw.length() == 0) {
+        ui->lbl_editUserWarning->setText("Please make sure a valid employee is selected");
+        return;
+    }
+
+    QSqlQuery queryResults = dbManager->findUser(uname);
+    int numrows1 = queryResults.numRowsAffected();
+
+    if (numrows1 == 1) {
+        QSqlQuery queryResults = dbManager->deleteEmployee(uname, pw, ui->comboBox->currentText());
+        int numrows = queryResults.numRowsAffected();
+
+        if (numrows != 0) {
+            ui->lbl_editUserWarning->setText("Employee Deleted");
+        } else {
+            ui->lbl_editUserWarning->setText("Employee Not Found");
+        }
+
+        return;
+    } else {
+        ui->lbl_editUserWarning->setText("Employee Not Found");
+        return;
+    }
+
 }
