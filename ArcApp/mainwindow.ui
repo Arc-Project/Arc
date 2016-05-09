@@ -7375,13 +7375,8 @@ QWidget#wdg_transTotal {
     <rect>
      <x>0</x>
      <y>0</y>
-<<<<<<< HEAD
-     <width>1390</width>
-     <height>21</height>
-=======
      <width>1529</width>
      <height>26</height>
->>>>>>> b4623fc0c2f1c0ce819ad3215ef2f1fd8d82479c
     </rect>
    </property>
    <property name="acceptDrops">
