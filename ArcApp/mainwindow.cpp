@@ -33,7 +33,7 @@ MainWindow::~MainWindow()
 //initialize widget when getinto that widget
 void MainWindow::initCurrentWidget(int idx){
     switch(idx){
-            case MAINMENU:  //WIDGET 0
+        case MAINMENU:  //WIDGET 0
             curClientID = "";
             break;
         case CLIENTLOOKUP:  //WIDGET 1
@@ -50,6 +50,7 @@ void MainWindow::initCurrentWidget(int idx){
                 ui->tableWidget_clientInfo2->clear();
             }
             //initimageview
+
 
             break;
         case BOOKINGLOOKUP: //WIDGET 2
@@ -580,8 +581,9 @@ void MainWindow::on_reportsButton_clicked()
 }
 
 /*===================================================================
-  registration page
+  REGISTRATION PAGE
   ===================================================================*/
+
 //Client Regiter widget [TAKE A PICTURE] button
 void MainWindow::on_button_cl_takePic_clicked()
 {
@@ -669,7 +671,29 @@ void MainWindow::clear_client_register_form(){
     on_button_cl_delPic_clicked();
 }
 
+//read client information to edit
 void MainWindow::read_curClient_Information(QString ClientId){
+    QString searchClientQ = "SELECT * FROM Client WHERE ClientId = "+ ClientId;
+    qDebug()<<"SEARCH QUERY: " + searchClientQ;
+    QSqlQuery clientInfo = dbManager->execQuery("SELECT * FROM Client WHERE ClientId = "+ ClientId);
+    clientInfo.next();
+    //dbManager->printAll(clientInfo);
+    //input currentValue;
+
+    qDebug()<<"FNAme: "<<clientInfo.value(1).toString()<<"MNAme: "<<clientInfo.value(2).toString()<<"LNAME: "<<clientInfo.value(3).toString();
+    qDebug()<<"DOB: "<<clientInfo.value(4).toString() <<"GANUM: "<<clientInfo.value(6).toString()<<"SIN: "<<clientInfo.value(7).toString();
+
+    ui->lineEdit_cl_fName->setText(clientInfo.value(1).toString());
+
+    ui->lineEdit_cl_mName->setText(clientInfo.value(2).toString());
+    ui->lineEdit_cl_lName->setText(clientInfo.value(3).toString());
+    ui->dateEdit_cl_dob->setDate(QDate::fromString(clientInfo.value(4).toString(),"yyyy-MM-dd"));
+    //balnace?
+    ui->lineEdit_cl_SIN->setText(clientInfo.value(6).toString());
+    ui->lineEdit_cl_GANum->setText(clientInfo.value(7).toString());
+    ui->checkBox_cl_parolee->setChecked(clientInfo.value(8).toBool());
+    ui->checkBox_cl_comm->setChecked(clientInfo.value(9).toBool());
+    ui->dateEdit_cl_rulesign->setDate(QDate::fromString(clientInfo.value(10).toString(),"yyyy-MM-dd"));
 
 }
 
