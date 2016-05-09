@@ -11,8 +11,10 @@
 #define EDITPROGRAM 7
 #define CASEFILE 8
 #define EDITBOOKING 9
+#define CLIENTREGISTER 10
 #define EDITROOM 12
 #define CONFIRMBOOKING 13
+#define EDITPAGE 14
 #define DAILYREPORT 0
 #define SHIFTREPORT 1
 #define DAILYLOG 2
@@ -26,6 +28,7 @@
 #include "booking.h"
 #include "transaction.h"
 #include "client.h"
+#include "shared.h"
 namespace Ui {
 class MainWindow;
 }
@@ -43,15 +46,17 @@ public:
     void bookingSetup();
     void populateBooking();
     void setBooking(int row);
-    void setup_searchClientTable(QSqlQuery query);
+    void setup_searchClientTable(QSqlQuery results);
     void displayPicThread(QString val);
     void displayClientInfoThread(QString val);
     void clientSearchedInfo();
     void populateConfirm();
     QImage profilePic;
+    void popEditPage();
 
 private slots:
 
+    void initCurrentWidget(int idx);
     /*==========================================================================
     DEV TESTING BUTTONS
     ==========================================================================*/
@@ -68,6 +73,13 @@ private slots:
     ==========================================================================*/
     QString browse();
 
+    /*==========================================================================
+    REPORT FUNCTIONS
+    ==========================================================================*/
+    void updateCheckoutView(QDate date = QDate::currentDate());
+    void updateVacancyView(QDate date = QDate::currentDate());
+    void updateLunchView(QDate date = QDate::currentDate());
+    void updateWakeupView(QDate date = QDate::currentDate());
 
 
     void on_bookButton_clicked();
@@ -103,7 +115,8 @@ private slots:
     void on_reportsButton_clicked();
 
     void on_pushButton_search_client_clicked();
-    void selected_client_info(QModelIndex idx1,QModelIndex idx2);
+
+    void selected_client_info(int nRow, int nCol);
 
     void on_button_register_client_clicked();
 
@@ -116,6 +129,8 @@ private slots:
     bool check_client_register_form();
 
     void clear_client_register_form();
+
+    void read_curClient_Information(QString ClientId);
 
     void on_button_clear_client_regForm_clicked();
 
@@ -159,12 +174,32 @@ private slots:
 
     void on_EditRoomsButton_clicked();
 
+    void on_editUpdate_clicked();
+    bool checkNumber(QString num);
+    double calcRefund(QDate old, QDate n);
+
+    void on_editDate_dateChanged(const QDate &date);
+    bool updateBooking(Booking b);
+    void popClientFromId(QString id);
+    void on_editManagePayment_clicked();
+
+
+
+    void on_editCost_textChanged(const QString &arg1);
+
+    void on_editCancel_textChanged(const QString &arg1);
+
+
+    void on_pushButton_bookRoom_clicked();
+    void on_editRoom_clicked();
+
 private:
     Ui::MainWindow *ui;
     MainWindow * mw;
     Booking * curBook;
     transaction * trans;
     Client * curClient;
+    QString curClientID;
     
     bool pic_available = true;
     bool table_available = true;

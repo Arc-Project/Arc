@@ -9,7 +9,7 @@ payment::payment(QWidget *parent) :
     ui->setupUi(this);
 
 }
-payment::payment(QWidget *parent, transaction * trans, double balance, double cost, Client * client, Booking * book ) :
+payment::payment(QWidget *parent, transaction * trans, double balance, double cost, Client * client, Booking * book, bool paymentType ) :
     QDialog(parent),
     ui(new Ui::payment)
 {
@@ -22,6 +22,14 @@ payment::payment(QWidget *parent, transaction * trans, double balance, double co
     ui->balanceLabel->setText(QString::number(balance));
     ui->transactionLabel->setText(QString::number(cost));
     ui->owedLabel->setText(QString::number(cost - balance));
+    if(paymentType){
+        doPayment();
+        ui->paymentRadio->setChecked(true);
+    }
+    else{
+        ui->refundRadio->setChecked(true);
+        doRefund();
+    }
 }
 
 
@@ -31,15 +39,23 @@ payment::~payment()
 }
 bool payment::makePayment(){
     QString values;
-    if(ui->paymentDrop->currentIndex() == 1){
+    if(ui->paymentRadio->isChecked()){
+        if(ui->paymentDrop->currentIndex() == 1){
+            values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
+                    + "','" + QString::number(transact->amount) + "','" + "6" + "','" + transact->type + "','" + transact->notes
+                    + "','" + transact->chequeNo + "','" + transact->MSQ + "','" + transact->issuedString + "','" + transact->transType + "'";
+        }
+        else{
         values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
                 + "','" + QString::number(transact->amount) + "','" + "6" + "','" + transact->type + "','" + transact->notes
-                + "','" + transact->chequeNo + "','" + transact->MSQ + "','" + transact->issuedString + "'";
+                + "', NULL, NULL, NULL" + ",'" + transact->transType + "'";
+        }
     }
     else{
-    values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
-            + "','" + QString::number(transact->amount) + "','" + "6" + "','" + transact->type + "','" + transact->notes
-            + "', NULL, NULL, NULL";
+        values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
+                + "','" + QString::number(transact->amount) + "','" + "6" + "','" + transact->type + "','" + transact->notes
+                + "', NULL, NULL, NULL" + ",'" + transact->transType + "'";
+
     }
     if(dbManager->addPayment(values)){
         curBook->paidTotal+= transact->amount;
@@ -48,7 +64,11 @@ bool payment::makePayment(){
     }
     return false;
 }
-void payment::addTransaction(){
+bool payment::addTransaction(){
+    QString type;
+    ui->paymentRadio->isChecked() == true ? type = "Payment" : type = "Refund";
+    if(!checkNumber(ui->paymentInput->text()))
+        return false;
     transact->chequeNo = "NULL";
     transact->notes = "NONE";
     transact->MSQ = "NO";\
@@ -57,12 +77,13 @@ void payment::addTransaction(){
     }
 
     double amt;
-    if(!(amt = ui->paymentInput->text().toDouble())){
+    /*if(!(amt = ui->paymentInput->text().toDouble())){
         qDebug() << "Invalid string";
     }
     else{
         transact->amount = amt;
-    }
+    }*/
+    transact->amount = ui->paymentInput->text().toDouble();
     transact->type = ui->paymentDrop->currentText();
     transact->notes = ui->plainTextEdit->toPlainText();
     if(ui->msqCheck->isChecked()){
@@ -72,8 +93,10 @@ void payment::addTransaction(){
     transact->issued = ui->chequeDate->date();
     transact->today = QDate::currentDate();
     transact->chequeNo = ui->chequeInput->text();
+    transact->transType = type;
     //CHANGE THIS
     transact->empId = "1";
+    return true;
 }
 
 void payment::on_paymentBox_accepted()
@@ -84,11 +107,48 @@ void payment::on_paymentBox_accepted()
 
 void payment::on_addPaymentButton_clicked()
 {
-    addTransaction();
+    if(!addTransaction())
+        return;
+    double newBal;
+    if(ui->paymentRadio->isChecked()){
+        newBal = client->balance + transact->amount;
+    }
+    else{
+        newBal = client->balance - transact->amount;
+    }
+    if(!dbManager->updateBalance(newBal, client->clientId)){
+        return;
+    }
+    else{
+        client->balance = newBal;
+    }
     if(makePayment()){
         ui->addPaymentButton->setEnabled(false);
     }
 
+}
+bool payment::checkNumber(QString num){
+    int l = num.length();
+    int period = 0;
+    char copy[l];
+    strcpy(copy, num.toStdString().c_str());
+    for(int i = 0; i < num.length(); i++){
+        if(copy[i] == '.'){
+            if(period)
+                return false;
+            period++;
+            continue;
+        }
+        /*if(copy[i] == '-'){
+            if(i == 0)
+                continue;
+             return false;
+        }
+*/
+        if(!isdigit(copy[i]))
+            return false;
+    }
+    return true;
 }
 
 void payment::on_paymentDrop_currentIndexChanged(const QString &arg1)
@@ -116,4 +176,33 @@ void payment::hideCheque(){
     ui->msqCheck->hide();
     ui->chequeInput->setText("");
     ui->msqCheck->setChecked(false);
+}
+void payment::doPayment(){
+    ui->paymentDrop->setEnabled(true);
+    ui->payRefLabel->setText("Payment Amount");
+    ui->addPaymentButton->setText("Add Payment");
+
+}
+void payment::doRefund(){
+    ui->payRefLabel->setText("Refund Amount");
+    ui->paymentDrop->setEnabled(false);
+    ui->addPaymentButton->setText("Add Refund");
+    hideCheque();
+
+}
+
+void payment::on_paymentRadio_clicked()
+{
+    if(!ui->paymentRadio->isChecked()){
+        return;
+    }
+    doPayment();
+}
+
+void payment::on_refundRadio_clicked()
+{
+    if(!ui->refundRadio->isChecked()){
+        return;
+    }
+    doRefund();
 }

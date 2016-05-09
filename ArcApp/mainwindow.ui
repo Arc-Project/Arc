@@ -107,8 +107,8 @@ QWidget#wdg_transTotal {
    <widget class="QStackedWidget" name="stackedWidget">
     <property name="geometry">
      <rect>
-      <x>11</x>
-      <y>11</y>
+      <x>30</x>
+      <y>50</y>
       <width>1366</width>
       <height>735</height>
      </rect>
@@ -380,25 +380,6 @@ QWidget#wdg_transTotal {
     </widget>
     <widget class="QWidget" name="clientLookup">
      <layout class="QGridLayout" name="gridLayout_7">
-      <item row="0" column="1" rowspan="2">
-       <widget class="QTableView" name="tableView_clientInfo"/>
-      </item>
-      <item row="0" column="2">
-       <widget class="QGraphicsView" name="graphicsView_getInfo">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>150</width>
-          <height>120</height>
-         </size>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0" rowspan="2">
        <layout class="QVBoxLayout" name="verticalLayout_12">
         <item>
@@ -473,39 +454,9 @@ QWidget#wdg_transTotal {
          </layout>
         </item>
         <item>
-         <widget class="QTableView" name="tableView_search_client">
-          <property name="minimumSize">
-           <size>
-            <width>320</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <family>MS Shell Dlg 2</family>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::VLine</enum>
-          </property>
-          <property name="lineWidth">
-           <number>1</number>
-          </property>
-          <property name="horizontalScrollBarPolicy">
-           <enum>Qt::ScrollBarAlwaysOff</enum>
-          </property>
-          <property name="sizeAdjustPolicy">
-           <enum>QAbstractScrollArea::AdjustToContents</enum>
-          </property>
-          <property name="autoScrollMargin">
-           <number>12</number>
-          </property>
+         <widget class="QTableWidget" name="tableWidget_search_client">
           <property name="editTriggers">
-           <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
-          </property>
-          <property name="dragDropOverwriteMode">
-           <bool>false</bool>
+           <set>QAbstractItemView::NoEditTriggers</set>
           </property>
           <property name="selectionMode">
            <enum>QAbstractItemView::SingleSelection</enum>
@@ -513,10 +464,13 @@ QWidget#wdg_transTotal {
           <property name="selectionBehavior">
            <enum>QAbstractItemView::SelectRows</enum>
           </property>
-          <attribute name="horizontalHeaderCascadingSectionResizes">
-           <bool>true</bool>
+          <attribute name="horizontalHeaderMinimumSectionSize">
+           <number>10</number>
           </attribute>
           <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+           <bool>true</bool>
+          </attribute>
+          <attribute name="horizontalHeaderStretchLastSection">
            <bool>true</bool>
           </attribute>
           <attribute name="verticalHeaderVisible">
@@ -527,7 +481,7 @@ QWidget#wdg_transTotal {
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_15">
           <item>
-           <widget class="QPushButton" name="pushButton_3">
+           <widget class="QPushButton" name="pushButton_bookRoom">
             <property name="minimumSize">
              <size>
               <width>105</width>
@@ -620,29 +574,79 @@ QWidget#wdg_transTotal {
         </item>
        </layout>
       </item>
+      <item row="0" column="3">
+       <widget class="QGraphicsView" name="graphicsView_getInfo">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>150</width>
+          <height>120</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QTableWidget" name="tableWidget_clientInfo">
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+        <property name="selectionMode">
+         <enum>QAbstractItemView::NoSelection</enum>
+        </property>
+        <property name="selectionBehavior">
+         <enum>QAbstractItemView::SelectRows</enum>
+        </property>
+        <attribute name="horizontalHeaderHighlightSections">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="verticalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
+        <attribute name="verticalHeaderHighlightSections">
+         <bool>false</bool>
+        </attribute>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QTableWidget" name="tableWidget_clientInfo2">
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+        <property name="showDropIndicator" stdset="0">
+         <bool>false</bool>
+        </property>
+        <property name="dragDropOverwriteMode">
+         <bool>false</bool>
+        </property>
+        <property name="selectionMode">
+         <enum>QAbstractItemView::NoSelection</enum>
+        </property>
+        <property name="selectionBehavior">
+         <enum>QAbstractItemView::SelectRows</enum>
+        </property>
+        <attribute name="horizontalHeaderCascadingSectionResizes">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="verticalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
+       </widget>
+      </item>
      </layout>
     </widget>
     <widget class="QWidget" name="bookingLookup">
      <layout class="QGridLayout" name="gridLayout_21">
-      <item row="2" column="0" colspan="7">
-       <widget class="QTableWidget" name="bookingTable">
-        <property name="sortingEnabled">
-         <bool>true</bool>
-        </property>
-        <property name="rowCount">
-         <number>0</number>
-        </property>
-        <property name="columnCount">
-         <number>6</number>
-        </property>
-        <column/>
-        <column/>
-        <column/>
-        <column/>
-        <column/>
-        <column/>
-       </widget>
-      </item>
       <item row="3" column="5" colspan="2">
        <widget class="QPushButton" name="makeBookingButton">
         <property name="sizePolicy">
@@ -780,21 +784,6 @@ QWidget#wdg_transTotal {
             <pointsize>10</pointsize>
            </font>
           </property>
-          <item>
-           <property name="text">
-            <string>JosephDrugAddit</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>DennisHomeless</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>HankTooBusyWatchingAnimeToWork</string>
-           </property>
-          </item>
          </widget>
         </item>
        </layout>
@@ -859,6 +848,25 @@ QWidget#wdg_transTotal {
          </size>
         </property>
        </spacer>
+      </item>
+      <item row="2" column="0" colspan="7">
+       <widget class="QTableWidget" name="bookingTable">
+        <property name="sortingEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="rowCount">
+         <number>0</number>
+        </property>
+        <property name="columnCount">
+         <number>6</number>
+        </property>
+        <column/>
+        <column/>
+        <column/>
+        <column/>
+        <column/>
+        <column/>
+       </widget>
       </item>
      </layout>
      <zorder>makeBookingButton</zorder>
@@ -2682,8 +2690,10 @@ QWidget#wdg_transTotal {
        <enum>QAbstractScrollArea::AdjustToContents</enum>
       </property>
       <property name="columnCount">
-       <number>10</number>
+       <number>12</number>
       </property>
+      <column/>
+      <column/>
       <column/>
       <column/>
       <column/>
@@ -3559,7 +3569,7 @@ QWidget#wdg_transTotal {
            <item row="0" column="1">
             <widget class="QStackedWidget" name="swdg_reports">
              <property name="currentIndex">
-              <number>3</number>
+              <number>0</number>
              </property>
              <widget class="QWidget" name="page_3">
               <layout class="QGridLayout" name="gridLayout_34">
@@ -3706,7 +3716,7 @@ QWidget#wdg_transTotal {
                   </font>
                  </property>
                  <property name="currentIndex">
-                  <number>1</number>
+                  <number>3</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -3714,7 +3724,48 @@ QWidget#wdg_transTotal {
                   </attribute>
                   <layout class="QGridLayout" name="gridLayout_36">
                    <item row="0" column="0">
-                    <widget class="QTableWidget" name="tableWidget_4"/>
+                    <widget class="QTableWidget" name="checkout_tableWidget">
+                     <column>
+                      <property name="text">
+                       <string>Client</string>
+                      </property>
+                     </column>
+                     <column>
+                      <property name="text">
+                       <string>Space #</string>
+                      </property>
+                     </column>
+                     <column>
+                      <property name="text">
+                       <string>Start Date</string>
+                      </property>
+                     </column>
+                     <column>
+                      <property name="text">
+                       <string>End Date</string>
+                      </property>
+                     </column>
+                     <column>
+                      <property name="text">
+                       <string>Program</string>
+                      </property>
+                     </column>
+                     <column>
+                      <property name="text">
+                       <string>Reason</string>
+                      </property>
+                     </column>
+                     <column>
+                      <property name="text">
+                       <string>ESP Days</string>
+                      </property>
+                     </column>
+                     <column>
+                      <property name="text">
+                       <string>Balance</string>
+                      </property>
+                     </column>
+                    </widget>
                    </item>
                   </layout>
                  </widget>
@@ -3724,7 +3775,18 @@ QWidget#wdg_transTotal {
                   </attribute>
                   <layout class="QGridLayout" name="gridLayout_33">
                    <item row="0" column="0">
-                    <widget class="QTableWidget" name="tableWidget_2"/>
+                    <widget class="QTableWidget" name="vacancy_tableWidget">
+                     <column>
+                      <property name="text">
+                       <string>Space #</string>
+                      </property>
+                     </column>
+                     <column>
+                      <property name="text">
+                       <string>Program</string>
+                      </property>
+                     </column>
+                    </widget>
                    </item>
                   </layout>
                  </widget>
@@ -3734,7 +3796,23 @@ QWidget#wdg_transTotal {
                   </attribute>
                   <layout class="QGridLayout" name="gridLayout_32">
                    <item row="0" column="0">
-                    <widget class="QTableWidget" name="tableWidget"/>
+                    <widget class="QTableWidget" name="lunch_tableWidget">
+                     <column>
+                      <property name="text">
+                       <string>Client</string>
+                      </property>
+                     </column>
+                     <column>
+                      <property name="text">
+                       <string>Space #</string>
+                      </property>
+                     </column>
+                     <column>
+                      <property name="text">
+                       <string># Lunches</string>
+                      </property>
+                     </column>
+                    </widget>
                    </item>
                   </layout>
                  </widget>
@@ -3744,7 +3822,23 @@ QWidget#wdg_transTotal {
                   </attribute>
                   <layout class="QGridLayout" name="gridLayout_25">
                    <item row="0" column="0">
-                    <widget class="QTableWidget" name="tableWidget_3"/>
+                    <widget class="QTableWidget" name="wakeup_tableWidget">
+                     <column>
+                      <property name="text">
+                       <string>Client</string>
+                      </property>
+                     </column>
+                     <column>
+                      <property name="text">
+                       <string>Space #</string>
+                      </property>
+                     </column>
+                     <column>
+                      <property name="text">
+                       <string>Time</string>
+                      </property>
+                     </column>
+                    </widget>
                    </item>
                   </layout>
                  </widget>
@@ -6361,7 +6455,7 @@ QWidget#wdg_transTotal {
            </font>
           </property>
           <property name="text">
-           <string>Paid:</string>
+           <string>Balance:</string>
           </property>
          </widget>
         </item>
@@ -6519,6 +6613,292 @@ QWidget#wdg_transTotal {
        </layout>
       </item>
      </layout>
+    </widget>
+    <widget class="QWidget" name="editABook">
+     <widget class="QLabel" name="label_34">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>70</y>
+        <width>55</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>End Date</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_35">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>110</y>
+        <width>55</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Room</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_36">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>150</y>
+        <width>55</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Program</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_37">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>190</y>
+        <width>55</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Cost</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_38">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>310</y>
+        <width>55</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Lunch</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_40">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>350</y>
+        <width>55</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Wakeup</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_41">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>390</y>
+        <width>55</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Storage</string>
+      </property>
+     </widget>
+     <widget class="QDateEdit" name="editDate">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>70</y>
+        <width>110</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="calendarPopup">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="editProgram_2">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>150</y>
+        <width>73</width>
+        <height>22</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="editCost">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>190</y>
+        <width>113</width>
+        <height>22</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="editLunch">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>310</y>
+        <width>81</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QTimeEdit" name="editWakeup">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>350</y>
+        <width>118</width>
+        <height>22</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="editStorage">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>390</y>
+        <width>431</width>
+        <height>131</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="editRoom">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>110</y>
+        <width>93</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Change</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="editUpdate">
+      <property name="geometry">
+       <rect>
+        <x>680</x>
+        <y>530</y>
+        <width>93</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Update</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="editRoomLabel">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>110</y>
+        <width>55</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>TextLabel</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="editOC">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>190</y>
+        <width>161</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Original Cost:</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="editWakeCheck">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>350</y>
+        <width>31</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="editManagePayment">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>230</y>
+        <width>121</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Payment/Refund</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="editRefundLabel">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>230</y>
+        <width>55</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Refund</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="editRefundAmt">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>230</y>
+        <width>111</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0.0</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_43">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>270</y>
+        <width>131</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Cancelation Fee</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="editCancel">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>270</y>
+        <width>101</width>
+        <height>22</height>
+       </rect>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>

@@ -19,6 +19,7 @@ public:
     int stayLength;
     QString wakeTime;
     double paidTotal;
+    QString bookID;
 };
 
 #endif // BOOKING_H
