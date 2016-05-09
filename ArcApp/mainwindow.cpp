@@ -1687,7 +1687,7 @@ void MainWindow::on_btn_listAllUsers_2_clicked()
     while (result.next()) {
         ui->tableWidget_2->insertRow(x);
         QStringList row;
-        row << result.value(0).toString() << result.value(1).toString() << result.value(2).toString();
+        row << result.value(0).toString() << result.value(1).toString());
         for (int i = 0; i < 2; ++i)
         {
             ui->tableWidget_2->setItem(x, i, new QTableWidgetItem(row.at(i)));
@@ -1715,7 +1715,7 @@ void MainWindow::on_btn_searchUsers_2_clicked()
     while (result.next()) {
         ui->tableWidget_2->insertRow(x);
         QStringList row;
-        row << result.value(0).toString() << result.value(1).toString() << result.value(2).toString();
+        row << result.value(0).toString() << result.value(1).toString();
         for (int i = 0; i < 2; ++i)
         {
             ui->tableWidget_2->setItem(x, i, new QTableWidgetItem(row.at(i)));
@@ -1743,9 +1743,9 @@ void MainWindow::on_pushButton_25_clicked()
         model->clear();
         ui->tableWidget_2->clear();
         ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
-        ui->tableWidget_2->setColumnCount(3);
+        ui->tableWidget_2->setColumnCount(2);
         ui->tableWidget_2->setRowCount(0);
-        ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
+        ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Program Code" << "Description");
 
         ui->comboBox->setCurrentIndex(0);
         ui->le_userName->setText("");
