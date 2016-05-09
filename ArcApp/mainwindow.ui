@@ -1813,7 +1813,7 @@ QWidget#wdg_transTotal {
               </font>
              </property>
              <property name="text">
-              <string>Display</string>
+              <string>Clear All</string>
              </property>
             </widget>
            </item>

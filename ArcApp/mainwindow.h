@@ -193,6 +193,12 @@ private slots:
     void on_pushButton_bookRoom_clicked();
     void on_editRoom_clicked();
 
+    void on_pushButton_4_clicked();
+
+    void on_btn_displayUser_clicked();
+
+    void on_tableView_3_clicked(const QModelIndex &index);
+
 private:
     Ui::MainWindow *ui;
     MainWindow * mw;
