@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1390</width>
-    <height>849</height>
+    <width>1529</width>
+    <height>917</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -114,7 +114,7 @@ QWidget#wdg_transTotal {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>4</number>
     </property>
     <widget class="QWidget" name="mainMenu">
      <layout class="QGridLayout" name="gridLayout_5">
@@ -189,7 +189,7 @@ QWidget#wdg_transTotal {
            </property>
            <property name="font">
             <font>
-             <pointsize>15</pointsize>
+             <pointsize>18</pointsize>
              <weight>75</weight>
              <bold>true</bold>
             </font>
@@ -337,7 +337,7 @@ QWidget#wdg_transTotal {
            </property>
            <property name="font">
             <font>
-             <pointsize>15</pointsize>
+             <pointsize>18</pointsize>
              <weight>75</weight>
              <bold>true</bold>
             </font>
@@ -363,7 +363,7 @@ QWidget#wdg_transTotal {
            </property>
            <property name="font">
             <font>
-             <pointsize>15</pointsize>
+             <pointsize>18</pointsize>
              <weight>75</weight>
              <bold>true</bold>
             </font>
@@ -1566,24 +1566,6 @@ QWidget#wdg_transTotal {
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="btn_payEdit">
-             <property name="minimumSize">
-              <size>
-               <width>70</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Edit</string>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QPushButton" name="btn_payDelete">
              <property name="minimumSize">
               <size>
@@ -1769,40 +1751,41 @@ QWidget#wdg_transTotal {
         </property>
         <layout class="QGridLayout" name="gridLayout_38">
          <item row="0" column="0">
-          <widget class="QLabel" name="label_34">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
+          <widget class="QLabel" name="label_47">
            <property name="minimumSize">
             <size>
              <width>0</width>
-             <height>30</height>
+             <height>28</height>
             </size>
            </property>
            <property name="font">
             <font>
-             <pointsize>12</pointsize>
-             <weight>75</weight>
-             <bold>true</bold>
+             <pointsize>18</pointsize>
             </font>
            </property>
            <property name="text">
-            <string>Payment Information</string>
+            <string>Add New Payment</string>
            </property>
           </widget>
          </item>
          <item row="1" column="0">
-          <layout class="QFormLayout" name="formLayout_14">
-           <property name="verticalSpacing">
-            <number>19</number>
-           </property>
-           <item row="0" column="0">
-            <widget class="QLabel" name="lbl_userName_3">
+          <layout class="QHBoxLayout" name="horizontalLayout_43">
+           <item>
+            <widget class="QLabel" name="label_4">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Client Name</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="le_clientName">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -1813,28 +1796,10 @@ QWidget#wdg_transTotal {
                <height>28</height>
               </size>
              </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Client:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="lbl_paySpace">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
+             <property name="maximumSize">
               <size>
-               <width>0</width>
-               <height>28</height>
+               <width>16777215</width>
+               <height>16777215</height>
               </size>
              </property>
              <property name="font">
@@ -1842,23 +1807,20 @@ QWidget#wdg_transTotal {
                <pointsize>10</pointsize>
               </font>
              </property>
-             <property name="text">
-              <string>Space Number:</string>
-             </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="lbl_payProg">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
+           <item>
+            <widget class="QPushButton" name="btn_clientSearch">
              <property name="minimumSize">
               <size>
-               <width>0</width>
+               <width>70</width>
                <height>28</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>100</width>
+               <height>16777215</height>
               </size>
              </property>
              <property name="font">
@@ -1867,266 +1829,38 @@ QWidget#wdg_transTotal {
               </font>
              </property>
              <property name="text">
-              <string>Program:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="lbl_payStart">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Stay Start:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QDateEdit" name="dE_payStart">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="calendarPopup">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="lbl_payEnd">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Stay End:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <widget class="QDateEdit" name="dE_payEnd">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="calendarPopup">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="0">
-            <widget class="QLabel" name="lbl_payLast">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Last Payment</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="1">
-            <widget class="QDateTimeEdit" name="dTE_payLast">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="calendarPopup">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="0">
-            <widget class="QLabel" name="lbl_payTotal">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Total Due:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="1">
-            <widget class="QLineEdit" name="le_payTotal">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>28</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="0">
-            <widget class="QLabel" name="lbl_amtPaid">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Amount Paid:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="1">
-            <widget class="QLineEdit" name="le_amtPaid">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>28</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item row="8" column="0">
-            <widget class="QLabel" name="lbl_payAmtOwe">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Amount Owing:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="8" column="1">
-            <widget class="QLineEdit" name="le_payAmtOwe">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>28</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item row="9" column="1">
-            <spacer name="verticalSpacer_22">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="0" column="1">
-            <widget class="QComboBox" name="cbox_payClient">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>28</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QComboBox" name="cbox_paySpace">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>28</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QComboBox" name="cbox_payProg">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>28</height>
-              </size>
+              <string>Search</string>
              </property>
             </widget>
            </item>
           </layout>
          </item>
          <item row="2" column="0">
+          <widget class="QTableWidget" name="tw_clientResults">
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::SingleSelection</enum>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
+           </property>
+           <attribute name="horizontalHeaderMinimumSectionSize">
+            <number>10</number>
+           </attribute>
+           <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+            <bool>true</bool>
+           </attribute>
+           <attribute name="horizontalHeaderStretchLastSection">
+            <bool>true</bool>
+           </attribute>
+           <attribute name="verticalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
+          </widget>
+         </item>
+         <item row="3" column="0">
           <layout class="QHBoxLayout" name="horizontalLayout_45">
            <item>
             <widget class="QLabel" name="lbl_editUserWarning_4">
@@ -2180,42 +1914,6 @@ QWidget#wdg_transTotal {
              </property>
              <property name="text">
               <string>Create New</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btn_payUpdate">
-             <property name="minimumSize">
-              <size>
-               <width>75</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Update</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btn_payReset">
-             <property name="minimumSize">
-              <size>
-               <width>130</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Reset Changes</string>
              </property>
             </widget>
            </item>
@@ -7573,7 +7271,7 @@ QWidget#wdg_transTotal {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1390</width>
+     <width>1529</width>
      <height>26</height>
     </rect>
    </property>
