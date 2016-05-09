@@ -300,6 +300,46 @@ void DatabaseManager::printDbConnections()
 FILE DOWLOAD AND UPLOAD RELATED FUNCTIONS (END)
 ==============================================================================*/
 
+
+/*==============================================================================
+SEARCH CLIENT LIST FUNCTION(START)
+==============================================================================*/
+bool DatabaseManager::searchClientList(QSqlQuery* query, QString ClientId){
+    query =  new QSqlQuery(db);
+    query->prepare("SELECT FirstName, MiddleName, LastName, Dob FROM Client WHERE ClientId = :id");
+    query->bindValue("id", ClientId);
+
+    if(query->exec())
+        return true;
+    return false;
+}
+
+QSqlQuery DatabaseManager::searchClientInfo(QSqlQuery* selectquer, QString ClientId){
+    QSqlQuery selectquery(db);
+    selectquery.prepare("SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId = :id");
+    selectquery.bindValue("id", ClientId);
+
+    selectquery.exec();
+
+    printAll(selectquery);
+    return selectquery;
+    /*
+    if(!selectquery->exec())
+        return false;
+*/
+
+    /*
+    printAll(*query);
+    QSqlQuery test(db);
+    qDebug()<<"TEST: Query";
+    test.exec("SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId = "+ClientId);
+    printAll(test);
+    */
+    //return true;
+}
+
+
+
 /*==============================================================================
 PROFILE PICTURE UPLOAD AND DOWNLOAD RELATED FUNCTIONS (START)
 ==============================================================================*/
@@ -348,7 +388,6 @@ bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage
         if (registerFieldList->at(i) != NULL)
         {
             qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
-            query.addBindValue(registerFieldList->at(i));
         }
         else
         {
