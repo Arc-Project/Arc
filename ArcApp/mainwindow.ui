@@ -114,7 +114,7 @@ QWidget#wdg_transTotal {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>11</number>
     </property>
     <widget class="QWidget" name="mainMenu">
      <layout class="QGridLayout" name="gridLayout_5">
@@ -3559,10 +3559,10 @@ QWidget#wdg_transTotal {
            <item row="0" column="1">
             <widget class="QStackedWidget" name="swdg_reports">
              <property name="currentIndex">
-              <number>3</number>
+              <number>0</number>
              </property>
              <widget class="QWidget" name="page_3">
-              <layout class="QGridLayout" name="gridLayout_25">
+              <layout class="QGridLayout" name="gridLayout_34">
                <item row="0" column="0">
                 <layout class="QHBoxLayout" name="horizontalLayout_22">
                  <item>
@@ -3699,25 +3699,46 @@ QWidget#wdg_transTotal {
                 </layout>
                </item>
                <item row="1" column="0" colspan="2">
-                <layout class="QVBoxLayout" name="verticalLayout_3">
-                 <item>
-                  <widget class="QLabel" name="lbl_vacancies">
-                   <property name="font">
-                    <font>
-                     <pointsize>10</pointsize>
-                     <weight>75</weight>
-                     <bold>true</bold>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Vacancies</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QColumnView" name="cView_vacancies"/>
-                 </item>
-                </layout>
+                <widget class="QTabWidget" name="tabWidget">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
+                 <property name="currentIndex">
+                  <number>0</number>
+                 </property>
+                 <widget class="QWidget" name="tab">
+                  <attribute name="title">
+                   <string>Vacancies</string>
+                  </attribute>
+                  <layout class="QGridLayout" name="gridLayout_33">
+                   <item row="0" column="0">
+                    <widget class="QTableWidget" name="tableWidget_2"/>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="tab_3">
+                  <attribute name="title">
+                   <string>Lunches</string>
+                  </attribute>
+                  <layout class="QGridLayout" name="gridLayout_32">
+                   <item row="0" column="0">
+                    <widget class="QTableWidget" name="tableWidget"/>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="tab_2">
+                  <attribute name="title">
+                   <string>Wake-ups</string>
+                  </attribute>
+                  <layout class="QGridLayout" name="gridLayout_25">
+                   <item row="0" column="0">
+                    <widget class="QTableWidget" name="tableWidget_3"/>
+                   </item>
+                  </layout>
+                 </widget>
+                </widget>
                </item>
                <item row="2" column="0" colspan="2">
                 <layout class="QHBoxLayout" name="horizontalLayout_18">
@@ -3923,56 +3944,10 @@ QWidget#wdg_transTotal {
                  </item>
                 </layout>
                </item>
-               <item row="3" column="0" colspan="2">
-                <layout class="QHBoxLayout" name="horizontalLayout_16">
-                 <item>
-                  <layout class="QVBoxLayout" name="verticalLayout_6">
-                   <item>
-                    <widget class="QLabel" name="lbl_lunches">
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                       <weight>75</weight>
-                       <bold>true</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>Lunches</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QColumnView" name="cView_lunches"/>
-                   </item>
-                  </layout>
-                 </item>
-                 <item>
-                  <layout class="QVBoxLayout" name="verticalLayout_4">
-                   <item>
-                    <widget class="QLabel" name="lbl_vacancies_2">
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                       <weight>75</weight>
-                       <bold>true</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>Wake-ups</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QColumnView" name="cView_vacancies_2"/>
-                   </item>
-                  </layout>
-                 </item>
-                </layout>
-               </item>
               </layout>
               <zorder></zorder>
               <zorder></zorder>
-              <zorder></zorder>
+              <zorder>tabWidget</zorder>
              </widget>
              <widget class="QWidget" name="page_2">
               <layout class="QGridLayout" name="gridLayout_18">
