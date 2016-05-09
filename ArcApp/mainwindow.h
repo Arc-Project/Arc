@@ -26,6 +26,7 @@
 #include "booking.h"
 #include "transaction.h"
 #include "client.h"
+#include "shared.h"
 namespace Ui {
 class MainWindow;
 }
@@ -69,6 +70,13 @@ private slots:
     ==========================================================================*/
     QString browse();
 
+    /*==========================================================================
+    REPORT FUNCTIONS
+    ==========================================================================*/
+    void updateCheckoutView(QDate date = QDate::currentDate());
+    void updateVacancyView(QDate date = QDate::currentDate());
+    void updateLunchView(QDate date = QDate::currentDate());
+    void updateWakeupView(QDate date = QDate::currentDate());
 
 
     void on_bookButton_clicked();
