@@ -201,6 +201,12 @@ private slots:
 
     void on_tableWidget_3_doubleClicked(const QModelIndex &index);
 
+    void on_btn_listAllUsers_3_clicked();
+
+    void on_btn_listAllUsers_2_clicked();
+
+    void on_btn_searchUsers_2_clicked();
+
 private:
     Ui::MainWindow *ui;
     MainWindow * mw;

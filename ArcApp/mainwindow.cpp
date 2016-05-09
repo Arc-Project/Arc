@@ -1597,3 +1597,87 @@ void MainWindow::on_pushButton_6_clicked()
     }
 
 }
+
+// list all rooms
+void MainWindow::on_btn_listAllUsers_3_clicked()
+{
+
+//    QString ename = ui->le_users->text();
+//    ui->tableWidget_3->setRowCount(0);
+//    ui->tableWidget_3->clear();
+//    ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+
+//    QSqlQuery result = dbManager->execQuery("SELECT Username, Password, Role FROM Employee WHERE Username LIKE '%"+ ename +"%'");
+
+//    int numCols = result.record().count();
+//    ui->tableWidget_3->setColumnCount(numCols);
+//    ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
+//    int x = 0;
+//    int qt = result.size();
+//    qDebug() << qt;
+//    while (result.next()) {
+//        ui->tableWidget_3->insertRow(x);
+//        QStringList row;
+//        row << result.value(0).toString() << result.value(1).toString() << result.value(2).toString();
+//        for (int i = 0; i < 3; ++i)
+//        {
+//            ui->tableWidget_3->setItem(x, i, new QTableWidgetItem(row.at(i)));
+//        }
+//        x++;
+//    }
+}
+
+// list all programs
+void MainWindow::on_btn_listAllUsers_2_clicked()
+{
+    ui->tableWidget_2->setRowCount(0);
+    ui->tableWidget_2->clear();
+    ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
+
+    QSqlQuery result = dbManager->execQuery("SELECT ProgramCode, Description FROM Program");
+
+    int numCols = result.record().count();
+    ui->tableWidget_2->setColumnCount(numCols);
+    ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Program Code" << "Description");
+    int x = 0;
+    int qt = result.size();
+    qDebug() << qt;
+    while (result.next()) {
+        ui->tableWidget_2->insertRow(x);
+        QStringList row;
+        row << result.value(0).toString() << result.value(1).toString() << result.value(2).toString();
+        for (int i = 0; i < 2; ++i)
+        {
+            ui->tableWidget_2->setItem(x, i, new QTableWidgetItem(row.at(i)));
+        }
+        x++;
+    }
+}
+
+// search programs by code
+void MainWindow::on_btn_searchUsers_2_clicked()
+{
+    QString ename = ui->le_users_2->text();
+    ui->tableWidget_2->setRowCount(0);
+    ui->tableWidget_2->clear();
+    ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
+
+    QSqlQuery result = dbManager->execQuery("SELECT ProgramCode, Description FROM Program WHERE ProgramCode LIKE '%"+ ename +"%'");
+
+    int numCols = result.record().count();
+    ui->tableWidget_2->setColumnCount(numCols);
+    ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Program Code" << "Description");
+    int x = 0;
+    int qt = result.size();
+    qDebug() << qt;
+    while (result.next()) {
+        ui->tableWidget_2->insertRow(x);
+        QStringList row;
+        row << result.value(0).toString() << result.value(1).toString() << result.value(2).toString();
+        for (int i = 0; i < 2; ++i)
+        {
+            ui->tableWidget_2->setItem(x, i, new QTableWidgetItem(row.at(i)));
+        }
+        x++;
+    }
+}
