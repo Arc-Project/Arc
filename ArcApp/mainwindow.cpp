@@ -838,14 +838,21 @@ void MainWindow::on_btn_searchUsers_clicked()
 void MainWindow::on_tableView_3_doubleClicked(const QModelIndex &index)
 {
     // populate the fields on the right
-    QStandardItemModel* model = qobject_cast<QStandardItemModel*>(ui->tableView_3->model());
-    int row = index.row();
+    QString uname = ui->tableView_3->model()->data(ui->tableView_3->model()->index(index.row(), 0)).toString();
+    QString pw = ui->tableView_3->model()->data(ui->tableView_3->model()->index(index.row(), 1)).toString();
+    QString role = ui->tableView_3->model()->data(ui->tableView_3->model()->index(index.row(), 2)).toString();
+    qDebug() << uname;
+    qDebug() << pw;
+    qDebug() << role;
 
-    //QStandardItemModel* model = ui->tableView_3->model();
-    qDebug() << model;
-    QString uname = model->item(row, 0)->text();
-    QString pw = model->item(row, 1)->text();
-    QString role = model->item(row, 2)->text();
+//    QStandardItemModel* model = qobject_cast<QStandardItemModel*>(ui->tableView_3->model());
+//    int row = index.row();
+
+//     QStandardItemModel* model = ui->tableView_3->model();
+//    qDebug() << model;
+//    QString uname = model->item(row, 0)->text();
+//    QString pw = model->item(row, 1)->text();
+//    QString role = model->item(row, 2)->text();
 
     if (role == "STANDARD") {
         ui->comboBox->setCurrentIndex(0);
@@ -855,7 +862,8 @@ void MainWindow::on_tableView_3_doubleClicked(const QModelIndex &index)
         ui->comboBox->setCurrentIndex(2);
     }
 
-
+    ui->le_userName->setText(uname);
+    ui->le_password->setText(pw);
 }
 
 
