@@ -1838,7 +1838,7 @@ QWidget#wdg_transTotal {
           </layout>
          </item>
          <item row="1" column="0">
-          <widget class="QTableView" name="tableView_3">
+          <widget class="QTableWidget" name="tableWidget_3">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -1854,19 +1854,19 @@ QWidget#wdg_transTotal {
            <property name="showGrid">
             <bool>false</bool>
            </property>
+           <property name="rowCount">
+            <number>0</number>
+           </property>
+           <property name="columnCount">
+            <number>0</number>
+           </property>
            <attribute name="horizontalHeaderVisible">
             <bool>false</bool>
            </attribute>
-           <attribute name="horizontalHeaderCascadingSectionResizes">
-            <bool>true</bool>
+           <attribute name="horizontalHeaderMinimumSectionSize">
+            <number>1</number>
            </attribute>
-           <attribute name="horizontalHeaderDefaultSectionSize">
-            <number>175</number>
-           </attribute>
-           <attribute name="horizontalHeaderStretchLastSection">
-            <bool>true</bool>
-           </attribute>
-           <attribute name="verticalHeaderVisible">
+           <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
             <bool>false</bool>
            </attribute>
           </widget>
