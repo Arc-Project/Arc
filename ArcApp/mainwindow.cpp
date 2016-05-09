@@ -30,6 +30,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+/*==============================================================================
+DETECT WIDGET CHANGING SIGNAL
+==============================================================================*/
 //initialize widget when getinto that widget
 void MainWindow::initCurrentWidget(int idx){
     switch(idx){
@@ -78,9 +81,9 @@ void MainWindow::initCurrentWidget(int idx){
             //initcode
             break;
         case CLIENTREGISTER:    //WIDGET 10
-            if(curClientID == NULL || curClientID == "")
-                clear_client_register_form();
-            else
+            clear_client_register_form();
+            defaultRegisterOptions();           //combobox item add
+            if(curClientID != NULL)
                 read_curClient_Information(curClientID);
             break;
         default:
@@ -696,12 +699,25 @@ void MainWindow::read_curClient_Information(QString ClientId){
     ui->lineEdit_cl_lName->setText(clientInfo.value(3).toString());
     ui->dateEdit_cl_dob->setDate(QDate::fromString(clientInfo.value(4).toString(),"yyyy-MM-dd"));
     //balnace?
+    ui->comboBox_cl_caseWorker->setCurrentText(clientInfo.value(23).toString());
     ui->lineEdit_cl_SIN->setText(clientInfo.value(6).toString());
     ui->lineEdit_cl_GANum->setText(clientInfo.value(7).toString());
     ui->checkBox_cl_parolee->setChecked(clientInfo.value(8).toBool());
     ui->checkBox_cl_comm->setChecked(clientInfo.value(9).toBool());
     ui->dateEdit_cl_rulesign->setDate(QDate::fromString(clientInfo.value(10).toString(),"yyyy-MM-dd"));
 
+    //NEXT OF KIN FIELD
+    ui->lineEdit_cl_nok_name->setText(clientInfo.value(11).toString());
+    ui->lineEdit_cl_nok_relationship->setText(clientInfo.value(12).toString());
+    ui->lineEdit_cl_nok_loc->setText(clientInfo.value(13).toString());
+    ui->lineEdit_cl_nok_ContactNo->setText(clientInfo.value(14).toString());
+
+    //Physician
+    ui->lineEdit_cl_phys_name->setText(clientInfo.value(15).toString());
+    ui->lineEdit_cl_phys_ContactNo->setText(clientInfo.value(16).toString());
+
+    //WSDWorker
+    ui->comboBox_cl_status->setCurrentText(clientInfo.value(19).toString());
 }
 
 //Client information input and register click
@@ -785,20 +801,18 @@ void MainWindow::on_pushButton_search_client_clicked()
 {
     qDebug() <<"START SEARCH CLIENT";
     QString clientName = ui->lineEdit_search_clientName->text();
-    QString searchQuery = "SELECT ClientId, FirstName, LastName, Dob FROM Client WHERE LastName LIKE '%"+clientName+"%' OR FirstName Like '%"+clientName+"%'";
+    QString searchQuery = "SELECT ClientId, FirstName, LastName, Dob, Balance FROM Client WHERE LastName LIKE '%"+clientName+"%' OR FirstName Like '%"+clientName+"%'";
     QSqlQuery results = dbManager->execQuery(searchQuery);
     setup_searchClientTable(results);
 
     QSqlQuery resultQ;
+    /*
     if(!(dbManager->searchClientList(&resultQ, curClientID)))
     {
         qDebug()<<"Select Fail";
         return;
     }
-
-
-
-
+*/
     connect(ui->tableWidget_search_client, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(selected_client_info(int,int)));
     // dbManager->printAll(results);
 
@@ -813,12 +827,12 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
     ui->tableWidget_search_client->setColumnCount(colCnt);
     ui->tableWidget_search_client->clear();
 
-    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"FirstName"<<"LastName"<<"DateOfBirth");
+    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"FirstName"<<"LastName"<<"DateOfBirth"<<"Balance");
     int row =0;
     while(results.next()){
         ui->tableWidget_search_client->insertRow(row);
         for(int i =0; i<colCnt; i++){
-           ui->tableWidget_search_client->setItem(row, i, new QTableWidgetItem(results.value(i).toString()));
+            ui->tableWidget_search_client->setItem(row, i, new QTableWidgetItem(results.value(i).toString()));
             //qDebug() <<"row : "<<row << ", col: " << i << "item" << results.value(i).toString();
         }
         row++;
@@ -838,13 +852,15 @@ void MainWindow::selected_client_info(int nRow, int nCol)
         return;
 
     curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
-    QSqlQuery resultQ;
+/*    QSqlQuery resultQ;
 
     if(!(dbManager->searchClientList(&resultQ, curClientID)))
     {
         qDebug()<<"Select Fail";
         return;
     }
+
+*/
 //    dbManager->printAll(resultQ);
 
 
@@ -876,11 +892,12 @@ void MainWindow::displayClientInfoThread(QString val){
 
     qDebug()<<"DISPLAY THREAD: " <<val;
 
-    QString searchQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId =" + val;
+   // QString searchQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId =" + val;
+    QString searchQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance FROM Client WHERE ClientId =" + val;
     QSqlQuery clientInfoR = dbManager->execQuery(searchQuery);
 
     ui->tableWidget_clientInfo->setRowCount(0);
-    ui->tableWidget_clientInfo2->setRowCount(0);
+    //ui->tableWidget_clientInfo2->setRowCount(0);
 
     int column = clientInfoR.record().count();
     ui->tableWidget_clientInfo->setColumnCount(5);
@@ -888,33 +905,36 @@ void MainWindow::displayClientInfoThread(QString val){
 //    ui->tableWidget_clientInfo->setHorizontalHeaderLabels(QStringList()<<"FirstName"<< "MiddleName"<< "LastName" << "Dob" << "Balance"<< "SinNo" << "GaNo" << "IsParolee" << "AllowComm" << "DateRulesSigned");
 
     ui->tableWidget_clientInfo->setHorizontalHeaderLabels(QStringList()<<"FirstName"<< "MiddleName"<< "LastName" << "Dob" << "Balance");
-
+/*
     ui->tableWidget_clientInfo2->setColumnCount(5);
     ui->tableWidget_clientInfo2->clear();
     ui->tableWidget_clientInfo2->setHorizontalHeaderLabels(QStringList()<<"SinNo" << "GaNo" << "IsParolee" << "AllowComm" << "DateRulesSigned");
-
+*/
 
     int row = 0;
     int col = 0;
     while(clientInfoR.next()){
         ui->tableWidget_clientInfo->insertRow(row);
-        ui->tableWidget_clientInfo2->insertRow(row);
-        for(col =0; col <5; col++){
+      //  ui->tableWidget_clientInfo2->insertRow(row);
+        for(col =0; col <column; col++){
             ui->tableWidget_clientInfo->setItem(row, col, new QTableWidgetItem(clientInfoR.value(col).toString()));
-         //   qDebug() <<"row : "<<row << ", col: " << col << "item" << clientInfoR.value(col).toString();
+            qDebug() <<"row : "<<row << ", col: " << col << "item" << clientInfoR.value(col).toString();
         }
+        /*
         while(col<column){
             ui->tableWidget_clientInfo2->setItem(row, col-5, new QTableWidgetItem(clientInfoR.value(col).toString()));
          //   qDebug() <<"row : "<<row << ", col: " << col << "item" << clientInfoR.value(col).toString();
             col++;
         }
+        */
         row++;
     }
 
    ui->tableWidget_clientInfo->show();
-   ui->tableWidget_clientInfo2->show();
+ //  ui->tableWidget_clientInfo2->show();
 
    table_available = true;
+   qDebug()<<"no matter for tableview";
 }
 
 void MainWindow::displayPicThread(QString val)
@@ -1448,6 +1468,22 @@ void MainWindow::on_editRoom_clicked()
 void MainWindow::on_pushButton_bookRoom_clicked()
 {
     curClient = new Client();
+    int nRow = ui->tableWidget_search_client->currentRow();
+
+    curClientID = curClient->clientId = ui->tableWidget_search_client->item(nRow, 0)->text();
+    curClient->fName =  ui->tableWidget_search_client->item(nRow, 1)->text();
+    curClient->mName =  ui->tableWidget_search_client->item(nRow, 2)->text();
+    curClient->lName =  ui->tableWidget_search_client->item(nRow, 3)->text();
+    curClient->balance =  ui->tableWidget_search_client->item(nRow, 4)->text().toFloat();
+
+    curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
+
+/*
+    qDebug()<<"ID: " << curClientID << curClient->clientId;
+    qDebug()<<"NAME: " << curClient->fullName;
+    qDebug()<<"Balance: " << curClient->balance;
+*/
+    ui->stackedWidget->setCurrentIndex(BOOKINGLOOKUP);
 
 }
 
