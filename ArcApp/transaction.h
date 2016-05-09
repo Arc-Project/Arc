@@ -15,6 +15,7 @@ public:
     QString chequeNo;
     QString MSQ;
     QString issuedString;
+    QString transType;
 };
 
 #endif // TRANSACTION_H
