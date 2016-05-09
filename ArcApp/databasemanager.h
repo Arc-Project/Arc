@@ -68,6 +68,8 @@ public:
     QSqlQuery loginSelect(QString username, QString password);
     QSqlQuery findUser(QString username);
     QSqlQuery addNewEmployee(QString username, QString password, QString role);
+    QSqlQuery updateEmployee(QString username, QString password, QString role);
+    QSqlQuery deleteEmployee(QString username, QString password, QString role);
     QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);
     QSqlQuery getPrograms();
     bool insertBookingTable(QString insert);
@@ -75,6 +77,10 @@ public:
     bool addPayment(QString values);
     QSqlQuery getActiveBooking(QString user, bool userLook);
     bool downloadLatestCaseFile();
+    double getRoomCost(QString roomNo);
+    bool updateBooking(QString q);
+    QSqlQuery pullClient(QString id);
+    bool updateBalance(double d, QString id);
 
 private:
     QSqlDatabase db = QSqlDatabase::database();

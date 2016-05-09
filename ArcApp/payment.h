@@ -15,16 +15,22 @@ class payment : public QDialog
 
 public:
     explicit payment(QWidget *parent = 0);
-    payment(QWidget *parent, transaction * trans, double balance, double cost, Client * client, Booking * book);
+    payment(QWidget *parent, transaction * trans, double balance, double cost, Client * client, Booking * book, bool paymentType);
     ~payment();
     bool makePayment();
+    bool checkNumber(QString num);
 private slots:
     void on_paymentBox_accepted();
-    void addTransaction();
+    bool addTransaction();
     void on_addPaymentButton_clicked();
     void hideCheque();
     void showCheque();
     void on_paymentDrop_currentIndexChanged(const QString &arg1);
+    void doPayment();
+    void doRefund();
+    void on_paymentRadio_clicked();
+
+    void on_refundRadio_clicked();
 
 private:
     Ui::payment *ui;
