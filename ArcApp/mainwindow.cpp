@@ -58,6 +58,12 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case BOOKINGLOOKUP: //WIDGET 2
             //initcode
+            qDebug()<<"Client INFO";
+            if(curClient != NULL){
+                qDebug()<<"ID: " << curClientID << curClient->clientId;
+                qDebug()<<"NAME: " << curClient->fullName;
+                qDebug()<<"Balance: " << curClient->balance;
+            }
             break;
         case BOOKINGPAGE: //WIDGET 3
             //initcode
