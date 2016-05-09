@@ -661,6 +661,15 @@ QSqlQuery DatabaseManager::updateEmployee(QString username, QString password, QS
     return query;
 }
 
+QSqlQuery DatabaseManager::deleteEmployee(QString username, QString password, QString role) {
+    QSqlQuery query(db);
+
+    query.exec("DELETE FROM Employee WHERE Username='" + username
+               + "' AND Password='" + password + "' AND Role='" + role + "';");
+
+    return query;
+}
+
 
 QSqlQuery DatabaseManager::getActiveBooking(QString user, bool userLook){
     QSqlQuery query(db);
