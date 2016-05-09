@@ -13,15 +13,16 @@
 #include <QDesktopServices>
 #include <QStringList>
 #include <QMutex>
+typedef QList<int> IntList;
 
-class DatabaseManager// : public QObject
+class DatabaseManager : public QObject
 {
-    //Q_OBJECT
+    Q_OBJECT
 public:
     /*==========================================================================
     DATABASE MANAGER SETUP
     ==========================================================================*/
-    DatabaseManager();
+    explicit DatabaseManager(QObject *parent = 0);
     bool createDatabase(QSqlDatabase* tempDbPtr, QString connName);
 
     /*==========================================================================

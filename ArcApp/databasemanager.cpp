@@ -12,17 +12,19 @@ DATABASE MANAGER SETUP (START)
  * Constuctor
  * Sets up the default database connection.
  */
-DatabaseManager::DatabaseManager()
+DatabaseManager::DatabaseManager(QObject *parent) :
+    QObject(parent)
 {
-    if (DatabaseManager::createDatabase(&db, DEFAULT_SQL_CONN_NAME))
-    {
-        qDebug() << "connected";
-    }
-    else
-    {
-        qDebug() << "failed to connect";
-        //A pop up should alert user that there is no db connection (Maybe close the app)
-    }
+   qRegisterMetaType< IntList >( "IntList" );
+   if (DatabaseManager::createDatabase(&db, DEFAULT_SQL_CONN_NAME))
+   {
+       qDebug() << "connected";
+   }
+   else
+   {
+       qDebug() << "failed to connect";
+       //A pop up should alert user that there is no db connection (Maybe close the app)
+   }
 }
 
 /*
@@ -687,7 +689,7 @@ void DatabaseManager::getDailyReportStatsThread(QDate date)
          << DatabaseManager::getTotalCheckouts(date)
          << DatabaseManager::getEspVacancies(date)
          << DatabaseManager::getTotalVacancies(date);
-    //emit DatabaseManager::dailyReportStatsChanged(list);
+    emit DatabaseManager::dailyReportStatsChanged(list);
 }
 
 int DatabaseManager::getIntFromQuery(QString queryString)

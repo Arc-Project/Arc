@@ -6723,7 +6723,7 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="reportsSetCurrentDate_Btn">
+                  <widget class="QPushButton" name="reportsSetCurrentDate_btn">
                    <property name="minimumSize">
                     <size>
                      <width>110</width>
