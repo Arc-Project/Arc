@@ -85,7 +85,7 @@ private slots:
     void on_actionUpload_Display_Picture_triggered();
     void on_actionDownload_Profile_Picture_triggered();
     void displayPicThread();
-    //void updateDailyReportStats(QList<int> list);
+    void updateDailyReportStats(QList<int> list);
 
     /*==========================================================================
     DETECT WIDGET CHANGING SIGNAL
@@ -106,9 +106,8 @@ private slots:
     /*==========================================================================
     REPORTS -slots
     ==========================================================================*/
-//    void on_reportsDateSelectorGo_Btn_clicked();
-//    void on_reportsSetCurrentDate_Btn_clicked();
-
+    void on_reportsDateSelectorGo_Btn_clicked();
+    void on_reportsSetCurrentDate_Btn_clicked();
 
     
     
@@ -344,7 +343,7 @@ private:
     QDir dir;
     
     void setupReportsScreen();
-    //void updateReportTables(QDate date = QDate::currentDate());
+    void updateReportTables(QDate date = QDate::currentDate());
     void getDailyReportStats(QDate date = QDate::currentDate());
 
 };
