@@ -14,6 +14,7 @@ public:
     QString notes;
     QString chequeNo;
     QString MSQ;
+    QString issuedString;
 };
 
 #endif // TRANSACTION_H

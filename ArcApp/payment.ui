@@ -144,7 +144,7 @@
     </rect>
    </property>
   </widget>
-  <widget class="QLabel" name="label_6">
+  <widget class="QLabel" name="chequeLabel">
    <property name="geometry">
     <rect>
      <x>40</x>
@@ -157,7 +157,7 @@
     <string>Cheque Number</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_7">
+  <widget class="QLabel" name="dateLabel">
    <property name="geometry">
     <rect>
      <x>40</x>
