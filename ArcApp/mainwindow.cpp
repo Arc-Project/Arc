@@ -33,9 +33,9 @@ MainWindow::MainWindow(QWidget *parent) :
     setPcpVector();
 
     checkoutReport = new Report(this, ui->checkout_tableView, CHECKOUT_REPORT);
-//    vacancyReport = new Report(this, ui->vacancy_tableView, VACANCY_REPORT);
-//    lunchReport = new Report(this, ui->lunch_tableView, LUNCH_REPORT);
-//    wakeupReport = new Report(this, ui->wakeup_tableView, WAKEUP_REPORT);
+    vacancyReport = new Report(this, ui->vacancy_tableView, VACANCY_REPORT);
+    lunchReport = new Report(this, ui->lunch_tableView, LUNCH_REPORT);
+    wakeupReport = new Report(this, ui->wakeup_tableView, WAKEUP_REPORT);
 }
 
 MainWindow::~MainWindow()
@@ -98,7 +98,11 @@ void MainWindow::initCurrentWidget(int idx){
                 read_curClient_Information(curClientID);
             break;
         case 11:    //WIDGET 11
-            //MainWindow::updateCheckoutView();
+            checkoutReport->updateModel(QDate::currentDate());
+            vacancyReport->updateModel(QDate::currentDate());
+            lunchReport->updateModel(QDate::currentDate());
+            wakeupReport->updateModel(QDate::currentDate());
+            break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
 
@@ -163,10 +167,6 @@ void MainWindow::on_actionDB_Connection_triggered()
 void MainWindow::on_actionTest_Query_triggered()
 {
     ui->stackedWidget->setCurrentIndex(11);
-    checkoutReport->updateModel(QDate::currentDate());
-//    vacancyReport->updateModel(QDate::currentDate());
-//    lunchReport->updateModel(QDate::currentDate());
-//    wakeupReport->updateModel(QDate::currentDate());
 }
 
 
@@ -235,149 +235,149 @@ DEV TESTING AUXILIARY FUNCTIONS (END)
 /*==============================================================================
 REPORT FUNCTIONS (START)
 ==============================================================================*/
-void MainWindow::updateCheckoutModel()
-{
-    QSqlDatabase tempDb = QSqlDatabase::database();
-    QString connName = QString::number(dbManager->getDbCounter());
-    if (dbManager->createDatabase(&tempDb, connName))
-    {
-        QSqlQuery query;
-        if (dbManager->getCheckoutQuery(&query, QDate::currentDate()))
-        {
-//            int numCols = query.record().count();
+//void MainWindow::updateCheckoutModel()
+//{
+//    QSqlDatabase tempDb = QSqlDatabase::database();
+//    QString connName = QString::number(dbManager->getDbCounter());
+//    if (dbManager->createDatabase(&tempDb, connName))
+//    {
+//        QSqlQuery query;
+//        if (dbManager->getCheckoutQuery(&query, QDate::currentDate()))
+//        {
+////            int numCols = query.record().count();
 
-//            int numRows = 0;
-//            QStringList *data = new QStringList();
-//            while (query.next()) {
-//                numRows++;
-//                for (int i = 0; i < numCols; ++i)
+////            int numRows = 0;
+////            QStringList *data = new QStringList();
+////            while (query.next()) {
+////                numRows++;
+////                for (int i = 0; i < numCols; ++i)
+////                {
+////                    *data << query.value(i).toString();
+////                }
+////            }
+////            checkoutModel->setData(data, numRows, numCols);
+//            qDebug() << "test";
+//            //report->setData(&query);
+//        }
+//        tempDb.close();
+//        QSqlDatabase::removeDatabase(connName);
+//    }
+//}
+
+
+//void MainWindow::updateCheckoutView(QDate date)
+//{
+//    QSqlQuery query;
+
+//    ui->checkout_tableWidget->setRowCount(0);
+//    if (dbManager->getCheckoutQuery(&query, date))
+//    {
+//        int rowNo = 0;
+//        while(query.next())
+//        {
+//            ui->checkout_tableWidget->insertRow(rowNo);
+//            for (int colNo = 0; colNo < NUM_CHKOUT_TBL_COLS; ++colNo)
+//            {
+//                if (colNo == 5 || colNo == 6)
 //                {
-//                    *data << query.value(i).toString();
+//                    ui->checkout_tableWidget->setItem(rowNo, colNo,
+//                        new QTableWidgetItem("tbd"));
+//                }
+//                else if (colNo == 7)
+//                {
+//                    ui->checkout_tableWidget->setItem(rowNo, colNo,
+//                        new QTableWidgetItem(query.value(5).toString()));
+//                }
+//                else
+//                {
+//                    ui->checkout_tableWidget->setItem(rowNo, colNo,
+//                        new QTableWidgetItem(query.value(colNo).toString()));
 //                }
 //            }
-//            checkoutModel->setData(data, numRows, numCols);
-            qDebug() << "test";
-            //report->setData(&query);
-        }
-        tempDb.close();
-        QSqlDatabase::removeDatabase(connName);
-    }
-}
+//            rowNo++;
+//        }
+//    }
+//    else
+//    {
+//        qDebug() << "updateCheckoutView() failed";
+//    }
+//    ui->checkout_tableWidget->show();
+//}
 
+//void MainWindow::updateVacancyView(QDate date)
+//{
+//    QSqlQuery query;
+//    ui->vacancy_tableWidget->setRowCount(0);
+//    if (dbManager->getVacancyQuery(&query, date))
+//    {
+//        int rowNo = 0;
+//        while(query.next())
+//        {
+//            ui->vacancy_tableWidget->insertRow(rowNo);
+//            for (int colNo = 0; colNo < NUM_VACANCY_TBL_COLS; ++colNo)
+//            {
+//                ui->vacancy_tableWidget->setItem(rowNo,
+//                    colNo, new QTableWidgetItem(query.value(colNo).toString()));
+//            }
+//            rowNo++;
+//        }
+//    }
+//    else
+//    {
+//        qDebug() << "updateVacancyView() failed";
+//    }
+//    ui->vacancy_tableWidget->show();
+//}
 
-void MainWindow::updateCheckoutView(QDate date)
-{
-    QSqlQuery query;    
+//void MainWindow::updateLunchView(QDate date)
+//{
+//    QSqlQuery query;
+//    ui->lunch_tableWidget->setRowCount(0);
+//    if (dbManager->getLunchQuery(&query, date))
+//    {
+//        int rowNo = 0;
+//        while(query.next())
+//        {
+//            ui->lunch_tableWidget->insertRow(rowNo);
+//            for (int colNo = 0; colNo < NUM_LUNCH_TBL_COLS; ++colNo)
+//            {
+//                ui->lunch_tableWidget->setItem(rowNo,
+//                    colNo, new QTableWidgetItem(query.value(colNo).toString()));
+//            }
+//            rowNo++;
+//        }
+//    }
+//    else
+//    {
+//        qDebug() << "updateLunchView() failed";
+//    }
+//    ui->lunch_tableWidget->show();
+//}
 
-    ui->checkout_tableWidget->setRowCount(0);
-    if (dbManager->getCheckoutQuery(&query, date))
-    {
-        int rowNo = 0;
-        while(query.next())
-        {
-            ui->checkout_tableWidget->insertRow(rowNo);
-            for (int colNo = 0; colNo < NUM_CHKOUT_TBL_COLS; ++colNo)
-            {
-                if (colNo == 5 || colNo == 6)
-                {
-                    ui->checkout_tableWidget->setItem(rowNo, colNo,
-                        new QTableWidgetItem("tbd"));
-                }
-                else if (colNo == 7)
-                {
-                    ui->checkout_tableWidget->setItem(rowNo, colNo,
-                        new QTableWidgetItem(query.value(5).toString()));
-                }
-                else
-                {
-                    ui->checkout_tableWidget->setItem(rowNo, colNo,
-                        new QTableWidgetItem(query.value(colNo).toString()));
-                }
-            }
-            rowNo++;
-        }
-    }
-    else
-    {
-        qDebug() << "updateCheckoutView() failed";
-    }
-    ui->checkout_tableWidget->show();
-}
-
-void MainWindow::updateVacancyView(QDate date)
-{
-    QSqlQuery query;
-    ui->vacancy_tableWidget->setRowCount(0);
-    if (dbManager->getVacancyQuery(&query, date))
-    {
-        int rowNo = 0;
-        while(query.next())
-        {
-            ui->vacancy_tableWidget->insertRow(rowNo);
-            for (int colNo = 0; colNo < NUM_VACANCY_TBL_COLS; ++colNo)
-            {
-                ui->vacancy_tableWidget->setItem(rowNo,
-                    colNo, new QTableWidgetItem(query.value(colNo).toString()));
-            }
-            rowNo++;
-        }
-    }
-    else
-    {
-        qDebug() << "updateVacancyView() failed";
-    }
-    ui->vacancy_tableWidget->show();
-}
-
-void MainWindow::updateLunchView(QDate date)
-{
-    QSqlQuery query;
-    ui->lunch_tableWidget->setRowCount(0);
-    if (dbManager->getLunchQuery(&query, date))
-    {
-        int rowNo = 0;
-        while(query.next())
-        {
-            ui->lunch_tableWidget->insertRow(rowNo);
-            for (int colNo = 0; colNo < NUM_LUNCH_TBL_COLS; ++colNo)
-            {
-                ui->lunch_tableWidget->setItem(rowNo,
-                    colNo, new QTableWidgetItem(query.value(colNo).toString()));
-            }
-            rowNo++;
-        }
-    }
-    else
-    {
-        qDebug() << "updateLunchView() failed";
-    }
-    ui->lunch_tableWidget->show();
-}
-
-void MainWindow::updateWakeupView(QDate date)
-{
-    QSqlQuery query;
-    ui->wakeup_tableWidget->setRowCount(0);
-    if (dbManager->getWakeupQuery(&query, date))
-    {
-        int rowNo = 0;
-        while(query.next())
-        {
-            ui->wakeup_tableWidget->insertRow(rowNo);
-            for (int colNo = 0; colNo < NUM_WAKEUP_TBL_COLS; ++colNo)
-            {
-                ui->wakeup_tableWidget->setItem(rowNo,
-                    colNo, new QTableWidgetItem(query.value(colNo).toString()));
-            }
-            rowNo++;
-        }
-    }
-    else
-    {
-        qDebug() << "updateWakeupView() failed";
-    }
-    ui->wakeup_tableWidget->show();
-}
+//void MainWindow::updateWakeupView(QDate date)
+//{
+//    QSqlQuery query;
+//    ui->wakeup_tableWidget->setRowCount(0);
+//    if (dbManager->getWakeupQuery(&query, date))
+//    {
+//        int rowNo = 0;
+//        while(query.next())
+//        {
+//            ui->wakeup_tableWidget->insertRow(rowNo);
+//            for (int colNo = 0; colNo < NUM_WAKEUP_TBL_COLS; ++colNo)
+//            {
+//                ui->wakeup_tableWidget->setItem(rowNo,
+//                    colNo, new QTableWidgetItem(query.value(colNo).toString()));
+//            }
+//            rowNo++;
+//        }
+//    }
+//    else
+//    {
+//        qDebug() << "updateWakeupView() failed";
+//    }
+//    ui->wakeup_tableWidget->show();
+//}
 /*==============================================================================
 REPORT FUNCTIONS (END)
 ==============================================================================*/

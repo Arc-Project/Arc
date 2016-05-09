@@ -90,11 +90,11 @@ private slots:
     /*==========================================================================
     REPORT FUNCTIONS
     ==========================================================================*/
-    void updateCheckoutView(QDate date = QDate::currentDate());
-    void updateVacancyView(QDate date = QDate::currentDate());
-    void updateLunchView(QDate date = QDate::currentDate());
-    void updateWakeupView(QDate date = QDate::currentDate());
-    void updateCheckoutModel();
+//    void updateCheckoutView(QDate date = QDate::currentDate());
+//    void updateVacancyView(QDate date = QDate::currentDate());
+//    void updateLunchView(QDate date = QDate::currentDate());
+//    void updateWakeupView(QDate date = QDate::currentDate());
+//    void updateCheckoutModel();
 
 
     void on_bookButton_clicked();

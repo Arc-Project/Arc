@@ -114,7 +114,7 @@ QWidget#wdg_transTotal {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>11</number>
     </property>
     <widget class="QWidget" name="mainMenu">
      <layout class="QGridLayout" name="gridLayout_5">
@@ -796,7 +796,7 @@ QWidget#wdg_transTotal {
                   <x>10</x>
                   <y>20</y>
                   <width>301</width>
-                  <height>211</height>
+                  <height>218</height>
                  </rect>
                 </property>
                 <layout class="QFormLayout" name="formLayout_client_info_personal">
@@ -1145,7 +1145,7 @@ QWidget#wdg_transTotal {
                    <x>9</x>
                    <y>19</y>
                    <width>291</width>
-                   <height>101</height>
+                   <height>107</height>
                   </rect>
                  </property>
                  <layout class="QFormLayout" name="formLayout_14">
@@ -1547,7 +1547,7 @@ QWidget#wdg_transTotal {
                    <x>9</x>
                    <y>19</y>
                    <width>291</width>
-                   <height>48</height>
+                   <height>49</height>
                   </rect>
                  </property>
                  <layout class="QFormLayout" name="formLayout_18">
@@ -4074,8 +4074,8 @@ QWidget#wdg_transTotal {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>348</width>
-               <height>2218</height>
+               <width>989</width>
+               <height>2305</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_47">
@@ -6587,7 +6587,7 @@ QWidget#wdg_transTotal {
                   </font>
                  </property>
                  <property name="currentIndex">
-                  <number>0</number>
+                  <number>3</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -6595,48 +6595,7 @@ QWidget#wdg_transTotal {
                   </attribute>
                   <layout class="QGridLayout" name="gridLayout_36">
                    <item row="0" column="0">
-                    <widget class="QTableWidget" name="checkout_tableWidget">
-                     <column>
-                      <property name="text">
-                       <string>Client</string>
-                      </property>
-                     </column>
-                     <column>
-                      <property name="text">
-                       <string>Space #</string>
-                      </property>
-                     </column>
-                     <column>
-                      <property name="text">
-                       <string>Start Date</string>
-                      </property>
-                     </column>
-                     <column>
-                      <property name="text">
-                       <string>End Date</string>
-                      </property>
-                     </column>
-                     <column>
-                      <property name="text">
-                       <string>Program</string>
-                      </property>
-                     </column>
-                     <column>
-                      <property name="text">
-                       <string>Reason</string>
-                      </property>
-                     </column>
-                     <column>
-                      <property name="text">
-                       <string>ESP Days</string>
-                      </property>
-                     </column>
-                     <column>
-                      <property name="text">
-                       <string>Balance</string>
-                      </property>
-                     </column>
-                    </widget>
+                    <widget class="QTableView" name="checkout_tableView"/>
                    </item>
                   </layout>
                  </widget>
@@ -6646,18 +6605,7 @@ QWidget#wdg_transTotal {
                   </attribute>
                   <layout class="QGridLayout" name="gridLayout_33">
                    <item row="0" column="0">
-                    <widget class="QTableWidget" name="vacancy_tableWidget">
-                     <column>
-                      <property name="text">
-                       <string>Space #</string>
-                      </property>
-                     </column>
-                     <column>
-                      <property name="text">
-                       <string>Program</string>
-                      </property>
-                     </column>
-                    </widget>
+                    <widget class="QTableView" name="vacancy_tableView"/>
                    </item>
                   </layout>
                  </widget>
@@ -6667,23 +6615,7 @@ QWidget#wdg_transTotal {
                   </attribute>
                   <layout class="QGridLayout" name="gridLayout_32">
                    <item row="0" column="0">
-                    <widget class="QTableWidget" name="lunch_tableWidget">
-                     <column>
-                      <property name="text">
-                       <string>Client</string>
-                      </property>
-                     </column>
-                     <column>
-                      <property name="text">
-                       <string>Space #</string>
-                      </property>
-                     </column>
-                     <column>
-                      <property name="text">
-                       <string># Lunches</string>
-                      </property>
-                     </column>
-                    </widget>
+                    <widget class="QTableView" name="lunch_tableView"/>
                    </item>
                   </layout>
                  </widget>
@@ -6693,23 +6625,7 @@ QWidget#wdg_transTotal {
                   </attribute>
                   <layout class="QGridLayout" name="gridLayout_25">
                    <item row="0" column="0">
-                    <widget class="QTableWidget" name="wakeup_tableWidget">
-                     <column>
-                      <property name="text">
-                       <string>Client</string>
-                      </property>
-                     </column>
-                     <column>
-                      <property name="text">
-                       <string>Space #</string>
-                      </property>
-                     </column>
-                     <column>
-                      <property name="text">
-                       <string>Time</string>
-                      </property>
-                     </column>
-                    </widget>
+                    <widget class="QTableView" name="wakeup_tableView"/>
                    </item>
                   </layout>
                  </widget>
@@ -9978,7 +9894,7 @@ QWidget#wdg_transTotal {
      <x>0</x>
      <y>0</y>
      <width>1409</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="acceptDrops">
