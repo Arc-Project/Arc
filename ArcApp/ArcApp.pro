@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     transaction.cpp \
     payment.cpp \
     client.cpp \
-    mymodel.cpp
+    mymodel.cpp \
+    report.cpp
 
 HEADERS  += mainwindow.h \
     databasemanager.h \
@@ -38,7 +39,8 @@ HEADERS  += mainwindow.h \
     payment.h \
     client.h \
     mymodel.h \
-    casefile.h
+    casefile.h \
+    report.h
 
 FORMS    += mainwindow.ui \
     loginprompt.ui \

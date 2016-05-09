@@ -17,11 +17,9 @@ public:
     bool setData(QStringList* data, int rowCount, int colCount);
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 private:
-    QStringList* data1 = NULL;
+    QStringList* tableData = NULL;
     int rows = 0;
     int cols = 0;
-signals:
-    void editCompleted();
 };
 
 #endif // MYMODEL_H

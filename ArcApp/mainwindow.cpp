@@ -4,10 +4,10 @@
 #include <QTableView>
 #include <QItemDelegate>
 #include <QStandardItemModel>
-#include <QDebug>
 #include "payment.h"
 
-MyModel* checkoutModel;
+//MyModel* checkoutModel;
+Report *checkoutReport, *vacancyReport, *lunchReport, *wakeupReport;
 bool firstTime = true;
 std::vector<QTableWidget*> pcp_tables;
 //QSqlQuery resultssss;
@@ -28,12 +28,11 @@ MainWindow::MainWindow(QWidget *parent) :
     curBook = 0;
     trans = 0;
     setPcpVector();
-//    QStringList* data = new QStringList();
-//    *data << "11" << "12" << "21" << "22";
-//    checkoutModel = new MyModel(this, data, 2, 2);
-    checkoutModel = new MyModel(this);
-    ui->checkout_tableView->setModel(checkoutModel);
-    ui->checkout_tableView->show();
+
+    checkoutReport = new Report(this, ui->checkout_tableView, CHECKOUT_REPORT);
+//    vacancyReport = new Report(this, ui->vacancy_tableView, VACANCY_REPORT);
+//    lunchReport = new Report(this, ui->lunch_tableView, LUNCH_REPORT);
+//    wakeupReport = new Report(this, ui->wakeup_tableView, WAKEUP_REPORT);
 }
 
 MainWindow::~MainWindow()
@@ -161,43 +160,21 @@ void MainWindow::on_actionDB_Connection_triggered()
 {
     //QSqlQuery results= dbManager->selectAll("Test");
     //dbManager->printAll(results);
-    QStringList* data = new QStringList();
-    *data << "11" << "12" << "21" << "22";
-    checkoutModel->setData(data, 2, 2);
+//    QStringList* data = new QStringList();
+//    *data << "11" << "12" << "21" << "22";
+//    checkoutModel->setData(data, 2, 2);
 }
 
 void MainWindow::on_actionTest_Query_triggered()
 {
     ui->stackedWidget->setCurrentIndex(11);
-    QtConcurrent::run(this, &updateCheckoutModel);
+    checkoutReport->updateModel(QDate::currentDate());
+//    vacancyReport->updateModel(QDate::currentDate());
+//    lunchReport->updateModel(QDate::currentDate());
+//    wakeupReport->updateModel(QDate::currentDate());
 }
 
-void MainWindow::updateCheckoutModel()
-{
-    QSqlDatabase tempDb = QSqlDatabase::database();
-    QString connName = QString::number(dbManager->getDbCounter());
-    if (dbManager->createDatabase(&tempDb, connName))
-    {
-        QSqlQuery query;
-        if (dbManager->getCheckoutQuery(&query, QDate::currentDate()))
-        {
-            int numCols = query.record().count();
 
-            int numRows = 0;
-            QStringList *data = new QStringList();
-            while (query.next()) {
-                numRows++;
-                for (int i = 0; i < numCols; ++i)
-                {
-                    *data << query.value(i).toString();
-                }
-            }
-            checkoutModel->setData(data, numRows, numCols);
-        }
-        tempDb.close();
-        QSqlDatabase::removeDatabase(connName);
-    }
-}
 
 void MainWindow::on_actionFile_Upload_triggered()
 {
@@ -263,6 +240,36 @@ DEV TESTING AUXILIARY FUNCTIONS (END)
 /*==============================================================================
 REPORT FUNCTIONS (START)
 ==============================================================================*/
+void MainWindow::updateCheckoutModel()
+{
+    QSqlDatabase tempDb = QSqlDatabase::database();
+    QString connName = QString::number(dbManager->getDbCounter());
+    if (dbManager->createDatabase(&tempDb, connName))
+    {
+        QSqlQuery query;
+        if (dbManager->getCheckoutQuery(&query, QDate::currentDate()))
+        {
+//            int numCols = query.record().count();
+
+//            int numRows = 0;
+//            QStringList *data = new QStringList();
+//            while (query.next()) {
+//                numRows++;
+//                for (int i = 0; i < numCols; ++i)
+//                {
+//                    *data << query.value(i).toString();
+//                }
+//            }
+//            checkoutModel->setData(data, numRows, numCols);
+            qDebug() << "test";
+            //report->setData(&query);
+        }
+        tempDb.close();
+        QSqlDatabase::removeDatabase(connName);
+    }
+}
+
+
 void MainWindow::updateCheckoutView(QDate date)
 {
     QSqlQuery query;    

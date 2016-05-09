@@ -31,6 +31,7 @@
 #include "shared.h"
 #include "casefile.h"
 #include "mymodel.h"
+#include "report.h"
 
 namespace Ui {
 class MainWindow;

@@ -7,7 +7,7 @@ MyModel::MyModel(QObject *parent) :
 
 MyModel::MyModel(QObject *parent, QStringList* data, int rowCount, int colCount) :
   QAbstractTableModel(parent),
-  data1(data),
+  tableData(data),
   rows(rowCount),
   cols(colCount)
 {
@@ -26,8 +26,8 @@ int MyModel::columnCount(const QModelIndex &/*parent*/) const
 bool MyModel::setData(QStringList* data, int rowCount, int colCount)
 {
     beginResetModel();
-    delete data1;
-    data1 = data;
+    delete tableData;
+    tableData = data;
     rows = rowCount;
     cols = colCount;
     endResetModel();
@@ -37,7 +37,7 @@ QVariant MyModel::data(const QModelIndex &index, int role) const
 {
     if (role == Qt::DisplayRole)
     {
-      return data1->at(index.row() * cols + index.column());
+      return tableData->at(index.row() * cols + index.column());
     }
     return QVariant();
 }
