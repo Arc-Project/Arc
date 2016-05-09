@@ -27,6 +27,8 @@ public:
     ==========================================================================*/
     QSqlQuery selectAll(QString tableName);
     void printAll(QSqlQuery queryResults);
+    QSqlQuery execQuery(QString queryString);
+    bool execQuery(QSqlQuery* query, QString queryString);
 
     /*==========================================================================
     FILE DOWNLOAD AND UPLOAD RELATED FUNCTIONS
@@ -46,9 +48,16 @@ public:
     void uploadProfilePicThread(QString strFilePath);
     bool downloadProfilePic(QImage* img);
     bool downloadProfilePic2(QImage* img,QString idNum);
-
     void testuploadProfilePicThread(QString strFilePath);
     bool insertClientWithPic(QStringList* registerFieldList, QImage* profilePic);
+
+    /*==========================================================================
+    REPORT QUERYS
+    ==========================================================================*/
+    bool getCheckoutQuery(QSqlQuery* queryResults, QDate date);
+    bool getVacancyQuery(QSqlQuery* queryResults, QDate date);
+    bool getLunchQuery(QSqlQuery* queryResults, QDate date);
+    bool getWakeupQuery(QSqlQuery* queryResults, QDate date);
 
     void print();
     QSqlQuery loginSelect(QString username, QString password);
@@ -58,14 +67,13 @@ public:
     QSqlQuery getPrograms();
     bool insertBookingTable(QString insert);
     int getMonthlyRate(QString room, QString program);
-    QSqlQuery execQuery(QString queryString);
     bool addPayment(QString values);
     QSqlQuery getActiveBooking(QString user, bool userLook);
     bool downloadLatestCaseFile();
 
 private:
     QSqlDatabase db = QSqlDatabase::database();
-    static QMutex mutex;  
+    static QMutex mutex;
     static int dbCounter;
 };
 
