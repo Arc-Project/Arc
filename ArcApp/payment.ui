@@ -33,7 +33,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>50</y>
+     <y>90</y>
      <width>91</width>
      <height>16</height>
     </rect>
@@ -42,11 +42,11 @@
     <string>Payment Type</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_2">
+  <widget class="QLabel" name="payRefLabel">
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>100</y>
+     <y>140</y>
      <width>131</width>
      <height>16</height>
     </rect>
@@ -59,7 +59,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>150</y>
+     <y>190</y>
      <width>121</width>
      <height>16</height>
     </rect>
@@ -72,7 +72,7 @@
    <property name="geometry">
     <rect>
      <x>340</x>
-     <y>50</y>
+     <y>90</y>
      <width>121</width>
      <height>16</height>
     </rect>
@@ -85,7 +85,7 @@
    <property name="geometry">
     <rect>
      <x>340</x>
-     <y>100</y>
+     <y>140</y>
      <width>121</width>
      <height>16</height>
     </rect>
@@ -98,7 +98,7 @@
    <property name="geometry">
     <rect>
      <x>150</x>
-     <y>100</y>
+     <y>140</y>
      <width>81</width>
      <height>22</height>
     </rect>
@@ -108,7 +108,7 @@
    <property name="geometry">
     <rect>
      <x>150</x>
-     <y>50</y>
+     <y>90</y>
      <width>73</width>
      <height>22</height>
     </rect>
@@ -138,7 +138,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>170</y>
+     <y>210</y>
      <width>291</width>
      <height>87</height>
     </rect>
@@ -148,7 +148,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>290</y>
+     <y>330</y>
      <width>111</width>
      <height>16</height>
     </rect>
@@ -161,7 +161,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>330</y>
+     <y>370</y>
      <width>71</width>
      <height>16</height>
     </rect>
@@ -174,7 +174,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>370</y>
+     <y>410</y>
      <width>121</width>
      <height>20</height>
     </rect>
@@ -187,7 +187,7 @@
    <property name="geometry">
     <rect>
      <x>150</x>
-     <y>330</y>
+     <y>370</y>
      <width>110</width>
      <height>22</height>
     </rect>
@@ -200,7 +200,7 @@
    <property name="geometry">
     <rect>
      <x>150</x>
-     <y>290</y>
+     <y>330</y>
      <width>113</width>
      <height>22</height>
     </rect>
@@ -210,7 +210,7 @@
    <property name="geometry">
     <rect>
      <x>480</x>
-     <y>50</y>
+     <y>90</y>
      <width>55</width>
      <height>16</height>
     </rect>
@@ -223,7 +223,7 @@
    <property name="geometry">
     <rect>
      <x>480</x>
-     <y>100</y>
+     <y>140</y>
      <width>55</width>
      <height>16</height>
     </rect>
@@ -249,7 +249,7 @@
    <property name="geometry">
     <rect>
      <x>340</x>
-     <y>150</y>
+     <y>190</y>
      <width>111</width>
      <height>16</height>
     </rect>
@@ -262,7 +262,7 @@
    <property name="geometry">
     <rect>
      <x>480</x>
-     <y>150</y>
+     <y>190</y>
      <width>55</width>
      <height>16</height>
     </rect>
@@ -270,6 +270,45 @@
    <property name="text">
     <string>TextLabel</string>
    </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>20</y>
+     <width>381</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Action</string>
+   </property>
+   <widget class="QRadioButton" name="paymentRadio">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>95</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Payment</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="refundRadio">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>20</y>
+      <width>95</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Refund</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>
