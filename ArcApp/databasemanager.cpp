@@ -403,6 +403,14 @@ bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage
     }
     return false;
 }
+QSqlQuery DatabaseManager::getTransactions(QDate start, QDate end){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Transac WHERE Date >= '" + start.toString(Qt::ISODate) + "' AND Date <= '"
+            + end.toString(Qt::ISODate) + "'";
+    qDebug() << q;
+    query.exec(q);
+    return query;
+}
 
 void DatabaseManager::uploadProfilePicThread(QString strFilePath)
 {
@@ -692,3 +700,18 @@ QSqlQuery DatabaseManager::getActiveBooking(QString user, bool userLook){
     return query;
 }
 
+QSqlQuery DatabaseManager::AddProgram(QString pcode, QString pdesc) {
+    QSqlQuery query(db);
+
+    query.exec("INSERT INTO Program VALUES('" + pcode +"', '" + pdesc + "')");
+
+    return query;
+}
+
+QSqlQuery DatabaseManager::updateProgram(QString pcode, QString pdesc) {
+    QSqlQuery query(db);
+
+    query.exec("UPDATE Program SET Description='" + pdesc + "' WHERE ProgramCode='" + pcode + "'");
+
+    return query;
+}

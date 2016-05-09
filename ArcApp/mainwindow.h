@@ -29,6 +29,7 @@
 #include "transaction.h"
 #include "client.h"
 #include "shared.h"
+#include "casefile.h"
 namespace Ui {
 class MainWindow;
 }
@@ -57,6 +58,7 @@ public:
 private slots:
 
     void initCurrentWidget(int idx);
+    void resizeEvent(QResizeEvent *event);
     /*==========================================================================
     DEV TESTING BUTTONS
     ==========================================================================*/
@@ -168,8 +170,6 @@ private slots:
 
     void on_btn_searchUsers_clicked();
 
-    void on_tableView_3_doubleClicked(const QModelIndex &index);
-
     void on_pushButton_CaseFiles_clicked();
 
     void on_EditRoomsButton_clicked();
@@ -197,9 +197,72 @@ private slots:
 
     void on_btn_displayUser_clicked();
 
-    void on_tableView_3_clicked(const QModelIndex &index);
-
     void on_pushButton_6_clicked();
+
+    void on_tableWidget_3_clicked(const QModelIndex &index);
+
+    void on_tableWidget_3_doubleClicked(const QModelIndex &index);
+
+    void on_cbox_payDateRange_activated(int index);
+    void popManagePayment();
+    void populateATable(QTableWidget * table, QStringList headers, QStringList items, QSqlQuery result, bool stretch);
+
+    void on_btn_payListAllUsers_clicked();
+    void on_btn_listAllUsers_3_clicked();
+
+    void on_btn_listAllUsers_2_clicked();
+
+    void on_btn_searchUsers_2_clicked();
+
+    void on_pushButton_25_clicked();
+
+    void on_tableWidget_2_clicked(const QModelIndex &index);
+
+    void on_pushButton_3_clicked();
+
+    /*==========================================================================
+    CASE FILES FUNCTIONS
+    ==========================================================================*/
+    void on_btn_caseFilter_clicked();
+
+    void populate_tw_caseFiles(QStringList filter = QStringList());
+
+    void on_tw_caseFiles_cellDoubleClicked(int row, int column);
+
+    void on_tw_pcpRela_itemChanged(QTableWidgetItem *item);
+
+    void setPcpVector();
+
+    void on_btn_pcpRela_clicked();
+
+    void on_btn_pcpEdu_clicked();
+
+    void on_btn_pcpSub_clicked();
+
+    void on_btn_pcpAcc_clicked();
+
+    void on_btn_pcpLife_clicked();
+
+    void on_btn_pcpMent_clicked();
+
+    void on_btn_pcpPhy_clicked();
+
+    void on_btn_pcpLeg_clicked();
+
+    void on_btn_pcpAct_clicked();
+
+    void on_btn_pcpTrad_clicked();
+
+    void on_btn_pcpOther_clicked();
+
+    void on_btn_pcpKey_clicked();
+
+    void on_btn_createNewUser_2_clicked();
+
+    void on_pushButton_24_clicked();
+
+
+
 
 private:
     Ui::MainWindow *ui;
@@ -211,6 +274,8 @@ private:
     
     bool pic_available = true;
     bool table_available = true;
+
+    QDir dir;
 
 };
 

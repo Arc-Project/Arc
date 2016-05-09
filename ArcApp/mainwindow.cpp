@@ -8,6 +8,7 @@
 #include "payment.h"
 
 bool firstTime = true;
+std::vector<QTableWidget*> pcp_tables;
 //QSqlQuery resultssss;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -16,13 +17,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     setCentralWidget(ui->stackedWidget);
 
-
     ui->makeBookingButton->hide();
     //mw = this;
 
     //default signal of stackedWidget
     //detect if the widget is changed
     connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(initCurrentWidget(int)));
+    curClient = 0;
+    curBook = 0;
+    trans = 0;
+    setPcpVector();
 }
 
 MainWindow::~MainWindow()
@@ -30,6 +34,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+/*==============================================================================
+DETECT WIDGET CHANGING SIGNAL
+==============================================================================*/
 //initialize widget when getinto that widget
 void MainWindow::initCurrentWidget(int idx){
     switch(idx){
@@ -55,12 +62,18 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case BOOKINGLOOKUP: //WIDGET 2
             //initcode
+            qDebug()<<"Client INFO";
+            if(curClient != NULL){
+                qDebug()<<"ID: " << curClientID << curClient->clientId;
+                qDebug()<<"NAME: " << curClient->fullName;
+                qDebug()<<"Balance: " << curClient->balance;
+            }
             break;
         case BOOKINGPAGE: //WIDGET 3
             //initcode
             break;
         case PAYMENTPAGE: //WIDGET 4
-            //initcode
+            popManagePayment();
             break;
         case ADMINPAGE: //WIDGET 5
             //initcode
@@ -78,9 +91,9 @@ void MainWindow::initCurrentWidget(int idx){
             //initcode
             break;
         case CLIENTREGISTER:    //WIDGET 10
-            if(curClientID == NULL || curClientID == "")
-                clear_client_register_form();
-            else
+            clear_client_register_form();
+            defaultRegisterOptions();           //combobox item add
+            if(curClientID != NULL)
                 read_curClient_Information(curClientID);
             break;
         default:
@@ -91,7 +104,7 @@ void MainWindow::initCurrentWidget(int idx){
 
 void MainWindow::on_bookButton_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(BOOKINGLOOKUP);
+    ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
     ui->startDateEdit->setDate(QDate::currentDate());
     ui->endDateEdit->setDate(QDate::currentDate().addDays(1));
     if(firstTime){
@@ -415,7 +428,7 @@ void MainWindow::on_makeBookingButton_clicked()
     if(row == - 1){
         return;
     }
-    curClient = new Client();
+    //curClient = new Client();
     popClientFromId("1");
     ui->stackedWidget->setCurrentIndex(BOOKINGPAGE);
     int rowNum = ui->bookingTable->columnCount();
@@ -696,12 +709,25 @@ void MainWindow::read_curClient_Information(QString ClientId){
     ui->lineEdit_cl_lName->setText(clientInfo.value(3).toString());
     ui->dateEdit_cl_dob->setDate(QDate::fromString(clientInfo.value(4).toString(),"yyyy-MM-dd"));
     //balnace?
+    ui->comboBox_cl_caseWorker->setCurrentText(clientInfo.value(23).toString());
     ui->lineEdit_cl_SIN->setText(clientInfo.value(6).toString());
     ui->lineEdit_cl_GANum->setText(clientInfo.value(7).toString());
     ui->checkBox_cl_parolee->setChecked(clientInfo.value(8).toBool());
     ui->checkBox_cl_comm->setChecked(clientInfo.value(9).toBool());
     ui->dateEdit_cl_rulesign->setDate(QDate::fromString(clientInfo.value(10).toString(),"yyyy-MM-dd"));
 
+    //NEXT OF KIN FIELD
+    ui->lineEdit_cl_nok_name->setText(clientInfo.value(11).toString());
+    ui->lineEdit_cl_nok_relationship->setText(clientInfo.value(12).toString());
+    ui->lineEdit_cl_nok_loc->setText(clientInfo.value(13).toString());
+    ui->lineEdit_cl_nok_ContactNo->setText(clientInfo.value(14).toString());
+
+    //Physician
+    ui->lineEdit_cl_phys_name->setText(clientInfo.value(15).toString());
+    ui->lineEdit_cl_phys_ContactNo->setText(clientInfo.value(16).toString());
+
+    //WSDWorker
+    ui->comboBox_cl_status->setCurrentText(clientInfo.value(19).toString());
 }
 
 //Client information input and register click
@@ -785,20 +811,18 @@ void MainWindow::on_pushButton_search_client_clicked()
 {
     qDebug() <<"START SEARCH CLIENT";
     QString clientName = ui->lineEdit_search_clientName->text();
-    QString searchQuery = "SELECT ClientId, FirstName, LastName, Dob FROM Client WHERE LastName LIKE '%"+clientName+"%' OR FirstName Like '%"+clientName+"%'";
+    QString searchQuery = "SELECT ClientId, FirstName, LastName, Dob, Balance FROM Client WHERE LastName LIKE '%"+clientName+"%' OR FirstName Like '%"+clientName+"%'";
     QSqlQuery results = dbManager->execQuery(searchQuery);
     setup_searchClientTable(results);
 
     QSqlQuery resultQ;
+    /*
     if(!(dbManager->searchClientList(&resultQ, curClientID)))
     {
         qDebug()<<"Select Fail";
         return;
     }
-
-
-
-
+*/
     connect(ui->tableWidget_search_client, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(selected_client_info(int,int)));
     // dbManager->printAll(results);
 
@@ -813,12 +837,12 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
     ui->tableWidget_search_client->setColumnCount(colCnt);
     ui->tableWidget_search_client->clear();
 
-    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"FirstName"<<"LastName"<<"DateOfBirth");
+    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"FirstName"<<"LastName"<<"DateOfBirth"<<"Balance");
     int row =0;
     while(results.next()){
         ui->tableWidget_search_client->insertRow(row);
         for(int i =0; i<colCnt; i++){
-           ui->tableWidget_search_client->setItem(row, i, new QTableWidgetItem(results.value(i).toString()));
+            ui->tableWidget_search_client->setItem(row, i, new QTableWidgetItem(results.value(i).toString()));
             //qDebug() <<"row : "<<row << ", col: " << i << "item" << results.value(i).toString();
         }
         row++;
@@ -838,13 +862,15 @@ void MainWindow::selected_client_info(int nRow, int nCol)
         return;
 
     curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
-    QSqlQuery resultQ;
+/*    QSqlQuery resultQ;
 
     if(!(dbManager->searchClientList(&resultQ, curClientID)))
     {
         qDebug()<<"Select Fail";
         return;
     }
+
+*/
 //    dbManager->printAll(resultQ);
 
 
@@ -876,7 +902,8 @@ void MainWindow::displayClientInfoThread(QString val){
 
     qDebug()<<"DISPLAY THREAD: " <<val;
 
-    QString searchQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId =" + val;
+    QString searchQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned, status FROM Client WHERE ClientId =" + val;
+   // QString searchQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance FROM Client WHERE ClientId =" + val;
     QSqlQuery clientInfoR = dbManager->execQuery(searchQuery);
 
     ui->tableWidget_clientInfo->setRowCount(0);
@@ -888,33 +915,52 @@ void MainWindow::displayClientInfoThread(QString val){
 //    ui->tableWidget_clientInfo->setHorizontalHeaderLabels(QStringList()<<"FirstName"<< "MiddleName"<< "LastName" << "Dob" << "Balance"<< "SinNo" << "GaNo" << "IsParolee" << "AllowComm" << "DateRulesSigned");
 
     ui->tableWidget_clientInfo->setHorizontalHeaderLabels(QStringList()<<"FirstName"<< "MiddleName"<< "LastName" << "Dob" << "Balance");
-
+/*
     ui->tableWidget_clientInfo2->setColumnCount(5);
     ui->tableWidget_clientInfo2->clear();
     ui->tableWidget_clientInfo2->setHorizontalHeaderLabels(QStringList()<<"SinNo" << "GaNo" << "IsParolee" << "AllowComm" << "DateRulesSigned");
-
-
+*/
+    QSqlQuery clientInfo = clientInfoR;
     int row = 0;
     int col = 0;
+/*
     while(clientInfoR.next()){
         ui->tableWidget_clientInfo->insertRow(row);
-        ui->tableWidget_clientInfo2->insertRow(row);
+ //       ui->tableWidget_clientInfo2->insertRow(row);
         for(col =0; col <5; col++){
             ui->tableWidget_clientInfo->setItem(row, col, new QTableWidgetItem(clientInfoR.value(col).toString()));
-         //   qDebug() <<"row : "<<row << ", col: " << col << "item" << clientInfoR.value(col).toString();
+        //    qDebug() <<"row : "<<row << ", col: " << col << "item" << clientInfoR.value(col).toString();
         }
+
         while(col<column){
             ui->tableWidget_clientInfo2->setItem(row, col-5, new QTableWidgetItem(clientInfoR.value(col).toString()));
          //   qDebug() <<"row : "<<row << ", col: " << col << "item" << clientInfoR.value(col).toString();
             col++;
         }
+
         row++;
     }
 
    ui->tableWidget_clientInfo->show();
-   ui->tableWidget_clientInfo2->show();
+*/
+//   ui->tableWidget_clientInfo2->show();
+
+   clientInfo.next();
+   ui->lineEdit_cl_info_fName->setText(clientInfo.value(0).toString());
+   ui->lineEdit_cl_info_mName->setText(clientInfo.value(1).toString());
+   ui->lineEdit_cl_info_lName->setText(clientInfo.value(2).toString());
+   ui->lineEdit_cl_info_dob->setText(clientInfo.value(3).toString());
+   ui->label_cl_info_balance_amt->setText(clientInfo.value(4).toString());
+   ui->lineEdit_cl_info_SIN->setText(clientInfo.value(5).toString());
+   ui->lineEdit_cl_info_gaNum->setText(clientInfo.value(6).toString());
+   ui->lineEdit_cl_info_payrolee->setText(clientInfo.value(7).toBool()?"YES":"NO");
+   ui->lineEdit_cl_info_allowComm->setText(clientInfo.value(8).toBool()?"Yes":"NO");
+   ui->lineEdit_cl_info_ruleSignDate->setText(clientInfo.value(9).toString());
+   ui->label_cl_info_status->setText(clientInfo.value(10).toString());
 
    table_available = true;
+
+
 }
 
 void MainWindow::displayPicThread(QString val)
@@ -931,15 +977,6 @@ void MainWindow::displayPicThread(QString val)
     pic_available=true;
     }
 }
-
-
-
-
-
-
-
-
-
 
 void MainWindow::on_paymentButton_2_clicked()
 {
@@ -986,6 +1023,18 @@ void MainWindow::on_btn_createNewUser_clicked()
 
         if (numrows != 0) {
             ui->lbl_editUserWarning->setText("Employee added");
+            QStandardItemModel * model = new QStandardItemModel(0,0);
+            model->clear();
+            ui->tableWidget_3->clear();
+            ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+            ui->tableWidget_3->setColumnCount(3);
+            ui->tableWidget_3->setRowCount(0);
+            ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
+
+            ui->comboBox->setCurrentIndex(0);
+            ui->le_userName->setText("");
+            ui->le_password->setText("");
+            ui->le_users->setText("");
         } else {
             ui->lbl_editUserWarning->setText("Something went wrong - please try again");
         }
@@ -1156,43 +1205,82 @@ void MainWindow::popBookFromRow(){
 
 void MainWindow::on_btn_listAllUsers_clicked()
 {
-    QSqlQuery query = dbManager->execQuery("SELECT Username, Password, Role FROM Employee");
-    QSqlQueryModel *model = new QSqlQueryModel();
-    model->setQuery(query);
-    ui->tableView_3->setModel(model);
-    ui->tableView_3->horizontalHeader()->model()->setHeaderData(0, Qt::Horizontal, "Username");
-    ui->tableView_3->horizontalHeader()->model()->setHeaderData(1, Qt::Horizontal, "Password");
-    ui->tableView_3->horizontalHeader()->model()->setHeaderData(2, Qt::Horizontal, "Role");
+    ui->tableWidget_3->setRowCount(0);
+    ui->tableWidget_3->clear();
+    ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+
+    QSqlQuery result = dbManager->execQuery("SELECT Username, Password, Role FROM Employee");
+
+    int numCols = result.record().count();
+    ui->tableWidget_3->setColumnCount(numCols);
+    ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
+    int x = 0;
+    int qt = result.size();
+    qDebug() << qt;
+    while (result.next()) {
+        ui->tableWidget_3->insertRow(x);
+        QStringList row;
+        row << result.value(0).toString() << result.value(1).toString() << result.value(2).toString();
+        for (int i = 0; i < 3; ++i)
+        {
+            ui->tableWidget_3->setItem(x, i, new QTableWidgetItem(row.at(i)));
+        }
+        x++;
+    }
 }
 
 void MainWindow::on_btn_searchUsers_clicked()
 {
     QString ename = ui->le_users->text();
-    QSqlQuery results = dbManager->execQuery("SELECT Username, Password, Role FROM Employee WHERE Username LIKE '%"+ ename +"%'");
-    QSqlQueryModel *model = new QSqlQueryModel();
-    model->setQuery(results);
+    ui->tableWidget_3->setRowCount(0);
+    ui->tableWidget_3->clear();
+    ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
 
-    ui->tableView_3->setModel(model);
-    ui->tableView_3->horizontalHeader()->model()->setHeaderData(0, Qt::Horizontal, "Username");
-    ui->tableView_3->horizontalHeader()->model()->setHeaderData(1, Qt::Horizontal, "Password");
-    ui->tableView_3->horizontalHeader()->model()->setHeaderData(2, Qt::Horizontal, "Role");
+    QSqlQuery result = dbManager->execQuery("SELECT Username, Password, Role FROM Employee WHERE Username LIKE '%"+ ename +"%'");
+
+    int numCols = result.record().count();
+    ui->tableWidget_3->setColumnCount(numCols);
+    ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
+    int x = 0;
+    int qt = result.size();
+    qDebug() << qt;
+    while (result.next()) {
+        ui->tableWidget_3->insertRow(x);
+        QStringList row;
+        row << result.value(0).toString() << result.value(1).toString() << result.value(2).toString();
+        for (int i = 0; i < 3; ++i)
+        {
+            ui->tableWidget_3->setItem(x, i, new QTableWidgetItem(row.at(i)));
+        }
+        x++;
+    }
+
+
+//    QSqlQuery results = dbManager->execQuery("SELECT Username, Password, Role FROM Employee WHERE Username LIKE '%"+ ename +"%'");
+//    QSqlQueryModel *model = new QSqlQueryModel();
+//    model->setQuery(results);
+
+////    ui->tableWidget_3->setModel(model);
+////    ui->tableWidget_3->horizontalHeader()->model()->setHeaderData(0, Qt::Horizontal, "Username");
+////    ui->tableWidget_3->horizontalHeader()->model()->setHeaderData(1, Qt::Horizontal, "Password");
+////    ui->tableWidget_3->horizontalHeader()->model()->setHeaderData(2, Qt::Horizontal, "Role");
 }
 
 // double clicked employee
-void MainWindow::on_tableView_3_doubleClicked(const QModelIndex &index)
+void MainWindow::on_tableWidget_3_doubleClicked(const QModelIndex &index)
 {
     // populate the fields on the right
-    QString uname = ui->tableView_3->model()->data(ui->tableView_3->model()->index(index.row(), 0)).toString();
-    QString pw = ui->tableView_3->model()->data(ui->tableView_3->model()->index(index.row(), 1)).toString();
-    QString role = ui->tableView_3->model()->data(ui->tableView_3->model()->index(index.row(), 2)).toString();
+    QString uname = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 0)).toString();
+    QString pw = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 1)).toString();
+    QString role = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 2)).toString();
     qDebug() << uname;
     qDebug() << pw;
     qDebug() << role;
 
-//    QStandardItemModel* model = qobject_cast<QStandardItemModel*>(ui->tableView_3->model());
+//    QStandardItemModel* model = qobject_cast<QStandardItemModel*>(ui->tableWidget_3->model());
 //    int row = index.row();
 
-//     QStandardItemModel* model = ui->tableView_3->model();
+//     QStandardItemModel* model = ui->tableWidget_3->model();
 //    qDebug() << model;
 //    QString uname = model->item(row, 0)->text();
 //    QString pw = model->item(row, 1)->text();
@@ -1214,6 +1302,15 @@ void MainWindow::on_tableView_3_doubleClicked(const QModelIndex &index)
 void MainWindow::on_pushButton_CaseFiles_clicked()
 {
     ui->stackedWidget->setCurrentIndex(CASEFILE);
+
+    double width = ui->tw_pcpRela->size().width();
+
+    for (auto x: pcp_tables){
+        x->resizeRowsToContents();
+        x->setColumnWidth(0, width*0.41);
+        x->setColumnWidth(1, width*0.41);
+        x->setColumnWidth(2, width*0.16);
+    }
 }
 
 void MainWindow::on_EditRoomsButton_clicked()
@@ -1406,6 +1503,22 @@ void MainWindow::on_editRoom_clicked()
 void MainWindow::on_pushButton_bookRoom_clicked()
 {
     curClient = new Client();
+    int nRow = ui->tableWidget_search_client->currentRow();
+
+    curClientID = curClient->clientId = ui->tableWidget_search_client->item(nRow, 0)->text();
+    curClient->fName =  ui->tableWidget_search_client->item(nRow, 1)->text();
+    curClient->mName =  ui->tableWidget_search_client->item(nRow, 2)->text();
+    curClient->lName =  ui->tableWidget_search_client->item(nRow, 3)->text();
+    curClient->balance =  ui->tableWidget_search_client->item(nRow, 4)->text().toFloat();
+
+    curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
+
+/*
+    qDebug()<<"ID: " << curClientID << curClient->clientId;
+    qDebug()<<"NAME: " << curClient->fullName;
+    qDebug()<<"Balance: " << curClient->balance;
+*/
+    ui->stackedWidget->setCurrentIndex(BOOKINGLOOKUP);
 
 }
 
@@ -1436,6 +1549,18 @@ void MainWindow::on_pushButton_4_clicked()
 
         if (numrows != 0) {
             ui->lbl_editUserWarning->setText("Employee Updated");
+            QStandardItemModel * model = new QStandardItemModel(0,0);
+            model->clear();
+            ui->tableWidget_3->clear();
+            ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+            ui->tableWidget_3->setColumnCount(3);
+            ui->tableWidget_3->setRowCount(0);
+            ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
+
+            ui->comboBox->setCurrentIndex(0);
+            ui->le_userName->setText("");
+            ui->le_password->setText("");
+            ui->le_users->setText("");
         } else {
             ui->lbl_editUserWarning->setText("Something went wrong - Please try again");
         }
@@ -1452,27 +1577,32 @@ void MainWindow::on_btn_displayUser_clicked()
 {
     QStandardItemModel * model = new QStandardItemModel(0,0);
     model->clear();
-    ui->tableView_3->setModel(model);
+    ui->tableWidget_3->clear();
+    ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+    ui->tableWidget_3->setColumnCount(3);
+    ui->tableWidget_3->setRowCount(0);
+    ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
 
     ui->comboBox->setCurrentIndex(0);
     ui->le_userName->setText("");
     ui->le_password->setText("");
+    ui->le_users->setText("");
 }
 
-void MainWindow::on_tableView_3_clicked(const QModelIndex &index)
+void MainWindow::on_tableWidget_3_clicked(const QModelIndex &index)
 {
     // populate the fields on the right
-    QString uname = ui->tableView_3->model()->data(ui->tableView_3->model()->index(index.row(), 0)).toString();
-    QString pw = ui->tableView_3->model()->data(ui->tableView_3->model()->index(index.row(), 1)).toString();
-    QString role = ui->tableView_3->model()->data(ui->tableView_3->model()->index(index.row(), 2)).toString();
+    QString uname = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 0)).toString();
+    QString pw = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 1)).toString();
+    QString role = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 2)).toString();
     qDebug() << uname;
     qDebug() << pw;
     qDebug() << role;
 
-//    QStandardItemModel* model = qobject_cast<QStandardItemModel*>(ui->tableView_3->model());
+//    QStandardItemModel* model = qobject_cast<QStandardItemModel*>(ui->tableWidget_3->model());
 //    int row = index.row();
 
-//     QStandardItemModel* model = ui->tableView_3->model();
+//     QStandardItemModel* model = ui->tableWidget_3->model();
 //    qDebug() << model;
 //    QString uname = model->item(row, 0)->text();
 //    QString pw = model->item(row, 1)->text();
@@ -1515,6 +1645,18 @@ void MainWindow::on_pushButton_6_clicked()
 
         if (numrows != 0) {
             ui->lbl_editUserWarning->setText("Employee Deleted");
+            QStandardItemModel * model = new QStandardItemModel(0,0);
+            model->clear();
+            ui->tableWidget_3->clear();
+            ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+            ui->tableWidget_3->setColumnCount(3);
+            ui->tableWidget_3->setRowCount(0);
+            ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
+
+            ui->comboBox->setCurrentIndex(0);
+            ui->le_userName->setText("");
+            ui->le_password->setText("");
+            ui->le_users->setText("");
         } else {
             ui->lbl_editUserWarning->setText("Employee Not Found");
         }
@@ -1525,4 +1667,472 @@ void MainWindow::on_pushButton_6_clicked()
         return;
     }
 
+}
+void MainWindow::popManagePayment(){
+    QStringList dropItems;
+    ui->cbox_payDateRange->clear();
+
+    dropItems << "" << "Today" << "Last 3 Days" << "This Month" <<  QDate::longMonthName(QDate::currentDate().month() - 1) << QDate::longMonthName(QDate::currentDate().month() - 2);
+    ui->cbox_payDateRange->addItems(dropItems);
+}
+
+void MainWindow::on_cbox_payDateRange_activated(int index)
+{
+    QString startDate;
+    QDate endDate = QDate::currentDate();
+    QDate hold = QDate::currentDate();
+    int days, move;
+    switch(index){
+    case 1:
+        startDate = QDate::currentDate().toString(Qt::ISODate);
+        break;
+    case 2:
+        hold = hold.addDays(-3);
+        startDate = hold.toString(Qt::ISODate);
+        break;
+    case 3:
+        days = hold.daysInMonth();
+        days = days - hold.day();
+        endDate = hold.addDays(days);
+        move = hold.day() -1;
+        hold = hold.addDays(move * -1);
+        qDebug() << hold;
+        break;
+    case 4:
+        hold = hold.addMonths(-1);
+        days = hold.daysInMonth();
+
+        move = hold.day() -1;
+        days = days - hold.day();
+        endDate = hold.addDays(days);
+        hold = hold.addDays(move * -1);
+        qDebug() << hold;
+        break;
+    case 5:
+        hold = hold.addMonths(-2);
+        days = hold.daysInMonth();
+
+        move = hold.day() -1;
+        days = days - hold.day();
+        endDate = hold.addDays(days);
+        hold = hold.addDays(move * -1);
+        qDebug() << hold;
+        break;
+    }
+    QStringList heads;
+    QStringList cols;
+    QSqlQuery tempSql = dbManager->getTransactions(hold, endDate);
+    heads << "Date" << "Amount" << "Type" << "Method" << "Notes << MSQ";
+    cols << "Date" << "Amount" << "TransType" << "Type" << "Notes" << "MSQ";
+    populateATable(ui->mpTable, heads, cols, tempSql, false);
+
+}
+
+//PARAMS - The table, list of headers, list of table column names, the sqlquery result, STRETCH - stretch mode true/false
+void MainWindow::populateATable(QTableWidget * table, QStringList headers, QStringList items, QSqlQuery result, bool stretch){
+    table->clear();
+    if(headers.length() != items.length())
+        return;
+
+    if(stretch)
+        table->horizontalHeader()->setStretchLastSection(true);
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    table->verticalHeader()->hide();
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->setSelectionMode(QAbstractItemView::SingleSelection);
+    int colCount = headers.size();
+    table->setColumnCount(colCount);
+    table->setHorizontalHeaderLabels(headers);
+    int x = 0;
+    while(result.next()){
+        table->insertRow(x);
+        for(int i = 0; i < colCount; i++){
+            table->setItem(x, i, new QTableWidgetItem(result.value(items.at(i)).toString()));
+
+
+        }
+
+
+        x++;
+    }
+}
+
+void MainWindow::on_btn_payListAllUsers_clicked()
+{
+    QStringList cols;
+    QStringList heads;
+    QDate sDate = QDate::fromString("1970-01-01", "yyyy-MM-dd");
+    QDate eDate = QDate::fromString("2222-01-01", "yyyy-MM-dd");
+    QSqlQuery tempSql = dbManager->getTransactions(sDate, eDate);
+    heads << "Date" << "Amount" << "Type" << "Method" << "Notes" << "MSQ";
+    cols << "Date" << "Amount" << "TransType" << "Type" << "Notes" << "MSQ";
+    populateATable(ui->mpTable, heads, cols, tempSql, false);
+
+// list all rooms
+}
+void MainWindow::on_btn_listAllUsers_3_clicked()
+{
+
+//    QString ename = ui->le_users->text();
+//    ui->tableWidget_3->setRowCount(0);
+//    ui->tableWidget_3->clear();
+//    ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+
+//    QSqlQuery result = dbManager->execQuery("SELECT Username, Password, Role FROM Employee WHERE Username LIKE '%"+ ename +"%'");
+
+//    int numCols = result.record().count();
+//    ui->tableWidget_3->setColumnCount(numCols);
+//    ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
+//    int x = 0;
+//    int qt = result.size();
+//    qDebug() << qt;
+//    while (result.next()) {
+//        ui->tableWidget_3->insertRow(x);
+//        QStringList row;
+//        row << result.value(0).toString() << result.value(1).toString() << result.value(2).toString();
+//        for (int i = 0; i < 3; ++i)
+//        {
+//            ui->tableWidget_3->setItem(x, i, new QTableWidgetItem(row.at(i)));
+//        }
+//        x++;
+//    }
+}
+
+// list all programs
+void MainWindow::on_btn_listAllUsers_2_clicked()
+{
+    ui->tableWidget_2->setRowCount(0);
+    ui->tableWidget_2->clear();
+    ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
+
+    QSqlQuery result = dbManager->execQuery("SELECT ProgramCode, Description FROM Program");
+
+    int numCols = result.record().count();
+    ui->tableWidget_2->setColumnCount(numCols);
+    ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Program Code" << "Description");
+    int x = 0;
+    int qt = result.size();
+    qDebug() << qt;
+    while (result.next()) {
+        ui->tableWidget_2->insertRow(x);
+        QStringList row;
+        row << result.value(0).toString() << result.value(1).toString();
+        for (int i = 0; i < 2; ++i)
+        {
+            ui->tableWidget_2->setItem(x, i, new QTableWidgetItem(row.at(i)));
+        }
+        x++;
+    }
+}
+
+// search programs by code
+void MainWindow::on_btn_searchUsers_2_clicked()
+{
+    QString ename = ui->le_users_2->text();
+    ui->tableWidget_2->setRowCount(0);
+    ui->tableWidget_2->clear();
+    ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
+
+    QSqlQuery result = dbManager->execQuery("SELECT ProgramCode, Description FROM Program WHERE ProgramCode LIKE '%"+ ename +"%'");
+
+    int numCols = result.record().count();
+    ui->tableWidget_2->setColumnCount(numCols);
+    ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Program Code" << "Description");
+    int x = 0;
+    int qt = result.size();
+    qDebug() << qt;
+    while (result.next()) {
+        ui->tableWidget_2->insertRow(x);
+        QStringList row;
+        row << result.value(0).toString() << result.value(1).toString();
+        for (int i = 0; i < 2; ++i)
+        {
+            ui->tableWidget_2->setItem(x, i, new QTableWidgetItem(row.at(i)));
+        }
+        x++;
+    }
+}
+
+// delete program
+void MainWindow::on_pushButton_25_clicked()
+{
+    QString pcode = ui->le_userName_2->text();
+
+    if (pcode.length() == 0) {
+        ui->lbl_editUserWarning->setText("Please make sure a valid Program is selected");
+        return;
+    }
+
+    QSqlQuery queryResults = dbManager->execQuery("DELETE FROM Program WHERE ProgramCode='" + pcode + "'");
+    int numrows = queryResults.numRowsAffected();
+
+    if (numrows != 0) {
+        ui->lbl_editProgWarning->setText("Program Deleted");
+        QStandardItemModel * model = new QStandardItemModel(0,0);
+        model->clear();
+        ui->tableWidget_2->clear();
+        ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
+        ui->tableWidget_2->setColumnCount(2);
+        ui->tableWidget_2->setRowCount(0);
+        ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Program Code" << "Description");
+
+        ui->comboBox->setCurrentIndex(0);
+        ui->le_userName->setText("");
+        ui->le_password->setText("");
+        ui->le_users->setText("");
+    } else {
+        ui->lbl_editProgWarning->setText("Program Not Found");
+    }
+    return;
+}
+
+// program clicked + selected
+void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
+{
+    // populate the fields on the right
+    QString pcode = ui->tableWidget_2->model()->data(ui->tableWidget_2->model()->index(index.row(), 0)).toString();
+    QString description = ui->tableWidget_2->model()->data(ui->tableWidget_2->model()->index(index.row(), 1)).toString();
+
+    ui->le_userName_2->setText(pcode);
+    ui->textEdit->setText(description);
+}
+
+// set case files directory
+void MainWindow::on_pushButton_3_clicked()
+{
+    QString tempDir = QFileDialog::getExistingDirectory(
+                    this,
+                    tr("Select Directory"),
+                    "C://"
+                );
+//    qDebug() << curClientID;
+    if (!tempDir.isEmpty()) {
+        dir = tempDir;
+        populate_tw_caseFiles();
+        ui->le_caseDir->setText(dir.path());
+    }
+    connect(ui->tw_caseFiles, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(on_tw_caseFiles_cellDoubleClicked(int,int)), Qt::UniqueConnection);
+}
+
+// open case file in external reader
+void MainWindow::on_tw_caseFiles_cellDoubleClicked(int row, int column)
+{
+    qDebug() << QUrl::fromLocalFile(dir.absoluteFilePath(ui->tw_caseFiles->item(row, column)->text())) << "at" << row << " " << column;
+    QDesktopServices::openUrl(QUrl::fromLocalFile(dir.absoluteFilePath(ui->tw_caseFiles->item(row, column)->text())));
+}
+
+// filter file names
+void MainWindow::on_btn_caseFilter_clicked()
+{
+    qDebug() << "filter button clicked, filter with" << ui->le_caseFilter->text();
+    QStringList filter = (QStringList() << "*"+(ui->le_caseFilter->text())+"*");
+    populate_tw_caseFiles(filter);
+}
+
+void MainWindow::populate_tw_caseFiles(QStringList filter){
+    int i = 0;
+    dir.setNameFilters(filter);
+    for (auto x : dir.entryList(QDir::Files)) {
+        qDebug() << x;
+        ui->tw_caseFiles->setRowCount(i+1);
+        ui->tw_caseFiles->setItem(i++,0, new QTableWidgetItem(x));
+        ui->tw_caseFiles->resizeColumnsToContents();
+    }
+    if (i > 0) {
+        ui->btn_caseFilter->setEnabled(true);
+    }
+
+}
+
+// create new program button
+void MainWindow::on_btn_createNewUser_2_clicked()
+{
+    QString pcode = ui->le_userName_2->text();
+    QString pdesc = ui->textEdit->toPlainText();
+
+    if (pcode.length() == 0) {
+        ui->lbl_editProgWarning->setText("Please Enter a Program Code");
+        return;
+    }
+
+    if (pdesc.length() == 0) {
+        ui->lbl_editProgWarning->setText("Please Enter a Program Description");
+        return;
+    }
+
+    QSqlQuery queryResults = dbManager->execQuery("SELECT * FROM Program WHERE ProgramCode='" + pcode + "'");
+    int numrows = queryResults.numRowsAffected();
+
+    if (numrows == 1) {
+        ui->lbl_editProgWarning->setText("Program code in use");
+        return;
+    } else {
+        QSqlQuery qr = dbManager->AddProgram(pcode, pdesc);
+        if (qr.numRowsAffected() == 1) {
+            ui->lbl_editProgWarning->setText("Program Added");
+            QStandardItemModel * model = new QStandardItemModel(0,0);
+            model->clear();
+            ui->tableWidget_2->clear();
+            ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
+            ui->tableWidget_2->setColumnCount(2);
+            ui->tableWidget_2->setRowCount(0);
+            ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Program Code" << "Description");
+
+            ui->comboBox->setCurrentIndex(0);
+            ui->le_userName->setText("");
+            ui->le_password->setText("");
+            ui->le_users->setText("");
+        } else {
+            ui->lbl_editProgWarning->setText("Program not added - please try again.");
+        }
+    }
+}
+
+// update program
+void MainWindow::on_pushButton_24_clicked()
+{
+    QString pcode = ui->le_userName_2->text();
+    QString pdesc = ui->textEdit->toPlainText();
+
+    if (pcode.length() == 0) {
+        ui->lbl_editProgWarning->setText("Please Enter a Program Code");
+        return;
+    }
+
+    if (pdesc.length() == 0) {
+        ui->lbl_editProgWarning->setText("Please Enter a Program Description");
+        return;
+    }
+
+    QSqlQuery queryResults = dbManager->execQuery("SELECT * FROM Program WHERE ProgramCode='" + pcode + "'");
+    int numrows = queryResults.numRowsAffected();
+
+    if (numrows != 1) {
+        ui->lbl_editProgWarning->setText("Enter a valid program code to update");
+        return;
+    } else {
+        QSqlQuery qr = dbManager->updateProgram(pcode, pdesc);
+        if (qr.numRowsAffected() == 1) {
+            ui->lbl_editProgWarning->setText("Program Updated");
+            QStandardItemModel * model = new QStandardItemModel(0,0);
+            model->clear();
+            ui->tableWidget_2->clear();
+            ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
+            ui->tableWidget_2->setColumnCount(2);
+            ui->tableWidget_2->setRowCount(0);
+            ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Program Code" << "Description");
+
+            ui->comboBox->setCurrentIndex(0);
+            ui->le_userName->setText("");
+            ui->le_password->setText("");
+            ui->le_users->setText("");
+        } else {
+            ui->lbl_editProgWarning->setText("Program not updated - please try again.");
+        }
+    }
+}
+
+
+void MainWindow::resizeEvent(QResizeEvent *event) {
+    double width = ui->tw_pcpRela->size().width();
+    for (auto x: pcp_tables){
+        x->resizeRowsToContents();
+        x->setColumnWidth(0, width*0.41);
+        x->setColumnWidth(1, width*0.41);
+        x->setColumnWidth(2, width*0.16);
+    }
+}
+
+void MainWindow::on_tw_pcpRela_itemChanged(QTableWidgetItem *item)
+{
+    for (auto x: pcp_tables){
+        x->resizeRowsToContents();
+    }
+}
+
+void MainWindow::setPcpVector(){
+    pcp_tables.push_back(ui->tw_pcpAcco);
+    pcp_tables.push_back(ui->tw_pcpAct);
+    pcp_tables.push_back(ui->tw_pcpEdu);
+    pcp_tables.push_back(ui->tw_pcpLeg);
+    pcp_tables.push_back(ui->tw_pcpLife);
+    pcp_tables.push_back(ui->tw_pcpMent);
+    pcp_tables.push_back(ui->tw_pcpOther);
+    pcp_tables.push_back(ui->tw_pcpPhy);
+    pcp_tables.push_back(ui->tw_pcpPpl);
+    pcp_tables.push_back(ui->tw_pcpRela);
+    pcp_tables.push_back(ui->tw_pcpSub);
+    pcp_tables.push_back(ui->tw_pcpTrad);
+}
+
+void MainWindow::on_btn_pcpRela_clicked()
+{
+    ui->tw_pcpRela->insertRow(0);
+    ui->tw_pcpRela->setMinimumHeight(ui->tw_pcpRela->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpEdu_clicked()
+{
+    ui->tw_pcpEdu->insertRow(0);
+    ui->tw_pcpEdu->setMinimumHeight(ui->tw_pcpEdu->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpSub_clicked()
+{
+    ui->tw_pcpSub->insertRow(0);
+    ui->tw_pcpSub->setMinimumHeight(ui->tw_pcpSub->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpAcc_clicked()
+{
+    ui->tw_pcpAcco->insertRow(0);
+    ui->tw_pcpAcco->setMinimumHeight(ui->tw_pcpAcco->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpLife_clicked()
+{
+    ui->tw_pcpLife->insertRow(0);
+    ui->tw_pcpLife->setMinimumHeight(ui->tw_pcpLife->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpMent_clicked()
+{
+    ui->tw_pcpMent->insertRow(0);
+    ui->tw_pcpMent->setMinimumHeight(ui->tw_pcpMent->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpPhy_clicked()
+{
+    ui->tw_pcpPhy->insertRow(0);
+    ui->tw_pcpPhy->setMinimumHeight(ui->tw_pcpPhy->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpLeg_clicked()
+{
+    ui->tw_pcpLeg->insertRow(0);
+    ui->tw_pcpLeg->setMinimumHeight(ui->tw_pcpLeg->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpAct_clicked()
+{
+    ui->tw_pcpAct->insertRow(0);
+    ui->tw_pcpAct->setMinimumHeight(ui->tw_pcpAct->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpTrad_clicked()
+{
+    ui->tw_pcpTrad->insertRow(0);
+    ui->tw_pcpTrad->setMinimumHeight(ui->tw_pcpTrad->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpOther_clicked()
+{
+    ui->tw_pcpOther->insertRow(0);
+    ui->tw_pcpOther->setMinimumHeight(ui->tw_pcpOther->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpKey_clicked()
+{
+    ui->tw_pcpPpl->insertRow(0);
+    ui->tw_pcpPpl->setMinimumHeight(ui->tw_pcpPpl->minimumHeight()+35);
 }
