@@ -1408,3 +1408,86 @@ void MainWindow::on_pushButton_bookRoom_clicked()
     curClient = new Client();
 
 }
+
+// update employee button
+void MainWindow::on_pushButton_4_clicked()
+{
+    // obtain username and pw and role from UI
+    QString uname = ui->le_userName->text();
+    QString pw = ui->le_password->text();
+
+    if (uname.length() == 0) {
+        ui->lbl_editUserWarning->setText("Enter a Username");
+        return;
+    }
+
+    if (pw.length() == 0) {
+        ui->lbl_editUserWarning->setText("Enter a Password");
+        return;
+    }
+
+    // first, check to make sure the username is taken
+    QSqlQuery queryResults = dbManager->findUser(uname);
+    int numrows1 = queryResults.numRowsAffected();
+
+    if (numrows1 == 1) {
+        QSqlQuery queryResults = dbManager->updateEmployee(uname, pw, ui->comboBox->currentText());
+        int numrows = queryResults.numRowsAffected();
+
+        if (numrows != 0) {
+            ui->lbl_editUserWarning->setText("Employee Updated");
+        } else {
+            ui->lbl_editUserWarning->setText("Something went wrong - Please try again");
+        }
+
+        return;
+    } else {
+        ui->lbl_editUserWarning->setText("Employee Not Found");
+        return;
+    }
+}
+
+// Clear button
+void MainWindow::on_btn_displayUser_clicked()
+{
+    QStandardItemModel * model = new QStandardItemModel(0,0);
+    model->clear();
+    ui->tableView_3->setModel(model);
+
+
+
+    ui->comboBox->setCurrentIndex(0);
+    ui->le_userName->setText("");
+    ui->le_password->setText("");
+}
+
+void MainWindow::on_tableView_3_clicked(const QModelIndex &index)
+{
+    // populate the fields on the right
+    QString uname = ui->tableView_3->model()->data(ui->tableView_3->model()->index(index.row(), 0)).toString();
+    QString pw = ui->tableView_3->model()->data(ui->tableView_3->model()->index(index.row(), 1)).toString();
+    QString role = ui->tableView_3->model()->data(ui->tableView_3->model()->index(index.row(), 2)).toString();
+    qDebug() << uname;
+    qDebug() << pw;
+    qDebug() << role;
+
+//    QStandardItemModel* model = qobject_cast<QStandardItemModel*>(ui->tableView_3->model());
+//    int row = index.row();
+
+//     QStandardItemModel* model = ui->tableView_3->model();
+//    qDebug() << model;
+//    QString uname = model->item(row, 0)->text();
+//    QString pw = model->item(row, 1)->text();
+//    QString role = model->item(row, 2)->text();
+
+    if (role == "STANDARD") {
+        ui->comboBox->setCurrentIndex(0);
+    } else if (role == "CASE WORKER") {
+        ui->comboBox->setCurrentIndex(1);
+    } else if (role == "ADMIN") {
+        ui->comboBox->setCurrentIndex(2);
+    }
+
+    ui->le_userName->setText(uname);
+    ui->le_password->setText(pw);
+}
