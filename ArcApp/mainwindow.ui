@@ -114,7 +114,7 @@ QWidget#wdg_transTotal {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>11</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="mainMenu">
      <layout class="QGridLayout" name="gridLayout_5">
@@ -617,6 +617,12 @@ QWidget#wdg_transTotal {
       </item>
       <item row="1" column="1">
        <widget class="QTableWidget" name="tableWidget_clientInfo2">
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+        <property name="showDropIndicator" stdset="0">
+         <bool>false</bool>
+        </property>
         <property name="dragDropOverwriteMode">
          <bool>false</bool>
         </property>

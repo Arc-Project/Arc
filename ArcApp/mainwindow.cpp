@@ -33,14 +33,50 @@ MainWindow::~MainWindow()
 //initialize widget when getinto that widget
 void MainWindow::initCurrentWidget(int idx){
     switch(idx){
-        case 0:
+            case MAINMENU:  //WIDGET 0
             curClientID = "";
             break;
-        case 1:
-            qDebug()<<"Client loopup Widget ON";
-          //  ui->tableView_search_client->reset();
+        case CLIENTLOOKUP:  //WIDGET 1
+            if(ui->tableWidget_search_client->columnCount()>0){
+            //init client search table
+                ui->tableWidget_search_client->setColumnCount(0);
+                ui->tableWidget_search_client->clear();
+            }
+            if(ui->tableWidget_clientInfo->columnCount()>0){
+            //init client info table
+                ui->tableWidget_clientInfo->setColumnCount(0);
+                ui->tableWidget_clientInfo->clear();
+                ui->tableWidget_clientInfo2->setColumnCount(0);
+                ui->tableWidget_clientInfo2->clear();
+            }
+            //initimageview
+
             break;
-        case 10:
+        case BOOKINGLOOKUP: //WIDGET 2
+            //initcode
+            break;
+        case BOOKINGPAGE: //WIDGET 3
+            //initcode
+            break;
+        case PAYMENTPAGE: //WIDGET 4
+            //initcode
+            break;
+        case ADMINPAGE: //WIDGET 5
+            //initcode
+            break;
+        case EDITUSERS: //WIDGET 6
+            //initcode
+            break;
+        case EDITPROGRAM: //WIDGET 7
+            //initcode
+            break;
+        case CASEFILE: //WIDGET 8
+            //initcode
+            break;
+        case EDITBOOKING: //WIDGET 9
+            //initcode
+            break;
+        case CLIENTREGISTER:    //WIDGET 10
             if(curClientID == NULL || curClientID == "")
                 clear_client_register_form();
             else
@@ -684,19 +720,6 @@ bool MainWindow::check_client_register_form(){
         ui->lineEdit_cl_fName->setText("anonymous");
     }
 
-
-    /*
-    else if(ui->lineEdit_cl_lName->text().isEmpty()){
-        ui->lineEdit_cl_lName->cursor();
-        qDebug()<<" Last Name Empty";
-        return false;
-    }
-    else if(ui->dateEdit_cl_dob->date() == QDate::currentDate()){
-        ui->dateEdit_cl_dob->cursor();
-        qDebug()<<"Wrong Date";
-        return false;
-    }
-*/
     return true;
 }
 
@@ -847,11 +870,11 @@ void MainWindow::displayClientInfoThread(QString val){
         ui->tableWidget_clientInfo2->insertRow(row);
         for(col =0; col <5; col++){
             ui->tableWidget_clientInfo->setItem(row, col, new QTableWidgetItem(clientInfoR.value(col).toString()));
-            qDebug() <<"row : "<<row << ", col: " << col << "item" << clientInfoR.value(col).toString();
+         //   qDebug() <<"row : "<<row << ", col: " << col << "item" << clientInfoR.value(col).toString();
         }
         while(col<column){
             ui->tableWidget_clientInfo2->setItem(row, col-5, new QTableWidgetItem(clientInfoR.value(col).toString()));
-            qDebug() <<"row : "<<row << ", col: " << col << "item" << clientInfoR.value(col).toString();
+         //   qDebug() <<"row : "<<row << ", col: " << col << "item" << clientInfoR.value(col).toString();
             col++;
         }
         row++;
