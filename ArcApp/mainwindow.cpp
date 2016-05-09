@@ -580,10 +580,10 @@ void MainWindow::on_button_cancel_client_register_clicked()
 
 void MainWindow::on_reportsButton_clicked()
 {
-    MainWindow::updateCheckoutView();
-    MainWindow::updateVacancyView();
-    MainWindow::updateLunchView();
-    MainWindow::updateWakeupView();
+//    MainWindow::updateCheckoutView();
+//    MainWindow::updateVacancyView();
+//    MainWindow::updateLunchView();
+//    MainWindow::updateWakeupView();
     ui->stackedWidget->setCurrentIndex(11);
 }
 
