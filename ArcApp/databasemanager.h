@@ -95,6 +95,8 @@ public:
     bool updateBalance(double d, QString id);
     QSqlQuery AddProgram(QString pcode, QString pdesc);
     QSqlQuery updateProgram(QString pcode, QString pdesc);
+    QSqlQuery getAvailableBeds(QString pcode);
+    QSqlQuery getAssignedBeds(QString pcode);
     bool removeTransaction(QString id);
     bool setPaid(QString id);
     QSqlQuery getOutstanding();
@@ -103,10 +105,10 @@ public:
     QSqlQuery getLunches(QDate start, QDate end, QString id);
     bool updateLunches(QDate date, int num, QString id);
     bool removeLunches(QDate date, QString id);
+    QSqlQuery addPcp(int clientId, QString type, QString goal, QString strategy, QString date);
 
 signals:
     void dailyReportStatsChanged(QList<int> list);
-
 
 private:
     QSqlDatabase db = QSqlDatabase::database();

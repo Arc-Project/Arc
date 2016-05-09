@@ -13,7 +13,8 @@ QStack<int> backStack;
 QStack<int> forwardStack;
 
 QFuture<void> displayPicFuture;
-std::vector<QTableWidget*> pcp_tables;
+QVector<QTableWidget*> pcp_tables;
+QVector<QString> pcpTypes;
 
 //QSqlQuery resultssss;
 MainWindow::MainWindow(QWidget *parent) :
@@ -28,15 +29,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //default signal of stackedWidget
     //detect if the widget is changed
-    qDebug() << "test";
     connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(initCurrentWidget(int)));
-    //connect(this, SIGNAL(DatabaseManager::dailyReportStatsChanged(QList<int>)), this, SLOT(updateDailyReportStats(QList<int>)));
     curClient = 0;
     curBook = 0;
     trans = 0;
     setPcpVector();
 
-    MainWindow::setupReportsScreen();
+    checkoutReport = new Report(this, ui->checkout_tableView, CHECKOUT_REPORT);
+    vacancyReport = new Report(this, ui->vacancy_tableView, VACANCY_REPORT);
+    lunchReport = new Report(this, ui->lunch_tableView, LUNCH_REPORT);
+    wakeupReport = new Report(this, ui->wakeup_tableView, WAKEUP_REPORT);
 }
 
 MainWindow::~MainWindow()
@@ -55,7 +57,6 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case CLIENTLOOKUP:  //WIDGET 1
             initClientLookupInfo();
-
             //initimageview
 
 
@@ -98,9 +99,11 @@ void MainWindow::initCurrentWidget(int idx){
             if(curClientID != NULL || curClientID != "")
                 read_curClient_Information(curClientID);
             break;
-        case REPORTS:    //WIDGET 11
-            MainWindow::updateReportTables();
-            MainWindow::getDailyReportStats();
+        case 11:    //WIDGET 11
+            checkoutReport->updateModel(QDate::currentDate());
+            vacancyReport->updateModel(QDate::currentDate());
+            lunchReport->updateModel(QDate::currentDate());
+            wakeupReport->updateModel(QDate::currentDate());
             break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
@@ -108,9 +111,6 @@ void MainWindow::initCurrentWidget(int idx){
     }
 }
 
-/*==============================================================================
-DASHBOARD - slots
-==============================================================================*/
 void MainWindow::on_bookButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
@@ -142,13 +142,6 @@ void MainWindow::on_paymentButton_clicked()
      qDebug() << "pushed page " << MAINMENU;
 }
 
-void MainWindow::on_adminButton_clicked()
-{
-    ui->stackedWidget->setCurrentIndex(ADMINPAGE);
-    addHistory(MAINMENU);
-    qDebug() << "pushed page " << MAINMENU;
-}
-
 void MainWindow::on_editbookButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(EDITBOOKING);
@@ -156,40 +149,37 @@ void MainWindow::on_editbookButton_clicked()
     qDebug() << "pushed page " << MAINMENU;
 }
 
-void MainWindow::on_reportsButton_clicked()
-{
-    ui->stackedWidget->setCurrentIndex(REPORTS);
-    addHistory(MAINMENU);
-    qDebug() << "pushed page " << MAINMENU;
-}
-
-
 void MainWindow::on_caseButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
     addHistory(MAINMENU);
     qDebug() << "pushed page " << MAINMENU;
+
 }
-/*==============================================================================
-DASHBOARD - slots (END)
-==============================================================================*/
+
+void MainWindow::on_adminButton_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(ADMINPAGE);
+    addHistory(MAINMENU);
+    qDebug() << "pushed page " << MAINMENU;
+
+}
 
 /*==============================================================================
 DEV TESTING BUTTONS (START)
 ==============================================================================*/
 void MainWindow::on_actionDB_Connection_triggered()
 {
-    dbManager->printDbConnections();
+    //QSqlQuery results= dbManager->selectAll("Test");
+    //dbManager->printAll(results);
+//    QStringList* data = new QStringList();
+//    *data << "11" << "12" << "21" << "22";
+//    checkoutModel->setData(data, 2, 2);
 }
 
 void MainWindow::on_actionTest_Query_triggered()
 {
-    qDebug() << "query test";
-    // qDebug() << dbManager->getEspVacancies(QDate::currentDate());
-    // qDebug() << dbManager->getTotalVacancies(QDate::currentDate());
-    // qDebug() << dbManager->getEspCheckouts(QDate::currentDate());
-    // qDebug() << dbManager->getTotalCheckouts(QDate::currentDate());
-    // // updateDailyReportStats();
+    ui->stackedWidget->setCurrentIndex(11);
 }
 
 
@@ -242,7 +232,7 @@ void MainWindow::on_actionDownload_Profile_Picture_triggered()
 DEV TESTING BUTTONS (END)
 ==============================================================================*/
 /*==============================================================================
-DEV TESTING AUXILIARY FUNCTIONS - public
+DEV TESTING AUXILIARY FUNCTIONS (START)
 ==============================================================================*/
 QString MainWindow::browse()
 {
@@ -253,7 +243,156 @@ QString MainWindow::browse()
     return strFilePath;
 }
 /*==============================================================================
-DEV TESTING AUXILIARY FUNCTIONS - public (END)
+DEV TESTING AUXILIARY FUNCTIONS (END)
+==============================================================================*/
+/*==============================================================================
+REPORT FUNCTIONS (START)
+==============================================================================*/
+//void MainWindow::updateCheckoutModel()
+//{
+//    QSqlDatabase tempDb = QSqlDatabase::database();
+//    QString connName = QString::number(dbManager->getDbCounter());
+//    if (dbManager->createDatabase(&tempDb, connName))
+//    {
+//        QSqlQuery query;
+//        if (dbManager->getCheckoutQuery(&query, QDate::currentDate()))
+//        {
+////            int numCols = query.record().count();
+
+////            int numRows = 0;
+////            QStringList *data = new QStringList();
+////            while (query.next()) {
+////                numRows++;
+////                for (int i = 0; i < numCols; ++i)
+////                {
+////                    *data << query.value(i).toString();
+////                }
+////            }
+////            checkoutModel->setData(data, numRows, numCols);
+//            qDebug() << "test";
+//            //report->setData(&query);
+//        }
+//        tempDb.close();
+//        QSqlDatabase::removeDatabase(connName);
+//    }
+//}
+
+
+//void MainWindow::updateCheckoutView(QDate date)
+//{
+//    QSqlQuery query;
+
+//    ui->checkout_tableWidget->setRowCount(0);
+//    if (dbManager->getCheckoutQuery(&query, date))
+//    {
+//        int rowNo = 0;
+//        while(query.next())
+//        {
+//            ui->checkout_tableWidget->insertRow(rowNo);
+//            for (int colNo = 0; colNo < NUM_CHKOUT_TBL_COLS; ++colNo)
+//            {
+//                if (colNo == 5 || colNo == 6)
+//                {
+//                    ui->checkout_tableWidget->setItem(rowNo, colNo,
+//                        new QTableWidgetItem("tbd"));
+//                }
+//                else if (colNo == 7)
+//                {
+//                    ui->checkout_tableWidget->setItem(rowNo, colNo,
+//                        new QTableWidgetItem(query.value(5).toString()));
+//                }
+//                else
+//                {
+//                    ui->checkout_tableWidget->setItem(rowNo, colNo,
+//                        new QTableWidgetItem(query.value(colNo).toString()));
+//                }
+//            }
+//            rowNo++;
+//        }
+//    }
+//    else
+//    {
+//        qDebug() << "updateCheckoutView() failed";
+//    }
+//    ui->checkout_tableWidget->show();
+//}
+
+//void MainWindow::updateVacancyView(QDate date)
+//{
+//    QSqlQuery query;
+//    ui->vacancy_tableWidget->setRowCount(0);
+//    if (dbManager->getVacancyQuery(&query, date))
+//    {
+//        int rowNo = 0;
+//        while(query.next())
+//        {
+//            ui->vacancy_tableWidget->insertRow(rowNo);
+//            for (int colNo = 0; colNo < NUM_VACANCY_TBL_COLS; ++colNo)
+//            {
+//                ui->vacancy_tableWidget->setItem(rowNo,
+//                    colNo, new QTableWidgetItem(query.value(colNo).toString()));
+//            }
+//            rowNo++;
+//        }
+//    }
+//    else
+//    {
+//        qDebug() << "updateVacancyView() failed";
+//    }
+//    ui->vacancy_tableWidget->show();
+//}
+
+//void MainWindow::updateLunchView(QDate date)
+//{
+//    QSqlQuery query;
+//    ui->lunch_tableWidget->setRowCount(0);
+//    if (dbManager->getLunchQuery(&query, date))
+//    {
+//        int rowNo = 0;
+//        while(query.next())
+//        {
+//            ui->lunch_tableWidget->insertRow(rowNo);
+//            for (int colNo = 0; colNo < NUM_LUNCH_TBL_COLS; ++colNo)
+//            {
+//                ui->lunch_tableWidget->setItem(rowNo,
+//                    colNo, new QTableWidgetItem(query.value(colNo).toString()));
+//            }
+//            rowNo++;
+//        }
+//    }
+//    else
+//    {
+//        qDebug() << "updateLunchView() failed";
+//    }
+//    ui->lunch_tableWidget->show();
+//}
+
+//void MainWindow::updateWakeupView(QDate date)
+//{
+//    QSqlQuery query;
+//    ui->wakeup_tableWidget->setRowCount(0);
+//    if (dbManager->getWakeupQuery(&query, date))
+//    {
+//        int rowNo = 0;
+//        while(query.next())
+//        {
+//            ui->wakeup_tableWidget->insertRow(rowNo);
+//            for (int colNo = 0; colNo < NUM_WAKEUP_TBL_COLS; ++colNo)
+//            {
+//                ui->wakeup_tableWidget->setItem(rowNo,
+//                    colNo, new QTableWidgetItem(query.value(colNo).toString()));
+//            }
+//            rowNo++;
+//        }
+//    }
+//    else
+//    {
+//        qDebug() << "updateWakeupView() failed";
+//    }
+//    ui->wakeup_tableWidget->show();
+//}
+/*==============================================================================
+REPORT FUNCTIONS (END)
 ==============================================================================*/
 
 void MainWindow::bookingSetup(){
@@ -512,6 +651,17 @@ void MainWindow::on_button_cancel_client_register_clicked()
     ui->stackedWidget->setCurrentIndex(MAINMENU);
 }
 
+void MainWindow::on_reportsButton_clicked()
+{
+//    MainWindow::updateCheckoutView();
+//    MainWindow::updateVacancyView();
+//    MainWindow::updateLunchView();
+//    MainWindow::updateWakeupView();
+    ui->stackedWidget->setCurrentIndex(11);
+    addHistory(MAINMENU);
+    qDebug() << "pushed page " << MAINMENU;
+}
+
 /*===================================================================
   REGISTRATION PAGE
   ===================================================================*/
@@ -609,7 +759,7 @@ void MainWindow::clear_client_register_form(){
 //read client information to edit
 void MainWindow::read_curClient_Information(QString ClientId){
     QString searchClientQ = "SELECT * FROM Client WHERE ClientId = "+ ClientId;
-    qDebug()<<"SEARCH QUERY: " + searchClientQ;
+//    qDebug()<<"SEARCH QUERY: " + searchClientQ;
     QSqlQuery clientInfo = dbManager->execQuery("SELECT * FROM Client WHERE ClientId = "+ ClientId);
 //    dbManager->printAll(clientInfo);
     clientInfo.next();
@@ -666,6 +816,7 @@ void MainWindow::on_button_register_client_clicked()
         MainWindow::getListRegisterFields(&registerFieldList);
         if(ui->label_cl_infoedit_title->text() == "Register Client")
         {
+
             if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
             {
                 qDebug() << "Client registered successfully";
@@ -862,6 +1013,8 @@ void MainWindow::displayClientInfoThread(QString val){
    ui->label_cl_info_Supporter2_contact_val->setText(clientInfo.value(19).toString());
    ui->label_cl_info_comment->setText(clientInfo.value(20).toString());
 
+
+// WITHOUT PICTURE
    QByteArray a = clientInfo.value(21).toByteArray();
    qDebug()<< "asdfa" <<a;
    profilePic =  QImage::fromData(a, "PNG");
@@ -888,7 +1041,11 @@ void MainWindow::displayClientInfoThread(QString val){
 void MainWindow::displayPicThread()
 {
     qDebug()<<"displayPicThread";
-   // QImage profile = QImage::fromData(a, "PNG");
+   // QSqlQuery testQuery = dbManager->execQuery("SELECT  ProfilePic FROM Client WHERE ClientId = "+ curClientID);
+   // testQuery.next();
+   // QByteArray test = testQuery.value(0).toByteArray();
+  //  profilePic = QImage::fromData(test, "PNG");
+    // QImage profile = QImage::fromData(a, "PNG");
     QPixmap item2 = QPixmap::fromImage(profilePic);
     QPixmap scaled = QPixmap(item2.scaledToWidth((int)(ui->graphicsView_getInfo->width()*0.9), Qt::SmoothTransformation));
     QGraphicsScene *scene2 = new QGraphicsScene();
@@ -1280,6 +1437,20 @@ void MainWindow::on_tableWidget_3_doubleClicked(const QModelIndex &index)
 
 void MainWindow::on_pushButton_CaseFiles_clicked()
 {
+    pcpTypes = {
+                    "relationship",
+                    "educationEmployment",
+                    "substanceUse",
+                    "accomodationsPlanning",
+                    "lifeSkills",
+                    "mentalHealth",
+                    "physicalHealth",
+                    "legalInvolvement",
+                    "activities",
+                    "traditions",
+                    "other",
+                    "people"
+                };
     addHistory(CLIENTLOOKUP);
     ui->stackedWidget->setCurrentIndex(CASEFILE);
 
@@ -1291,6 +1462,41 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
         x->setColumnWidth(1, width*0.41);
         x->setColumnWidth(2, width*0.16);
     }
+
+    //get client id
+//    int nRow = ui->tableWidget_search_client->currentRow();
+//    if (nRow <0)
+//        return;
+//    curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
+
+    populatePcp();
+
+}
+
+void MainWindow::populatePcp() {
+
+
+//    QSqlQuery result = dbManager->execQuery("SELECT ProgramCode, Description FROM Program");
+
+    for (auto x: pcpTypes) {
+        QString query = "SELECT PcpId, Goal, Strategy, Date "
+                        "FROM Pcp "
+                        "WHERE ClientId = 2 "
+                        " AND Type = '" + x + "'";
+
+        qDebug() << query;
+        QSqlQuery result = dbManager->execQuery(query);
+
+        qDebug() << result.lastError();
+        while (result.next()){
+            qDebug() << result.value(0).toString();
+            qDebug() << result.value(1).toString();
+            qDebug() << result.value(2).toString();
+            qDebug() << result.value(3).toString();
+
+        }
+    }
+
 }
 
 void MainWindow::on_EditRoomsButton_clicked()
@@ -1890,7 +2096,7 @@ void MainWindow::on_pushButton_25_clicked()
     return;
 }
 
-// program clicked + selected
+// program clicked + selected HANK
 void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
 {
     // populate the fields on the right
@@ -1899,6 +2105,53 @@ void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
 
     ui->le_userName_2->setText(pcode);
     ui->textEdit->setText(description);
+
+    // populate the beds list
+    QSqlQuery availSpaces = dbManager->getAvailableBeds(pcode);
+    int numrowsavail = availSpaces.numRowsAffected();
+
+    QStandardItemModel* availmodel = new QStandardItemModel();
+
+    while (availSpaces.next()) {
+        QString buildingNo = availSpaces.value(0).toString();
+        QString floorNo = availSpaces.value(1).toString();
+        QString roomNo = availSpaces.value(2).toString();
+        QString spaceNo = availSpaces.value(4).toString();
+        QString type = availSpaces.value(5).toString();
+
+        //1-319-3
+        QString roomCode = buildingNo + "-" + floorNo + "-" + roomNo + "-" + spaceNo + type[0];
+
+        // QStandardItem* Items = new QStandardItem(availSpaces.value(1).toString());
+        QStandardItem* Items = new QStandardItem(roomCode);
+        availmodel->appendRow(Items);
+    }
+
+    ui->availablebedslist->setModel(availmodel);
+
+    QSqlQuery assignedspaces = dbManager->getAssignedBeds(pcode);
+    int numrowsassigned = assignedspaces.numRowsAffected();
+
+    QStandardItemModel* assignedmodel = new QStandardItemModel();
+
+    while (assignedspaces.next()) {
+        QString buildingNo = assignedspaces.value(0).toString();
+        QString floorNo = assignedspaces.value(1).toString();
+        QString roomNo = assignedspaces.value(2).toString();
+        QString spaceNo = assignedspaces.value(4).toString();
+        QString type = assignedspaces.value(5).toString();
+
+        //1-319-3
+        QString roomCode = buildingNo + "-" + floorNo + "-" + roomNo + "-" + spaceNo + type[0];
+
+        // QStandardItem* Items = new QStandardItem(availSpaces.value(1).toString());
+        QStandardItem* Items = new QStandardItem(roomCode);
+        assignedmodel->appendRow(Items);
+    }
+
+    ui->assignedbedslist->setModel(assignedmodel);
+
+
 }
 
 // set case files directory
@@ -2141,6 +2394,78 @@ void MainWindow::on_btn_pcpKey_clicked()
     ui->tw_pcpPpl->setMinimumHeight(ui->tw_pcpPpl->minimumHeight()+35);
 }
 
+void MainWindow::on_addbedtoprogram_clicked()
+{
+    // add program tag to bed
+    QString pcode = ui->le_userName_2->text();
+
+    // get current tag
+    // parse space code to check building number + floor number + room number + space number
+    // and obtain space id
+
+    // append to tag
+
+    // update tag value
+}
+
+void MainWindow::on_removebedfromprogram_clicked()
+{
+    // remove program tag from bed
+    QString pcode = ui->le_userName_2->text();
+
+    // get current tag
+    // populate the fields on the right
+
+//    QString pcode = ui->tableWidget_2->model()->data(ui->tableWidget_2->model()->index(index.row(), 0)).toString();
+//    QString description = ui->tableWidget_2->model()->data(ui->tableWidget_2->model()->index(index.row(), 1)).toString();
+
+//    ui->le_userName_2->setText(pcode);
+//    ui->textEdit->setText(description);
+
+//    // populate the beds list
+//    QSqlQuery availSpaces = dbManager->getAvailableBeds(pcode);
+//    int numrowsavail = availSpaces.numRowsAffected();
+
+//    QStandardItemModel* availmodel = new QStandardItemModel();
+
+//    while (availSpaces.next()) {
+//        QString buildingNo = availSpaces.value(0).toString();
+//        QString floorNo = availSpaces.value(1).toString();
+//        QString roomNo = availSpaces.value(2).toString();
+//        QString spaceNo = availSpaces.value(4).toString();
+//        QString type = availSpaces.value(5).toString();
+
+//        //1-319-3
+//        QString roomCode = buildingNo + "-" + floorNo + "-" + roomNo + "-" + spaceNo + type[0];
+
+//        // QStandardItem* Items = new QStandardItem(availSpaces.value(1).toString());
+//        QStandardItem* Items = new QStandardItem(roomCode);
+//        availmodel->appendRow(Items);
+//    }
+
+//    ui->availablebedslist->setModel(availmodel);
+    // parse space code to check building number + floor number + room number + space number
+    // and obtain space id
+
+    // split current tag
+
+    // remove from the list the tag we are removing
+
+    // re-add tags
+
+    // update tag value
+}
+
+void MainWindow::on_availablebedslist_clicked(const QModelIndex &index)
+{
+    // clicked available bed
+}
+
+void MainWindow::on_assignedbedslist_clicked(const QModelIndex &index)
+{
+    // clicked assigned bed
+}
+
 void MainWindow::on_btn_monthlyReport_clicked()
 {
     ui->swdg_reports->setCurrentIndex(MONTHLYREPORT);
@@ -2175,6 +2500,7 @@ void MainWindow::on_btn_payDelete_clicked()
         handleNewPayment(index);
     }
 }
+
 void MainWindow::handleNewPayment(int row){
     curClient = new Client();
     trans = new transaction();
@@ -2186,9 +2512,6 @@ void MainWindow::handleNewPayment(int row){
     payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true);
     pay->exec();
     ui->mpTable->removeRow(row);
-
-
-
 }
 
 void MainWindow::updateCheque(int row){
@@ -2247,60 +2570,6 @@ void MainWindow::on_btn_payOutstanding_clicked()
     ui->mpTable->setColumnHidden(5, true);
 }
 
-/*==============================================================================
-REPORTS
-==============================================================================*/
-void MainWindow::setupReportsScreen()
-{
-    ui->lbl_shiftReportDateVal_2->setText(QDate::currentDate().toString("yyyy-MM-dd"));
-    ui->reports_dateEdit->setDate(QDate::currentDate());
-    checkoutReport = new Report(this, ui->checkout_tableView, CHECKOUT_REPORT);
-    vacancyReport = new Report(this, ui->vacancy_tableView, VACANCY_REPORT);
-    lunchReport = new Report(this, ui->lunch_tableView, LUNCH_REPORT);
-    wakeupReport = new Report(this, ui->wakeup_tableView, WAKEUP_REPORT);
-}
-
-void MainWindow::updateReportTables(QDate date)
-{
-    checkoutReport->updateModel(date);
-    vacancyReport->updateModel(date);
-    lunchReport->updateModel(date);
-    wakeupReport->updateModel(date);
-}
-
-void MainWindow::on_reportsDateSelectorGo_Btn_clicked()
-{
-    QDate date = ui->reports_dateEdit->date();
-    updateReportTables(date);
-    ui->lbl_shiftReportDateVal_2->setText(date.toString("yyyy-MM-dd"));
-}
-
-void MainWindow::on_reportsSetCurrentDate_Btn_clicked()
-{
-    ui->lbl_shiftReportDateVal_2->setText(QDate::currentDate().toString("yyyy-MM-dd"));
-}
-
-void MainWindow::getDailyReportStats(QDate date)
-{
-    qDebug() << "getDailyReportStats  called";
-    QtConcurrent::run(dbManager, &DatabaseManager::getDailyReportStatsThread, date);
-}
-
-void MainWindow::updateDailyReportStats(QList<int> list)
-{
-    qDebug() << "updateDailyReportStats slot";
-    foreach(int val, list)
-    {
-        qDebug() << val;
-    }
-}
-/*==============================================================================
-REPORTS (END)
-==============================================================================*/
-
-
-
-
 void MainWindow::on_actionBack_triggered()
 {
     if (!backStack.isEmpty()){
@@ -2327,8 +2596,6 @@ void MainWindow::addHistory(int n){
     ui->actionForward->setEnabled(false);
 }
 
-
-
 void MainWindow::on_pushButton_processPaymeent_clicked()
 {
     addHistory(CLIENTLOOKUP);
@@ -2342,8 +2609,8 @@ void MainWindow::on_lunchCheck_clicked()
   //curClient = new Client();
    //curClient->clientId = "1";
 
-//   MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient);
-//   mc->exec();
+   MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient);
+   mc->exec();
 }
 
 void MainWindow::on_startDateEdit_dateChanged(const QDate &date)
@@ -2352,4 +2619,34 @@ void MainWindow::on_startDateEdit_dateChanged(const QDate &date)
         QDate newD = ui->startDateEdit->date().addDays(1);
         ui->endDateEdit->setDate(newD);
     }
+}
+
+void MainWindow::on_btn_pcpRelaSave_clicked()
+{
+    insertPcp(ui->tw_pcpRela, "relationship");
+}
+
+void MainWindow::insertPcp(QTableWidget *tw, QString type){
+    int client = 2;
+    QString goal;
+    QString strategy;
+    QString date;
+    int rows = tw->rowCount();
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (tw->item(i,j)) {
+                switch (j) {
+                case 0: goal = tw->item(i,j)->text();
+                    break;
+                case 1: strategy = tw->item(i,j)->text();
+                    break;
+                case 2: date = tw->item(i,j)->text();
+                }
+
+              }
+        }
+        QSqlQuery result = dbManager->addPcp(client, type, goal, strategy, date);
+        qDebug() << result.lastError();
+    }
+
 }

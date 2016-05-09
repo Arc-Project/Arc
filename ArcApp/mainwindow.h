@@ -34,6 +34,7 @@
 #include "client.h"
 #include "shared.h"
 #include "casefile.h"
+#include "Utility.h"
 #include "mymodel.h"
 #include "report.h"
 #include "mycalendar.h"
@@ -84,7 +85,7 @@ private slots:
     void on_actionUpload_Display_Picture_triggered();
     void on_actionDownload_Profile_Picture_triggered();
     void displayPicThread();
-    void updateDailyReportStats(QList<int> list);
+    //void updateDailyReportStats(QList<int> list);
 
     /*==========================================================================
     DETECT WIDGET CHANGING SIGNAL
@@ -105,8 +106,8 @@ private slots:
     /*==========================================================================
     REPORTS -slots
     ==========================================================================*/
-    void on_reportsDateSelectorGo_Btn_clicked();
-    void on_reportsSetCurrentDate_Btn_clicked();
+//    void on_reportsDateSelectorGo_Btn_clicked();
+//    void on_reportsSetCurrentDate_Btn_clicked();
 
 
     
@@ -274,6 +275,10 @@ private slots:
 
     void on_btn_pcpKey_clicked();
 
+    void populatePcp();
+
+    void insertPcp(QTableWidget *tw, QString type);
+
     void on_btn_createNewUser_2_clicked();
 
     void on_pushButton_24_clicked();
@@ -288,6 +293,27 @@ private slots:
     void handleNewPayment(int row);
     void updateCheque(int row);
 
+//    void on_actionBack_triggered();
+
+//    void on_actionForward_triggered();
+
+//    void addHistory(int n);
+
+//    void on_pushButton_processPaymeent_clicked();
+
+//    void on_lunchCheck_clicked();
+
+//    void on_startDateEdit_dateChanged(const QDate &date);
+
+    void on_btn_pcpRelaSave_clicked();
+
+    void on_addbedtoprogram_clicked();
+
+    void on_removebedfromprogram_clicked();
+
+    void on_availablebedslist_clicked(const QModelIndex &index);
+
+    void on_assignedbedslist_clicked(const QModelIndex &index);
 
     void on_actionBack_triggered();
 
@@ -318,7 +344,7 @@ private:
     QDir dir;
     
     void setupReportsScreen();
-    void updateReportTables(QDate date = QDate::currentDate());
+    //void updateReportTables(QDate date = QDate::currentDate());
     void getDailyReportStats(QDate date = QDate::currentDate());
 
 };

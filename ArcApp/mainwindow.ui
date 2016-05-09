@@ -111,7 +111,7 @@ QWidget#wdg_transTotal {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>11</number>
+     <number>7</number>
     </property>
     <widget class="QWidget" name="mainMenu">
      <layout class="QGridLayout" name="gridLayout_5">
@@ -574,7 +574,7 @@ QWidget#wdg_transTotal {
       <item row="0" column="1">
        <widget class="QTabWidget" name="tabWidget_cl_info">
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tab_cl_general">
          <attribute name="title">
@@ -1655,7 +1655,27 @@ QWidget#wdg_transTotal {
             <height>681</height>
            </rect>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_6"/>
+          <layout class="QVBoxLayout" name="verticalLayout_6">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <item>
+              <widget class="QLabel" name="label_cl_info_transaction">
+               <property name="font">
+                <font>
+                 <pointsize>12</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>Recent TransactionList</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QTableWidget" name="tableWidget"/>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </widget>
         </widget>
         <widget class="QWidget" name="tab_7">
@@ -3657,7 +3677,7 @@ QWidget#wdg_transTotal {
           </widget>
          </item>
          <item row="4" column="0" colspan="2">
-          <widget class="QListView" name="listView">
+          <widget class="QListView" name="availablebedslist">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -3669,6 +3689,9 @@ QWidget#wdg_transTotal {
              <width>275</width>
              <height>0</height>
             </size>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
            </property>
           </widget>
          </item>
@@ -3687,7 +3710,7 @@ QWidget#wdg_transTotal {
          <item row="4" column="2">
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
-            <widget class="QPushButton" name="pushButton_16">
+            <widget class="QPushButton" name="addbedtoprogram">
              <property name="minimumSize">
               <size>
                <width>80</width>
@@ -3700,7 +3723,7 @@ QWidget#wdg_transTotal {
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_17">
+            <widget class="QPushButton" name="removebedfromprogram">
              <property name="minimumSize">
               <size>
                <width>80</width>
@@ -3731,7 +3754,7 @@ QWidget#wdg_transTotal {
           </widget>
          </item>
          <item row="4" column="3">
-          <widget class="QListView" name="listView_2">
+          <widget class="QListView" name="assignedbedslist">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -3743,6 +3766,9 @@ QWidget#wdg_transTotal {
              <width>275</width>
              <height>0</height>
             </size>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
            </property>
           </widget>
          </item>
@@ -4071,8 +4097,8 @@ QWidget#wdg_transTotal {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>1047</width>
-               <height>2249</height>
+               <width>1012</width>
+               <height>1381</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_47">
@@ -4124,6 +4150,42 @@ QWidget#wdg_transTotal {
                      </property>
                     </widget>
                    </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpRelaUndo">
+                     <property name="minimumSize">
+                      <size>
+                       <width>130</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Undo Changes</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpRelaSave">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Save</string>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
                  </item>
                  <item row="1" column="0">
@@ -4131,7 +4193,7 @@ QWidget#wdg_transTotal {
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
-                     <height>150</height>
+                     <height>73</height>
                     </size>
                    </property>
                    <property name="font">
@@ -4155,7 +4217,7 @@ QWidget#wdg_transTotal {
                     <bool>false</bool>
                    </property>
                    <property name="rowCount">
-                    <number>3</number>
+                    <number>1</number>
                    </property>
                    <attribute name="horizontalHeaderCascadingSectionResizes">
                     <bool>true</bool>
@@ -4178,8 +4240,6 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderMinimumSectionSize">
                     <number>35</number>
                    </attribute>
-                   <row/>
-                   <row/>
                    <row/>
                    <column>
                     <property name="text">
@@ -4250,7 +4310,7 @@ QWidget#wdg_transTotal {
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
-                     <height>150</height>
+                     <height>73</height>
                     </size>
                    </property>
                    <property name="font">
@@ -4274,7 +4334,7 @@ QWidget#wdg_transTotal {
                     <bool>false</bool>
                    </property>
                    <property name="rowCount">
-                    <number>3</number>
+                    <number>1</number>
                    </property>
                    <attribute name="horizontalHeaderCascadingSectionResizes">
                     <bool>true</bool>
@@ -4297,8 +4357,6 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderMinimumSectionSize">
                     <number>35</number>
                    </attribute>
-                   <row/>
-                   <row/>
                    <row/>
                    <column>
                     <property name="text">
@@ -4369,7 +4427,7 @@ QWidget#wdg_transTotal {
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
-                     <height>150</height>
+                     <height>73</height>
                     </size>
                    </property>
                    <property name="font">
@@ -4393,7 +4451,7 @@ QWidget#wdg_transTotal {
                     <bool>false</bool>
                    </property>
                    <property name="rowCount">
-                    <number>3</number>
+                    <number>1</number>
                    </property>
                    <attribute name="horizontalHeaderCascadingSectionResizes">
                     <bool>true</bool>
@@ -4416,8 +4474,6 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderMinimumSectionSize">
                     <number>35</number>
                    </attribute>
-                   <row/>
-                   <row/>
                    <row/>
                    <column>
                     <property name="text">
@@ -4488,7 +4544,7 @@ QWidget#wdg_transTotal {
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
-                     <height>150</height>
+                     <height>73</height>
                     </size>
                    </property>
                    <property name="font">
@@ -4512,7 +4568,7 @@ QWidget#wdg_transTotal {
                     <bool>false</bool>
                    </property>
                    <property name="rowCount">
-                    <number>3</number>
+                    <number>1</number>
                    </property>
                    <attribute name="horizontalHeaderCascadingSectionResizes">
                     <bool>true</bool>
@@ -4535,8 +4591,6 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderMinimumSectionSize">
                     <number>35</number>
                    </attribute>
-                   <row/>
-                   <row/>
                    <row/>
                    <column>
                     <property name="text">
@@ -4607,7 +4661,7 @@ QWidget#wdg_transTotal {
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
-                     <height>150</height>
+                     <height>73</height>
                     </size>
                    </property>
                    <property name="font">
@@ -4631,7 +4685,7 @@ QWidget#wdg_transTotal {
                     <bool>false</bool>
                    </property>
                    <property name="rowCount">
-                    <number>3</number>
+                    <number>1</number>
                    </property>
                    <attribute name="horizontalHeaderCascadingSectionResizes">
                     <bool>true</bool>
@@ -4654,8 +4708,6 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderMinimumSectionSize">
                     <number>35</number>
                    </attribute>
-                   <row/>
-                   <row/>
                    <row/>
                    <column>
                     <property name="text">
@@ -4726,7 +4778,7 @@ QWidget#wdg_transTotal {
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
-                     <height>150</height>
+                     <height>73</height>
                     </size>
                    </property>
                    <property name="font">
@@ -4750,7 +4802,7 @@ QWidget#wdg_transTotal {
                     <bool>false</bool>
                    </property>
                    <property name="rowCount">
-                    <number>3</number>
+                    <number>1</number>
                    </property>
                    <attribute name="horizontalHeaderCascadingSectionResizes">
                     <bool>true</bool>
@@ -4773,8 +4825,6 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderMinimumSectionSize">
                     <number>35</number>
                    </attribute>
-                   <row/>
-                   <row/>
                    <row/>
                    <column>
                     <property name="text">
@@ -4845,7 +4895,7 @@ QWidget#wdg_transTotal {
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
-                     <height>150</height>
+                     <height>73</height>
                     </size>
                    </property>
                    <property name="font">
@@ -4869,7 +4919,7 @@ QWidget#wdg_transTotal {
                     <bool>false</bool>
                    </property>
                    <property name="rowCount">
-                    <number>3</number>
+                    <number>1</number>
                    </property>
                    <attribute name="horizontalHeaderCascadingSectionResizes">
                     <bool>true</bool>
@@ -4892,8 +4942,6 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderMinimumSectionSize">
                     <number>35</number>
                    </attribute>
-                   <row/>
-                   <row/>
                    <row/>
                    <column>
                     <property name="text">
@@ -4964,7 +5012,7 @@ QWidget#wdg_transTotal {
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
-                     <height>150</height>
+                     <height>73</height>
                     </size>
                    </property>
                    <property name="font">
@@ -4988,7 +5036,7 @@ QWidget#wdg_transTotal {
                     <bool>false</bool>
                    </property>
                    <property name="rowCount">
-                    <number>3</number>
+                    <number>1</number>
                    </property>
                    <attribute name="horizontalHeaderCascadingSectionResizes">
                     <bool>true</bool>
@@ -5011,8 +5059,6 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderMinimumSectionSize">
                     <number>35</number>
                    </attribute>
-                   <row/>
-                   <row/>
                    <row/>
                    <column>
                     <property name="text">
@@ -5083,7 +5129,7 @@ QWidget#wdg_transTotal {
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
-                     <height>150</height>
+                     <height>73</height>
                     </size>
                    </property>
                    <property name="font">
@@ -5107,7 +5153,7 @@ QWidget#wdg_transTotal {
                     <bool>false</bool>
                    </property>
                    <property name="rowCount">
-                    <number>3</number>
+                    <number>1</number>
                    </property>
                    <attribute name="horizontalHeaderCascadingSectionResizes">
                     <bool>true</bool>
@@ -5130,8 +5176,6 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderMinimumSectionSize">
                     <number>35</number>
                    </attribute>
-                   <row/>
-                   <row/>
                    <row/>
                    <column>
                     <property name="text">
@@ -5202,7 +5246,7 @@ QWidget#wdg_transTotal {
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
-                     <height>150</height>
+                     <height>73</height>
                     </size>
                    </property>
                    <property name="font">
@@ -5226,7 +5270,7 @@ QWidget#wdg_transTotal {
                     <bool>false</bool>
                    </property>
                    <property name="rowCount">
-                    <number>3</number>
+                    <number>1</number>
                    </property>
                    <attribute name="horizontalHeaderCascadingSectionResizes">
                     <bool>true</bool>
@@ -5249,8 +5293,6 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderMinimumSectionSize">
                     <number>35</number>
                    </attribute>
-                   <row/>
-                   <row/>
                    <row/>
                    <column>
                     <property name="text">
@@ -5321,7 +5363,7 @@ QWidget#wdg_transTotal {
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
-                     <height>150</height>
+                     <height>73</height>
                     </size>
                    </property>
                    <property name="font">
@@ -5345,7 +5387,7 @@ QWidget#wdg_transTotal {
                     <bool>false</bool>
                    </property>
                    <property name="rowCount">
-                    <number>3</number>
+                    <number>1</number>
                    </property>
                    <attribute name="horizontalHeaderCascadingSectionResizes">
                     <bool>true</bool>
@@ -5368,8 +5410,6 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderMinimumSectionSize">
                     <number>35</number>
                    </attribute>
-                   <row/>
-                   <row/>
                    <row/>
                    <column>
                     <property name="text">
@@ -5440,7 +5480,7 @@ QWidget#wdg_transTotal {
                    <property name="minimumSize">
                     <size>
                      <width>0</width>
-                     <height>150</height>
+                     <height>73</height>
                     </size>
                    </property>
                    <property name="font">
@@ -5464,7 +5504,7 @@ QWidget#wdg_transTotal {
                     <bool>false</bool>
                    </property>
                    <property name="rowCount">
-                    <number>3</number>
+                    <number>1</number>
                    </property>
                    <attribute name="horizontalHeaderCascadingSectionResizes">
                     <bool>true</bool>
@@ -5487,8 +5527,6 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderMinimumSectionSize">
                     <number>35</number>
                    </attribute>
-                   <row/>
-                   <row/>
                    <row/>
                    <column>
                     <property name="text">
@@ -6643,7 +6681,7 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                  <item>
-                  <widget class="QDateEdit" name="reports_dateEdit">
+                  <widget class="QDateEdit" name="dateEdit_2">
                    <property name="minimumSize">
                     <size>
                      <width>100</width>
@@ -6661,7 +6699,7 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="reportsDateSelectorGo_Btn">
+                  <widget class="QPushButton" name="pushButton_7">
                    <property name="minimumSize">
                     <size>
                      <width>28</width>
@@ -6685,7 +6723,7 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="reportsSetCurrentDate_Btn">
+                  <widget class="QPushButton" name="pushButton_8">
                    <property name="minimumSize">
                     <size>
                      <width>110</width>
@@ -6781,7 +6819,7 @@ QWidget#wdg_transTotal {
                        </font>
                       </property>
                       <property name="text">
-                       <string>Total ESP Check-outs</string>
+                       <string>Total ESP Vacancies</string>
                       </property>
                      </widget>
                     </item>
@@ -6799,14 +6837,14 @@ QWidget#wdg_transTotal {
                      </spacer>
                     </item>
                     <item row="0" column="0">
-                     <widget class="QLabel" name="lbl_espCheckouts">
+                     <widget class="QLabel" name="lbl_cashAmt_3">
                       <property name="font">
                        <font>
                         <pointsize>22</pointsize>
                        </font>
                       </property>
                       <property name="text">
-                       <string>0</string>
+                       <string>99</string>
                       </property>
                      </widget>
                     </item>
@@ -6830,7 +6868,7 @@ QWidget#wdg_transTotal {
                        </font>
                       </property>
                       <property name="text">
-                       <string>Total Check-outs</string>
+                       <string>Total Vacancies</string>
                       </property>
                      </widget>
                     </item>
@@ -6848,14 +6886,14 @@ QWidget#wdg_transTotal {
                      </spacer>
                     </item>
                     <item row="0" column="0">
-                     <widget class="QLabel" name="lbl_totalCheckouts">
+                     <widget class="QLabel" name="lbl_debitAmt_3">
                       <property name="font">
                        <font>
                         <pointsize>22</pointsize>
                        </font>
                       </property>
                       <property name="text">
-                       <string>0</string>
+                       <string>99</string>
                       </property>
                      </widget>
                     </item>
@@ -6879,7 +6917,7 @@ QWidget#wdg_transTotal {
                        </font>
                       </property>
                       <property name="text">
-                       <string>Total ESP Vacancies</string>
+                       <string>ESP Beds Available</string>
                       </property>
                      </widget>
                     </item>
@@ -6897,14 +6935,14 @@ QWidget#wdg_transTotal {
                      </spacer>
                     </item>
                     <item row="0" column="0">
-                     <widget class="QLabel" name="lbl_espVacancies">
+                     <widget class="QLabel" name="lbl_chequeAmt_3">
                       <property name="font">
                        <font>
                         <pointsize>22</pointsize>
                        </font>
                       </property>
                       <property name="text">
-                       <string>0</string>
+                       <string>99</string>
                       </property>
                      </widget>
                     </item>
@@ -6930,7 +6968,7 @@ QWidget#wdg_transTotal {
                        </font>
                       </property>
                       <property name="text">
-                       <string>Total Vacancies</string>
+                       <string>Total Beds Available</string>
                       </property>
                      </widget>
                     </item>
@@ -6948,7 +6986,7 @@ QWidget#wdg_transTotal {
                      </spacer>
                     </item>
                     <item row="0" column="0">
-                     <widget class="QLabel" name="lbl_totalVacancies">
+                     <widget class="QLabel" name="lbl_shiftAmt_3">
                       <property name="font">
                        <font>
                         <pointsize>22</pointsize>
@@ -6957,7 +6995,7 @@ QWidget#wdg_transTotal {
                        </font>
                       </property>
                       <property name="text">
-                       <string>0</string>
+                       <string>99</string>
                       </property>
                      </widget>
                     </item>
