@@ -8,7 +8,7 @@ QMutex DatabaseManager::mutex;
 /*==============================================================================
 DATABASE MANAGER SETUP (START)
 ==============================================================================*/
-/* 
+/*
  * Constuctor
  * Sets up the default database connection.
  */
@@ -25,10 +25,10 @@ DatabaseManager::DatabaseManager()
     }
 }
 
-/* 
+/*
  * Creates and adds a new database connection to the DatabaseManager.
  * Multiple connections may be required to performing querys asynchronously.
- * 
+ *
  * @PARAM: QSqlDatabase* tempDbPtr: A pointer to the QSqlDatabase object
  * @PARAM: QString connName: The name of the connection
  *
@@ -50,7 +50,7 @@ bool DatabaseManager::createDatabase(QSqlDatabase* tempDbPtr, QString connName)
     {
         QString error = tempDbPtr->lastError().text();
         qDebug() << error.toLocal8Bit().data();
-        
+
         return false;
     }
 
@@ -65,9 +65,9 @@ DATABASE MANAGER SETUP (END)
 /*==============================================================================
 GENERAL QUERYS (START)
 ==============================================================================*/
-/* 
+/*
  * Selects all rows from the specified table.
- * 
+ *
  * @PARAM: QString tableName: The name of the sql server table
  *
  * @RETURN: QSqlQuery; The QSqlQuery object containing all the rows of the table
@@ -79,9 +79,9 @@ QSqlQuery DatabaseManager::selectAll(QString tableName)
     return query;
 }
 
-/* 
+/*
  * Prints all the results of QSqlQuery object.
- * 
+ *
  * @PARAM: QSqlQuery queryResults: The object containing the query results
  *
  * @RETURN: void
@@ -100,6 +100,18 @@ void DatabaseManager::printAll(QSqlQuery queryResults)
         qDebug() << record;
     }
 }
+
+QSqlQuery DatabaseManager::execQuery(QString queryString)
+{
+    QSqlQuery query(db);
+    query.exec(queryString);
+    return query;
+}
+
+bool DatabaseManager::execQuery(QSqlQuery* query, QString queryString)
+{
+    return query->exec(queryString);
+}
 /*==============================================================================
 GENERAL QUERYS (END)
 ==============================================================================*/
@@ -107,9 +119,9 @@ GENERAL QUERYS (END)
 /*==============================================================================
 FILE DOWLOAD AND UPLOAD RELATED FUNCTIONS (START)
 ==============================================================================*/
-/* 
+/*
  * Uploads a file to the database.
- * 
+ *
  * @PARAM: QSqlDatabase* tempDbPtr: The database connection
  * @PARAM: QString connName: The name of the connection (unique);
  * @PARAM: QString filepath: The local file path of the file to upload
@@ -155,9 +167,9 @@ bool DatabaseManager::uploadCaseFile(QSqlDatabase* tempDbPtr, QString connName, 
    return false;
 }
 
-/* 
+/*
  * Download the latest uploaded file from the database.
- * 
+ *
  * @PARAM: QSqlDatabase* tempDbPtr: The database connection
  * @PARAM: QString connName: The name of the connection (unique);
  *
@@ -191,9 +203,9 @@ bool DatabaseManager::downloadLatestCaseFile(QSqlDatabase* tempDbPtr, QString co
     return false;
 }
 
-/* 
+/*
  * Retrieves the QSqlQuery object containing the last added row of the table specified
- * 
+ *
  * @PARAM: QSqlDatabase* tempDbPtr: The database connection
  * @PARAM: QString table: The database table name;
  *
@@ -206,7 +218,7 @@ QSqlQuery DatabaseManager::getLatestFileUploadEntry(QSqlDatabase* tempDbPtr, QSt
     return query;
 }
 
-/* 
+/*
  * Retrives the current database connection counter and increments it.
  *
  * @RETURN: int: The current database connection counter
@@ -222,7 +234,7 @@ int DatabaseManager::getDbCounter()
     return dbCounter;
 }
 
-/* 
+/*
  * Thread function for downloading files from the database.
  *
  * @RETURN: void
@@ -230,7 +242,7 @@ int DatabaseManager::getDbCounter()
 void DatabaseManager::downloadThread()
 {
     QSqlDatabase tempDb = QSqlDatabase::database();
-    
+
     QString dbConnName = QString::number(DatabaseManager::getDbCounter());
 
     if (dbManager->downloadLatestCaseFile(&tempDb, dbConnName))
@@ -245,7 +257,7 @@ void DatabaseManager::downloadThread()
     QSqlDatabase::removeDatabase(dbConnName);
 }
 
-/* 
+/*
  * Thread function for uploading files into the database.
  *
  * @PARAM: QString strFilePath: The local path of the file to upload
@@ -270,7 +282,7 @@ void DatabaseManager::uploadThread(QString strFilePath)
     QSqlDatabase::removeDatabase(dbConnName);
 }
 
-/* 
+/*
  * Prints the current active database connections
  *
  * @RETURN: void
@@ -278,7 +290,7 @@ void DatabaseManager::uploadThread(QString strFilePath)
 void DatabaseManager::printDbConnections()
 {
     QStringList list = db.connectionNames();
-    for (QStringList::iterator it = list.begin(); it != list.end(); ++it) 
+    for (QStringList::iterator it = list.begin(); it != list.end(); ++it)
     {
         QString current = *it;
         qDebug() << "[[" << current << "]]";
@@ -307,7 +319,7 @@ bool DatabaseManager::uploadProfilePic(QSqlDatabase* tempDbPtr, QString connName
     QSqlQuery query(*tempDbPtr);
     query.prepare("UPDATE Client SET ProfilePic = :profilePic WHERE ClientId = 6");
     query.bindValue(":profilePic", ba, QSql::In | QSql::Binary);
-    
+
     if (query.exec())
     {
         return true;
@@ -435,7 +447,69 @@ printAll(query);
 /*==============================================================================
 PROFILE PICTURE UPLOAD AND DOWNLOAD RELATED FUNCTIONS (END)
 ==============================================================================*/
+/*==============================================================================
+REPORT QUERYS (START)
+==============================================================================*/
+bool DatabaseManager::getCheckoutQuery(QSqlQuery* queryResults, QDate date)
+{
+    *queryResults = QSqlQuery(db);
 
+    QString queryString =
+        QString("SELECT b.ClientName, b.SpaceId, b.StartDate, ")
+        + QString("b.EndDate, b.ProgramCode, c.Balance ")
+        + QString("FROM Booking b INNER JOIN Client c ON b.ClientId = c.ClientId ")
+        + QString("WHERE EndDate = '" + date.toString(Qt::ISODate))
+        + QString("' AND FirstBook = 'YES'");
+
+        qDebug() << queryString;
+    return queryResults->exec(queryString);
+}
+
+bool DatabaseManager::getVacancyQuery(QSqlQuery* queryResults, QDate date)
+{
+    *queryResults = QSqlQuery(db);
+
+    QString queryString =
+        QString("SELECT s.SpaceId, s.ProgramCodes ")
+        + QString("FROM Space s LEFT JOIN (SELECT SpaceId, Date ")
+        + QString("FROM Booking WHERE Date = '" + date.toString(Qt::ISODate))
+        + QString("') as b ON s.SpaceId = b.SpaceId ")
+        + QString("WHERE b.date IS NULL");
+
+        qDebug() << queryString;
+    return queryResults->exec(queryString);
+}
+
+bool DatabaseManager::getLunchQuery(QSqlQuery* queryResults, QDate date)
+{
+    *queryResults = QSqlQuery(db);
+
+    QString queryString =
+        QString("SELECT ClientName, SpaceId, Lunch ")
+        + QString("FROM Booking ")
+        + QString("WHERE Date = '" + date.toString(Qt::ISODate)) + "' AND "
+        + QString("Lunch = 'YES'");
+
+        qDebug() << queryString;
+    return queryResults->exec(queryString);
+}
+
+bool DatabaseManager::getWakeupQuery(QSqlQuery* queryResults, QDate date)
+{
+    *queryResults = QSqlQuery(db);
+
+    QString queryString =
+        QString("SELECT ClientName, SpaceId, Wakeup ")
+        + QString("FROM Booking ")
+        + QString("WHERE Date = '" + date.toString(Qt::ISODate)) + "' AND "
+        + QString("Wakeup <> 'NO' AND Wakeup IS NOT NULL");
+
+        qDebug() << queryString;
+    return queryResults->exec(queryString);
+}
+/*==============================================================================
+REPORT QUERYS (END)
+==============================================================================*/
 
 QSqlQuery DatabaseManager::getPrograms(){
     QSqlQuery query(db);
@@ -504,12 +578,7 @@ QSqlQuery DatabaseManager::addNewEmployee(QString username, QString password, QS
     return query;
 }
 
-QSqlQuery DatabaseManager::execQuery(QString queryString)
-{
-    QSqlQuery query(db);
-    query.exec(queryString);
-    return query;
-}
+
 
 
 QSqlQuery DatabaseManager::getActiveBooking(QString user, bool userLook){
@@ -531,22 +600,4 @@ QSqlQuery DatabaseManager::getActiveBooking(QString user, bool userLook){
     }
     return query;
 }
-
-//bool DatabaseManager::downloadLatestCaseFile()
-//{
-//    QSqlQuery queryResults = DatabaseManager::getLatestFileUploadEntry("FileTest1");
-//    queryResults.next();
-//    QString filename = queryResults.value(3).toString();
-//    QByteArray data = queryResults.value(2).toByteArray();
-//    qDebug() << filename;
-
-//    QFile file("..\\Downloads\\" + filename);
-//    if (file.open(QIODevice::WriteOnly))
-//    {
-//        file.write(data);
-//        file.close();
-//        return true;
-//    }
-//    return false;
-//}
 
