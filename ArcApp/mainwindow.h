@@ -13,6 +13,7 @@
 #define EDITBOOKING 9
 #define EDITROOM 12
 #define CONFIRMBOOKING 13
+#define EDITPAGE 14
 #define DAILYREPORT 0
 #define SHIFTREPORT 1
 #define DAILYLOG 2
@@ -49,6 +50,7 @@ public:
     void clientSearchedInfo();
     void populateConfirm();
     QImage profilePic;
+    void popEditPage();
 
 private slots:
 
@@ -158,6 +160,21 @@ private slots:
     void on_pushButton_CaseFiles_clicked();
 
     void on_EditRoomsButton_clicked();
+
+    void on_editUpdate_clicked();
+    bool checkNumber(QString num);
+    double calcRefund(QDate old, QDate n);
+
+    void on_editDate_dateChanged(const QDate &date);
+    bool updateBooking(Booking b);
+    void popClientFromId(QString id);
+    void on_editManagePayment_clicked();
+
+
+
+    void on_editCost_textChanged(const QString &arg1);
+
+    void on_editCancel_textChanged(const QString &arg1);
 
 private:
     Ui::MainWindow *ui;

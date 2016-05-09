@@ -62,6 +62,10 @@ public:
     bool addPayment(QString values);
     QSqlQuery getActiveBooking(QString user, bool userLook);
     bool downloadLatestCaseFile();
+    double getRoomCost(QString roomNo);
+    bool updateBooking(QString q);
+    QSqlQuery pullClient(QString id);
+    bool updateBalance(double d, QString id);
 
 private:
     QSqlDatabase db = QSqlDatabase::database();

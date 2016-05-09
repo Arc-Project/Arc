@@ -452,10 +452,20 @@ bool DatabaseManager::addPayment(QString values){
     }
     return false;
 }
+double DatabaseManager::getRoomCost(QString roomNo){
+    QSqlQuery query(db);
+    QString q = "SELECT cost from Space WHERE SpaceId='" + roomNo + "'";
+
+    if(query.exec(q)){
+        query.seek(0, false);
+        return query.record().value(0).toString().toDouble();
+    }
+    return -1;
+}
 
 int DatabaseManager::getMonthlyRate(QString room, QString program){
     QSqlQuery query(db);
-    QString q = "SELECT cost FROM Space WHERE SpaceId = '" + room + "'";
+    QString q = "SELECT Monthly FROM Space WHERE SpaceId = '" + room + "'";
     if(query.exec(q)){
         return query.value(0).toInt();
     }
@@ -463,16 +473,42 @@ int DatabaseManager::getMonthlyRate(QString room, QString program){
         return -1;
     }
 }
+QSqlQuery DatabaseManager::pullClient(QString id){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM CLIENT WHERE ClientId ='" + id + "'";
+    if(!query.exec(q)){
+        qDebug() << "ERROR IN PULLCLIENT";
+    }
+    return query;
+}
+bool DatabaseManager::updateBalance(double d, QString id){
+    QSqlQuery query(db);
+    QString q = "UPDATE Client SET Balance = '" + QString::number(d, 'f', 2)
+            + "' WHERE ClientId ='" + id + "'";
+    qDebug() << q;
+    if(query.exec(q))
+        return true;
+    return false;
+}
 
 QSqlQuery DatabaseManager::getCurrentBooking(QDate start, QDate end, QString program){
     QSqlQuery query(db);
     QString q = "SELECT Space.SpaceId, Space.Location, Space.ProgramCodes, Space.type, Space.cost, Space.Monthly FROM Space"
-                " LEFT JOIN (SELECT * from Booking WHERE Date >= '" + start.toString(Qt::ISODate) + "' AND Date <= '"
-                + end.toString(Qt::ISODate) + "') AS a on Space.SpaceId = a.SpaceId WHERE BookingID IS NULL AND Space.ProgramCodes = '" + program + "'";
+                " LEFT JOIN (SELECT * from Booking WHERE StartDate <= '" + start.toString(Qt::ISODate) + "' AND EndDate >= '"
+                + start.toString(Qt::ISODate) + "') AS a on Space.SpaceId = a.SpaceId WHERE BookingID IS NULL AND Space.ProgramCodes = '" + program + "'";
 
+    qDebug() << q;
     query.exec(q);
     return query;
 }
+bool DatabaseManager::updateBooking(QString q){
+    QSqlQuery query(db);
+    qDebug() << q;
+    if(query.exec(q))
+        return true;
+    return false;
+}
+
 bool DatabaseManager::insertBookingTable(QString insert){
     QSqlQuery query(db);
     QString q = "INSERT INTO Booking VALUES(" + insert + ")";
@@ -523,6 +559,7 @@ QSqlQuery DatabaseManager::getActiveBooking(QString user, bool userLook){
          q = "SELECT * FROM BOOKING WHERE FirstBook = 'YES' AND EndDate >= '" + date + "' AND ClientName LIKE '%" + user + "%'";
 
     }
+    qDebug() << q;
     if(query.exec(q)){
 
     }
