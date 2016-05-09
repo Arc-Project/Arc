@@ -39,6 +39,11 @@ public:
     void uploadThread(QString strFilePath);
     void printDbConnections();
 
+
+    bool searchClientList(QSqlQuery* query, QString ClientId);
+
+    QSqlQuery searchClientInfo(QSqlQuery* quer, QString ClientId);
+
     /*==========================================================================
     PROFILE PICTURE UPLOAD AND DOWNLOAD RELATED FUNCTIONS
     ==========================================================================*/

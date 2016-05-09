@@ -43,7 +43,7 @@ public:
     void bookingSetup();
     void populateBooking();
     void setBooking(int row);
-    void setup_searchClientTable(QSqlQuery query);
+    void setup_searchClientTable(QSqlQuery results);
     void displayPicThread(QString val);
     void displayClientInfoThread(QString val);
     void clientSearchedInfo();
@@ -52,6 +52,7 @@ public:
 
 private slots:
 
+    void initCurrentWidget(int idx);
     /*==========================================================================
     DEV TESTING BUTTONS
     ==========================================================================*/
@@ -103,7 +104,8 @@ private slots:
     void on_reportsButton_clicked();
 
     void on_pushButton_search_client_clicked();
-    void selected_client_info(QModelIndex idx1,QModelIndex idx2);
+
+    void selected_client_info(int nRow, int nCol);
 
     void on_button_register_client_clicked();
 
@@ -116,6 +118,8 @@ private slots:
     bool check_client_register_form();
 
     void clear_client_register_form();
+
+    void read_curClient_Information(QString ClientId);
 
     void on_button_clear_client_regForm_clicked();
 
@@ -159,12 +163,17 @@ private slots:
 
     void on_EditRoomsButton_clicked();
 
+
+
+    void on_pushButton_bookRoom_clicked();
+
 private:
     Ui::MainWindow *ui;
     MainWindow * mw;
     Booking * curBook;
     transaction * trans;
     Client * curClient;
+    QString curClientID;
     
     bool pic_available = true;
     bool table_available = true;
