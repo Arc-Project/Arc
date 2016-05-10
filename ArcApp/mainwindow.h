@@ -29,6 +29,7 @@
 #include "transaction.h"
 #include "client.h"
 #include "shared.h"
+#include "casefile.h"
 namespace Ui {
 class MainWindow;
 }
@@ -201,6 +202,14 @@ private slots:
 
     void on_tableWidget_3_doubleClicked(const QModelIndex &index);
 
+    void on_pushButton_3_clicked();
+
+    /*==========================================================================
+    CASE FILES FUNCTIONS
+    ==========================================================================*/
+
+    void on_twCaseFiles_doubleClicked(int row, int col);
+
 private:
     Ui::MainWindow *ui;
     MainWindow * mw;
@@ -211,6 +220,8 @@ private:
     
     bool pic_available = true;
     bool table_available = true;
+
+    QDir dir;
 
 };
 
