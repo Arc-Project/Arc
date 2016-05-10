@@ -44,23 +44,14 @@ void MainWindow::initCurrentWidget(int idx){
             curClientID = "";
             break;
         case CLIENTLOOKUP:  //WIDGET 1
-            if(ui->tableWidget_search_client->columnCount()>0){
-            //init client search table
-                ui->tableWidget_search_client->setColumnCount(0);
-                ui->tableWidget_search_client->clear();
-            }
-            if(ui->tableWidget_clientInfo->columnCount()>0){
-            //init client info table
-                ui->tableWidget_clientInfo->setColumnCount(0);
-                ui->tableWidget_clientInfo->clear();
-                ui->tableWidget_clientInfo2->setColumnCount(0);
-                ui->tableWidget_clientInfo2->clear();
-            }
+            initClientLookupInfo();
+
             //initimageview
 
 
             break;
         case BOOKINGLOOKUP: //WIDGET 2
+            bookingSetup();
             //initcode
             qDebug()<<"Client INFO";
             if(curClient != NULL){
@@ -93,7 +84,7 @@ void MainWindow::initCurrentWidget(int idx){
         case CLIENTREGISTER:    //WIDGET 10
             clear_client_register_form();
             defaultRegisterOptions();           //combobox item add
-            if(curClientID != NULL)
+            if(curClientID != NULL || curClientID != "")
                 read_curClient_Information(curClientID);
             break;
         default:
@@ -570,7 +561,7 @@ void MainWindow::on_monthCheck_stateChanged(int arg1)
 
 void MainWindow::on_pushButton_RegisterClient_clicked()
 {
-
+    curClientID = "";
     ui->stackedWidget->setCurrentIndex(10);
     ui->label_cl_infoedit_title->setText("Register Client");
     ui->button_register_client->setText("Register");
@@ -651,9 +642,7 @@ void MainWindow::getListRegisterFields(QStringList* fieldList)
                << ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd")
                << ui->lineEdit_cl_SIN->text()
                << ui->lineEdit_cl_GANum->text()
-               << 0//ui->comboBox_cl_caseWorker->currentText() //grab value from case worker dropdown I don't know how to do it
-               << QString::number(ui->checkBox_cl_comm->isChecked())
-               << QString::number(ui->checkBox_cl_parolee->isChecked())
+               << "1"// ui->comboBox_cl_caseWorker->currentText() //grab value from case worker dropdown I don't know how to do it
                << ui->dateEdit_cl_rulesign->date().toString("yyyy-MM-dd")
                << ui->lineEdit_cl_nok_name->text()
                << ui->lineEdit_cl_nok_relationship->text()
@@ -661,8 +650,10 @@ void MainWindow::getListRegisterFields(QStringList* fieldList)
                << ui->lineEdit_cl_nok_ContactNo->text()
                << ui->lineEdit_cl_phys_name->text()
                << ui->lineEdit_cl_phys_ContactNo->text()
-               << ui->lineEdit_cl_Msd_Name->text()
-               << ui->lineEdit_cl_Msd_ContactNo->text()
+               << ui->lineEdit_cl_supporter_Name->text()
+               << ui->lineEdit_cl_supporter_ContactNo->text()
+               << ui->lineEdit_cl_supporter2_Name->text()
+               << ui->lineEdit_cl_supporter2_ContactNo->text()
                << ui->comboBox_cl_status->currentText() //grab value from status dropdown
                << ui->plainTextEdit_cl_comments->toPlainText();
 
@@ -681,8 +672,10 @@ void MainWindow::clear_client_register_form(){
     ui->lineEdit_cl_nok_ContactNo->clear();
     ui->lineEdit_cl_phys_name->clear();
     ui->lineEdit_cl_phys_ContactNo->clear();
-    ui->lineEdit_cl_Msd_Name->clear();
-    ui->lineEdit_cl_Msd_ContactNo->clear();
+    ui->lineEdit_cl_supporter_Name->clear();
+    ui->lineEdit_cl_supporter_ContactNo->clear();
+    ui->lineEdit_cl_supporter2_Name->clear();
+    ui->lineEdit_cl_supporter2_ContactNo->clear();
     ui->comboBox_cl_status->setCurrentIndex(0);
     ui->plainTextEdit_cl_comments->clear();
     QDate defaultDob= QDate::fromString("1990-01-01","yyyy-MM-dd");
@@ -712,22 +705,20 @@ void MainWindow::read_curClient_Information(QString ClientId){
     ui->comboBox_cl_caseWorker->setCurrentText(clientInfo.value(23).toString());
     ui->lineEdit_cl_SIN->setText(clientInfo.value(6).toString());
     ui->lineEdit_cl_GANum->setText(clientInfo.value(7).toString());
-    ui->checkBox_cl_parolee->setChecked(clientInfo.value(8).toBool());
-    ui->checkBox_cl_comm->setChecked(clientInfo.value(9).toBool());
-    ui->dateEdit_cl_rulesign->setDate(QDate::fromString(clientInfo.value(10).toString(),"yyyy-MM-dd"));
+    ui->dateEdit_cl_rulesign->setDate(QDate::fromString(clientInfo.value(8).toString(),"yyyy-MM-dd"));
 
     //NEXT OF KIN FIELD
-    ui->lineEdit_cl_nok_name->setText(clientInfo.value(11).toString());
-    ui->lineEdit_cl_nok_relationship->setText(clientInfo.value(12).toString());
-    ui->lineEdit_cl_nok_loc->setText(clientInfo.value(13).toString());
-    ui->lineEdit_cl_nok_ContactNo->setText(clientInfo.value(14).toString());
+    ui->lineEdit_cl_nok_name->setText(clientInfo.value(9).toString());
+    ui->lineEdit_cl_nok_relationship->setText(clientInfo.value(10).toString());
+    ui->lineEdit_cl_nok_loc->setText(clientInfo.value(11).toString());
+    ui->lineEdit_cl_nok_ContactNo->setText(clientInfo.value(12).toString());
 
     //Physician
-    ui->lineEdit_cl_phys_name->setText(clientInfo.value(15).toString());
-    ui->lineEdit_cl_phys_ContactNo->setText(clientInfo.value(16).toString());
+    ui->lineEdit_cl_phys_name->setText(clientInfo.value(13).toString());
+    ui->lineEdit_cl_phys_ContactNo->setText(clientInfo.value(14).toString());
 
     //WSDWorker
-    ui->comboBox_cl_status->setCurrentText(clientInfo.value(19).toString());
+    ui->comboBox_cl_status->setCurrentText(clientInfo.value(17).toString());
 }
 
 //Client information input and register click
@@ -749,6 +740,8 @@ void MainWindow::on_button_register_client_clicked()
             if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
             {
                 qDebug() << "Client registered successfully";
+                clear_client_register_form();
+                ui->stackedWidget->setCurrentIndex(1);
             }
             else
             {
@@ -759,8 +752,7 @@ void MainWindow::on_button_register_client_clicked()
         {
             qDebug() << "Edit Client";
         }
-        clear_client_register_form();
-        ui->stackedWidget->setCurrentIndex(1);
+
     }
     else
     {
@@ -902,7 +894,7 @@ void MainWindow::displayClientInfoThread(QString val){
 
     qDebug()<<"DISPLAY THREAD: " <<val;
 
-    QString searchQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned, status FROM Client WHERE ClientId =" + val;
+    QString searchQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, DateRulesSigned, status FROM Client WHERE ClientId =" + val;
    // QString searchQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance FROM Client WHERE ClientId =" + val;
     QSqlQuery clientInfoR = dbManager->execQuery(searchQuery);
 
@@ -912,7 +904,7 @@ void MainWindow::displayClientInfoThread(QString val){
     int column = clientInfoR.record().count();
     ui->tableWidget_clientInfo->setColumnCount(5);
     ui->tableWidget_clientInfo->clear();
-//    ui->tableWidget_clientInfo->setHorizontalHeaderLabels(QStringList()<<"FirstName"<< "MiddleName"<< "LastName" << "Dob" << "Balance"<< "SinNo" << "GaNo" << "IsParolee" << "AllowComm" << "DateRulesSigned");
+//    ui->tableWidget_clientInfo->setHorizontalHeaderLabels(QStringList()<<"FirstName"<< "MiddleName"<< "LastName" << "Dob" << "Balance"<< "SinNo" << "GaNo" << "DateRulesSigned");
 
     ui->tableWidget_clientInfo->setHorizontalHeaderLabels(QStringList()<<"FirstName"<< "MiddleName"<< "LastName" << "Dob" << "Balance");
 /*
@@ -946,19 +938,19 @@ void MainWindow::displayClientInfoThread(QString val){
 //   ui->tableWidget_clientInfo2->show();
 
    clientInfo.next();
-   ui->lineEdit_cl_info_fName->setText(clientInfo.value(0).toString());
-   ui->lineEdit_cl_info_mName->setText(clientInfo.value(1).toString());
-   ui->lineEdit_cl_info_lName->setText(clientInfo.value(2).toString());
-   ui->lineEdit_cl_info_dob->setText(clientInfo.value(3).toString());
+   ui->label_cl_info_fName_val->setText(clientInfo.value(0).toString());
+   ui->label_cl_info_mName_val->setText(clientInfo.value(1).toString());
+   ui->label_cl_info_lName_val->setText(clientInfo.value(2).toString());
+   ui->label_cl_info_dob_val->setText(clientInfo.value(3).toString());
    ui->label_cl_info_balance_amt->setText(clientInfo.value(4).toString());
-   ui->lineEdit_cl_info_SIN->setText(clientInfo.value(5).toString());
-   ui->lineEdit_cl_info_gaNum->setText(clientInfo.value(6).toString());
-   ui->lineEdit_cl_info_payrolee->setText(clientInfo.value(7).toBool()?"YES":"NO");
-   ui->lineEdit_cl_info_allowComm->setText(clientInfo.value(8).toBool()?"Yes":"NO");
-   ui->lineEdit_cl_info_ruleSignDate->setText(clientInfo.value(9).toString());
-   ui->label_cl_info_status->setText(clientInfo.value(10).toString());
+   ui->label_cl_info_sin_val->setText(clientInfo.value(5).toString());
+   ui->label_cl_info_gaNum_val->setText(clientInfo.value(6).toString());
+   ui->label_cl_info_ruleSignDate_val->setText(clientInfo.value(7).toString());
+   ui->label_cl_info_status->setText(clientInfo.value(8).toString());
+
 
    table_available = true;
+
 
 
 }
@@ -1266,6 +1258,55 @@ void MainWindow::on_btn_searchUsers_clicked()
 ////    ui->tableWidget_3->horizontalHeader()->model()->setHeaderData(2, Qt::Horizontal, "Role");
 }
 
+
+
+
+void MainWindow::initClientLookupInfo(){
+    //init client search table
+    if(ui->tableWidget_search_client->columnCount()>0){
+        ui->tableWidget_search_client->setColumnCount(0);
+        ui->tableWidget_search_client->clear();
+    }
+
+    //init client Info Form Field
+    ui->label_cl_info_fName_val->clear();
+    ui->label_cl_info_mName_val->clear();
+    ui->label_cl_info_lName_val->clear();
+    ui->label_cl_info_dob_val->clear();
+    ui->label_cl_info_balance_amt->clear();
+    ui->label_cl_info_sin_val->clear();
+    ui->label_cl_info_gaNum_val->clear();
+    ui->label_cl_info_caseWorker_val->clear();
+    ui->label_cl_info_ruleSignDate_val->clear();
+    ui->label_cl_info_status->clear();
+
+    ui->label_cl_info_nok_name_val->clear();
+    ui->label_cl_info_nok_relationship_val->clear();
+    ui->label_cl_info_nok_loc_val->clear();
+    ui->label_cl_info_nok_contatct_val->clear();
+
+    ui->label_cl_info_phys_name_val->clear();
+    ui->label_cl_info_phys_contact_val->clear();
+
+    ui->label_cl_info_Supporter_name_val->clear();
+    ui->label_cl_info_Supporter_contact_val->clear();
+    ui->label_cl_info_Supporter2_name_val->clear();
+    ui->label_cl_info_Supporter2_contact_val->clear();
+
+    ui->textBrowser_client_info_comment->clear();
+
+
+    //init client info table
+    if(ui->tableWidget_clientInfo->columnCount()>0){
+        ui->tableWidget_clientInfo->setColumnCount(0);
+        ui->tableWidget_clientInfo->clear();
+        ui->tableWidget_clientInfo2->setColumnCount(0);
+        ui->tableWidget_clientInfo2->clear();
+    }
+
+
+}
+
 // double clicked employee
 void MainWindow::on_tableWidget_3_doubleClicked(const QModelIndex &index)
 {
@@ -1504,6 +1545,8 @@ void MainWindow::on_pushButton_bookRoom_clicked()
 {
     curClient = new Client();
     int nRow = ui->tableWidget_search_client->currentRow();
+    if (nRow <0)
+        return;
 
     curClientID = curClient->clientId = ui->tableWidget_search_client->item(nRow, 0)->text();
     curClient->fName =  ui->tableWidget_search_client->item(nRow, 1)->text();
