@@ -233,12 +233,36 @@ private slots:
 
     void setPcpVector();
 
+    void on_btn_pcpRela_clicked();
+
+    void on_btn_pcpEdu_clicked();
+
+    void on_btn_pcpSub_clicked();
+
+    void on_btn_pcpAcc_clicked();
+
+    void on_btn_pcpLife_clicked();
+
+    void on_btn_pcpMent_clicked();
+
+    void on_btn_pcpPhy_clicked();
+
+    void on_btn_pcpLeg_clicked();
+
+    void on_btn_pcpAct_clicked();
+
+    void on_btn_pcpTrad_clicked();
+
+    void on_btn_pcpOther_clicked();
+
+    void on_btn_pcpKey_clicked();
+
     void on_btn_createNewUser_2_clicked();
 
     void on_pushButton_24_clicked();
 
 
-    void on_btn_pcpRela_clicked();
+
 
 private:
     Ui::MainWindow *ui;
