@@ -109,12 +109,12 @@ QWidget#wdg_transTotal {
      <rect>
       <x>30</x>
       <y>50</y>
-      <width>1366</width>
+      <width>1381</width>
       <height>735</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="mainMenu">
      <layout class="QGridLayout" name="gridLayout_5">
@@ -596,10 +596,124 @@ QWidget#wdg_transTotal {
            <property name="spacing">
             <number>2</number>
            </property>
+           <item row="0" column="1" rowspan="2">
+            <layout class="QVBoxLayout" name="verticalLayout_4">
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_13">
+               <property name="spacing">
+                <number>1</number>
+               </property>
+               <property name="sizeConstraint">
+                <enum>QLayout::SetDefaultConstraint</enum>
+               </property>
+               <item alignment="Qt::AlignHCenter">
+                <widget class="QGraphicsView" name="graphicsView_getInfo">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>150</width>
+                   <height>120</height>
+                  </size>
+                 </property>
+                 <property name="layoutDirection">
+                  <enum>Qt::LeftToRight</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_cl_info_status">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>12</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QFormLayout" name="formLayout_17">
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_cl_info_balance_tag">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Balance</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QLabel" name="label_cl_info_balance_amt">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_15">
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <item>
+                <widget class="QTextBrowser" name="textBrowser_client_info_comment">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
            <item row="0" column="0" rowspan="2">
             <layout class="QVBoxLayout" name="verticalLayout_3">
+             <property name="spacing">
+              <number>4</number>
+             </property>
              <item>
-              <widget class="QGroupBox" name="groupBox_4">
+              <widget class="QGroupBox" name="groupBox_cl_info_personal">
                <property name="title">
                 <string>PERSONAL INFORMATION</string>
                </property>
@@ -609,10 +723,10 @@ QWidget#wdg_transTotal {
                   <x>10</x>
                   <y>20</y>
                   <width>301</width>
-                  <height>291</height>
+                  <height>301</height>
                  </rect>
                 </property>
-                <layout class="QFormLayout" name="formLayout_15">
+                <layout class="QFormLayout" name="formLayout_client_info_personal">
                  <item row="1" column="0">
                   <widget class="QLabel" name="label_cl_info_fName">
                    <property name="font">
@@ -633,7 +747,7 @@ QWidget#wdg_transTotal {
                     </font>
                    </property>
                    <property name="autoFillBackground">
-                    <bool>true</bool>
+                    <bool>false</bool>
                    </property>
                    <property name="readOnly">
                     <bool>true</bool>
@@ -708,7 +822,7 @@ QWidget#wdg_transTotal {
                     </font>
                    </property>
                    <property name="autoFillBackground">
-                    <bool>true</bool>
+                    <bool>false</bool>
                    </property>
                    <property name="readOnly">
                     <bool>true</bool>
@@ -723,7 +837,7 @@ QWidget#wdg_transTotal {
                     </font>
                    </property>
                    <property name="autoFillBackground">
-                    <bool>true</bool>
+                    <bool>false</bool>
                    </property>
                    <property name="readOnly">
                     <bool>true</bool>
@@ -738,7 +852,7 @@ QWidget#wdg_transTotal {
                     </font>
                    </property>
                    <property name="autoFillBackground">
-                    <bool>true</bool>
+                    <bool>false</bool>
                    </property>
                    <property name="readOnly">
                     <bool>true</bool>
@@ -753,7 +867,7 @@ QWidget#wdg_transTotal {
                     </font>
                    </property>
                    <property name="autoFillBackground">
-                    <bool>true</bool>
+                    <bool>false</bool>
                    </property>
                    <property name="readOnly">
                     <bool>true</bool>
@@ -768,7 +882,7 @@ QWidget#wdg_transTotal {
                     </font>
                    </property>
                    <property name="autoFillBackground">
-                    <bool>true</bool>
+                    <bool>false</bool>
                    </property>
                    <property name="readOnly">
                     <bool>true</bool>
@@ -807,7 +921,7 @@ QWidget#wdg_transTotal {
                     </font>
                    </property>
                    <property name="autoFillBackground">
-                    <bool>true</bool>
+                    <bool>false</bool>
                    </property>
                    <property name="readOnly">
                     <bool>true</bool>
@@ -822,7 +936,7 @@ QWidget#wdg_transTotal {
                     </font>
                    </property>
                    <property name="autoFillBackground">
-                    <bool>true</bool>
+                    <bool>false</bool>
                    </property>
                    <property name="readOnly">
                     <bool>true</bool>
@@ -861,7 +975,7 @@ QWidget#wdg_transTotal {
                     </font>
                    </property>
                    <property name="autoFillBackground">
-                    <bool>true</bool>
+                    <bool>false</bool>
                    </property>
                    <property name="readOnly">
                     <bool>true</bool>
@@ -876,7 +990,7 @@ QWidget#wdg_transTotal {
                     </font>
                    </property>
                    <property name="autoFillBackground">
-                    <bool>true</bool>
+                    <bool>false</bool>
                    </property>
                    <property name="readOnly">
                     <bool>true</bool>
@@ -889,67 +1003,272 @@ QWidget#wdg_transTotal {
              </item>
              <item>
               <widget class="QGroupBox" name="groupBox">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="title">
-                <string>GroupBox</string>
+                <string>CONTACT INFORMATION</string>
                </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item row="0" column="1" rowspan="2">
-            <layout class="QVBoxLayout" name="verticalLayout_4">
-             <item>
-              <layout class="QVBoxLayout" name="verticalLayout_13">
-               <property name="spacing">
-                <number>1</number>
-               </property>
-               <property name="sizeConstraint">
-                <enum>QLayout::SetDefaultConstraint</enum>
-               </property>
-               <item alignment="Qt::AlignHCenter">
-                <widget class="QGraphicsView" name="graphicsView_getInfo">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>150</width>
-                   <height>120</height>
-                  </size>
-                 </property>
-                 <property name="layoutDirection">
-                  <enum>Qt::LeftToRight</enum>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <widget class="QGroupBox" name="groupBox_cl_group">
-               <property name="title">
-                <string>GroupBox</string>
-               </property>
-               <widget class="QWidget" name="formLayoutWidget">
+               <widget class="QGroupBox" name="groupBox_4">
                 <property name="geometry">
                  <rect>
-                  <x>20</x>
+                  <x>9</x>
                   <y>20</y>
-                  <width>291</width>
-                  <height>181</height>
+                  <width>301</width>
+                  <height>141</height>
                  </rect>
                 </property>
-                <layout class="QFormLayout" name="formLayout_14"/>
+                <property name="title">
+                 <string>NEXT OF KIN</string>
+                </property>
+                <widget class="QWidget" name="formLayoutWidget">
+                 <property name="geometry">
+                  <rect>
+                   <x>9</x>
+                   <y>19</y>
+                   <width>281</width>
+                   <height>111</height>
+                  </rect>
+                 </property>
+                 <layout class="QFormLayout" name="formLayout_14">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_cl_info_nok_name">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Name</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_cl_info_nok_relationship">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Relationship</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0">
+                   <widget class="QLabel" name="label_cl_info_nok_loc">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Location</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="0">
+                   <widget class="QLabel" name="label_cl_info_nok_contatct">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Contact Number </string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QLineEdit" name="lineEdit_cl_info_nok_name">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="readOnly">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QLineEdit" name="lineEdit_cl_info_nok_relationship">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="readOnly">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="1">
+                   <widget class="QLineEdit" name="lineEdit_cl_info_nok_loc">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="readOnly">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="1">
+                   <widget class="QLineEdit" name="lineEdit_cl_info_nok_contact">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="readOnly">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
                </widget>
-              </widget>
-             </item>
-             <item>
-              <widget class="QGroupBox" name="groupBox_5">
-               <property name="title">
-                <string>GroupBox</string>
-               </property>
+               <widget class="QGroupBox" name="groupBox_client_info_physician">
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>160</y>
+                  <width>301</width>
+                  <height>71</height>
+                 </rect>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="title">
+                 <string>Physician</string>
+                </property>
+                <widget class="QWidget" name="formLayoutWidget_3">
+                 <property name="geometry">
+                  <rect>
+                   <x>9</x>
+                   <y>20</y>
+                   <width>281</width>
+                   <height>48</height>
+                  </rect>
+                 </property>
+                 <layout class="QFormLayout" name="formLayout_15">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_cl_info_phys_name">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Name</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_cl_info_phys_contact">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Contact Number </string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QLineEdit" name="lineEdit_cl_info_phys_name">
+                    <property name="readOnly">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QLineEdit" name="lineEdit_cl_info_phys_contact">
+                    <property name="readOnly">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </widget>
+               <widget class="QGroupBox" name="groupBox_cl_info_MSD">
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>240</y>
+                  <width>301</width>
+                  <height>71</height>
+                 </rect>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="title">
+                 <string>MSD Worker</string>
+                </property>
+                <widget class="QWidget" name="formLayoutWidget_4">
+                 <property name="geometry">
+                  <rect>
+                   <x>9</x>
+                   <y>19</y>
+                   <width>281</width>
+                   <height>48</height>
+                  </rect>
+                 </property>
+                 <layout class="QFormLayout" name="formLayout_16">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_cl_info_MsdWorker_name">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Name</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_cl_info_MsdWorker_contact">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Conatact Number </string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QLineEdit" name="lineEdit_cl_info_MsdWorker_name">
+                    <property name="readOnly">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QLineEdit" name="lineEdit_cl_info_MsdWorker_contact">
+                    <property name="readOnly">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </widget>
               </widget>
              </item>
             </layout>

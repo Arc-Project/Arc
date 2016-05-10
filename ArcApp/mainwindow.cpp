@@ -898,12 +898,12 @@ void MainWindow::displayClientInfoThread(QString val){
 
     qDebug()<<"DISPLAY THREAD: " <<val;
 
-   // QString searchQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId =" + val;
-    QString searchQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance FROM Client WHERE ClientId =" + val;
+    QString searchQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned, status FROM Client WHERE ClientId =" + val;
+   // QString searchQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance FROM Client WHERE ClientId =" + val;
     QSqlQuery clientInfoR = dbManager->execQuery(searchQuery);
 
     ui->tableWidget_clientInfo->setRowCount(0);
-    //ui->tableWidget_clientInfo2->setRowCount(0);
+    ui->tableWidget_clientInfo2->setRowCount(0);
 
     int column = clientInfoR.record().count();
     ui->tableWidget_clientInfo->setColumnCount(5);
@@ -916,31 +916,47 @@ void MainWindow::displayClientInfoThread(QString val){
     ui->tableWidget_clientInfo2->clear();
     ui->tableWidget_clientInfo2->setHorizontalHeaderLabels(QStringList()<<"SinNo" << "GaNo" << "IsParolee" << "AllowComm" << "DateRulesSigned");
 */
-
+    QSqlQuery clientInfo = clientInfoR;
     int row = 0;
     int col = 0;
+/*
     while(clientInfoR.next()){
         ui->tableWidget_clientInfo->insertRow(row);
-      //  ui->tableWidget_clientInfo2->insertRow(row);
-        for(col =0; col <column; col++){
+ //       ui->tableWidget_clientInfo2->insertRow(row);
+        for(col =0; col <5; col++){
             ui->tableWidget_clientInfo->setItem(row, col, new QTableWidgetItem(clientInfoR.value(col).toString()));
-            qDebug() <<"row : "<<row << ", col: " << col << "item" << clientInfoR.value(col).toString();
+        //    qDebug() <<"row : "<<row << ", col: " << col << "item" << clientInfoR.value(col).toString();
         }
-        /*
+
         while(col<column){
             ui->tableWidget_clientInfo2->setItem(row, col-5, new QTableWidgetItem(clientInfoR.value(col).toString()));
          //   qDebug() <<"row : "<<row << ", col: " << col << "item" << clientInfoR.value(col).toString();
             col++;
         }
-        */
+
         row++;
     }
 
    ui->tableWidget_clientInfo->show();
- //  ui->tableWidget_clientInfo2->show();
+*/
+//   ui->tableWidget_clientInfo2->show();
+
+   clientInfo.next();
+   ui->lineEdit_cl_info_fName->setText(clientInfo.value(0).toString());
+   ui->lineEdit_cl_info_mName->setText(clientInfo.value(1).toString());
+   ui->lineEdit_cl_info_lName->setText(clientInfo.value(2).toString());
+   ui->lineEdit_cl_info_dob->setText(clientInfo.value(3).toString());
+   ui->label_cl_info_balance_amt->setText(clientInfo.value(4).toString());
+   ui->lineEdit_cl_info_SIN->setText(clientInfo.value(5).toString());
+   ui->lineEdit_cl_info_gaNum->setText(clientInfo.value(6).toString());
+   ui->lineEdit_cl_info_payrolee->setText(clientInfo.value(7).toBool()?"YES":"NO");
+   ui->lineEdit_cl_info_allowComm->setText(clientInfo.value(8).toBool()?"Yes":"NO");
+   ui->lineEdit_cl_info_ruleSignDate->setText(clientInfo.value(9).toString());
+   ui->label_cl_info_status->setText(clientInfo.value(10).toString());
 
    table_available = true;
-   qDebug()<<"no matter for tableview";
+
+
 }
 
 void MainWindow::displayPicThread(QString val)
