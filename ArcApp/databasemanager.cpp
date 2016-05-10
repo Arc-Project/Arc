@@ -692,3 +692,10 @@ QSqlQuery DatabaseManager::getActiveBooking(QString user, bool userLook){
     return query;
 }
 
+QSqlQuery DatabaseManager::AddProgram(QString pcode, QString pdesc) {
+    QSqlQuery query(db);
+
+    query.exec("INSERT INTO Program VALUES('" + pcode +"', '" + pdesc + "')");
+
+    return query;
+}
