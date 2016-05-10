@@ -15,7 +15,6 @@
 #define EDITROOM 12
 #define CONFIRMBOOKING 13
 #define EDITPAGE 14
-#define CASEFILES 15
 #define DAILYREPORT 0
 #define SHIFTREPORT 1
 #define DAILYLOG 2
