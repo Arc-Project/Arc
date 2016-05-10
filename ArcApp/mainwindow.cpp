@@ -1865,12 +1865,12 @@ void MainWindow::on_pushButton_24_clicked()
     QString pdesc = ui->textEdit->toPlainText();
 
     if (pcode.length() == 0) {
-        ui->lbl_editUserWarning_2->setText("Please Enter a Program Code");
+        ui->lbl_editProgWarning->setText("Please Enter a Program Code");
         return;
     }
 
     if (pdesc.length() == 0) {
-        ui->lbl_editUserWarning_2->setText("Please Enter a Program Description");
+        ui->lbl_editProgWarning->setText("Please Enter a Program Description");
         return;
     }
 
@@ -1878,12 +1878,12 @@ void MainWindow::on_pushButton_24_clicked()
     int numrows = queryResults.numRowsAffected();
 
     if (numrows != 1) {
-        ui->lbl_editUserWarning_2->setText("Enter a valid program code to update");
+        ui->lbl_editProgWarning->setText("Enter a valid program code to update");
         return;
     } else {
         QSqlQuery qr = dbManager->updateProgram(pcode, pdesc);
         if (qr.numRowsAffected() == 1) {
-            ui->lbl_editUserWarning_2->setText("Program Updated");
+            ui->lbl_editProgWarning->setText("Program Updated");
             QStandardItemModel * model = new QStandardItemModel(0,0);
             model->clear();
             ui->tableWidget_2->clear();
@@ -1897,7 +1897,7 @@ void MainWindow::on_pushButton_24_clicked()
             ui->le_password->setText("");
             ui->le_users->setText("");
         } else {
-            ui->lbl_editUserWarning_2->setText("Program not updated - please try again.");
+            ui->lbl_editProgWarning->setText("Program not updated - please try again.");
         }
     }
 }
