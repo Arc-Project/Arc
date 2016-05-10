@@ -2156,6 +2156,17 @@ void MainWindow::on_btn_pcpKey_clicked()
     ui->tw_pcpPpl->setMinimumHeight(ui->tw_pcpPpl->minimumHeight()+35);
 }
 
+void MainWindow::on_btn_monthlyReport_clicked()
+{
+    ui->swdg_reports->setCurrentIndex(MONTHLYREPORT);
+}
+
+
+void MainWindow::on_btn_restrictedList_clicked()
+{
+    ui->swdg_reports->setCurrentIndex(RESTRICTIONS);
+}
+
 void MainWindow::on_btn_payDelete_clicked()
 {
     if(ui->btn_payDelete->text() == "Cash Cheque")
@@ -2227,6 +2238,4 @@ void MainWindow::on_btn_payOutstanding_clicked()
     populateATable(ui->mpTable, headers, cols, result, false);
     ui->mpTable->setColumnHidden(6, true);
     ui->mpTable->setColumnHidden(5, true);
-
-
 }

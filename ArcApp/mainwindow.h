@@ -19,6 +19,8 @@
 #define SHIFTREPORT 1
 #define DAILYLOG 2
 #define FLOATCOUNT 3
+#define MONTHLYREPORT 4
+#define RESTRICTIONS 5
 #include <QMainWindow>
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
@@ -261,8 +263,9 @@ private slots:
 
     void on_pushButton_24_clicked();
 
+    void on_btn_monthlyReport_clicked();
 
-
+    void on_btn_restrictedList_clicked();
 
     void on_btn_payDelete_clicked();
     void getTransactionFromRow(int row);
