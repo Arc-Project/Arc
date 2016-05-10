@@ -1643,25 +1643,48 @@ void MainWindow::on_pushButton_6_clicked()
 // set case files directory
 void MainWindow::on_pushButton_3_clicked()
 {
-    dir = QFileDialog::getExistingDirectory(
+    QString tempDir = QFileDialog::getExistingDirectory(
                     this,
                     tr("Select Directory"),
                     "C://"
                 );
     qDebug() << "selected directory" <<  dir.dirName();
+    qDebug() << curClientID;
+    if (!tempDir.dirName().isEmpty()) {
+        dir = tempDir;
+        populate_tw_caseFiles();
+    }
+    connect(ui->tw_caseFiles, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(on_tw_caseFiles_cellDoubleClicked(int,int)), Qt::UniqueConnection);
+}
+
+// open case file in external reader
+void MainWindow::on_tw_caseFiles_cellDoubleClicked(int row, int column)
+{
+    qDebug() << dir.absoluteFilePath(ui->tw_caseFiles->item(row, column)->text()) << "at" << row << " " << column;
+    QDesktopServices::openUrl(QUrl::fromLocalFile(dir.absoluteFilePath(ui->tw_caseFiles->item(row, column)->text())));
+}
+
+// filter file names
+void MainWindow::on_btn_caseFilter_clicked()
+{
+    qDebug() << "filter button clicked, filter with" << ui->le_caseFilter->text();
+    QStringList filter = (QStringList() << "*"+(ui->le_caseFilter->text())+"*");
+    populate_tw_caseFiles(filter);
+}
+
+void MainWindow::populate_tw_caseFiles(QStringList filter){
     int i = 0;
+    dir.setNameFilters(filter);
     for (auto x : dir.entryList(QDir::Files)) {
         qDebug() << x;
         ui->tw_caseFiles->setRowCount(i+1);
         ui->tw_caseFiles->setItem(i++,0, new QTableWidgetItem(x));
         ui->tw_caseFiles->resizeColumnsToContents();
     }
+    if (i > 0) {
+        ui->btn_caseFilter->setEnabled(true);
+    }
 
-    connect(ui->tw_caseFiles, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(on_twCaseFiles_doubleClicked(int,int)));
 }
 
-// open case file in external reader
-void MainWindow::on_twCaseFiles_doubleClicked(int row,int col){
-    qDebug() << dir.absoluteFilePath(ui->tw_caseFiles->itemAt(row, col)->text());
-    QDesktopServices::openUrl(dir.absoluteFilePath(ui->tw_caseFiles->itemAt(row, col)->text()));
-}
+

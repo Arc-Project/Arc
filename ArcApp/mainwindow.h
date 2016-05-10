@@ -207,8 +207,11 @@ private slots:
     /*==========================================================================
     CASE FILES FUNCTIONS
     ==========================================================================*/
+    void on_btn_caseFilter_clicked();
 
-    void on_twCaseFiles_doubleClicked(int row, int col);
+    void populate_tw_caseFiles(QStringList filter = QStringList());
+
+    void on_tw_caseFiles_cellDoubleClicked(int row, int column);
 
 private:
     Ui::MainWindow *ui;
