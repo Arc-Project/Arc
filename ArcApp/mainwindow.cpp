@@ -8,6 +8,7 @@
 #include "payment.h"
 
 bool firstTime = true;
+std::vector<QTableWidget*> pcp_tables;
 //QSqlQuery resultssss;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -16,13 +17,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     setCentralWidget(ui->stackedWidget);
 
-
     ui->makeBookingButton->hide();
     //mw = this;
 
     //default signal of stackedWidget
     //detect if the widget is changed
     connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(initCurrentWidget(int)));
+
+    setPcpVector();
 }
 
 MainWindow::~MainWindow()
@@ -1282,6 +1284,15 @@ void MainWindow::on_tableWidget_3_doubleClicked(const QModelIndex &index)
 void MainWindow::on_pushButton_CaseFiles_clicked()
 {
     ui->stackedWidget->setCurrentIndex(CASEFILE);
+
+    double width = ui->tw_pcpRela->size().width();
+
+    for (auto x: pcp_tables){
+        x->resizeRowsToContents();
+        x->setColumnWidth(0, width*0.41);
+        x->setColumnWidth(1, width*0.41);
+        x->setColumnWidth(2, width*0.16);
+    }
 }
 
 void MainWindow::on_EditRoomsButton_clicked()
@@ -1900,4 +1911,44 @@ void MainWindow::on_pushButton_24_clicked()
             ui->lbl_editProgWarning->setText("Program not updated - please try again.");
         }
     }
+}
+
+
+void MainWindow::resizeEvent(QResizeEvent *event) {
+    double width = ui->tw_pcpRela->size().width();
+    for (auto x: pcp_tables){
+        x->resizeRowsToContents();
+        x->setColumnWidth(0, width*0.41);
+        x->setColumnWidth(1, width*0.41);
+        x->setColumnWidth(2, width*0.16);
+    }
+}
+
+void MainWindow::on_tw_pcpRela_itemChanged(QTableWidgetItem *item)
+{
+    for (auto x: pcp_tables){
+        x->resizeRowsToContents();
+    }
+}
+
+void MainWindow::setPcpVector(){
+    pcp_tables.push_back(ui->tw_pcpAcco);
+    pcp_tables.push_back(ui->tw_pcpAct);
+    pcp_tables.push_back(ui->tw_pcpEdu);
+    pcp_tables.push_back(ui->tw_pcpLeg);
+    pcp_tables.push_back(ui->tw_pcpLife);
+    pcp_tables.push_back(ui->tw_pcpMent);
+    pcp_tables.push_back(ui->tw_pcpOther);
+    pcp_tables.push_back(ui->tw_pcpPhy);
+    pcp_tables.push_back(ui->tw_pcpPpl);
+    pcp_tables.push_back(ui->tw_pcpRela);
+    pcp_tables.push_back(ui->tw_pcpSub);
+    pcp_tables.push_back(ui->tw_pcpTrad);
+}
+
+void MainWindow::on_btn_pcpRela_clicked()
+{
+    ui->tw_pcpRela->setRowCount(ui->tw_pcpRela->rowCount()+1);
+
+    ui->tw_pcpRela->setMinimumHeight(ui->tw_pcpRela->minimumHeight()+28);
 }

@@ -58,6 +58,7 @@ public:
 private slots:
 
     void initCurrentWidget(int idx);
+    void resizeEvent(QResizeEvent *event);
     /*==========================================================================
     DEV TESTING BUTTONS
     ==========================================================================*/
@@ -223,10 +224,16 @@ private slots:
 
     void on_tw_caseFiles_cellDoubleClicked(int row, int column);
 
+    void on_tw_pcpRela_itemChanged(QTableWidgetItem *item);
+
+    void setPcpVector();
 
     void on_btn_createNewUser_2_clicked();
 
     void on_pushButton_24_clicked();
+
+
+    void on_btn_pcpRela_clicked();
 
 private:
     Ui::MainWindow *ui;
