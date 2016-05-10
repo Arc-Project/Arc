@@ -2136,3 +2136,14 @@ void MainWindow::on_btn_pcpKey_clicked()
     ui->tw_pcpPpl->insertRow(0);
     ui->tw_pcpPpl->setMinimumHeight(ui->tw_pcpPpl->minimumHeight()+35);
 }
+
+void MainWindow::on_btn_monthlyReport_clicked()
+{
+    ui->swdg_reports->setCurrentIndex(MONTHLYREPORT);
+}
+
+
+void MainWindow::on_btn_restrictedList_clicked()
+{
+    ui->swdg_reports->setCurrentIndex(RESTRICTIONS);
+}
