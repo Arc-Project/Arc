@@ -114,7 +114,7 @@ QWidget#wdg_transTotal {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>8</number>
     </property>
     <widget class="QWidget" name="mainMenu">
      <layout class="QGridLayout" name="gridLayout_5">
@@ -3746,10 +3746,122 @@ QWidget#wdg_transTotal {
      <layout class="QGridLayout" name="gridLayout_45">
       <item row="0" column="0">
        <widget class="QLabel" name="label_8">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
-         <string>Client Name</string>
+         <string>Client Name's Files</string>
         </property>
        </widget>
+      </item>
+      <item row="1" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout_48">
+        <item>
+         <widget class="QLabel" name="label_48">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Directory:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="le_caseDir">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>28</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_3">
+          <property name="minimumSize">
+           <size>
+            <width>70</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Browse</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="0">
+       <widget class="QTableWidget" name="tw_caseFiles">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+        <property name="sortingEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="cornerButtonEnabled">
+         <bool>false</bool>
+        </property>
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <column>
+         <property name="text">
+          <string>Filename</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout_49">
+        <item>
+         <widget class="QLabel" name="label_51">
+          <property name="text">
+           <string>Filter Name</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="le_caseFilter">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btn_caseFilter">
+          <property name="text">
+           <string>Filter</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item row="0" column="1" rowspan="4">
        <widget class="QTabWidget" name="tabWidget_2">
@@ -3759,7 +3871,7 @@ QWidget#wdg_transTotal {
          </font>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <property name="movable">
          <bool>true</bool>
@@ -3782,8 +3894,8 @@ QWidget#wdg_transTotal {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>244</width>
-               <height>2172</height>
+               <width>989</width>
+               <height>2305</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_47">
@@ -3791,7 +3903,7 @@ QWidget#wdg_transTotal {
                <widget class="QFrame" name="frame_2">
                 <layout class="QGridLayout" name="gridLayout_40">
                  <item row="0" column="0">
-                  <layout class="QHBoxLayout" name="horizontalLayout_46">
+                  <layout class="QHBoxLayout" name="horizontalLayout_56">
                    <item>
                     <widget class="QLabel" name="label_49">
                      <property name="font">
@@ -3805,7 +3917,7 @@ QWidget#wdg_transTotal {
                     </widget>
                    </item>
                    <item>
-                    <spacer name="horizontalSpacer_24">
+                    <spacer name="horizontalSpacer_32">
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
                      </property>
@@ -3883,6 +3995,12 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderVisible">
                     <bool>false</bool>
                    </attribute>
+                   <attribute name="verticalHeaderDefaultSectionSize">
+                    <number>35</number>
+                   </attribute>
+                   <attribute name="verticalHeaderMinimumSectionSize">
+                    <number>35</number>
+                   </attribute>
                    <row/>
                    <row/>
                    <row/>
@@ -3904,16 +4022,51 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                  <item row="2" column="0">
-                  <widget class="QLabel" name="label_50">
-                   <property name="font">
-                    <font>
-                     <pointsize>10</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Education / Employment</string>
-                   </property>
-                  </widget>
+                  <layout class="QHBoxLayout" name="horizontalLayout_46">
+                   <item>
+                    <widget class="QLabel" name="label_50">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Education / Employment</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_24">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpEdu">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Add Row</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                  <item row="3" column="0">
                   <widget class="QTableWidget" name="tw_pcpEdu">
@@ -3961,6 +4114,12 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderVisible">
                     <bool>false</bool>
                    </attribute>
+                   <attribute name="verticalHeaderDefaultSectionSize">
+                    <number>35</number>
+                   </attribute>
+                   <attribute name="verticalHeaderMinimumSectionSize">
+                    <number>35</number>
+                   </attribute>
                    <row/>
                    <row/>
                    <row/>
@@ -3982,16 +4141,51 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                  <item row="4" column="0">
-                  <widget class="QLabel" name="label_52">
-                   <property name="font">
-                    <font>
-                     <pointsize>10</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Substance Use</string>
-                   </property>
-                  </widget>
+                  <layout class="QHBoxLayout" name="horizontalLayout_57">
+                   <item>
+                    <widget class="QLabel" name="label_52">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Substance Use</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_33">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>37</width>
+                       <height>17</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpSub">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Add Row</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                  <item row="5" column="0">
                   <widget class="QTableWidget" name="tw_pcpSub">
@@ -4039,6 +4233,12 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderVisible">
                     <bool>false</bool>
                    </attribute>
+                   <attribute name="verticalHeaderDefaultSectionSize">
+                    <number>35</number>
+                   </attribute>
+                   <attribute name="verticalHeaderMinimumSectionSize">
+                    <number>35</number>
+                   </attribute>
                    <row/>
                    <row/>
                    <row/>
@@ -4060,16 +4260,51 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                  <item row="6" column="0">
-                  <widget class="QLabel" name="label_53">
-                   <property name="font">
-                    <font>
-                     <pointsize>10</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Accomodations / Transition Planning</string>
-                   </property>
-                  </widget>
+                  <layout class="QHBoxLayout" name="horizontalLayout_58">
+                   <item>
+                    <widget class="QLabel" name="label_53">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Accomodations / Transition Planning</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_34">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>34</width>
+                       <height>14</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpAcc">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Add Row</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                  <item row="7" column="0">
                   <widget class="QTableWidget" name="tw_pcpAcco">
@@ -4117,6 +4352,12 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderVisible">
                     <bool>false</bool>
                    </attribute>
+                   <attribute name="verticalHeaderDefaultSectionSize">
+                    <number>35</number>
+                   </attribute>
+                   <attribute name="verticalHeaderMinimumSectionSize">
+                    <number>35</number>
+                   </attribute>
                    <row/>
                    <row/>
                    <row/>
@@ -4138,16 +4379,51 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                  <item row="8" column="0">
-                  <widget class="QLabel" name="label_54">
-                   <property name="font">
-                    <font>
-                     <pointsize>10</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Life Skills</string>
-                   </property>
-                  </widget>
+                  <layout class="QHBoxLayout" name="horizontalLayout_59">
+                   <item>
+                    <widget class="QLabel" name="label_54">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Life Skills</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_35">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>31</width>
+                       <height>11</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpLife">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Add Row</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                  <item row="9" column="0">
                   <widget class="QTableWidget" name="tw_pcpLife">
@@ -4195,6 +4471,12 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderVisible">
                     <bool>false</bool>
                    </attribute>
+                   <attribute name="verticalHeaderDefaultSectionSize">
+                    <number>35</number>
+                   </attribute>
+                   <attribute name="verticalHeaderMinimumSectionSize">
+                    <number>35</number>
+                   </attribute>
                    <row/>
                    <row/>
                    <row/>
@@ -4216,16 +4498,51 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                  <item row="10" column="0">
-                  <widget class="QLabel" name="label_55">
-                   <property name="font">
-                    <font>
-                     <pointsize>10</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Mental Health</string>
-                   </property>
-                  </widget>
+                  <layout class="QHBoxLayout" name="horizontalLayout_68">
+                   <item>
+                    <widget class="QLabel" name="label_55">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Mental Health</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_44">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>750</width>
+                       <height>13</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpMent">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Add Row</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                  <item row="11" column="0">
                   <widget class="QTableWidget" name="tw_pcpMent">
@@ -4273,6 +4590,12 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderVisible">
                     <bool>false</bool>
                    </attribute>
+                   <attribute name="verticalHeaderDefaultSectionSize">
+                    <number>35</number>
+                   </attribute>
+                   <attribute name="verticalHeaderMinimumSectionSize">
+                    <number>35</number>
+                   </attribute>
                    <row/>
                    <row/>
                    <row/>
@@ -4294,16 +4617,51 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                  <item row="12" column="0">
-                  <widget class="QLabel" name="label_56">
-                   <property name="font">
-                    <font>
-                     <pointsize>10</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Physical Health</string>
-                   </property>
-                  </widget>
+                  <layout class="QHBoxLayout" name="horizontalLayout_67">
+                   <item>
+                    <widget class="QLabel" name="label_56">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Physical Health</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_45">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>750</width>
+                       <height>8</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpPhy">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Add Row</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                  <item row="13" column="0">
                   <widget class="QTableWidget" name="tw_pcpPhy">
@@ -4351,6 +4709,12 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderVisible">
                     <bool>false</bool>
                    </attribute>
+                   <attribute name="verticalHeaderDefaultSectionSize">
+                    <number>35</number>
+                   </attribute>
+                   <attribute name="verticalHeaderMinimumSectionSize">
+                    <number>35</number>
+                   </attribute>
                    <row/>
                    <row/>
                    <row/>
@@ -4372,16 +4736,51 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                  <item row="14" column="0">
-                  <widget class="QLabel" name="label_60">
-                   <property name="font">
-                    <font>
-                     <pointsize>10</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Legal Involvement</string>
-                   </property>
-                  </widget>
+                  <layout class="QHBoxLayout" name="horizontalLayout_66">
+                   <item>
+                    <widget class="QLabel" name="label_60">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Legal Involvement</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_53">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>747</width>
+                       <height>13</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpLeg">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Add Row</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                  <item row="15" column="0">
                   <widget class="QTableWidget" name="tw_pcpLeg">
@@ -4429,6 +4828,12 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderVisible">
                     <bool>false</bool>
                    </attribute>
+                   <attribute name="verticalHeaderDefaultSectionSize">
+                    <number>35</number>
+                   </attribute>
+                   <attribute name="verticalHeaderMinimumSectionSize">
+                    <number>35</number>
+                   </attribute>
                    <row/>
                    <row/>
                    <row/>
@@ -4450,16 +4855,51 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                  <item row="16" column="0">
-                  <widget class="QLabel" name="label_61">
-                   <property name="font">
-                    <font>
-                     <pointsize>10</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Activities &amp; Interests</string>
-                   </property>
-                  </widget>
+                  <layout class="QHBoxLayout" name="horizontalLayout_65">
+                   <item>
+                    <widget class="QLabel" name="label_61">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Activities &amp; Interests</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_54">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>747</width>
+                       <height>13</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpAct">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Add Row</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                  <item row="17" column="0">
                   <widget class="QTableWidget" name="tw_pcpAct">
@@ -4507,6 +4947,12 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderVisible">
                     <bool>false</bool>
                    </attribute>
+                   <attribute name="verticalHeaderDefaultSectionSize">
+                    <number>35</number>
+                   </attribute>
+                   <attribute name="verticalHeaderMinimumSectionSize">
+                    <number>35</number>
+                   </attribute>
                    <row/>
                    <row/>
                    <row/>
@@ -4528,16 +4974,51 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                  <item row="18" column="0">
-                  <widget class="QLabel" name="label_57">
-                   <property name="font">
-                    <font>
-                     <pointsize>10</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Traditions, Culture, Spirituality</string>
-                   </property>
-                  </widget>
+                  <layout class="QHBoxLayout" name="horizontalLayout_69">
+                   <item>
+                    <widget class="QLabel" name="label_57">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Traditions, Culture, Spirituality</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_55">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>744</width>
+                       <height>10</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpTrad">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Add Row</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                  <item row="19" column="0">
                   <widget class="QTableWidget" name="tw_pcpTrad">
@@ -4585,6 +5066,12 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderVisible">
                     <bool>false</bool>
                    </attribute>
+                   <attribute name="verticalHeaderDefaultSectionSize">
+                    <number>35</number>
+                   </attribute>
+                   <attribute name="verticalHeaderMinimumSectionSize">
+                    <number>35</number>
+                   </attribute>
                    <row/>
                    <row/>
                    <row/>
@@ -4606,16 +5093,51 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                  <item row="20" column="0">
-                  <widget class="QLabel" name="label_58">
-                   <property name="font">
-                    <font>
-                     <pointsize>10</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Other</string>
-                   </property>
-                  </widget>
+                  <layout class="QHBoxLayout" name="horizontalLayout_70">
+                   <item>
+                    <widget class="QLabel" name="label_58">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Other</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_56">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>741</width>
+                       <height>7</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpOther">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Add Row</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                  <item row="21" column="0">
                   <widget class="QTableWidget" name="tw_pcpOther">
@@ -4663,6 +5185,12 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderVisible">
                     <bool>false</bool>
                    </attribute>
+                   <attribute name="verticalHeaderDefaultSectionSize">
+                    <number>35</number>
+                   </attribute>
+                   <attribute name="verticalHeaderMinimumSectionSize">
+                    <number>35</number>
+                   </attribute>
                    <row/>
                    <row/>
                    <row/>
@@ -4684,16 +5212,51 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                  <item row="22" column="0">
-                  <widget class="QLabel" name="label_59">
-                   <property name="font">
-                    <font>
-                     <pointsize>10</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Key people within the plan</string>
-                   </property>
-                  </widget>
+                  <layout class="QHBoxLayout" name="horizontalLayout_74">
+                   <item>
+                    <widget class="QLabel" name="label_59">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Key people within the plan</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_60">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>738</width>
+                       <height>4</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpKey">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Add Row</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </item>
                  <item row="23" column="0">
                   <widget class="QTableWidget" name="tw_pcpPpl">
@@ -4741,6 +5304,12 @@ QWidget#wdg_transTotal {
                    <attribute name="verticalHeaderVisible">
                     <bool>false</bool>
                    </attribute>
+                   <attribute name="verticalHeaderDefaultSectionSize">
+                    <number>35</number>
+                   </attribute>
+                   <attribute name="verticalHeaderMinimumSectionSize">
+                    <number>35</number>
+                   </attribute>
                    <row/>
                    <row/>
                    <row/>
@@ -4785,6 +5354,28 @@ QWidget#wdg_transTotal {
                 <zorder>tw_pcpPpl</zorder>
                 <zorder>tw_pcpOther</zorder>
                 <zorder>label_61</zorder>
+                <zorder>btn_pcpEdu</zorder>
+                <zorder>btn_pcpSub</zorder>
+                <zorder>btn_pcpAcc</zorder>
+                <zorder>btn_pcpLife</zorder>
+                <zorder>btn_pcpMent</zorder>
+                <zorder>btn_pcpPhy</zorder>
+                <zorder>btn_pcpLeg</zorder>
+                <zorder>btn_pcpAct</zorder>
+                <zorder>btn_pcpTrad</zorder>
+                <zorder>btn_pcpOther</zorder>
+                <zorder>btn_pcpKey</zorder>
+                <zorder>horizontalSpacer_32</zorder>
+                <zorder>horizontalSpacer_33</zorder>
+                <zorder>horizontalSpacer_34</zorder>
+                <zorder>horizontalSpacer_35</zorder>
+                <zorder>horizontalSpacer_44</zorder>
+                <zorder>horizontalSpacer_45</zorder>
+                <zorder>horizontalSpacer_53</zorder>
+                <zorder>horizontalSpacer_54</zorder>
+                <zorder>horizontalSpacer_55</zorder>
+                <zorder>horizontalSpacer_56</zorder>
+                <zorder>horizontalSpacer_60</zorder>
                </widget>
               </item>
              </layout>
@@ -4793,105 +5384,23 @@ QWidget#wdg_transTotal {
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tab_6">
-         <attribute name="title">
-          <string>Intake Form</string>
-         </attribute>
-        </widget>
         <widget class="QWidget" name="tab_8">
          <attribute name="title">
           <string>Running Notes</string>
          </attribute>
+         <layout class="QGridLayout" name="gridLayout_46">
+          <item row="0" column="0">
+           <widget class="QTextEdit" name="textEdit_2">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </widget>
-      </item>
-      <item row="1" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_48">
-        <item>
-         <widget class="QLabel" name="label_48">
-          <property name="text">
-           <string>Directory:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="le_caseDir">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButton_3">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Browse</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="2" column="0">
-       <widget class="QTableWidget" name="tw_caseFiles">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="editTriggers">
-         <set>QAbstractItemView::NoEditTriggers</set>
-        </property>
-        <property name="sortingEnabled">
-         <bool>true</bool>
-        </property>
-        <property name="cornerButtonEnabled">
-         <bool>false</bool>
-        </property>
-        <attribute name="horizontalHeaderStretchLastSection">
-         <bool>true</bool>
-        </attribute>
-        <column>
-         <property name="text">
-          <string>Filename</string>
-         </property>
-        </column>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_49">
-        <item>
-         <widget class="QLabel" name="label_51">
-          <property name="text">
-           <string>Filter Name</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="le_caseFilter">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="btn_caseFilter">
-          <property name="text">
-           <string>Filter</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
       </item>
      </layout>
     </widget>

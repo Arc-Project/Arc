@@ -2114,9 +2114,74 @@ void MainWindow::setPcpVector(){
 
 void MainWindow::on_btn_pcpRela_clicked()
 {
-    ui->tw_pcpRela->setRowCount(ui->tw_pcpRela->rowCount()+1);
+    ui->tw_pcpRela->insertRow(0);
+    ui->tw_pcpRela->setMinimumHeight(ui->tw_pcpRela->minimumHeight()+35);
+}
 
-    ui->tw_pcpRela->setMinimumHeight(ui->tw_pcpRela->minimumHeight()+28);
+void MainWindow::on_btn_pcpEdu_clicked()
+{
+    ui->tw_pcpEdu->insertRow(0);
+    ui->tw_pcpEdu->setMinimumHeight(ui->tw_pcpEdu->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpSub_clicked()
+{
+    ui->tw_pcpSub->insertRow(0);
+    ui->tw_pcpSub->setMinimumHeight(ui->tw_pcpSub->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpAcc_clicked()
+{
+    ui->tw_pcpAcco->insertRow(0);
+    ui->tw_pcpAcco->setMinimumHeight(ui->tw_pcpAcco->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpLife_clicked()
+{
+    ui->tw_pcpLife->insertRow(0);
+    ui->tw_pcpLife->setMinimumHeight(ui->tw_pcpLife->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpMent_clicked()
+{
+    ui->tw_pcpMent->insertRow(0);
+    ui->tw_pcpMent->setMinimumHeight(ui->tw_pcpMent->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpPhy_clicked()
+{
+    ui->tw_pcpPhy->insertRow(0);
+    ui->tw_pcpPhy->setMinimumHeight(ui->tw_pcpPhy->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpLeg_clicked()
+{
+    ui->tw_pcpLeg->insertRow(0);
+    ui->tw_pcpLeg->setMinimumHeight(ui->tw_pcpLeg->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpAct_clicked()
+{
+    ui->tw_pcpAct->insertRow(0);
+    ui->tw_pcpAct->setMinimumHeight(ui->tw_pcpAct->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpTrad_clicked()
+{
+    ui->tw_pcpTrad->insertRow(0);
+    ui->tw_pcpTrad->setMinimumHeight(ui->tw_pcpTrad->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpOther_clicked()
+{
+    ui->tw_pcpOther->insertRow(0);
+    ui->tw_pcpOther->setMinimumHeight(ui->tw_pcpOther->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpKey_clicked()
+{
+    ui->tw_pcpPpl->insertRow(0);
+    ui->tw_pcpPpl->setMinimumHeight(ui->tw_pcpPpl->minimumHeight()+35);
 }
 
 void MainWindow::on_addbedtoprogram_clicked()
