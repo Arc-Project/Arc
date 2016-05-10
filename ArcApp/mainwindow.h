@@ -29,6 +29,7 @@
 #include "transaction.h"
 #include "client.h"
 #include "shared.h"
+#include "casefile.h"
 namespace Ui {
 class MainWindow;
 }
@@ -57,6 +58,7 @@ public:
 private slots:
 
     void initCurrentWidget(int idx);
+    void resizeEvent(QResizeEvent *event);
     /*==========================================================================
     DEV TESTING BUTTONS
     ==========================================================================*/
@@ -206,6 +208,37 @@ private slots:
     void populateATable(QTableWidget * table, QStringList headers, QStringList items, QSqlQuery result, bool stretch);
 
     void on_btn_payListAllUsers_clicked();
+    void on_btn_listAllUsers_3_clicked();
+
+    void on_btn_listAllUsers_2_clicked();
+
+    void on_btn_searchUsers_2_clicked();
+
+    void on_pushButton_25_clicked();
+
+    void on_tableWidget_2_clicked(const QModelIndex &index);
+
+    void on_pushButton_3_clicked();
+
+    /*==========================================================================
+    CASE FILES FUNCTIONS
+    ==========================================================================*/
+    void on_btn_caseFilter_clicked();
+
+    void populate_tw_caseFiles(QStringList filter = QStringList());
+
+    void on_tw_caseFiles_cellDoubleClicked(int row, int column);
+
+    void on_tw_pcpRela_itemChanged(QTableWidgetItem *item);
+
+    void setPcpVector();
+
+    void on_btn_createNewUser_2_clicked();
+
+    void on_pushButton_24_clicked();
+
+
+    void on_btn_pcpRela_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -217,6 +250,8 @@ private:
     
     bool pic_available = true;
     bool table_available = true;
+
+    QDir dir;
 
 };
 

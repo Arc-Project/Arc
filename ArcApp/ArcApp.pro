@@ -6,6 +6,7 @@
 QT       += sql
 QT       += core gui
 QT       += multimedia multimediawidgets
+CONFIG       += c++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -34,7 +35,8 @@ HEADERS  += mainwindow.h \
     takephoto.h \
     transaction.h \
     payment.h \
-    client.h
+    client.h \
+    casefile.h
 
 FORMS    += mainwindow.ui \
     loginprompt.ui \
