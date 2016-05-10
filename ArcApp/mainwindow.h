@@ -221,6 +221,8 @@ private slots:
     void on_twCaseFiles_doubleClicked(int row, int col);
 
 
+    void on_btn_createNewUser_2_clicked();
+
 private:
     Ui::MainWindow *ui;
     MainWindow * mw;

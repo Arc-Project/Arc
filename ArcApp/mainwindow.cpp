@@ -1792,3 +1792,35 @@ void MainWindow::on_twCaseFiles_doubleClicked(int row,int col){
     qDebug() << dir.absoluteFilePath(ui->tw_caseFiles->itemAt(row, col)->text());
     QDesktopServices::openUrl(dir.absoluteFilePath(ui->tw_caseFiles->itemAt(row, col)->text()));
 }
+
+// create new program button
+void MainWindow::on_btn_createNewUser_2_clicked()
+{
+    QString pcode = ui->le_userName_2->text();
+    QString pdesc = ui->textEdit->toPlainText();
+
+    if (pcode.length() == 0) {
+        ui->lbl_editUserWarning_2->setText("Please Enter a Program Code");
+        return;
+    }
+
+    if (pdesc.length() == 0) {
+        ui->lbl_editUserWarning_2->setText("Please Enter a Program Description");
+        return;
+    }
+
+    QSqlQuery queryResults = dbManager->execQuery("SELECT * FROM Program WHERE ProgramCode='" + pcode + "'");
+    int numrows = queryResults.numRowsAffected();
+
+    if (numrows == 1) {
+        ui->lbl_editUserWarning_2->setText("Program code in use");
+        return;
+    } else {
+        QSqlQuery qr = dbManager->AddProgram(pcode, pdesc);
+        if (qr.numRowsAffected() == 1) {
+            ui->lbl_editUserWarning_2->setText("Program Added");
+        } else {
+            ui->lbl_editUserWarning_2->setText("Program not added - please try again.");
+        }
+    }
+}
