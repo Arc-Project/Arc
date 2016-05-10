@@ -240,6 +240,10 @@ private slots:
 
     void on_btn_pcpRela_clicked();
 
+    void on_btn_payDelete_clicked();
+    void getTransactionFromRow(int row);
+    void on_btn_payOutstanding_clicked();
+    void updateCheque(int row);
 private:
     Ui::MainWindow *ui;
     MainWindow * mw;
