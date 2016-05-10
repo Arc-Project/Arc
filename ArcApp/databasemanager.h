@@ -64,6 +64,9 @@ public:
     bool getVacancyQuery(QSqlQuery* queryResults, QDate date);
     bool getLunchQuery(QSqlQuery* queryResults, QDate date);
     bool getWakeupQuery(QSqlQuery* queryResults, QDate date);
+    bool getDailyReportStats(QSqlDatabase* tempDbPtr, QSqlQuery* queryResults, QDate date);
+
+
 
     void print();
     QSqlQuery loginSelect(QString username, QString password);

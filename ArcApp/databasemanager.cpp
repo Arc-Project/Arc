@@ -546,7 +546,7 @@ REPORT QUERYS (START)
 ==============================================================================*/
 bool DatabaseManager::getCheckoutQuery(QSqlQuery* queryResults, QDate date)
 {
-    *queryResults = QSqlQuery(db);
+    //*queryResults = QSqlQuery(*tempDbPtr);
 
     QString queryString =
         QString("SELECT b.ClientName, b.SpaceId, b.StartDate, ")
@@ -561,7 +561,7 @@ bool DatabaseManager::getCheckoutQuery(QSqlQuery* queryResults, QDate date)
 
 bool DatabaseManager::getVacancyQuery(QSqlQuery* queryResults, QDate date)
 {
-    *queryResults = QSqlQuery(db);
+    //*queryResults = QSqlQuery(*tempDbPtr);
 
     QString queryString =
         QString("SELECT s.SpaceId, s.ProgramCodes ")
@@ -576,7 +576,7 @@ bool DatabaseManager::getVacancyQuery(QSqlQuery* queryResults, QDate date)
 
 bool DatabaseManager::getLunchQuery(QSqlQuery* queryResults, QDate date)
 {
-    *queryResults = QSqlQuery(db);
+    //*queryResults = QSqlQuery(*tempDbPtr);
 
     QString queryString =
         QString("SELECT ClientName, SpaceId, Lunch ")
@@ -590,7 +590,7 @@ bool DatabaseManager::getLunchQuery(QSqlQuery* queryResults, QDate date)
 
 bool DatabaseManager::getWakeupQuery(QSqlQuery* queryResults, QDate date)
 {
-    *queryResults = QSqlQuery(db);
+    //*queryResults = QSqlQuery(*tempDbPtr);
 
     QString queryString =
         QString("SELECT ClientName, SpaceId, Wakeup ")
@@ -600,6 +600,11 @@ bool DatabaseManager::getWakeupQuery(QSqlQuery* queryResults, QDate date)
 
         qDebug() << queryString;
     return queryResults->exec(queryString);
+}
+
+bool DatabaseManager::getDailyReportStats(QSqlDatabase* tempDbPtr, QSqlQuery* queryResults, QDate date)
+{
+
 }
 /*==============================================================================
 REPORT QUERYS (END)
