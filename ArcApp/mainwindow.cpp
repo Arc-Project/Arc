@@ -7,6 +7,7 @@
 #include <QDebug>
 #include "payment.h"
 
+MyModel* checkoutModel;
 bool firstTime = true;
 std::vector<QTableWidget*> pcp_tables;
 //QSqlQuery resultssss;
@@ -27,6 +28,12 @@ MainWindow::MainWindow(QWidget *parent) :
     curBook = 0;
     trans = 0;
     setPcpVector();
+//    QStringList* data = new QStringList();
+//    *data << "11" << "12" << "21" << "22";
+//    checkoutModel = new MyModel(this, data, 2, 2);
+    checkoutModel = new MyModel(this);
+    ui->checkout_tableView->setModel(checkoutModel);
+    ui->checkout_tableView->show();
 }
 
 MainWindow::~MainWindow()
@@ -96,6 +103,8 @@ void MainWindow::initCurrentWidget(int idx){
             if(curClientID != NULL)
                 read_curClient_Information(curClientID);
             break;
+        case 11:    //WIDGET 11
+            //MainWindow::updateCheckoutView();
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
 
@@ -150,20 +159,44 @@ DEV TESTING BUTTONS (START)
 ==============================================================================*/
 void MainWindow::on_actionDB_Connection_triggered()
 {
-    QSqlQuery results= dbManager->selectAll("Test");
-    dbManager->printAll(results);
+    //QSqlQuery results= dbManager->selectAll("Test");
+    //dbManager->printAll(results);
+    QStringList* data = new QStringList();
+    *data << "11" << "12" << "21" << "22";
+    checkoutModel->setData(data, 2, 2);
 }
 
 void MainWindow::on_actionTest_Query_triggered()
 {
-    QStringList fieldList;
-    getListRegisterFields(&fieldList);
+    ui->stackedWidget->setCurrentIndex(11);
+    QtConcurrent::run(this, &updateCheckoutModel);
+}
 
-    for(int i = 0; i < fieldList.size(); ++i)
+void MainWindow::updateCheckoutModel()
+{
+    QSqlDatabase tempDb = QSqlDatabase::database();
+    QString connName = QString::number(dbManager->getDbCounter());
+    if (dbManager->createDatabase(&tempDb, connName))
     {
-        qDebug() << fieldList.at(i);
-    }
+        QSqlQuery query;
+        if (dbManager->getCheckoutQuery(&query, QDate::currentDate()))
+        {
+            int numCols = query.record().count();
 
+            int numRows = 0;
+            QStringList *data = new QStringList();
+            while (query.next()) {
+                numRows++;
+                for (int i = 0; i < numCols; ++i)
+                {
+                    *data << query.value(i).toString();
+                }
+            }
+            checkoutModel->setData(data, numRows, numCols);
+        }
+        tempDb.close();
+        QSqlDatabase::removeDatabase(connName);
+    }
 }
 
 void MainWindow::on_actionFile_Upload_triggered()
@@ -232,7 +265,8 @@ REPORT FUNCTIONS (START)
 ==============================================================================*/
 void MainWindow::updateCheckoutView(QDate date)
 {
-    QSqlQuery query;
+    QSqlQuery query;    
+
     ui->checkout_tableWidget->setRowCount(0);
     if (dbManager->getCheckoutQuery(&query, date))
     {

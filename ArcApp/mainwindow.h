@@ -30,6 +30,8 @@
 #include "client.h"
 #include "shared.h"
 #include "casefile.h"
+#include "mymodel.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -69,7 +71,7 @@ private slots:
     void on_actionPrint_Db_Connections_triggered();
     void on_actionUpload_Display_Picture_triggered();
     void on_actionDownload_Profile_Picture_triggered();
-    
+
     /*==========================================================================
     DEV TESTING AUXILIARY FUNCTIONS
     ==========================================================================*/
@@ -82,6 +84,7 @@ private slots:
     void updateVacancyView(QDate date = QDate::currentDate());
     void updateLunchView(QDate date = QDate::currentDate());
     void updateWakeupView(QDate date = QDate::currentDate());
+    void updateCheckoutModel();
 
 
     void on_bookButton_clicked();
