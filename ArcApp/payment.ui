@@ -180,7 +180,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>MSQ Cheque</string>
+    <string>MSD Cheque</string>
    </property>
   </widget>
   <widget class="QDateEdit" name="chequeDate">
@@ -309,6 +309,19 @@
      <string>Refund</string>
     </property>
    </widget>
+  </widget>
+  <widget class="QCheckBox" name="payWaitMSD">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>450</y>
+     <width>121</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Wait For MSD</string>
+   </property>
   </widget>
  </widget>
  <resources/>

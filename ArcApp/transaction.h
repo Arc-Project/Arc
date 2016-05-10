@@ -16,6 +16,8 @@ public:
     QString MSQ;
     QString issuedString;
     QString transType;
+    QString transId;
+    QString outstanding;
 };
 
 #endif // TRANSACTION_H
