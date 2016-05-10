@@ -1753,7 +1753,7 @@ void MainWindow::on_pushButton_25_clicked()
     int numrows = queryResults.numRowsAffected();
 
     if (numrows != 0) {
-        ui->lbl_editUserWarning_2->setText("Program Deleted");
+        ui->lbl_editProgWarning->setText("Program Deleted");
         QStandardItemModel * model = new QStandardItemModel(0,0);
         model->clear();
         ui->tableWidget_2->clear();
@@ -1767,7 +1767,7 @@ void MainWindow::on_pushButton_25_clicked()
         ui->le_password->setText("");
         ui->le_users->setText("");
     } else {
-        ui->lbl_editUserWarning_2->setText("Program Not Found");
+        ui->lbl_editProgWarning->setText("Program Not Found");
     }
     return;
 }
@@ -1786,27 +1786,48 @@ void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
 // set case files directory
 void MainWindow::on_pushButton_3_clicked()
 {
-    dir = QFileDialog::getExistingDirectory(
+    QString tempDir = QFileDialog::getExistingDirectory(
                     this,
                     tr("Select Directory"),
                     "C://"
                 );
-    qDebug() << "selected directory" <<  dir.dirName();
+//    qDebug() << curClientID;
+    if (!tempDir.isEmpty()) {
+        dir = tempDir;
+        populate_tw_caseFiles();
+        ui->le_caseDir->setText(dir.path());
+    }
+    connect(ui->tw_caseFiles, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(on_tw_caseFiles_cellDoubleClicked(int,int)), Qt::UniqueConnection);
+}
+
+// open case file in external reader
+void MainWindow::on_tw_caseFiles_cellDoubleClicked(int row, int column)
+{
+    qDebug() << QUrl::fromLocalFile(dir.absoluteFilePath(ui->tw_caseFiles->item(row, column)->text())) << "at" << row << " " << column;
+    QDesktopServices::openUrl(QUrl::fromLocalFile(dir.absoluteFilePath(ui->tw_caseFiles->item(row, column)->text())));
+}
+
+// filter file names
+void MainWindow::on_btn_caseFilter_clicked()
+{
+    qDebug() << "filter button clicked, filter with" << ui->le_caseFilter->text();
+    QStringList filter = (QStringList() << "*"+(ui->le_caseFilter->text())+"*");
+    populate_tw_caseFiles(filter);
+}
+
+void MainWindow::populate_tw_caseFiles(QStringList filter){
     int i = 0;
+    dir.setNameFilters(filter);
     for (auto x : dir.entryList(QDir::Files)) {
         qDebug() << x;
         ui->tw_caseFiles->setRowCount(i+1);
         ui->tw_caseFiles->setItem(i++,0, new QTableWidgetItem(x));
         ui->tw_caseFiles->resizeColumnsToContents();
     }
+    if (i > 0) {
+        ui->btn_caseFilter->setEnabled(true);
+    }
 
-    connect(ui->tw_caseFiles, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(on_twCaseFiles_doubleClicked(int,int)));
-}
-
-// open case file in external reader
-void MainWindow::on_twCaseFiles_doubleClicked(int row,int col){
-    qDebug() << dir.absoluteFilePath(ui->tw_caseFiles->itemAt(row, col)->text());
-    QDesktopServices::openUrl(dir.absoluteFilePath(ui->tw_caseFiles->itemAt(row, col)->text()));
 }
 
 // create new program button
@@ -1816,12 +1837,12 @@ void MainWindow::on_btn_createNewUser_2_clicked()
     QString pdesc = ui->textEdit->toPlainText();
 
     if (pcode.length() == 0) {
-        ui->lbl_editUserWarning_2->setText("Please Enter a Program Code");
+        ui->lbl_editProgWarning->setText("Please Enter a Program Code");
         return;
     }
 
     if (pdesc.length() == 0) {
-        ui->lbl_editUserWarning_2->setText("Please Enter a Program Description");
+        ui->lbl_editProgWarning->setText("Please Enter a Program Description");
         return;
     }
 
@@ -1829,12 +1850,12 @@ void MainWindow::on_btn_createNewUser_2_clicked()
     int numrows = queryResults.numRowsAffected();
 
     if (numrows == 1) {
-        ui->lbl_editUserWarning_2->setText("Program code in use");
+        ui->lbl_editProgWarning->setText("Program code in use");
         return;
     } else {
         QSqlQuery qr = dbManager->AddProgram(pcode, pdesc);
         if (qr.numRowsAffected() == 1) {
-            ui->lbl_editUserWarning_2->setText("Program Added");
+            ui->lbl_editProgWarning->setText("Program Added");
             QStandardItemModel * model = new QStandardItemModel(0,0);
             model->clear();
             ui->tableWidget_2->clear();
@@ -1848,7 +1869,7 @@ void MainWindow::on_btn_createNewUser_2_clicked()
             ui->le_password->setText("");
             ui->le_users->setText("");
         } else {
-            ui->lbl_editUserWarning_2->setText("Program not added - please try again.");
+            ui->lbl_editProgWarning->setText("Program not added - please try again.");
         }
     }
 }
