@@ -223,6 +223,8 @@ private slots:
 
     void on_btn_createNewUser_2_clicked();
 
+    void on_pushButton_24_clicked();
+
 private:
     Ui::MainWindow *ui;
     MainWindow * mw;
