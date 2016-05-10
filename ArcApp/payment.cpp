@@ -22,6 +22,8 @@ payment::payment(QWidget *parent, transaction * trans, double balance, double co
     ui->balanceLabel->setText(QString::number(balance));
     ui->transactionLabel->setText(QString::number(cost));
     ui->owedLabel->setText(QString::number(cost - balance));
+    ui->plainTextEdit->insertPlainText("Booking: " + book->stringStart + " to " + book->stringEnd + " Total Cost: "
+                                       + QString::number(book->cost, 'f', 2));
     if(paymentType){
         doPayment();
         ui->paymentRadio->setChecked(true);

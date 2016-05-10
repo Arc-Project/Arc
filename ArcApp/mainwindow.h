@@ -201,6 +201,12 @@ private slots:
 
     void on_tableWidget_3_doubleClicked(const QModelIndex &index);
 
+    void on_cbox_payDateRange_activated(int index);
+    void popManagePayment();
+    void populateATable(QTableWidget * table, QStringList headers, QStringList items, QSqlQuery result, bool stretch);
+
+    void on_btn_payListAllUsers_clicked();
+
 private:
     Ui::MainWindow *ui;
     MainWindow * mw;
