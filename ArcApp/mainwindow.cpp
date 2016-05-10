@@ -1819,8 +1819,64 @@ void MainWindow::on_btn_createNewUser_2_clicked()
         QSqlQuery qr = dbManager->AddProgram(pcode, pdesc);
         if (qr.numRowsAffected() == 1) {
             ui->lbl_editUserWarning_2->setText("Program Added");
+            QStandardItemModel * model = new QStandardItemModel(0,0);
+            model->clear();
+            ui->tableWidget_2->clear();
+            ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
+            ui->tableWidget_2->setColumnCount(2);
+            ui->tableWidget_2->setRowCount(0);
+            ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Program Code" << "Description");
+
+            ui->comboBox->setCurrentIndex(0);
+            ui->le_userName->setText("");
+            ui->le_password->setText("");
+            ui->le_users->setText("");
         } else {
             ui->lbl_editUserWarning_2->setText("Program not added - please try again.");
+        }
+    }
+}
+
+// update program
+void MainWindow::on_pushButton_24_clicked()
+{
+    QString pcode = ui->le_userName_2->text();
+    QString pdesc = ui->textEdit->toPlainText();
+
+    if (pcode.length() == 0) {
+        ui->lbl_editUserWarning_2->setText("Please Enter a Program Code");
+        return;
+    }
+
+    if (pdesc.length() == 0) {
+        ui->lbl_editUserWarning_2->setText("Please Enter a Program Description");
+        return;
+    }
+
+    QSqlQuery queryResults = dbManager->execQuery("SELECT * FROM Program WHERE ProgramCode='" + pcode + "'");
+    int numrows = queryResults.numRowsAffected();
+
+    if (numrows != 1) {
+        ui->lbl_editUserWarning_2->setText("Enter a valid program code to update");
+        return;
+    } else {
+        QSqlQuery qr = dbManager->updateProgram(pcode, pdesc);
+        if (qr.numRowsAffected() == 1) {
+            ui->lbl_editUserWarning_2->setText("Program Updated");
+            QStandardItemModel * model = new QStandardItemModel(0,0);
+            model->clear();
+            ui->tableWidget_2->clear();
+            ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
+            ui->tableWidget_2->setColumnCount(2);
+            ui->tableWidget_2->setRowCount(0);
+            ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Program Code" << "Description");
+
+            ui->comboBox->setCurrentIndex(0);
+            ui->le_userName->setText("");
+            ui->le_password->setText("");
+            ui->le_users->setText("");
+        } else {
+            ui->lbl_editUserWarning_2->setText("Program not updated - please try again.");
         }
     }
 }

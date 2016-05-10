@@ -82,6 +82,7 @@ public:
     QSqlQuery pullClient(QString id);
     bool updateBalance(double d, QString id);
     QSqlQuery AddProgram(QString pcode, QString pdesc);
+    QSqlQuery updateProgram(QString pcode, QString pdesc);
 
 private:
     QSqlDatabase db = QSqlDatabase::database();

@@ -699,3 +699,11 @@ QSqlQuery DatabaseManager::AddProgram(QString pcode, QString pdesc) {
 
     return query;
 }
+
+QSqlQuery DatabaseManager::updateProgram(QString pcode, QString pdesc) {
+    QSqlQuery query(db);
+
+    query.exec("UPDATE Program SET Description='" + pdesc + "' WHERE ProgramCode='" + pcode + "'");
+
+    return query;
+}
