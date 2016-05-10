@@ -34,7 +34,8 @@ HEADERS  += mainwindow.h \
     takephoto.h \
     transaction.h \
     payment.h \
-    client.h
+    client.h \
+    casefile.h
 
 FORMS    += mainwindow.ui \
     loginprompt.ui \

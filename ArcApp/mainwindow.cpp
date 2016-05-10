@@ -1597,3 +1597,29 @@ void MainWindow::on_pushButton_6_clicked()
     }
 
 }
+
+// set case files directory
+void MainWindow::on_pushButton_3_clicked()
+{
+    dir = QFileDialog::getExistingDirectory(
+                    this,
+                    tr("Select Directory"),
+                    "C://"
+                );
+    qDebug() << "selected directory" <<  dir.dirName();
+    int i = 0;
+    for (auto x : dir.entryList(QDir::Files)) {
+        qDebug() << x;
+        ui->tw_caseFiles->setRowCount(i+1);
+        ui->tw_caseFiles->setItem(i++,0, new QTableWidgetItem(x));
+        ui->tw_caseFiles->resizeColumnsToContents();
+    }
+
+    connect(ui->tw_caseFiles, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(on_twCaseFiles_doubleClicked(int,int)));
+}
+
+// open case file in external reader
+void MainWindow::on_twCaseFiles_doubleClicked(int row,int col){
+    qDebug() << dir.absoluteFilePath(ui->tw_caseFiles->itemAt(row, col)->text());
+    QDesktopServices::openUrl(dir.absoluteFilePath(ui->tw_caseFiles->itemAt(row, col)->text()));
+}

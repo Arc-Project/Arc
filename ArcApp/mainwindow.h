@@ -15,6 +15,7 @@
 #define EDITROOM 12
 #define CONFIRMBOOKING 13
 #define EDITPAGE 14
+#define CASEFILES 15
 #define DAILYREPORT 0
 #define SHIFTREPORT 1
 #define DAILYLOG 2
@@ -29,6 +30,7 @@
 #include "transaction.h"
 #include "client.h"
 #include "shared.h"
+#include "casefile.h"
 namespace Ui {
 class MainWindow;
 }
@@ -201,6 +203,14 @@ private slots:
 
     void on_tableWidget_3_doubleClicked(const QModelIndex &index);
 
+    void on_pushButton_3_clicked();
+
+    /*==========================================================================
+    CASE FILES FUNCTIONS
+    ==========================================================================*/
+
+    void on_twCaseFiles_doubleClicked(int row, int col);
+
 private:
     Ui::MainWindow *ui;
     MainWindow * mw;
@@ -211,6 +221,8 @@ private:
     
     bool pic_available = true;
     bool table_available = true;
+
+    QDir dir;
 
 };
 
