@@ -3338,6 +3338,9 @@ QWidget#wdg_transTotal {
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
            <property name="selectionBehavior">
             <enum>QAbstractItemView::SelectRows</enum>
            </property>
@@ -3476,7 +3479,7 @@ QWidget#wdg_transTotal {
           </widget>
          </item>
          <item row="5" column="0" colspan="2">
-          <widget class="QListView" name="listView">
+          <widget class="QListView" name="availablebedslist">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -3494,7 +3497,7 @@ QWidget#wdg_transTotal {
          <item row="5" column="2">
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
-            <widget class="QPushButton" name="pushButton_16">
+            <widget class="QPushButton" name="addbedtoprogram">
              <property name="minimumSize">
               <size>
                <width>80</width>
@@ -3507,7 +3510,7 @@ QWidget#wdg_transTotal {
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_17">
+            <widget class="QPushButton" name="removebedfromprogram">
              <property name="minimumSize">
               <size>
                <width>80</width>
@@ -3528,7 +3531,7 @@ QWidget#wdg_transTotal {
           </layout>
          </item>
          <item row="5" column="3">
-          <widget class="QListView" name="listView_2">
+          <widget class="QListView" name="assignedbedslist">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -3779,8 +3782,8 @@ QWidget#wdg_transTotal {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>1020</width>
-               <height>2261</height>
+               <width>244</width>
+               <height>2172</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_47">
@@ -9160,7 +9163,7 @@ QWidget#wdg_transTotal {
      <x>0</x>
      <y>0</y>
      <width>1409</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="acceptDrops">
