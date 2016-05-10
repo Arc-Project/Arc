@@ -1648,11 +1648,11 @@ void MainWindow::on_pushButton_3_clicked()
                     tr("Select Directory"),
                     "C://"
                 );
-    qDebug() << "selected directory" <<  dir.dirName();
-    qDebug() << curClientID;
-    if (!tempDir.dirName().isEmpty()) {
+//    qDebug() << curClientID;
+    if (!tempDir.isEmpty()) {
         dir = tempDir;
         populate_tw_caseFiles();
+        ui->le_caseDir->setText(dir.path());
     }
     connect(ui->tw_caseFiles, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(on_tw_caseFiles_cellDoubleClicked(int,int)), Qt::UniqueConnection);
 }
@@ -1660,7 +1660,7 @@ void MainWindow::on_pushButton_3_clicked()
 // open case file in external reader
 void MainWindow::on_tw_caseFiles_cellDoubleClicked(int row, int column)
 {
-    qDebug() << dir.absoluteFilePath(ui->tw_caseFiles->item(row, column)->text()) << "at" << row << " " << column;
+    qDebug() << QUrl::fromLocalFile(dir.absoluteFilePath(ui->tw_caseFiles->item(row, column)->text())) << "at" << row << " " << column;
     QDesktopServices::openUrl(QUrl::fromLocalFile(dir.absoluteFilePath(ui->tw_caseFiles->item(row, column)->text())));
 }
 
