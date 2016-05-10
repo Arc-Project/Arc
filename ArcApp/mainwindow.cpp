@@ -1655,6 +1655,133 @@ void MainWindow::on_pushButton_6_clicked()
     }
 
 }
+// list all rooms
+void MainWindow::on_btn_listAllUsers_3_clicked()
+{
+
+//    QString ename = ui->le_users->text();
+//    ui->tableWidget_3->setRowCount(0);
+//    ui->tableWidget_3->clear();
+//    ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+
+//    QSqlQuery result = dbManager->execQuery("SELECT Username, Password, Role FROM Employee WHERE Username LIKE '%"+ ename +"%'");
+
+//    int numCols = result.record().count();
+//    ui->tableWidget_3->setColumnCount(numCols);
+//    ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
+//    int x = 0;
+//    int qt = result.size();
+//    qDebug() << qt;
+//    while (result.next()) {
+//        ui->tableWidget_3->insertRow(x);
+//        QStringList row;
+//        row << result.value(0).toString() << result.value(1).toString() << result.value(2).toString();
+//        for (int i = 0; i < 3; ++i)
+//        {
+//            ui->tableWidget_3->setItem(x, i, new QTableWidgetItem(row.at(i)));
+//        }
+//        x++;
+//    }
+}
+
+// list all programs
+void MainWindow::on_btn_listAllUsers_2_clicked()
+{
+    ui->tableWidget_2->setRowCount(0);
+    ui->tableWidget_2->clear();
+    ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
+
+    QSqlQuery result = dbManager->execQuery("SELECT ProgramCode, Description FROM Program");
+
+    int numCols = result.record().count();
+    ui->tableWidget_2->setColumnCount(numCols);
+    ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Program Code" << "Description");
+    int x = 0;
+    int qt = result.size();
+    qDebug() << qt;
+    while (result.next()) {
+        ui->tableWidget_2->insertRow(x);
+        QStringList row;
+        row << result.value(0).toString() << result.value(1).toString();
+        for (int i = 0; i < 2; ++i)
+        {
+            ui->tableWidget_2->setItem(x, i, new QTableWidgetItem(row.at(i)));
+        }
+        x++;
+    }
+}
+
+// search programs by code
+void MainWindow::on_btn_searchUsers_2_clicked()
+{
+    QString ename = ui->le_users_2->text();
+    ui->tableWidget_2->setRowCount(0);
+    ui->tableWidget_2->clear();
+    ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
+
+    QSqlQuery result = dbManager->execQuery("SELECT ProgramCode, Description FROM Program WHERE ProgramCode LIKE '%"+ ename +"%'");
+
+    int numCols = result.record().count();
+    ui->tableWidget_2->setColumnCount(numCols);
+    ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Program Code" << "Description");
+    int x = 0;
+    int qt = result.size();
+    qDebug() << qt;
+    while (result.next()) {
+        ui->tableWidget_2->insertRow(x);
+        QStringList row;
+        row << result.value(0).toString() << result.value(1).toString();
+        for (int i = 0; i < 2; ++i)
+        {
+            ui->tableWidget_2->setItem(x, i, new QTableWidgetItem(row.at(i)));
+        }
+        x++;
+    }
+}
+
+// delete program
+void MainWindow::on_pushButton_25_clicked()
+{
+    QString pcode = ui->le_userName_2->text();
+
+    if (pcode.length() == 0) {
+        ui->lbl_editUserWarning->setText("Please make sure a valid Program is selected");
+        return;
+    }
+
+    QSqlQuery queryResults = dbManager->execQuery("DELETE FROM Program WHERE ProgramCode='" + pcode + "'");
+    int numrows = queryResults.numRowsAffected();
+
+    if (numrows != 0) {
+        ui->lbl_editUserWarning_2->setText("Program Deleted");
+        QStandardItemModel * model = new QStandardItemModel(0,0);
+        model->clear();
+        ui->tableWidget_2->clear();
+        ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
+        ui->tableWidget_2->setColumnCount(2);
+        ui->tableWidget_2->setRowCount(0);
+        ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Program Code" << "Description");
+
+        ui->comboBox->setCurrentIndex(0);
+        ui->le_userName->setText("");
+        ui->le_password->setText("");
+        ui->le_users->setText("");
+    } else {
+        ui->lbl_editUserWarning_2->setText("Program Not Found");
+    }
+    return;
+}
+
+// program clicked + selected
+void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
+{
+    // populate the fields on the right
+    QString pcode = ui->tableWidget_2->model()->data(ui->tableWidget_2->model()->index(index.row(), 0)).toString();
+    QString description = ui->tableWidget_2->model()->data(ui->tableWidget_2->model()->index(index.row(), 1)).toString();
+
+    ui->le_userName_2->setText(pcode);
+    ui->textEdit->setText(description);
+}
 
 // set case files directory
 void MainWindow::on_pushButton_3_clicked()
@@ -1680,4 +1807,92 @@ void MainWindow::on_pushButton_3_clicked()
 void MainWindow::on_twCaseFiles_doubleClicked(int row,int col){
     qDebug() << dir.absoluteFilePath(ui->tw_caseFiles->itemAt(row, col)->text());
     QDesktopServices::openUrl(dir.absoluteFilePath(ui->tw_caseFiles->itemAt(row, col)->text()));
+}
+
+// create new program button
+void MainWindow::on_btn_createNewUser_2_clicked()
+{
+    QString pcode = ui->le_userName_2->text();
+    QString pdesc = ui->textEdit->toPlainText();
+
+    if (pcode.length() == 0) {
+        ui->lbl_editUserWarning_2->setText("Please Enter a Program Code");
+        return;
+    }
+
+    if (pdesc.length() == 0) {
+        ui->lbl_editUserWarning_2->setText("Please Enter a Program Description");
+        return;
+    }
+
+    QSqlQuery queryResults = dbManager->execQuery("SELECT * FROM Program WHERE ProgramCode='" + pcode + "'");
+    int numrows = queryResults.numRowsAffected();
+
+    if (numrows == 1) {
+        ui->lbl_editUserWarning_2->setText("Program code in use");
+        return;
+    } else {
+        QSqlQuery qr = dbManager->AddProgram(pcode, pdesc);
+        if (qr.numRowsAffected() == 1) {
+            ui->lbl_editUserWarning_2->setText("Program Added");
+            QStandardItemModel * model = new QStandardItemModel(0,0);
+            model->clear();
+            ui->tableWidget_2->clear();
+            ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
+            ui->tableWidget_2->setColumnCount(2);
+            ui->tableWidget_2->setRowCount(0);
+            ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Program Code" << "Description");
+
+            ui->comboBox->setCurrentIndex(0);
+            ui->le_userName->setText("");
+            ui->le_password->setText("");
+            ui->le_users->setText("");
+        } else {
+            ui->lbl_editUserWarning_2->setText("Program not added - please try again.");
+        }
+    }
+}
+
+// update program
+void MainWindow::on_pushButton_24_clicked()
+{
+    QString pcode = ui->le_userName_2->text();
+    QString pdesc = ui->textEdit->toPlainText();
+
+    if (pcode.length() == 0) {
+        ui->lbl_editUserWarning_2->setText("Please Enter a Program Code");
+        return;
+    }
+
+    if (pdesc.length() == 0) {
+        ui->lbl_editUserWarning_2->setText("Please Enter a Program Description");
+        return;
+    }
+
+    QSqlQuery queryResults = dbManager->execQuery("SELECT * FROM Program WHERE ProgramCode='" + pcode + "'");
+    int numrows = queryResults.numRowsAffected();
+
+    if (numrows != 1) {
+        ui->lbl_editUserWarning_2->setText("Enter a valid program code to update");
+        return;
+    } else {
+        QSqlQuery qr = dbManager->updateProgram(pcode, pdesc);
+        if (qr.numRowsAffected() == 1) {
+            ui->lbl_editUserWarning_2->setText("Program Updated");
+            QStandardItemModel * model = new QStandardItemModel(0,0);
+            model->clear();
+            ui->tableWidget_2->clear();
+            ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
+            ui->tableWidget_2->setColumnCount(2);
+            ui->tableWidget_2->setRowCount(0);
+            ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Program Code" << "Description");
+
+            ui->comboBox->setCurrentIndex(0);
+            ui->le_userName->setText("");
+            ui->le_password->setText("");
+            ui->le_users->setText("");
+        } else {
+            ui->lbl_editUserWarning_2->setText("Program not updated - please try again.");
+        }
+    }
 }
