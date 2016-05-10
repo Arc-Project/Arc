@@ -403,6 +403,14 @@ bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage
     }
     return false;
 }
+QSqlQuery DatabaseManager::getTransactions(QDate start, QDate end){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Transac WHERE Date >= '" + start.toString(Qt::ISODate) + "' AND Date <= '"
+            + end.toString(Qt::ISODate) + "'";
+    qDebug() << q;
+    query.exec(q);
+    return query;
+}
 
 void DatabaseManager::uploadProfilePicThread(QString strFilePath)
 {

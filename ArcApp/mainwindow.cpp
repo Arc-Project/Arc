@@ -23,7 +23,9 @@ MainWindow::MainWindow(QWidget *parent) :
     //default signal of stackedWidget
     //detect if the widget is changed
     connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(initCurrentWidget(int)));
-
+    curClient = 0;
+    curBook = 0;
+    trans = 0;
     setPcpVector();
 }
 
@@ -71,7 +73,7 @@ void MainWindow::initCurrentWidget(int idx){
             //initcode
             break;
         case PAYMENTPAGE: //WIDGET 4
-            //initcode
+            popManagePayment();
             break;
         case ADMINPAGE: //WIDGET 5
             //initcode
@@ -102,7 +104,7 @@ void MainWindow::initCurrentWidget(int idx){
 
 void MainWindow::on_bookButton_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(BOOKINGLOOKUP);
+    ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
     ui->startDateEdit->setDate(QDate::currentDate());
     ui->endDateEdit->setDate(QDate::currentDate().addDays(1));
     if(firstTime){
@@ -426,7 +428,7 @@ void MainWindow::on_makeBookingButton_clicked()
     if(row == - 1){
         return;
     }
-    curClient = new Client();
+    //curClient = new Client();
     popClientFromId("1");
     ui->stackedWidget->setCurrentIndex(BOOKINGPAGE);
     int rowNum = ui->bookingTable->columnCount();
@@ -1666,7 +1668,108 @@ void MainWindow::on_pushButton_6_clicked()
     }
 
 }
+void MainWindow::popManagePayment(){
+    QStringList dropItems;
+    ui->cbox_payDateRange->clear();
+
+    dropItems << "" << "Today" << "Last 3 Days" << "This Month" <<  QDate::longMonthName(QDate::currentDate().month() - 1) << QDate::longMonthName(QDate::currentDate().month() - 2);
+    ui->cbox_payDateRange->addItems(dropItems);
+}
+
+void MainWindow::on_cbox_payDateRange_activated(int index)
+{
+    QString startDate;
+    QDate endDate = QDate::currentDate();
+    QDate hold = QDate::currentDate();
+    int days, move;
+    switch(index){
+    case 1:
+        startDate = QDate::currentDate().toString(Qt::ISODate);
+        break;
+    case 2:
+        hold = hold.addDays(-3);
+        startDate = hold.toString(Qt::ISODate);
+        break;
+    case 3:
+        days = hold.daysInMonth();
+        days = days - hold.day();
+        endDate = hold.addDays(days);
+        move = hold.day() -1;
+        hold = hold.addDays(move * -1);
+        qDebug() << hold;
+        break;
+    case 4:
+        hold = hold.addMonths(-1);
+        days = hold.daysInMonth();
+
+        move = hold.day() -1;
+        days = days - hold.day();
+        endDate = hold.addDays(days);
+        hold = hold.addDays(move * -1);
+        qDebug() << hold;
+        break;
+    case 5:
+        hold = hold.addMonths(-2);
+        days = hold.daysInMonth();
+
+        move = hold.day() -1;
+        days = days - hold.day();
+        endDate = hold.addDays(days);
+        hold = hold.addDays(move * -1);
+        qDebug() << hold;
+        break;
+    }
+    QStringList heads;
+    QStringList cols;
+    QSqlQuery tempSql = dbManager->getTransactions(hold, endDate);
+    heads << "Date" << "Amount" << "Type" << "Method" << "Notes << MSQ";
+    cols << "Date" << "Amount" << "TransType" << "Type" << "Notes" << "MSQ";
+    populateATable(ui->mpTable, heads, cols, tempSql, false);
+
+}
+
+//PARAMS - The table, list of headers, list of table column names, the sqlquery result, STRETCH - stretch mode true/false
+void MainWindow::populateATable(QTableWidget * table, QStringList headers, QStringList items, QSqlQuery result, bool stretch){
+    table->clear();
+    if(headers.length() != items.length())
+        return;
+
+    if(stretch)
+        table->horizontalHeader()->setStretchLastSection(true);
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    table->verticalHeader()->hide();
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->setSelectionMode(QAbstractItemView::SingleSelection);
+    int colCount = headers.size();
+    table->setColumnCount(colCount);
+    table->setHorizontalHeaderLabels(headers);
+    int x = 0;
+    while(result.next()){
+        table->insertRow(x);
+        for(int i = 0; i < colCount; i++){
+            table->setItem(x, i, new QTableWidgetItem(result.value(items.at(i)).toString()));
+
+
+        }
+
+
+        x++;
+    }
+}
+
+void MainWindow::on_btn_payListAllUsers_clicked()
+{
+    QStringList cols;
+    QStringList heads;
+    QDate sDate = QDate::fromString("1970-01-01", "yyyy-MM-dd");
+    QDate eDate = QDate::fromString("2222-01-01", "yyyy-MM-dd");
+    QSqlQuery tempSql = dbManager->getTransactions(sDate, eDate);
+    heads << "Date" << "Amount" << "Type" << "Method" << "Notes" << "MSQ";
+    cols << "Date" << "Amount" << "TransType" << "Type" << "Notes" << "MSQ";
+    populateATable(ui->mpTable, heads, cols, tempSql, false);
+
 // list all rooms
+}
 void MainWindow::on_btn_listAllUsers_3_clicked()
 {
 

@@ -2306,40 +2306,6 @@ QWidget#wdg_transTotal {
            </item>
           </layout>
          </item>
-         <item row="1" column="0">
-          <widget class="QTableView" name="tview_payment">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="selectionMode">
-            <enum>QAbstractItemView::SingleSelection</enum>
-           </property>
-           <property name="selectionBehavior">
-            <enum>QAbstractItemView::SelectRows</enum>
-           </property>
-           <property name="showGrid">
-            <bool>false</bool>
-           </property>
-           <attribute name="horizontalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <attribute name="horizontalHeaderCascadingSectionResizes">
-            <bool>true</bool>
-           </attribute>
-           <attribute name="horizontalHeaderDefaultSectionSize">
-            <number>175</number>
-           </attribute>
-           <attribute name="horizontalHeaderStretchLastSection">
-            <bool>true</bool>
-           </attribute>
-           <attribute name="verticalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-          </widget>
-         </item>
          <item row="0" column="0">
           <layout class="QHBoxLayout" name="horizontalLayout_41">
            <item>
@@ -2385,31 +2351,6 @@ QWidget#wdg_transTotal {
                <pointsize>10</pointsize>
               </font>
              </property>
-             <item>
-              <property name="text">
-               <string>Today</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Last 3 Days</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>This Month</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>April 2016</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>March 2016</string>
-              </property>
-             </item>
             </widget>
            </item>
            <item>
@@ -2455,6 +2396,18 @@ QWidget#wdg_transTotal {
             </widget>
            </item>
           </layout>
+         </item>
+         <item row="1" column="0">
+          <widget class="QTableWidget" name="mpTable">
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
+           <property name="columnCount">
+            <number>2</number>
+           </property>
+           <column/>
+           <column/>
+          </widget>
          </item>
         </layout>
        </widget>
