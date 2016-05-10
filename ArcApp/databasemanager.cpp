@@ -405,8 +405,8 @@ bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage
 }
 QSqlQuery DatabaseManager::getTransactions(QDate start, QDate end){
     QSqlQuery query(db);
-    QString q = "SELECT * FROM Transac WHERE Date >= '" + start.toString(Qt::ISODate) + "' AND Date <= '"
-            + end.toString(Qt::ISODate) + "'";
+    QString q = "SELECT * FROM Transac JOIN Client on Transac.ClientId = Client.ClientID WHERE Date >= '" + start.toString(Qt::ISODate) + "' AND Date <= '"
+            + end.toString(Qt::ISODate) + "'  AND Deleted = 0";
     qDebug() << q;
     query.exec(q);
     return query;
@@ -564,6 +564,32 @@ QSqlQuery DatabaseManager::getPrograms(){
     query.exec(q);
     return query;
 }
+bool DatabaseManager::removeTransaction(QString id){
+    QSqlQuery query(db);
+    QString curDate = QDate::currentDate().toString(Qt::ISODate);
+    QString q = "UPDATE Transac Set Deleted = 1, Date = '" + curDate + "' WHERE TransacId ='" + id + "'";
+    qDebug() << q;
+    if(query.exec(q))
+        return true;
+    return false;
+
+}
+bool DatabaseManager::setPaid(QString id){
+    QSqlQuery query(db);
+    QString curDate = QDate::currentDate().toString(Qt::ISODate);
+    QString q = "UPDATE Transac SET Outstanding = 0, Date = '" + curDate + "' WHERE TransacId ='" + id + "'";
+    qDebug() << q;
+    if(query.exec(q))
+        return true;
+    return false;
+}
+QSqlQuery DatabaseManager::getOutstanding(){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Transac JOIN Client on Transac.ClientId = Client.ClientId WHERE Outstanding = 1";
+    query.exec(q);
+    return query;
+}
+
 bool DatabaseManager::addPayment(QString values){
     QSqlQuery query(db);
     QString q = "INSERT INTO Transac Values( " + values + ")";
