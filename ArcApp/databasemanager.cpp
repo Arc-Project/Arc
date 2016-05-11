@@ -314,14 +314,16 @@ bool DatabaseManager::searchClientList(QSqlQuery* query, QString ClientId){
     return false;
 }
 
-QSqlQuery DatabaseManager::searchClientInfo(QSqlQuery* selectquer, QString ClientId){
+QSqlQuery DatabaseManager::searchClientInfo(QString ClientId){
     QSqlQuery selectquery(db);
-    selectquery.prepare("SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId = :id");
-    selectquery.bindValue("id", ClientId);
+
+    selectquery.prepare("SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, DateRulesSigned, status FROM Client WHERE ClientId ="+ClientId);
+//    selectquery.prepare("SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId = :id");
+//    selectquery.bindValue("id", ClientId);
 
     selectquery.exec();
 
-    printAll(selectquery);
+  //  printAll(selectquery);
     return selectquery;
     /*
     if(!selectquery->exec())

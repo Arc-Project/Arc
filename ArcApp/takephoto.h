@@ -43,7 +43,7 @@ private slots:
 
     void processImage(int i, QImage img);
 
-    void checkCam(QCamera::Status);
+    void checkCam(QCamera::Status error);
 
 private:
     Ui::TakePhoto *ui;

@@ -644,11 +644,17 @@ QWidget#wdg_transTotal {
                    <pointsize>12</pointsize>
                   </font>
                  </property>
+                 <property name="styleSheet">
+                  <string notr="true">color: rgb(0, 85, 255);</string>
+                 </property>
                  <property name="text">
                   <string/>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
+                 </property>
+                 <property name="indent">
+                  <number>-1</number>
                  </property>
                 </widget>
                </item>

@@ -39,9 +39,10 @@ void TakePhoto::on_pushButtons_camstart_clicked()
         cam->setViewfinder(vf);
         qDebug()<<"CAMERA STATUS 2: " <<cam->status();
         cic = new QCameraImageCapture(cam);
+        cic->setCaptureDestination(QCameraImageCapture::CaptureToBuffer);
         connect(cam, SIGNAL(stateChanged(QCamera::State)),this, SLOT(checkCam(QCamera::Status)));
         connect(cic,SIGNAL(imageCaptured(int,QImage)),this,SLOT(processImage(int,QImage)));
-
+        connect(cam, SIGNAL(error(QCamera::Error)), this, SLOT(checkCam(QCamera::Error)));
         cam->setCaptureMode(QCamera::CaptureStillImage);
         qDebug()<<"CAMERA STATUS 3: " <<cam->status();
 
@@ -63,7 +64,8 @@ void TakePhoto::on_pushButtons_camstart_clicked()
 }
 
 //need to fix;;;
-void TakePhoto::checkCam(QCamera::Status status){
+void TakePhoto::checkCam(QCamera::Status error){
+    /*
     switch(status){
         case QCamera::ActiveState:
         case QCamera::LoadedState:
@@ -78,7 +80,21 @@ void TakePhoto::checkCam(QCamera::Status status){
             qDebug()<<"ERROR RETRY";
             ui->pushButtons_camstart->setEnabled(false);
     }
-
+*/
+    switch(error){
+        case QCamera::CameraError:
+            qDebug()<<"Camera ERROR OCCURED";
+            break;
+        case QCamera::InvalidRequestError:
+            qDebug()<<"System resource doesn't support requested functionality.";
+            break;
+        case QCamera::ServiceMissingError:
+            qDebug()<<"No camera service available.";
+            break;
+        case QCamera::NotSupportedFeatureError:
+            qDebug()<<"The feature is not supported.";
+            break;
+    }
 }
 
 void TakePhoto::on_pushButton_piccapture_clicked()

@@ -44,7 +44,7 @@ public:
 
     bool searchClientList(QSqlQuery* query, QString ClientId);
 
-    QSqlQuery searchClientInfo(QSqlQuery* quer, QString ClientId);
+    QSqlQuery searchClientInfo(QString ClientId);
 
     /*==========================================================================
     PROFILE PICTURE UPLOAD AND DOWNLOAD RELATED FUNCTIONS

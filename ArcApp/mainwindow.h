@@ -27,6 +27,7 @@
 #include "databasemanager.h"
 #include "bookingmanager.h"
 #include <QTableWidgetItem>
+#include <QMap>
 #include "booking.h"
 #include "transaction.h"
 #include "client.h"
@@ -50,7 +51,7 @@ public:
     void populateBooking();
     void setBooking(int row);
     void setup_searchClientTable(QSqlQuery results);
-    void displayPicThread(QString val);
+    void displayPicThread(QByteArray val);
     void displayClientInfoThread(QString val);
     void clientSearchedInfo();
     void initClientLookupInfo();
@@ -282,6 +283,7 @@ private:
     
     bool pic_available = true;
     bool table_available = true;
+    QMap <QString, int> caseWorkerList;
 
     QDir dir;
 
