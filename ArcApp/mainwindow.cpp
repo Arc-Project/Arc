@@ -65,6 +65,7 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case PAYMENTPAGE: //WIDGET 4
             popManagePayment();
+
             break;
         case ADMINPAGE: //WIDGET 5
             //initcode
@@ -636,6 +637,7 @@ void MainWindow::on_button_clear_client_regForm_clicked()
 
 void MainWindow::getListRegisterFields(QStringList* fieldList)
 {
+    /*
     *fieldList << ui->lineEdit_cl_fName->text()
                << ui->lineEdit_cl_mName->text()
                << ui->lineEdit_cl_lName->text()
@@ -656,7 +658,7 @@ void MainWindow::getListRegisterFields(QStringList* fieldList)
                << ui->lineEdit_cl_supporter2_ContactNo->text()
                << ui->comboBox_cl_status->currentText() //grab value from status dropdown
                << ui->plainTextEdit_cl_comments->toPlainText();
-
+*/
 }
 
 void MainWindow::clear_client_register_form(){
@@ -672,10 +674,12 @@ void MainWindow::clear_client_register_form(){
     ui->lineEdit_cl_nok_ContactNo->clear();
     ui->lineEdit_cl_phys_name->clear();
     ui->lineEdit_cl_phys_ContactNo->clear();
+    /*
     ui->lineEdit_cl_supporter_Name->clear();
     ui->lineEdit_cl_supporter_ContactNo->clear();
     ui->lineEdit_cl_supporter2_Name->clear();
     ui->lineEdit_cl_supporter2_ContactNo->clear();
+    */
     ui->comboBox_cl_status->setCurrentIndex(0);
     ui->plainTextEdit_cl_comments->clear();
     QDate defaultDob= QDate::fromString("1990-01-01","yyyy-MM-dd");
@@ -938,6 +942,7 @@ void MainWindow::displayClientInfoThread(QString val){
 //   ui->tableWidget_clientInfo2->show();
 
    clientInfo.next();
+   /*
    ui->label_cl_info_fName_val->setText(clientInfo.value(0).toString());
    ui->label_cl_info_mName_val->setText(clientInfo.value(1).toString());
    ui->label_cl_info_lName_val->setText(clientInfo.value(2).toString());
@@ -947,7 +952,7 @@ void MainWindow::displayClientInfoThread(QString val){
    ui->label_cl_info_gaNum_val->setText(clientInfo.value(6).toString());
    ui->label_cl_info_ruleSignDate_val->setText(clientInfo.value(7).toString());
    ui->label_cl_info_status->setText(clientInfo.value(8).toString());
-
+*/
 
    table_available = true;
 
@@ -1269,6 +1274,7 @@ void MainWindow::initClientLookupInfo(){
     }
 
     //init client Info Form Field
+    /*
     ui->label_cl_info_fName_val->clear();
     ui->label_cl_info_mName_val->clear();
     ui->label_cl_info_lName_val->clear();
@@ -1294,7 +1300,7 @@ void MainWindow::initClientLookupInfo(){
     ui->label_cl_info_Supporter2_contact_val->clear();
 
     ui->textBrowser_client_info_comment->clear();
-
+*/
 
     //init client info table
     if(ui->tableWidget_clientInfo->columnCount()>0){
@@ -1714,8 +1720,14 @@ void MainWindow::on_pushButton_6_clicked()
 void MainWindow::popManagePayment(){
     QStringList dropItems;
     ui->cbox_payDateRange->clear();
+    ui->mpTable->clear();
+    ui->mpTable->setRowCount(0);
+    ui->btn_payDelete->setText("Delete");
 
-    dropItems << "" << "Today" << "Last 3 Days" << "This Month" <<  QDate::longMonthName(QDate::currentDate().month() - 1) << QDate::longMonthName(QDate::currentDate().month() - 2);
+    dropItems << "" << "Today" << "Last 3 Days" << "This Month"
+              <<  QDate::longMonthName(QDate::currentDate().month() - 1)
+              << QDate::longMonthName(QDate::currentDate().month() - 2)
+              << "ALL";
     ui->cbox_payDateRange->addItems(dropItems);
 }
 
@@ -1724,8 +1736,12 @@ void MainWindow::on_cbox_payDateRange_activated(int index)
     QString startDate;
     QDate endDate = QDate::currentDate();
     QDate hold = QDate::currentDate();
+    ui->btn_payDelete->setText("Delete");
     int days, move;
     switch(index){
+    case 0:
+        return;
+        break;
     case 1:
         startDate = QDate::currentDate().toString(Qt::ISODate);
         break;
@@ -1739,7 +1755,6 @@ void MainWindow::on_cbox_payDateRange_activated(int index)
         endDate = hold.addDays(days);
         move = hold.day() -1;
         hold = hold.addDays(move * -1);
-        qDebug() << hold;
         break;
     case 4:
         hold = hold.addMonths(-1);
@@ -1749,7 +1764,6 @@ void MainWindow::on_cbox_payDateRange_activated(int index)
         days = days - hold.day();
         endDate = hold.addDays(days);
         hold = hold.addDays(move * -1);
-        qDebug() << hold;
         break;
     case 5:
         hold = hold.addMonths(-2);
@@ -1759,21 +1773,29 @@ void MainWindow::on_cbox_payDateRange_activated(int index)
         days = days - hold.day();
         endDate = hold.addDays(days);
         hold = hold.addDays(move * -1);
-        qDebug() << hold;
         break;
+    case 6:
+        hold = QDate::fromString("1970-01-01", "yyyy-MM-dd");
+        endDate = QDate::fromString("2222-01-01", "yyyy-MM-dd");
+        break;
+
     }
     QStringList heads;
     QStringList cols;
     QSqlQuery tempSql = dbManager->getTransactions(hold, endDate);
-    heads << "Date" << "Amount" << "Type" << "Method" << "Notes << MSQ";
-    cols << "Date" << "Amount" << "TransType" << "Type" << "Notes" << "MSQ";
+    heads << "Date"  <<"First" << "Last" << "Amount" << "Type" << "Method" << "Notes"  << "" << "";
+    cols << "Date" <<"FirstName"<< "LastName"  << "Amount" << "TransType" << "Type" << "Notes" << "TransacId" << "ClientId";
     populateATable(ui->mpTable, heads, cols, tempSql, false);
+    ui->mpTable->setColumnHidden(7, true);
+    ui->mpTable->setColumnHidden(8, true);
 
 }
 
 //PARAMS - The table, list of headers, list of table column names, the sqlquery result, STRETCH - stretch mode true/false
 void MainWindow::populateATable(QTableWidget * table, QStringList headers, QStringList items, QSqlQuery result, bool stretch){
     table->clear();
+    table->setRowCount(0);
+
     if(headers.length() != items.length())
         return;
 
@@ -1785,7 +1807,9 @@ void MainWindow::populateATable(QTableWidget * table, QStringList headers, QStri
     table->setSelectionMode(QAbstractItemView::SingleSelection);
     int colCount = headers.size();
     table->setColumnCount(colCount);
-    table->setHorizontalHeaderLabels(headers);
+    if(headers.length() != 0){
+        table->setHorizontalHeaderLabels(headers);
+    }
     int x = 0;
     while(result.next()){
         table->insertRow(x);
@@ -1807,8 +1831,8 @@ void MainWindow::on_btn_payListAllUsers_clicked()
     QDate sDate = QDate::fromString("1970-01-01", "yyyy-MM-dd");
     QDate eDate = QDate::fromString("2222-01-01", "yyyy-MM-dd");
     QSqlQuery tempSql = dbManager->getTransactions(sDate, eDate);
-    heads << "Date" << "Amount" << "Type" << "Method" << "Notes" << "MSQ";
-    cols << "Date" << "Amount" << "TransType" << "Type" << "Notes" << "MSQ";
+    heads << "Date" << "Amount" << "First" << "Last" << "Type" << "Method" << "Notes" << "MSD" << "" << "";
+    cols << "Date" << "Amount" << "FirstName" << "LastName" << "TransType" << "Type" << "Notes" << "MSQ" << "TransacId" << "ClientId";
     populateATable(ui->mpTable, heads, cols, tempSql, false);
 
 // list all rooms
@@ -2110,7 +2134,156 @@ void MainWindow::setPcpVector(){
 
 void MainWindow::on_btn_pcpRela_clicked()
 {
-    ui->tw_pcpRela->setRowCount(ui->tw_pcpRela->rowCount()+1);
+    ui->tw_pcpRela->insertRow(0);
+    ui->tw_pcpRela->setMinimumHeight(ui->tw_pcpRela->minimumHeight()+35);
+}
 
-    ui->tw_pcpRela->setMinimumHeight(ui->tw_pcpRela->minimumHeight()+28);
+void MainWindow::on_btn_pcpEdu_clicked()
+{
+    ui->tw_pcpEdu->insertRow(0);
+    ui->tw_pcpEdu->setMinimumHeight(ui->tw_pcpEdu->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpSub_clicked()
+{
+    ui->tw_pcpSub->insertRow(0);
+    ui->tw_pcpSub->setMinimumHeight(ui->tw_pcpSub->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpAcc_clicked()
+{
+    ui->tw_pcpAcco->insertRow(0);
+    ui->tw_pcpAcco->setMinimumHeight(ui->tw_pcpAcco->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpLife_clicked()
+{
+    ui->tw_pcpLife->insertRow(0);
+    ui->tw_pcpLife->setMinimumHeight(ui->tw_pcpLife->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpMent_clicked()
+{
+    ui->tw_pcpMent->insertRow(0);
+    ui->tw_pcpMent->setMinimumHeight(ui->tw_pcpMent->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpPhy_clicked()
+{
+    ui->tw_pcpPhy->insertRow(0);
+    ui->tw_pcpPhy->setMinimumHeight(ui->tw_pcpPhy->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpLeg_clicked()
+{
+    ui->tw_pcpLeg->insertRow(0);
+    ui->tw_pcpLeg->setMinimumHeight(ui->tw_pcpLeg->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpAct_clicked()
+{
+    ui->tw_pcpAct->insertRow(0);
+    ui->tw_pcpAct->setMinimumHeight(ui->tw_pcpAct->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpTrad_clicked()
+{
+    ui->tw_pcpTrad->insertRow(0);
+    ui->tw_pcpTrad->setMinimumHeight(ui->tw_pcpTrad->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpOther_clicked()
+{
+    ui->tw_pcpOther->insertRow(0);
+    ui->tw_pcpOther->setMinimumHeight(ui->tw_pcpOther->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_pcpKey_clicked()
+{
+    ui->tw_pcpPpl->insertRow(0);
+    ui->tw_pcpPpl->setMinimumHeight(ui->tw_pcpPpl->minimumHeight()+35);
+}
+
+void MainWindow::on_btn_monthlyReport_clicked()
+{
+    ui->swdg_reports->setCurrentIndex(MONTHLYREPORT);
+}
+
+
+void MainWindow::on_btn_restrictedList_clicked()
+{
+    ui->swdg_reports->setCurrentIndex(RESTRICTIONS);
+}
+
+void MainWindow::on_btn_payDelete_clicked()
+{
+    if(ui->btn_payDelete->text() == "Cash Cheque")
+    {
+        int index = ui->mpTable->selectionModel()->currentIndex().row();
+        if(index == -1)
+            return;
+        updateCheque(index);
+    }
+    else{
+        int index = ui->mpTable->selectionModel()->currentIndex().row();
+        if(index == -1)
+            return;
+
+        getTransactionFromRow(index);
+    }
+}
+void MainWindow::updateCheque(int row){
+    QString transId = ui->mpTable->item(row, 6)->text();
+    double retAmt = ui->mpTable->item(row, 3)->text().toDouble();
+    QString clientId = ui->mpTable->item(row, 5)->text();
+    curClient = new Client();
+    popClientFromId(clientId);
+    double curBal = curClient->balance + retAmt;
+    if(dbManager->setPaid(transId)){
+        if(!dbManager->updateBalance(curBal, clientId)){
+                qDebug() << "BIG ERROR - removed transacton but not update balance";
+                return;
+        }
+    }
+    ui->mpTable->removeRow(row);
+}
+
+void MainWindow::getTransactionFromRow(int row){
+    QString transId = ui->mpTable->item(row, 7)->text();
+
+    QString type = ui->mpTable->item(row, 4)->text();
+    double retAmt = ui->mpTable->item(row, 3)->text().toDouble();
+    QString clientId = ui->mpTable->item(row, 8)->text();
+    curClient = new Client();
+    popClientFromId(clientId);
+    double curBal = curClient->balance;
+
+    if(type == "Payment"){
+        curBal -= retAmt;
+    }
+    else if(type == "Refund"){
+        curBal += retAmt;
+    }
+    else{
+        //error - not a payment or refund
+        return;
+    }
+    dbManager->updateBalance(curBal, clientId);
+    dbManager->removeTransaction(transId);
+    ui->mpTable->removeRow(row);
+
+}
+
+void MainWindow::on_btn_payOutstanding_clicked()
+{
+    ui->btn_payDelete->setText("Cash Cheque");
+    QSqlQuery result;
+    result = dbManager->getOutstanding();
+    QStringList headers;
+    QStringList cols;
+    headers << "Date" << "First" << "Last" << "Amount" << "Notes" << "" << "";
+    cols << "Date" << "FirstName" << "LastName" << "Amount" << "Notes" << "ClientId" << "TransacId";
+    populateATable(ui->mpTable, headers, cols, result, false);
+    ui->mpTable->setColumnHidden(6, true);
+    ui->mpTable->setColumnHidden(5, true);
 }

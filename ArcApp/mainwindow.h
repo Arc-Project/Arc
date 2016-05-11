@@ -19,6 +19,8 @@
 #define SHIFTREPORT 1
 #define DAILYLOG 2
 #define FLOATCOUNT 3
+#define MONTHLYREPORT 4
+#define RESTRICTIONS 5
 #include <QMainWindow>
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
@@ -234,13 +236,42 @@ private slots:
 
     void setPcpVector();
 
+    void on_btn_pcpRela_clicked();
+
+    void on_btn_pcpEdu_clicked();
+
+    void on_btn_pcpSub_clicked();
+
+    void on_btn_pcpAcc_clicked();
+
+    void on_btn_pcpLife_clicked();
+
+    void on_btn_pcpMent_clicked();
+
+    void on_btn_pcpPhy_clicked();
+
+    void on_btn_pcpLeg_clicked();
+
+    void on_btn_pcpAct_clicked();
+
+    void on_btn_pcpTrad_clicked();
+
+    void on_btn_pcpOther_clicked();
+
+    void on_btn_pcpKey_clicked();
+
     void on_btn_createNewUser_2_clicked();
 
     void on_pushButton_24_clicked();
 
+    void on_btn_monthlyReport_clicked();
 
-    void on_btn_pcpRela_clicked();
+    void on_btn_restrictedList_clicked();
 
+    void on_btn_payDelete_clicked();
+    void getTransactionFromRow(int row);
+    void on_btn_payOutstanding_clicked();
+    void updateCheque(int row);
 private:
     Ui::MainWindow *ui;
     MainWindow * mw;
