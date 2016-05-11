@@ -114,7 +114,7 @@ QWidget#wdg_transTotal {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="mainMenu">
      <layout class="QGridLayout" name="gridLayout_5">
@@ -580,330 +580,628 @@ QWidget#wdg_transTotal {
          <number>0</number>
         </property>
         <widget class="QWidget" name="tab_cl_general">
-          <attribute name="title">
-           <string>Client General Info</string>
-          </attribute>
-          <widget class="QWidget" name="gridLayoutWidget">
-           <property name="geometry">
-            <rect>
-             <x>9</x>
-             <y>9</y>
-             <width>771</width>
-             <height>681</height>
-            </rect>
+         <attribute name="title">
+          <string>Client General Info</string>
+         </attribute>
+         <widget class="QWidget" name="gridLayoutWidget">
+          <property name="geometry">
+           <rect>
+            <x>9</x>
+            <y>9</y>
+            <width>651</width>
+            <height>671</height>
+           </rect>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_clientInfo">
+           <property name="spacing">
+            <number>2</number>
            </property>
-           <layout class="QGridLayout" name="gridLayout_clientInfo">
-            <property name="spacing">
-             <number>2</number>
-            </property>
-            <item row="0" column="1" rowspan="2">
-             <layout class="QVBoxLayout" name="verticalLayout_cl_info_right">
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout_13">
-                <property name="spacing">
-                 <number>1</number>
+           <item row="0" column="1" rowspan="2">
+            <layout class="QVBoxLayout" name="verticalLayout_cl_info_right">
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_13">
+               <property name="spacing">
+                <number>1</number>
+               </property>
+               <property name="sizeConstraint">
+                <enum>QLayout::SetDefaultConstraint</enum>
+               </property>
+               <item alignment="Qt::AlignHCenter">
+                <widget class="QGraphicsView" name="graphicsView_getInfo">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>150</width>
+                   <height>120</height>
+                  </size>
+                 </property>
+                 <property name="layoutDirection">
+                  <enum>Qt::LeftToRight</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_cl_info_status">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>12</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QFormLayout" name="formLayout_17">
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_cl_info_balance_tag">
+                   <property name="minimumSize">
+                    <size>
+                     <width>120</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Balance</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QLabel" name="label_cl_info_balance_amt">
+                   <property name="font">
+                    <font>
+                     <pointsize>12</pointsize>
+                    </font>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>false</bool>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_15">
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_cl_info_Comment_tag">
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Comment</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QTextBrowser" name="textBrowser_client_info_comment">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item row="0" column="0" rowspan="2">
+            <layout class="QVBoxLayout" name="verticalLayout_cl_info_left">
+             <property name="spacing">
+              <number>4</number>
+             </property>
+             <item>
+              <widget class="QGroupBox" name="groupBox_cl_info_personal">
+               <property name="maximumSize">
+                <size>
+                 <width>320</width>
+                 <height>240</height>
+                </size>
+               </property>
+               <property name="title">
+                <string>PERSONAL INFORMATION</string>
+               </property>
+               <widget class="QWidget" name="formLayoutWidget_2">
+                <property name="geometry">
+                 <rect>
+                  <x>20</x>
+                  <y>20</y>
+                  <width>291</width>
+                  <height>211</height>
+                 </rect>
                 </property>
-                <property name="sizeConstraint">
-                 <enum>QLayout::SetDefaultConstraint</enum>
+                <layout class="QFormLayout" name="formLayout_client_info_personal">
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_cl_info_fName">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>First Name</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="label_cl_info_mName">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Middle Initial</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="label_cl_info_lName">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Last Name</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="0">
+                  <widget class="QLabel" name="label_cl_info_dob">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Date of Birth</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="5" column="0">
+                  <widget class="QLabel" name="label_cl_info_sin">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>SIN Number</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="6" column="0">
+                  <widget class="QLabel" name="label_cl_info_gaNum">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>GA Number</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="7" column="0">
+                  <widget class="QLabel" name="label_cl_info_caseWorker">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Case Worker</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="8" column="0">
+                  <widget class="QLabel" name="label_cl_info_ruleSignDate">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Rule Signed Date</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QLabel" name="label_cl_info_fName_val">
+                   <property name="minimumSize">
+                    <size>
+                     <width>150</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QLabel" name="label_cl_info_mName_val">
+                   <property name="minimumSize">
+                    <size>
+                     <width>150</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="1">
+                  <widget class="QLabel" name="label_cl_info_lName_val">
+                   <property name="minimumSize">
+                    <size>
+                     <width>150</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="1">
+                  <widget class="QLabel" name="label_cl_info_dob_val">
+                   <property name="minimumSize">
+                    <size>
+                     <width>150</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="5" column="1">
+                  <widget class="QLabel" name="label_cl_info_sin_val">
+                   <property name="minimumSize">
+                    <size>
+                     <width>150</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="6" column="1">
+                  <widget class="QLabel" name="label_cl_info_gaNum_val">
+                   <property name="minimumSize">
+                    <size>
+                     <width>150</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="7" column="1">
+                  <widget class="QLabel" name="label_cl_info_caseWorker_val">
+                   <property name="minimumSize">
+                    <size>
+                     <width>150</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="8" column="1">
+                  <widget class="QLabel" name="label_cl_info_ruleSignDate_val">
+                   <property name="minimumSize">
+                    <size>
+                     <width>150</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="groupBox">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="title">
+                <string>CONTACT INFORMATION</string>
+               </property>
+               <widget class="QGroupBox" name="groupBox_4">
+                <property name="geometry">
+                 <rect>
+                  <x>9</x>
+                  <y>20</y>
+                  <width>311</width>
+                  <height>131</height>
+                 </rect>
                 </property>
-                <item alignment="Qt::AlignHCenter">
-                 <widget class="QGraphicsView" name="graphicsView_getInfo">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>150</width>
-                    <height>120</height>
-                   </size>
-                  </property>
-                  <property name="layoutDirection">
-                   <enum>Qt::LeftToRight</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="label_cl_info_status">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <pointsize>12</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <layout class="QFormLayout" name="formLayout_17">
+                <property name="title">
+                 <string>NEXT OF KIN</string>
+                </property>
+                <widget class="QWidget" name="formLayoutWidget">
+                 <property name="geometry">
+                  <rect>
+                   <x>9</x>
+                   <y>19</y>
+                   <width>291</width>
+                   <height>101</height>
+                  </rect>
+                 </property>
+                 <layout class="QFormLayout" name="formLayout_14">
                   <item row="0" column="0">
-                   <widget class="QLabel" name="label_cl_info_balance_tag">
+                   <widget class="QLabel" name="label_cl_info_nok_name">
                     <property name="minimumSize">
                      <size>
-                      <width>120</width>
+                      <width>100</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Name</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_cl_info_nok_relationship">
+                    <property name="minimumSize">
+                     <size>
+                      <width>100</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Relationship</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0">
+                   <widget class="QLabel" name="label_cl_info_nok_loc">
+                    <property name="minimumSize">
+                     <size>
+                      <width>100</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Location</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="0">
+                   <widget class="QLabel" name="label_cl_info_nok_contatct">
+                    <property name="minimumSize">
+                     <size>
+                      <width>100</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Contact Number </string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QLabel" name="label_cl_info_nok_name_val">
+                    <property name="minimumSize">
+                     <size>
+                      <width>150</width>
                       <height>0</height>
                      </size>
                     </property>
                     <property name="font">
                      <font>
-                      <pointsize>12</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Balance</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="1">
-                   <widget class="QLabel" name="label_cl_info_balance_amt">
-                    <property name="font">
-                     <font>
-                      <pointsize>12</pointsize>
+                      <pointsize>10</pointsize>
                      </font>
                     </property>
                     <property name="autoFillBackground">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </property>
                     <property name="text">
                      <string/>
                     </property>
-                    <property name="alignment">
-                     <set>Qt::AlignCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QVBoxLayout" name="verticalLayout_15">
-                <property name="spacing">
-                 <number>2</number>
-                </property>
-                <item>
-                 <widget class="QLabel" name="label_cl_info_Comment_tag">
-                  <property name="font">
-                   <font>
-                    <pointsize>11</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Comment</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QTextBrowser" name="textBrowser_client_info_comment">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </item>
-            <item row="0" column="0" rowspan="2">
-             <layout class="QVBoxLayout" name="verticalLayout_cl_info_left">
-              <property name="spacing">
-               <number>4</number>
-              </property>
-              <item>
-               <widget class="QGroupBox" name="groupBox_cl_info_personal">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>240</height>
-                 </size>
-                </property>
-                <property name="title">
-                 <string>PERSONAL INFORMATION</string>
-                </property>
-                <widget class="QWidget" name="formLayoutWidget_2">
-                 <property name="geometry">
-                  <rect>
-                   <x>20</x>
-                   <y>20</y>
-                   <width>341</width>
-                   <height>211</height>
-                  </rect>
-                 </property>
-                 <layout class="QFormLayout" name="formLayout_client_info_personal">
-                  <item row="1" column="0">
-                   <widget class="QLabel" name="label_cl_info_fName">
-                    <property name="minimumSize">
-                     <size>
-                      <width>120</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>10</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>First Name</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="2" column="0">
-                   <widget class="QLabel" name="label_cl_info_mName">
-                    <property name="minimumSize">
-                     <size>
-                      <width>120</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>10</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Middle Initial</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="3" column="0">
-                   <widget class="QLabel" name="label_cl_info_lName">
-                    <property name="minimumSize">
-                     <size>
-                      <width>120</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>10</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Last Name</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="4" column="0">
-                   <widget class="QLabel" name="label_cl_info_dob">
-                    <property name="minimumSize">
-                     <size>
-                      <width>120</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>10</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Date of Birth</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="5" column="0">
-                   <widget class="QLabel" name="label_cl_info_sin">
-                    <property name="minimumSize">
-                     <size>
-                      <width>120</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>10</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>SIN Number</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="6" column="0">
-                   <widget class="QLabel" name="label_cl_info_gaNum">
-                    <property name="minimumSize">
-                     <size>
-                      <width>120</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>10</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>GA Number</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="7" column="0">
-                   <widget class="QLabel" name="label_cl_info_caseWorker">
-                    <property name="minimumSize">
-                     <size>
-                      <width>120</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>10</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Case Worker</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="8" column="0">
-                   <widget class="QLabel" name="label_cl_info_ruleSignDate">
-                    <property name="minimumSize">
-                     <size>
-                      <width>120</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>10</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Rule Signed Date</string>
-                    </property>
                    </widget>
                   </item>
                   <item row="1" column="1">
-                   <widget class="QLabel" name="label_cl_info_fName_val">
+                   <widget class="QLabel" name="label_cl_info_nok_relationship_val">
                     <property name="minimumSize">
                      <size>
-                      <width>200</width>
-                      <height>20</height>
+                      <width>150</width>
+                      <height>0</height>
                      </size>
                     </property>
                     <property name="font">
@@ -920,11 +1218,11 @@ QWidget#wdg_transTotal {
                    </widget>
                   </item>
                   <item row="2" column="1">
-                   <widget class="QLabel" name="label_cl_info_mName_val">
+                   <widget class="QLabel" name="label_cl_info_nok_loc_val">
                     <property name="minimumSize">
                      <size>
-                      <width>200</width>
-                      <height>20</height>
+                      <width>150</width>
+                      <height>0</height>
                      </size>
                     </property>
                     <property name="font">
@@ -941,10 +1239,97 @@ QWidget#wdg_transTotal {
                    </widget>
                   </item>
                   <item row="3" column="1">
-                   <widget class="QLabel" name="label_cl_info_lName_val">
+                   <widget class="QLabel" name="label_cl_info_nok_contatct_val">
                     <property name="minimumSize">
                      <size>
-                      <width>200</width>
+                      <width>150</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="autoFillBackground">
+                     <bool>true</bool>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </widget>
+               <widget class="QGroupBox" name="groupBox_client_info_physician">
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>160</y>
+                  <width>311</width>
+                  <height>81</height>
+                 </rect>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="title">
+                 <string>Physician</string>
+                </property>
+                <widget class="QWidget" name="formLayoutWidget_3">
+                 <property name="geometry">
+                  <rect>
+                   <x>9</x>
+                   <y>20</y>
+                   <width>291</width>
+                   <height>53</height>
+                  </rect>
+                 </property>
+                 <layout class="QFormLayout" name="formLayout_15">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_cl_info_phys_name">
+                    <property name="minimumSize">
+                     <size>
+                      <width>100</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Name</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_cl_info_phys_contact">
+                    <property name="minimumSize">
+                     <size>
+                      <width>100</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Contact Number </string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QLabel" name="label_cl_info_phys_name_val">
+                    <property name="minimumSize">
+                     <size>
+                      <width>150</width>
                       <height>20</height>
                      </size>
                     </property>
@@ -961,95 +1346,11 @@ QWidget#wdg_transTotal {
                     </property>
                    </widget>
                   </item>
-                  <item row="4" column="1">
-                   <widget class="QLabel" name="label_cl_info_dob_val">
+                  <item row="1" column="1">
+                   <widget class="QLabel" name="label_cl_info_phys_contact_val">
                     <property name="minimumSize">
                      <size>
-                      <width>200</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>10</pointsize>
-                     </font>
-                    </property>
-                    <property name="autoFillBackground">
-                     <bool>true</bool>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="5" column="1">
-                   <widget class="QLabel" name="label_cl_info_sin_val">
-                    <property name="minimumSize">
-                     <size>
-                      <width>200</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>10</pointsize>
-                     </font>
-                    </property>
-                    <property name="autoFillBackground">
-                     <bool>true</bool>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="6" column="1">
-                   <widget class="QLabel" name="label_cl_info_gaNum_val">
-                    <property name="minimumSize">
-                     <size>
-                      <width>200</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>10</pointsize>
-                     </font>
-                    </property>
-                    <property name="autoFillBackground">
-                     <bool>true</bool>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="7" column="1">
-                   <widget class="QLabel" name="label_cl_info_caseWorker_val">
-                    <property name="minimumSize">
-                     <size>
-                      <width>200</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>10</pointsize>
-                     </font>
-                    </property>
-                    <property name="autoFillBackground">
-                     <bool>true</bool>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="8" column="1">
-                   <widget class="QLabel" name="label_cl_info_ruleSignDate_val">
-                    <property name="minimumSize">
-                     <size>
-                      <width>200</width>
+                      <width>150</width>
                       <height>20</height>
                      </size>
                     </property>
@@ -1069,530 +1370,235 @@ QWidget#wdg_transTotal {
                  </layout>
                 </widget>
                </widget>
-              </item>
-              <item>
-               <widget class="QGroupBox" name="groupBox">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
+               <widget class="QGroupBox" name="groupBox_cl_info_MSD">
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>250</y>
+                  <width>311</width>
+                  <height>81</height>
+                 </rect>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
                 </property>
                 <property name="title">
-                 <string>CONTACT INFORMATION</string>
+                 <string>Support Worker1</string>
                 </property>
-                <widget class="QGroupBox" name="groupBox_4">
+                <widget class="QWidget" name="formLayoutWidget_4">
                  <property name="geometry">
                   <rect>
                    <x>9</x>
-                   <y>20</y>
-                   <width>351</width>
-                   <height>131</height>
+                   <y>19</y>
+                   <width>291</width>
+                   <height>53</height>
                   </rect>
                  </property>
-                 <property name="title">
-                  <string>NEXT OF KIN</string>
-                 </property>
-                 <widget class="QWidget" name="formLayoutWidget">
-                  <property name="geometry">
-                   <rect>
-                    <x>9</x>
-                    <y>19</y>
-                    <width>331</width>
-                    <height>101</height>
-                   </rect>
-                  </property>
-                  <layout class="QFormLayout" name="formLayout_14">
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="label_cl_info_nok_name">
-                     <property name="minimumSize">
-                      <size>
-                       <width>120</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>Name</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="label_cl_info_nok_relationship">
-                     <property name="minimumSize">
-                      <size>
-                       <width>120</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>Relationship</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="0">
-                    <widget class="QLabel" name="label_cl_info_nok_loc">
-                     <property name="minimumSize">
-                      <size>
-                       <width>120</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>Location</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="3" column="0">
-                    <widget class="QLabel" name="label_cl_info_nok_contatct">
-                     <property name="minimumSize">
-                      <size>
-                       <width>120</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>Contact Number </string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="1">
-                    <widget class="QLabel" name="label_cl_info_nok_name_val">
-                     <property name="minimumSize">
-                      <size>
-                       <width>200</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="autoFillBackground">
-                      <bool>true</bool>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="1">
-                    <widget class="QLabel" name="label_cl_info_nok_relationship_val">
-                     <property name="minimumSize">
-                      <size>
-                       <width>200</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="autoFillBackground">
-                      <bool>true</bool>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="1">
-                    <widget class="QLabel" name="label_cl_info_nok_loc_val">
-                     <property name="minimumSize">
-                      <size>
-                       <width>200</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="autoFillBackground">
-                      <bool>true</bool>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="3" column="1">
-                    <widget class="QLabel" name="label_cl_info_nok_contatct_val">
-                     <property name="minimumSize">
-                      <size>
-                       <width>200</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="autoFillBackground">
-                      <bool>true</bool>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </widget>
-                <widget class="QGroupBox" name="groupBox_client_info_physician">
-                 <property name="geometry">
-                  <rect>
-                   <x>10</x>
-                   <y>160</y>
-                   <width>351</width>
-                   <height>81</height>
-                  </rect>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>10</pointsize>
-                  </font>
-                 </property>
-                 <property name="title">
-                  <string>Physician</string>
-                 </property>
-                 <widget class="QWidget" name="formLayoutWidget_3">
-                  <property name="geometry">
-                   <rect>
-                    <x>9</x>
-                    <y>20</y>
-                    <width>331</width>
-                    <height>53</height>
-                   </rect>
-                  </property>
-                  <layout class="QFormLayout" name="formLayout_15">
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="label_cl_info_phys_name">
-                     <property name="minimumSize">
-                      <size>
-                       <width>120</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>Name</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="label_cl_info_phys_contact">
-                     <property name="minimumSize">
-                      <size>
-                       <width>120</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>Contact Number </string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="1">
-                    <widget class="QLabel" name="label_cl_info_phys_name_val">
-                     <property name="minimumSize">
-                      <size>
-                       <width>200</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="autoFillBackground">
-                      <bool>true</bool>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="1">
-                    <widget class="QLabel" name="label_cl_info_phys_contact_val">
-                     <property name="minimumSize">
-                      <size>
-                       <width>200</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="autoFillBackground">
-                      <bool>true</bool>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </widget>
-                <widget class="QGroupBox" name="groupBox_cl_info_MSD">
-                 <property name="geometry">
-                  <rect>
-                   <x>10</x>
-                   <y>250</y>
-                   <width>351</width>
-                   <height>81</height>
-                  </rect>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>10</pointsize>
-                  </font>
-                 </property>
-                 <property name="title">
-                  <string>Support Worker1</string>
-                 </property>
-                 <widget class="QWidget" name="formLayoutWidget_4">
-                  <property name="geometry">
-                   <rect>
-                    <x>9</x>
-                    <y>19</y>
-                    <width>331</width>
-                    <height>53</height>
-                   </rect>
-                  </property>
-                  <layout class="QFormLayout" name="formLayout_16">
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="label_cl_info_Supporter_name">
-                     <property name="minimumSize">
-                      <size>
-                       <width>120</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>Name</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="label_cl_info_Supporter_contact">
-                     <property name="minimumSize">
-                      <size>
-                       <width>120</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>Conatact Number </string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="1">
-                    <widget class="QLabel" name="label_cl_info_Supporter_name_val">
-                     <property name="minimumSize">
-                      <size>
-                       <width>200</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="autoFillBackground">
-                      <bool>true</bool>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="1">
-                    <widget class="QLabel" name="label_cl_info_Supporter_contact_val">
-                     <property name="minimumSize">
-                      <size>
-                       <width>200</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="autoFillBackground">
-                      <bool>true</bool>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </widget>
-                <widget class="QGroupBox" name="groupBox_cl_info_MSD_2">
-                 <property name="geometry">
-                  <rect>
-                   <x>10</x>
-                   <y>340</y>
-                   <width>351</width>
-                   <height>81</height>
-                  </rect>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>10</pointsize>
-                  </font>
-                 </property>
-                 <property name="title">
-                  <string>Support Worker2</string>
-                 </property>
-                 <widget class="QWidget" name="formLayoutWidget_5">
-                  <property name="geometry">
-                   <rect>
-                    <x>9</x>
-                    <y>19</y>
-                    <width>331</width>
-                    <height>53</height>
-                   </rect>
-                  </property>
-                  <layout class="QFormLayout" name="formLayout_18">
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="label_cl_info_Supporter2_name">
-                     <property name="minimumSize">
-                      <size>
-                       <width>120</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>Name</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="label_cl_info_Supporter2_contact">
-                     <property name="minimumSize">
-                      <size>
-                       <width>120</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>Conatact Number </string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="1">
-                    <widget class="QLabel" name="label_cl_info_Supporter2_name_val">
-                     <property name="minimumSize">
-                      <size>
-                       <width>200</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="autoFillBackground">
-                      <bool>true</bool>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="1">
-                    <widget class="QLabel" name="label_cl_info_Supporter2_contact_val">
-                     <property name="minimumSize">
-                      <size>
-                       <width>200</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="autoFillBackground">
-                      <bool>true</bool>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
+                 <layout class="QFormLayout" name="formLayout_16">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_cl_info_Supporter_name">
+                    <property name="minimumSize">
+                     <size>
+                      <width>100</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Name</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_cl_info_Supporter_contact">
+                    <property name="minimumSize">
+                     <size>
+                      <width>100</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Conatact Number </string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QLabel" name="label_cl_info_Supporter_name_val">
+                    <property name="minimumSize">
+                     <size>
+                      <width>150</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="autoFillBackground">
+                     <bool>true</bool>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QLabel" name="label_cl_info_Supporter_contact_val">
+                    <property name="minimumSize">
+                     <size>
+                      <width>150</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="autoFillBackground">
+                     <bool>true</bool>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </widget>
+               <widget class="QGroupBox" name="groupBox_cl_info_MSD_2">
+                <property name="geometry">
+                 <rect>
+                  <x>10</x>
+                  <y>340</y>
+                  <width>311</width>
+                  <height>81</height>
+                 </rect>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="title">
+                 <string>Support Worker2</string>
+                </property>
+                <widget class="QWidget" name="formLayoutWidget_5">
+                 <property name="geometry">
+                  <rect>
+                   <x>9</x>
+                   <y>19</y>
+                   <width>291</width>
+                   <height>48</height>
+                  </rect>
+                 </property>
+                 <layout class="QFormLayout" name="formLayout_18">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_cl_info_Supporter2_name">
+                    <property name="minimumSize">
+                     <size>
+                      <width>100</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Name</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QLabel" name="label_cl_info_Supporter2_name_val">
+                    <property name="minimumSize">
+                     <size>
+                      <width>150</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="autoFillBackground">
+                     <bool>true</bool>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_cl_info_Supporter2_contact">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>100</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Conatact Number </string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QLabel" name="label_cl_info_Supporter2_contact_val">
+                    <property name="minimumSize">
+                     <size>
+                      <width>150</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                     </font>
+                    </property>
+                    <property name="autoFillBackground">
+                     <bool>true</bool>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </widget>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </widget>
+        </widget>
         <widget class="QWidget" name="tab_cl_transaction">
          <attribute name="title">
           <string>Transaction Info</string>
@@ -2742,9 +2748,6 @@ QWidget#wdg_transTotal {
                </widget>
               </item>
              </layout>
-             <zorder>btn_payOutstanding</zorder>
-             <zorder>btn_payOutstanding</zorder>
-             <zorder>btn_payListAllUsers</zorder>
             </widget>
            </item>
           </layout>
@@ -4025,8 +4028,8 @@ QWidget#wdg_transTotal {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>989</width>
-               <height>2305</height>
+               <width>348</width>
+               <height>2218</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_47">
@@ -5462,51 +5465,18 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                 </layout>
-                <zorder>label_59</zorder>
                 <zorder>tw_pcpSub</zorder>
                 <zorder>tw_pcpAcco</zorder>
-                <zorder>label_53</zorder>
                 <zorder>tw_pcpRela</zorder>
-                <zorder>label_50</zorder>
                 <zorder>tw_pcpEdu</zorder>
-                <zorder>label_52</zorder>
                 <zorder>tw_pcpLife</zorder>
-                <zorder>label_54</zorder>
                 <zorder>tw_pcpMent</zorder>
-                <zorder>label_55</zorder>
                 <zorder>tw_pcpPhy</zorder>
-                <zorder>label_56</zorder>
-                <zorder>label_57</zorder>
                 <zorder>tw_pcpLeg</zorder>
                 <zorder>tw_pcpAct</zorder>
-                <zorder>label_58</zorder>
                 <zorder>tw_pcpTrad</zorder>
-                <zorder>label_60</zorder>
                 <zorder>tw_pcpPpl</zorder>
                 <zorder>tw_pcpOther</zorder>
-                <zorder>label_61</zorder>
-                <zorder>btn_pcpEdu</zorder>
-                <zorder>btn_pcpSub</zorder>
-                <zorder>btn_pcpAcc</zorder>
-                <zorder>btn_pcpLife</zorder>
-                <zorder>btn_pcpMent</zorder>
-                <zorder>btn_pcpPhy</zorder>
-                <zorder>btn_pcpLeg</zorder>
-                <zorder>btn_pcpAct</zorder>
-                <zorder>btn_pcpTrad</zorder>
-                <zorder>btn_pcpOther</zorder>
-                <zorder>btn_pcpKey</zorder>
-                <zorder>horizontalSpacer_32</zorder>
-                <zorder>horizontalSpacer_33</zorder>
-                <zorder>horizontalSpacer_34</zorder>
-                <zorder>horizontalSpacer_35</zorder>
-                <zorder>horizontalSpacer_44</zorder>
-                <zorder>horizontalSpacer_45</zorder>
-                <zorder>horizontalSpacer_53</zorder>
-                <zorder>horizontalSpacer_54</zorder>
-                <zorder>horizontalSpacer_55</zorder>
-                <zorder>horizontalSpacer_56</zorder>
-                <zorder>horizontalSpacer_60</zorder>
                </widget>
               </item>
              </layout>
@@ -5615,788 +5585,788 @@ QWidget#wdg_transTotal {
      </widget>
     </widget>
     <widget class="QWidget" name="registerClient">
-           <layout class="QGridLayout" name="gridLayout_10">
-            <item row="0" column="0">
-             <widget class="QWidget" name="widget" native="true">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_9">
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_cl_infoedit_title">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>16</pointsize>
-                   <weight>75</weight>
-                   <bold>true</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Register Client</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <layout class="QGridLayout" name="gridLayout_10">
+      <item row="0" column="0">
+       <widget class="QWidget" name="widget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_9">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_cl_infoedit_title">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>16</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Register Client</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout_6">
+           <item>
+            <widget class="QGroupBox" name="groupBox_3">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>350</width>
+               <height>409</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
+             <property name="title">
+              <string>General Information</string>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <item>
+               <layout class="QFormLayout" name="formLayout">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_cl_fName">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>25</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>10</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>First Name</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QLineEdit" name="lineEdit_cl_fName"/>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_cl_mName">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>25</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>10</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Middle Initials</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QLineEdit" name="lineEdit_cl_mName"/>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="label_cl_lName">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>25</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>10</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Last Name</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QLineEdit" name="lineEdit_cl_lName"/>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QLabel" name="label_cl_dob">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>25</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>10</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Date Of Birth</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QDateEdit" name="dateEdit_cl_dob">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>22</height>
+                   </size>
+                  </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::ClickFocus</enum>
+                  </property>
+                  <property name="displayFormat">
+                   <string>yyyy-MM-dd</string>
+                  </property>
+                  <property name="calendarPopup">
+                   <bool>true</bool>
+                  </property>
+                  <property name="date">
+                   <date>
+                    <year>1990</year>
+                    <month>1</month>
+                    <day>1</day>
+                   </date>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="0">
+                 <widget class="QLabel" name="label_cl_SIN">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>25</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>10</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>SIN Number</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="1">
+                 <widget class="QLineEdit" name="lineEdit_cl_SIN">
+                  <property name="inputMethodHints">
+                   <set>Qt::ImhNone</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="0">
+                 <widget class="QLabel" name="label_cl_GANum">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>25</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>10</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>GA Number</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="1">
+                 <widget class="QLineEdit" name="lineEdit_cl_GANum">
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item row="6" column="0">
+                 <widget class="QLabel" name="label_cl_caseWorker">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>25</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>10</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Case Worker</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="6" column="1">
+                 <widget class="QComboBox" name="comboBox_cl_caseWorker"/>
+                </item>
+                <item row="7" column="0">
+                 <widget class="QLabel" name="label_cl_ruleSign">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>25</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>10</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Date Rules Signed</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="7" column="1">
+                 <widget class="QDateEdit" name="dateEdit_cl_rulesign">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>22</height>
+                   </size>
+                  </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::ClickFocus</enum>
+                  </property>
+                  <property name="displayFormat">
+                   <string>yyyy-MM-dd</string>
+                  </property>
+                  <property name="calendarPopup">
+                   <bool>true</bool>
+                  </property>
+                  <property name="date">
+                   <date>
+                    <year>2016</year>
+                    <month>5</month>
+                    <day>1</day>
+                   </date>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_cl_contact">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>350</width>
+               <height>500</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
+             <property name="title">
+              <string>Contact Details</string>
+             </property>
+             <layout class="QFormLayout" name="formLayout_5">
+              <item row="1" column="0">
+               <widget class="QGroupBox" name="groupBox_cl_phys">
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="title">
+                 <string>Physician</string>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_3">
                  <item>
-                  <widget class="QGroupBox" name="groupBox_3">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>350</width>
-                     <height>409</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <pointsize>11</pointsize>
-                    </font>
-                   </property>
-                   <property name="title">
-                    <string>General Information</string>
-                   </property>
-                   <layout class="QHBoxLayout" name="horizontalLayout">
-                    <item>
-                     <layout class="QFormLayout" name="formLayout">
-                      <item row="0" column="0">
-                       <widget class="QLabel" name="label_cl_fName">
-                        <property name="minimumSize">
-                         <size>
-                          <width>0</width>
-                          <height>25</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <pointsize>10</pointsize>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>First Name</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="1">
-                       <widget class="QLineEdit" name="lineEdit_cl_fName"/>
-                      </item>
-                      <item row="1" column="0">
-                       <widget class="QLabel" name="label_cl_mName">
-                        <property name="minimumSize">
-                         <size>
-                          <width>0</width>
-                          <height>25</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <pointsize>10</pointsize>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>Middle Initials</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="1" column="1">
-                       <widget class="QLineEdit" name="lineEdit_cl_mName"/>
-                      </item>
-                      <item row="2" column="0">
-                       <widget class="QLabel" name="label_cl_lName">
-                        <property name="minimumSize">
-                         <size>
-                          <width>0</width>
-                          <height>25</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <pointsize>10</pointsize>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>Last Name</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="2" column="1">
-                       <widget class="QLineEdit" name="lineEdit_cl_lName"/>
-                      </item>
-                      <item row="3" column="0">
-                       <widget class="QLabel" name="label_cl_dob">
-                        <property name="minimumSize">
-                         <size>
-                          <width>0</width>
-                          <height>25</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <pointsize>10</pointsize>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>Date Of Birth</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="3" column="1">
-                       <widget class="QDateEdit" name="dateEdit_cl_dob">
-                        <property name="minimumSize">
-                         <size>
-                          <width>0</width>
-                          <height>22</height>
-                         </size>
-                        </property>
-                        <property name="focusPolicy">
-                         <enum>Qt::ClickFocus</enum>
-                        </property>
-                        <property name="displayFormat">
-                         <string>yyyy-MM-dd</string>
-                        </property>
-                        <property name="calendarPopup">
-                         <bool>true</bool>
-                        </property>
-                        <property name="date">
-                         <date>
-                          <year>1990</year>
-                          <month>1</month>
-                          <day>1</day>
-                         </date>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="4" column="0">
-                       <widget class="QLabel" name="label_cl_SIN">
-                        <property name="minimumSize">
-                         <size>
-                          <width>0</width>
-                          <height>25</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <pointsize>10</pointsize>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>SIN Number</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="4" column="1">
-                       <widget class="QLineEdit" name="lineEdit_cl_SIN">
-                        <property name="inputMethodHints">
-                         <set>Qt::ImhNone</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="5" column="0">
-                       <widget class="QLabel" name="label_cl_GANum">
-                        <property name="minimumSize">
-                         <size>
-                          <width>0</width>
-                          <height>25</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <pointsize>10</pointsize>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>GA Number</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="5" column="1">
-                       <widget class="QLineEdit" name="lineEdit_cl_GANum">
-                        <property name="text">
-                         <string/>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="6" column="0">
-                       <widget class="QLabel" name="label_cl_caseWorker">
-                        <property name="minimumSize">
-                         <size>
-                          <width>0</width>
-                          <height>25</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <pointsize>10</pointsize>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>Case Worker</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="6" column="1">
-                       <widget class="QComboBox" name="comboBox_cl_caseWorker"/>
-                      </item>
-                      <item row="7" column="0">
-                       <widget class="QLabel" name="label_cl_ruleSign">
-                        <property name="minimumSize">
-                         <size>
-                          <width>0</width>
-                          <height>25</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <pointsize>10</pointsize>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>Date Rules Signed</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="7" column="1">
-                       <widget class="QDateEdit" name="dateEdit_cl_rulesign">
-                        <property name="minimumSize">
-                         <size>
-                          <width>0</width>
-                          <height>22</height>
-                         </size>
-                        </property>
-                        <property name="focusPolicy">
-                         <enum>Qt::ClickFocus</enum>
-                        </property>
-                        <property name="displayFormat">
-                         <string>yyyy-MM-dd</string>
-                        </property>
-                        <property name="calendarPopup">
-                         <bool>true</bool>
-                        </property>
-                        <property name="date">
-                         <date>
-                          <year>2016</year>
-                          <month>5</month>
-                          <day>1</day>
-                         </date>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QGroupBox" name="groupBox_cl_contact">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>350</width>
-                     <height>500</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <pointsize>11</pointsize>
-                    </font>
-                   </property>
-                   <property name="title">
-                    <string>Contact Details</string>
-                   </property>
-                   <layout class="QFormLayout" name="formLayout_5">
-                    <item row="1" column="0">
-                     <widget class="QGroupBox" name="groupBox_cl_phys">
-                      <property name="font">
-                       <font>
-                        <pointsize>9</pointsize>
-                       </font>
-                      </property>
-                      <property name="title">
-                       <string>Physician</string>
-                      </property>
-                      <layout class="QHBoxLayout" name="horizontalLayout_3">
-                       <item>
-                        <layout class="QFormLayout" name="formLayout_3">
-                         <item row="0" column="0">
-                          <widget class="QLabel" name="label_cl_phys_name">
-                           <property name="font">
-                            <font>
-                             <pointsize>10</pointsize>
-                            </font>
-                           </property>
-                           <property name="text">
-                            <string>Name</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="1" column="0">
-                          <widget class="QLabel" name="label_cl_phys_ContactNo">
-                           <property name="font">
-                            <font>
-                             <pointsize>10</pointsize>
-                            </font>
-                           </property>
-                           <property name="text">
-                            <string>Contact Number</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="0" column="1">
-                          <widget class="QLineEdit" name="lineEdit_cl_phys_name"/>
-                         </item>
-                         <item row="1" column="1">
-                          <widget class="QLineEdit" name="lineEdit_cl_phys_ContactNo"/>
-                         </item>
-                        </layout>
-                       </item>
-                      </layout>
-                     </widget>
-                    </item>
-                    <item row="2" column="0">
-                     <widget class="QGroupBox" name="groupBox_cl_supporter1">
-                      <property name="font">
-                       <font>
-                        <pointsize>9</pointsize>
-                       </font>
-                      </property>
-                      <property name="title">
-                       <string>Support Worker1</string>
-                      </property>
-                      <layout class="QHBoxLayout" name="horizontalLayout_4">
-                       <item>
-                        <layout class="QFormLayout" name="formLayout_4">
-                         <item row="0" column="0">
-                          <widget class="QLabel" name="label_cl_supporter_Name">
-                           <property name="font">
-                            <font>
-                             <pointsize>10</pointsize>
-                            </font>
-                           </property>
-                           <property name="text">
-                            <string>Name</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="1" column="0">
-                          <widget class="QLabel" name="label_cl_supporter_ContactNo">
-                           <property name="font">
-                            <font>
-                             <pointsize>10</pointsize>
-                            </font>
-                           </property>
-                           <property name="text">
-                            <string>Contact Number</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="0" column="1">
-                          <widget class="QLineEdit" name="lineEdit_cl_supporter_Name"/>
-                         </item>
-                         <item row="1" column="1">
-                          <widget class="QLineEdit" name="lineEdit_cl_supporter_ContactNo"/>
-                         </item>
-                        </layout>
-                       </item>
-                      </layout>
-                     </widget>
-                    </item>
-                    <item row="3" column="0" colspan="2">
-                     <widget class="QGroupBox" name="groupBox_cl_supporter2">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="font">
-                       <font>
-                        <pointsize>10</pointsize>
-                       </font>
-                      </property>
-                      <property name="title">
-                       <string>Support Worker2</string>
-                      </property>
-                      <layout class="QHBoxLayout" name="horizontalLayout_56">
-                       <item>
-                        <layout class="QFormLayout" name="formLayout_20">
-                         <item row="0" column="0">
-                          <widget class="QLabel" name="label_cl_supporter2_Name">
-                           <property name="font">
-                            <font>
-                             <pointsize>10</pointsize>
-                            </font>
-                           </property>
-                           <property name="text">
-                            <string>Name</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="0" column="1">
-                          <widget class="QLineEdit" name="lineEdit_cl_supporter2_Name"/>
-                         </item>
-                         <item row="1" column="0">
-                          <widget class="QLabel" name="label_cl_supporter2_ContactNo">
-                           <property name="font">
-                            <font>
-                             <pointsize>10</pointsize>
-                            </font>
-                           </property>
-                           <property name="text">
-                            <string>Contact Number </string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="1" column="1">
-                          <widget class="QLineEdit" name="lineEdit_cl_supporter2_ContactNo"/>
-                         </item>
-                        </layout>
-                       </item>
-                      </layout>
-                     </widget>
-                    </item>
-                    <item row="0" column="0">
-                     <widget class="QGroupBox" name="groupBox_cl_nok">
-                      <property name="font">
-                       <font>
-                        <pointsize>9</pointsize>
-                       </font>
-                      </property>
-                      <property name="title">
-                       <string>Next Of Kin</string>
-                      </property>
-                      <layout class="QHBoxLayout" name="horizontalLayout_2">
-                       <item>
-                        <layout class="QFormLayout" name="formLayout_2">
-                         <property name="horizontalSpacing">
-                          <number>4</number>
-                         </property>
-                         <property name="verticalSpacing">
-                          <number>4</number>
-                         </property>
-                         <item row="0" column="0">
-                          <widget class="QLabel" name="label_cl_nok_name">
-                           <property name="font">
-                            <font>
-                             <pointsize>10</pointsize>
-                            </font>
-                           </property>
-                           <property name="text">
-                            <string>Name</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="0" column="1">
-                          <widget class="QLineEdit" name="lineEdit_cl_nok_name"/>
-                         </item>
-                         <item row="1" column="0">
-                          <widget class="QLabel" name="label_cl_nok_relationship">
-                           <property name="font">
-                            <font>
-                             <pointsize>10</pointsize>
-                            </font>
-                           </property>
-                           <property name="text">
-                            <string>Relationship</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="1" column="1">
-                          <widget class="QLineEdit" name="lineEdit_cl_nok_relationship"/>
-                         </item>
-                         <item row="2" column="0">
-                          <widget class="QLabel" name="label_cl_nok_loc">
-                           <property name="font">
-                            <font>
-                             <pointsize>10</pointsize>
-                            </font>
-                           </property>
-                           <property name="text">
-                            <string>Location</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="2" column="1">
-                          <widget class="QLineEdit" name="lineEdit_cl_nok_loc"/>
-                         </item>
-                         <item row="3" column="0">
-                          <widget class="QLabel" name="label_cl_nok_ContactNo">
-                           <property name="font">
-                            <font>
-                             <pointsize>10</pointsize>
-                            </font>
-                           </property>
-                           <property name="text">
-                            <string>Contact Number</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="3" column="1">
-                          <widget class="QLineEdit" name="lineEdit_cl_nok_ContactNo"/>
-                         </item>
-                        </layout>
-                       </item>
-                      </layout>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QGroupBox" name="groupBox_cl_extra">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>230</width>
-                     <height>409</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <pointsize>11</pointsize>
-                    </font>
-                   </property>
-                   <property name="title">
-                    <string>Extra Info</string>
-                   </property>
-                   <layout class="QFormLayout" name="formLayout_6">
-                    <item row="0" column="0">
-                     <widget class="QLabel" name="label_cl_status">
-                      <property name="font">
-                       <font>
-                        <pointsize>10</pointsize>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>Status</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="1">
-                     <widget class="QComboBox" name="comboBox_cl_status"/>
-                    </item>
-                    <item row="1" column="0" colspan="2">
-                     <widget class="QLabel" name="label_cl_status_2">
-                      <property name="font">
-                       <font>
-                        <pointsize>10</pointsize>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>Comments</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="2" column="0" colspan="2">
-                     <widget class="QPlainTextEdit" name="plainTextEdit_cl_comments">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>0</width>
-                        <height>300</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>210</width>
-                        <height>16777215</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QGroupBox" name="groupBox_2">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Ignored">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="maximumSize">
-                    <size>
-                     <width>230</width>
-                     <height>409</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <pointsize>11</pointsize>
-                    </font>
-                   </property>
-                   <property name="title">
-                    <string>Photo</string>
-                   </property>
-                   <layout class="QFormLayout" name="formLayout_7">
-                    <item row="0" column="0">
-                     <widget class="QGraphicsView" name="graphicsView_cl_pic">
-                      <property name="enabled">
-                       <bool>true</bool>
-                      </property>
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>200</width>
-                        <height>16777215</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="0">
-                     <widget class="QPushButton" name="button_cl_takePic">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="font">
-                       <font>
-                        <pointsize>10</pointsize>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>Take a Photo</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="2" column="0">
-                     <widget class="QPushButton" name="button_cl_delPic">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="font">
-                       <font>
-                        <pointsize>10</pointsize>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>Delete Photo</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
+                  <layout class="QFormLayout" name="formLayout_3">
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_cl_phys_name">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Name</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="label_cl_phys_ContactNo">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Contact Number</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QLineEdit" name="lineEdit_cl_phys_name"/>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QLineEdit" name="lineEdit_cl_phys_ContactNo"/>
+                   </item>
+                  </layout>
                  </item>
                 </layout>
-               </item>
-               <item row="2" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_5">
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QGroupBox" name="groupBox_cl_supporter1">
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="title">
+                 <string>Support Worker1</string>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_4">
                  <item>
-                  <widget class="QPushButton" name="button_register_client">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>150</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <pointsize>12</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Register</string>
-                   </property>
-                  </widget>
+                  <layout class="QFormLayout" name="formLayout_4">
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_cl_supporter_Name">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Name</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="label_cl_supporter_ContactNo">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Contact Number</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QLineEdit" name="lineEdit_cl_supporter_Name"/>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QLineEdit" name="lineEdit_cl_supporter_ContactNo"/>
+                   </item>
+                  </layout>
                  </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="3" column="0" colspan="2">
+               <widget class="QGroupBox" name="groupBox_cl_supporter2">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="title">
+                 <string>Support Worker2</string>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_56">
                  <item>
-                  <widget class="QPushButton" name="button_cancel_client_register">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>80</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <pointsize>12</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Cancel</string>
-                   </property>
-                  </widget>
+                  <layout class="QFormLayout" name="formLayout_20">
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_cl_supporter2_Name">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Name</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QLineEdit" name="lineEdit_cl_supporter2_Name"/>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="label_cl_supporter2_ContactNo">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Contact Number </string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QLineEdit" name="lineEdit_cl_supporter2_ContactNo"/>
+                   </item>
+                  </layout>
                  </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QGroupBox" name="groupBox_cl_nok">
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="title">
+                 <string>Next Of Kin</string>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_2">
                  <item>
-                  <spacer name="horizontalSpacer_2">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
+                  <layout class="QFormLayout" name="formLayout_2">
+                   <property name="horizontalSpacing">
+                    <number>4</number>
                    </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
+                   <property name="verticalSpacing">
+                    <number>4</number>
                    </property>
-                  </spacer>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_cl_nok_name">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Name</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QLineEdit" name="lineEdit_cl_nok_name"/>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="label_cl_nok_relationship">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Relationship</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QLineEdit" name="lineEdit_cl_nok_relationship"/>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QLabel" name="label_cl_nok_loc">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Location</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="1">
+                    <widget class="QLineEdit" name="lineEdit_cl_nok_loc"/>
+                   </item>
+                   <item row="3" column="0">
+                    <widget class="QLabel" name="label_cl_nok_ContactNo">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Contact Number</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="1">
+                    <widget class="QLineEdit" name="lineEdit_cl_nok_ContactNo"/>
+                   </item>
+                  </layout>
                  </item>
-                 <item>
-                  <widget class="QPushButton" name="button_clear_client_regForm">
-                   <property name="minimumSize">
-                    <size>
-                     <width>80</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <pointsize>12</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Clear Form</string>
-                   </property>
-                  </widget>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_cl_extra">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>230</width>
+               <height>409</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
+             <property name="title">
+              <string>Extra Info</string>
+             </property>
+             <layout class="QFormLayout" name="formLayout_6">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_cl_status">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Status</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QComboBox" name="comboBox_cl_status"/>
+              </item>
+              <item row="1" column="0" colspan="2">
+               <widget class="QLabel" name="label_cl_status_2">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Comments</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0" colspan="2">
+               <widget class="QPlainTextEdit" name="plainTextEdit_cl_comments">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>300</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>210</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Ignored">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>230</width>
+               <height>409</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
+             <property name="title">
+              <string>Photo</string>
+             </property>
+             <layout class="QFormLayout" name="formLayout_7">
+              <item row="0" column="0">
+               <widget class="QGraphicsView" name="graphicsView_cl_pic">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>200</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QPushButton" name="button_cl_takePic">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Take a Photo</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QPushButton" name="button_cl_delPic">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Delete Photo</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="2" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QPushButton" name="button_register_client">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>150</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>12</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Register</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="button_cancel_client_register">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>80</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>12</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Cancel</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="button_clear_client_regForm">
+             <property name="minimumSize">
+              <size>
+               <width>80</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>12</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Clear Form</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -9962,7 +9932,7 @@ QWidget#wdg_transTotal {
      <x>0</x>
      <y>0</y>
      <width>1409</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="acceptDrops">
