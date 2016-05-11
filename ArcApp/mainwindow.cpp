@@ -637,7 +637,6 @@ void MainWindow::on_button_clear_client_regForm_clicked()
 
 void MainWindow::getListRegisterFields(QStringList* fieldList)
 {
-    /*
     *fieldList << ui->lineEdit_cl_fName->text()
                << ui->lineEdit_cl_mName->text()
                << ui->lineEdit_cl_lName->text()
@@ -658,7 +657,7 @@ void MainWindow::getListRegisterFields(QStringList* fieldList)
                << ui->lineEdit_cl_supporter2_ContactNo->text()
                << ui->comboBox_cl_status->currentText() //grab value from status dropdown
                << ui->plainTextEdit_cl_comments->toPlainText();
-*/
+
 }
 
 void MainWindow::clear_client_register_form(){
@@ -674,12 +673,11 @@ void MainWindow::clear_client_register_form(){
     ui->lineEdit_cl_nok_ContactNo->clear();
     ui->lineEdit_cl_phys_name->clear();
     ui->lineEdit_cl_phys_ContactNo->clear();
-    /*
     ui->lineEdit_cl_supporter_Name->clear();
     ui->lineEdit_cl_supporter_ContactNo->clear();
     ui->lineEdit_cl_supporter2_Name->clear();
     ui->lineEdit_cl_supporter2_ContactNo->clear();
-    */
+
     ui->comboBox_cl_status->setCurrentIndex(0);
     ui->plainTextEdit_cl_comments->clear();
     QDate defaultDob= QDate::fromString("1990-01-01","yyyy-MM-dd");
@@ -942,7 +940,7 @@ void MainWindow::displayClientInfoThread(QString val){
 //   ui->tableWidget_clientInfo2->show();
 
    clientInfo.next();
-   /*
+
    ui->label_cl_info_fName_val->setText(clientInfo.value(0).toString());
    ui->label_cl_info_mName_val->setText(clientInfo.value(1).toString());
    ui->label_cl_info_lName_val->setText(clientInfo.value(2).toString());
@@ -952,7 +950,7 @@ void MainWindow::displayClientInfoThread(QString val){
    ui->label_cl_info_gaNum_val->setText(clientInfo.value(6).toString());
    ui->label_cl_info_ruleSignDate_val->setText(clientInfo.value(7).toString());
    ui->label_cl_info_status->setText(clientInfo.value(8).toString());
-*/
+
 
    table_available = true;
 
@@ -1274,7 +1272,7 @@ void MainWindow::initClientLookupInfo(){
     }
 
     //init client Info Form Field
-    /*
+
     ui->label_cl_info_fName_val->clear();
     ui->label_cl_info_mName_val->clear();
     ui->label_cl_info_lName_val->clear();
@@ -1300,7 +1298,7 @@ void MainWindow::initClientLookupInfo(){
     ui->label_cl_info_Supporter2_contact_val->clear();
 
     ui->textBrowser_client_info_comment->clear();
-*/
+
 
     //init client info table
     if(ui->tableWidget_clientInfo->columnCount()>0){
