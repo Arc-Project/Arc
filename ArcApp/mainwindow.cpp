@@ -464,6 +464,7 @@ void MainWindow::getProgramCodes(){
 void MainWindow::on_EditUserButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(EDITUSERS);
+
 }
 
 void MainWindow::on_EditProgramButton_clicked()
@@ -575,8 +576,11 @@ void MainWindow::on_pushButton_editClientInfo_clicked()
     ui->stackedWidget->setCurrentIndex(10);
     ui->label_cl_infoedit_title->setText("Edit Client Information");
     ui->button_register_client->setText("Edit");
+    int nRow = ui->tableWidget_search_client->currentRow();
+    if (nRow <0)
+        return;
+    curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
 }
-
 void MainWindow::on_button_cancel_client_register_clicked()
 {
     clear_client_register_form();
@@ -643,7 +647,7 @@ void MainWindow::getListRegisterFields(QStringList* fieldList)
                << ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd")
                << ui->lineEdit_cl_SIN->text()
                << ui->lineEdit_cl_GANum->text()
-               << "1"// ui->comboBox_cl_caseWorker->currentText() //grab value from case worker dropdown I don't know how to do it
+               << QString::number(caseWorkerList.value(ui->comboBox_cl_caseWorker->currentText())) //grab value from case worker dropdown I don't know how to do it
                << ui->dateEdit_cl_rulesign->date().toString("yyyy-MM-dd")
                << ui->lineEdit_cl_nok_name->text()
                << ui->lineEdit_cl_nok_relationship->text()
@@ -691,8 +695,9 @@ void MainWindow::read_curClient_Information(QString ClientId){
     QString searchClientQ = "SELECT * FROM Client WHERE ClientId = "+ ClientId;
     qDebug()<<"SEARCH QUERY: " + searchClientQ;
     QSqlQuery clientInfo = dbManager->execQuery("SELECT * FROM Client WHERE ClientId = "+ ClientId);
+//    dbManager->printAll(clientInfo);
     clientInfo.next();
-    //dbManager->printAll(clientInfo);
+
     //input currentValue;
 
     qDebug()<<"FNAme: "<<clientInfo.value(1).toString()<<"MNAme: "<<clientInfo.value(2).toString()<<"LNAME: "<<clientInfo.value(3).toString();
@@ -704,7 +709,8 @@ void MainWindow::read_curClient_Information(QString ClientId){
     ui->lineEdit_cl_lName->setText(clientInfo.value(3).toString());
     ui->dateEdit_cl_dob->setDate(QDate::fromString(clientInfo.value(4).toString(),"yyyy-MM-dd"));
     //balnace?
-    ui->comboBox_cl_caseWorker->setCurrentText(clientInfo.value(23).toString());
+    QString caseWorkerName = caseWorkerList.key(clientInfo.value(21).toInt());
+    ui->comboBox_cl_caseWorker->setCurrentText(caseWorkerName);
     ui->lineEdit_cl_SIN->setText(clientInfo.value(6).toString());
     ui->lineEdit_cl_GANum->setText(clientInfo.value(7).toString());
     ui->dateEdit_cl_rulesign->setDate(QDate::fromString(clientInfo.value(8).toString(),"yyyy-MM-dd"));
@@ -719,26 +725,25 @@ void MainWindow::read_curClient_Information(QString ClientId){
     ui->lineEdit_cl_phys_name->setText(clientInfo.value(13).toString());
     ui->lineEdit_cl_phys_ContactNo->setText(clientInfo.value(14).toString());
 
-    //WSDWorker
+    //Supporter
+    ui->lineEdit_cl_supporter_Name->setText(clientInfo.value(15).toString());
+    ui->lineEdit_cl_supporter_ContactNo->setText(clientInfo.value(16).toString());
+    ui->lineEdit_cl_supporter2_Name->setText(clientInfo.value(22).toString());
+    ui->lineEdit_cl_supporter2_ContactNo->setText(clientInfo.value(23).toString());
+
     ui->comboBox_cl_status->setCurrentText(clientInfo.value(17).toString());
 }
 
 //Client information input and register click
 void MainWindow::on_button_register_client_clicked()
 {
-    QString queryOption;
-    if(ui->button_register_client->text()=="Register"){
-        queryOption = "SELECT";
-    }
-    else
-        queryOption = "ALTER";
 
     if (MainWindow::check_client_register_form())
     {
+        QStringList registerFieldList;
+        MainWindow::getListRegisterFields(&registerFieldList);
         if(ui->label_cl_infoedit_title->text() == "Register Client")
         {
-            QStringList registerFieldList;
-            MainWindow::getListRegisterFields(&registerFieldList);
             if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
             {
                 qDebug() << "Client registered successfully";
@@ -752,7 +757,16 @@ void MainWindow::on_button_register_client_clicked()
         }
         else
         {
-            qDebug() << "Edit Client";
+            if (dbManager->updateClientWithPic(&registerFieldList, curClientID, &profilePic))
+            {
+                qDebug() << "Client info edit successfully";
+                clear_client_register_form();
+                ui->stackedWidget->setCurrentIndex(1);
+            }
+            else
+            {
+                qDebug() << "Could not edit client info";
+            }
         }
 
     }
@@ -776,7 +790,7 @@ bool MainWindow::check_client_register_form(){
 
 void MainWindow::defaultRegisterOptions(){
     //add caseWorker Name
-    QString caseWorkerquery = "SELECT Username FROM Employee WHERE Role = 'CASE WORKER' ORDER BY Username";
+    QString caseWorkerquery = "SELECT Username, EmpId FROM Employee WHERE Role = 'CASE WORKER' ORDER BY Username";
     QSqlQuery caseWorkers = dbManager->execQuery(caseWorkerquery);
     //dbManager->printAll(caseWorkers);
     if(ui->comboBox_cl_caseWorker->findText("NONE")==-1){
@@ -784,9 +798,11 @@ void MainWindow::defaultRegisterOptions(){
 
     }
     while(caseWorkers.next()){
-        qDebug()<<"CASEWORKER: " <<caseWorkers.value(0).toString();
-        if(ui->comboBox_cl_caseWorker->findText(caseWorkers.value(0).toString())==-1)
+     //   qDebug()<<"CASEWORKER: " <<caseWorkers.value(0).toString() << caseWorkers.value(1).toString();
+        caseWorkerList.insert(caseWorkers.value(0).toString(), caseWorkers.value(1).toInt());
+        if(ui->comboBox_cl_caseWorker->findText(caseWorkers.value(0).toString())==-1){
             ui->comboBox_cl_caseWorker->addItem(caseWorkers.value(0).toString());
+        }
     }
     if(ui->comboBox_cl_status->findText("Green")==-1){
         ui->comboBox_cl_status->addItem("Green");
@@ -878,11 +894,12 @@ void MainWindow::selected_client_info(int nRow, int nCol)
     QtConcurrent::run(this, &displayPicThread, val);
     */
     table_available = false;
-    QtConcurrent::run(this, &displayClientInfoThread, curClientID);
+    QFuture<void> displayFuture = QtConcurrent::run(this, &displayClientInfoThread, curClientID);
+    displayFuture.waitForFinished();
 
 //    qDebug()<<"Finish Select Query to tableview";
 
-
+    //connect(&displayFuture, SIGNAL(displayPictThread(QByteArray val)))
 }
 
 void MainWindow::clientSearchedInfo(){
@@ -896,9 +913,11 @@ void MainWindow::displayClientInfoThread(QString val){
 
     qDebug()<<"DISPLAY THREAD: " <<val;
 
-    QString searchQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, DateRulesSigned, status FROM Client WHERE ClientId =" + val;
-   // QString searchQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance FROM Client WHERE ClientId =" + val;
-    QSqlQuery clientInfoR = dbManager->execQuery(searchQuery);
+    QSqlQuery clientInfoR = dbManager->searchClientInfo(val);
+//    QString searchQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, DateRulesSigned, status FROM Client WHERE ClientId =" + val;
+
+    // QString searchQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance FROM Client WHERE ClientId =" + val;
+//    QSqlQuery clientInfoR = dbManager->execQuery(searchQuery);
 
     ui->tableWidget_clientInfo->setRowCount(0);
     ui->tableWidget_clientInfo2->setRowCount(0);
@@ -951,6 +970,37 @@ void MainWindow::displayClientInfoThread(QString val){
    ui->label_cl_info_ruleSignDate_val->setText(clientInfo.value(7).toString());
    ui->label_cl_info_status->setText(clientInfo.value(8).toString());
 
+   ui->label_cl_info_nok_name_val->setText(clientInfo.value(9).toString());
+   ui->label_cl_info_nok_relationship_val->setText(clientInfo.value(10).toString());
+   ui->label_cl_info_nok_loc_val->setText(clientInfo.value(11).toString());
+   ui->label_cl_info_nok_contatct_val->setText(clientInfo.value(12).toString());
+
+   ui->label_cl_info_phys_name_val->setText(clientInfo.value(13).toString());
+   ui->label_cl_info_phys_contact_val->setText(clientInfo.value(14).toString());
+
+   ui->label_cl_info_Supporter_name_val->setText(clientInfo.value(15).toString());
+   ui->label_cl_info_Supporter_contact_val->setText(clientInfo.value(16).toString());
+
+   ui->label_cl_info_Supporter2_name_val->setText(clientInfo.value(17).toString());
+   ui->label_cl_info_Supporter2_contact_val->setText(clientInfo.value(18).toString());
+/*
+   ui->label_cl_info_status->setText(clientInfo.value(8).toString());
+   if(clientInfo.value(8).toString() == "green"){
+       ui->label_cl_info_status->setStyleSheet("color: rgb(0, 204, 102);");
+   }else if(clientInfo.value(8).toString() == "Yellow"){
+       ui->label_cl_info_status->setStyleSheet("color: rgb(255, 255, 0);");
+   }else if(clientInfo.value(8).toString() == "Red"){
+       ui->label_cl_info_status->setStyleSheet("color: rgb(255, 0, 0);");
+
+   }
+*/
+
+
+
+//   ui->label_cl_info_status->setStyleSheet("QLabel { color: blue }");
+
+
+
 
    table_available = true;
 
@@ -958,11 +1008,13 @@ void MainWindow::displayClientInfoThread(QString val){
 
 }
 
-void MainWindow::displayPicThread(QString val)
+void MainWindow::displayPicThread(QByteArray val)
 {
     qDebug()<<"displayPicThread";
     QImage *ClientFace = new QImage();
-    if(dbManager->downloadProfilePic2(ClientFace, val)){
+    //QByteArray data = query.value(0).toByteArray();
+    *ClientFace = QImage::fromData(val, "PNG");
+   // if(dbManager->downloadProfilePic2(ClientFace, val)){
     QPixmap item2 = QPixmap::fromImage(*ClientFace);
     QPixmap scaled = QPixmap(item2.scaledToWidth((int)(ui->graphicsView_getInfo->width()*0.9), Qt::SmoothTransformation));
     QGraphicsScene *scene2 = new QGraphicsScene();
@@ -970,7 +1022,7 @@ void MainWindow::displayPicThread(QString val)
     ui->graphicsView_getInfo->setScene(scene2);
     ui->graphicsView_getInfo->show();
     pic_available=true;
-    }
+
 }
 
 void MainWindow::on_paymentButton_2_clicked()
