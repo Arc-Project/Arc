@@ -586,8 +586,8 @@ QWidget#wdg_transTotal {
          <widget class="QWidget" name="gridLayoutWidget">
           <property name="geometry">
            <rect>
-            <x>9</x>
-            <y>9</y>
+            <x>10</x>
+            <y>10</y>
             <width>651</width>
             <height>671</height>
            </rect>
@@ -616,12 +616,15 @@ QWidget#wdg_transTotal {
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>150</width>
-                   <height>120</height>
+                   <width>180</width>
+                   <height>160</height>
                   </size>
                  </property>
                  <property name="layoutDirection">
                   <enum>Qt::LeftToRight</enum>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
                  </property>
                 </widget>
                </item>
@@ -708,6 +711,12 @@ QWidget#wdg_transTotal {
                <property name="spacing">
                 <number>2</number>
                </property>
+               <property name="leftMargin">
+                <number>10</number>
+               </property>
+               <property name="rightMargin">
+                <number>10</number>
+               </property>
                <item>
                 <widget class="QLabel" name="label_cl_info_Comment_tag">
                  <property name="font">
@@ -721,14 +730,45 @@ QWidget#wdg_transTotal {
                 </widget>
                </item>
                <item>
-                <widget class="QTextBrowser" name="textBrowser_client_info_comment">
+                <widget class="QLabel" name="label_cl_info_comment">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>200</height>
+                  </size>
+                 </property>
+                 <property name="autoFillBackground">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
                 </widget>
+               </item>
+               <item>
+                <spacer name="verticalSpacer_cl_info_empty">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeType">
+                  <enum>QSizePolicy::Expanding</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>130</height>
+                  </size>
+                 </property>
+                </spacer>
                </item>
               </layout>
              </item>
@@ -753,9 +793,9 @@ QWidget#wdg_transTotal {
                <widget class="QWidget" name="formLayoutWidget_2">
                 <property name="geometry">
                  <rect>
-                  <x>20</x>
+                  <x>10</x>
                   <y>20</y>
-                  <width>291</width>
+                  <width>301</width>
                   <height>211</height>
                  </rect>
                 </property>

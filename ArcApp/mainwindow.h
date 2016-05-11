@@ -51,7 +51,6 @@ public:
     void populateBooking();
     void setBooking(int row);
     void setup_searchClientTable(QSqlQuery results);
-    void displayPicThread(QByteArray val);
     void displayClientInfoThread(QString val);
     void clientSearchedInfo();
     void initClientLookupInfo();
@@ -59,7 +58,13 @@ public:
     QImage profilePic;
     void popEditPage();
 
+
+signals:
+    void displayPic(QByteArray a);
+
 private slots:
+
+    void displayPicThread();
 
     void initCurrentWidget(int idx);
     void resizeEvent(QResizeEvent *event);
@@ -273,7 +278,11 @@ private slots:
     void getTransactionFromRow(int row);
     void on_btn_payOutstanding_clicked();
     void updateCheque(int row);
+
+
+
 private:
+
     Ui::MainWindow *ui;
     MainWindow * mw;
     Booking * curBook;
@@ -283,7 +292,8 @@ private:
     
     bool pic_available = true;
     bool table_available = true;
-    QMap <QString, int> caseWorkerList;
+
+    QMap <QString, int> caseWorkerList;    //caseworker list
 
     QDir dir;
 

@@ -318,9 +318,10 @@ QSqlQuery DatabaseManager::searchClientInfo(QString ClientId){
     QSqlQuery selectquery(db);
 
     selectquery.prepare(QString("SELECT FirstName, MiddleName, LastName, Dob, Balance, ")
-                      + QString("SinNo, GaNo, DateRulesSigned, status, NokName, ")
-                      + QString("NokRelationship, NokLocation, NokContactNo, PhysName, PhysContactNo, ")
-                      + QString("SuppWorker1Name, SuppWorker1ContactNo, SuppWorker2Name, SuppWorker2ContactNo, Comments ")
+                      + QString("SinNo, GaNo, EmpId, DateRulesSigned, status, ")
+                      + QString("NokName, NokRelationship, NokLocation, NokContactNo, PhysName, ")
+                      + QString("PhysContactNo, SuppWorker1Name, SuppWorker1ContactNo, SuppWorker2Name, SuppWorker2ContactNo, ")
+                      + QString("Comments, ProfilePic ")
                       + QString("FROM Client WHERE ClientId ="+ClientId));
 //    selectquery.prepare("SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId = :id");
 //    selectquery.bindValue("id", ClientId);
