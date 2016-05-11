@@ -2204,6 +2204,36 @@ void MainWindow::on_removebedfromprogram_clicked()
     QString pcode = ui->le_userName_2->text();
 
     // get current tag
+    // populate the fields on the right
+
+//    QString pcode = ui->tableWidget_2->model()->data(ui->tableWidget_2->model()->index(index.row(), 0)).toString();
+//    QString description = ui->tableWidget_2->model()->data(ui->tableWidget_2->model()->index(index.row(), 1)).toString();
+
+//    ui->le_userName_2->setText(pcode);
+//    ui->textEdit->setText(description);
+
+//    // populate the beds list
+//    QSqlQuery availSpaces = dbManager->getAvailableBeds(pcode);
+//    int numrowsavail = availSpaces.numRowsAffected();
+
+//    QStandardItemModel* availmodel = new QStandardItemModel();
+
+//    while (availSpaces.next()) {
+//        QString buildingNo = availSpaces.value(0).toString();
+//        QString floorNo = availSpaces.value(1).toString();
+//        QString roomNo = availSpaces.value(2).toString();
+//        QString spaceNo = availSpaces.value(4).toString();
+//        QString type = availSpaces.value(5).toString();
+
+//        //1-319-3
+//        QString roomCode = buildingNo + "-" + floorNo + "-" + roomNo + "-" + spaceNo + type[0];
+
+//        // QStandardItem* Items = new QStandardItem(availSpaces.value(1).toString());
+//        QStandardItem* Items = new QStandardItem(roomCode);
+//        availmodel->appendRow(Items);
+//    }
+
+//    ui->availablebedslist->setModel(availmodel);
     // parse space code to check building number + floor number + room number + space number
     // and obtain space id
 

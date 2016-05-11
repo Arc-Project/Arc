@@ -114,7 +114,7 @@ QWidget#wdg_transTotal {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>8</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="mainMenu">
      <layout class="QGridLayout" name="gridLayout_5">
@@ -3894,8 +3894,8 @@ QWidget#wdg_transTotal {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>989</width>
-               <height>2305</height>
+               <width>348</width>
+               <height>2218</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_47">
@@ -5331,51 +5331,18 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                 </layout>
-                <zorder>label_59</zorder>
                 <zorder>tw_pcpSub</zorder>
                 <zorder>tw_pcpAcco</zorder>
-                <zorder>label_53</zorder>
                 <zorder>tw_pcpRela</zorder>
-                <zorder>label_50</zorder>
                 <zorder>tw_pcpEdu</zorder>
-                <zorder>label_52</zorder>
                 <zorder>tw_pcpLife</zorder>
-                <zorder>label_54</zorder>
                 <zorder>tw_pcpMent</zorder>
-                <zorder>label_55</zorder>
                 <zorder>tw_pcpPhy</zorder>
-                <zorder>label_56</zorder>
-                <zorder>label_57</zorder>
                 <zorder>tw_pcpLeg</zorder>
                 <zorder>tw_pcpAct</zorder>
-                <zorder>label_58</zorder>
                 <zorder>tw_pcpTrad</zorder>
-                <zorder>label_60</zorder>
                 <zorder>tw_pcpPpl</zorder>
                 <zorder>tw_pcpOther</zorder>
-                <zorder>label_61</zorder>
-                <zorder>btn_pcpEdu</zorder>
-                <zorder>btn_pcpSub</zorder>
-                <zorder>btn_pcpAcc</zorder>
-                <zorder>btn_pcpLife</zorder>
-                <zorder>btn_pcpMent</zorder>
-                <zorder>btn_pcpPhy</zorder>
-                <zorder>btn_pcpLeg</zorder>
-                <zorder>btn_pcpAct</zorder>
-                <zorder>btn_pcpTrad</zorder>
-                <zorder>btn_pcpOther</zorder>
-                <zorder>btn_pcpKey</zorder>
-                <zorder>horizontalSpacer_32</zorder>
-                <zorder>horizontalSpacer_33</zorder>
-                <zorder>horizontalSpacer_34</zorder>
-                <zorder>horizontalSpacer_35</zorder>
-                <zorder>horizontalSpacer_44</zorder>
-                <zorder>horizontalSpacer_45</zorder>
-                <zorder>horizontalSpacer_53</zorder>
-                <zorder>horizontalSpacer_54</zorder>
-                <zorder>horizontalSpacer_55</zorder>
-                <zorder>horizontalSpacer_56</zorder>
-                <zorder>horizontalSpacer_60</zorder>
                </widget>
               </item>
              </layout>

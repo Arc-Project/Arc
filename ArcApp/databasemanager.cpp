@@ -711,7 +711,7 @@ QSqlQuery DatabaseManager::AddProgram(QString pcode, QString pdesc) {
 QSqlQuery DatabaseManager::getAvailableBeds(QString pcode) {
     QSqlQuery query(db);
 
-    query.exec("SELECT b.BuildingNo, f.FloorNo, r.RoomNo, s.SpaceId, s.SpaceNo, s.type, s.cost, s.Monthly "
+    query.exec("SELECT b.BuildingNo, f.FloorNo, r.RoomNo, s.SpaceId, s.SpaceNo, s.type, s.cost, s.Monthly, s.ProgramCodes "
                "FROM Space s INNER JOIN Room r ON s.RoomId = r.RoomId INNER JOIN Floor f ON r.FloorId = f.FloorId "
                "INNER JOIN Building b ON f.BuildingId = b.BuildingId "
                "WHERE s.ProgramCodes NOT LIKE '%" + pcode + "%'");
@@ -724,7 +724,7 @@ QSqlQuery DatabaseManager::getAvailableBeds(QString pcode) {
 QSqlQuery DatabaseManager::getAssignedBeds(QString pcode) {
     QSqlQuery query(db);
 
-    query.exec("SELECT b.BuildingNo, f.FloorNo, r.RoomNo, s.SpaceId, s.SpaceNo, s.type, s.cost, s.Monthly "
+    query.exec("SELECT b.BuildingNo, f.FloorNo, r.RoomNo, s.SpaceId, s.SpaceNo, s.type, s.cost, s.Monthly, s.ProgramCodes "
                "FROM Space s INNER JOIN Room r ON s.RoomId = r.RoomId INNER JOIN Floor f ON r.FloorId = f.FloorId "
                "INNER JOIN Building b ON f.BuildingId = b.BuildingId "
                "WHERE s.ProgramCodes LIKE '%" + pcode + "%'");
