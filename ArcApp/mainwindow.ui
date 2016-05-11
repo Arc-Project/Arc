@@ -67,13 +67,14 @@ QWidget#wdg_debitTotal, QWidget#wdg_totalVac{
 QWidget#wdg_cheqTotal, QWidget#wdg_ESPBedsAvail{
         background-color: #9A59B5;
 }
+QWidget#wdg_depoTotal, QWidget#wdg_totalBeds{
+        background-color: #D9AC35;
+}
 QWidget#wdg_shiftTotal, QWidget#wdg_totalBeds{
         background-color: #1ABC9C;
 }
 
-QWidget#wdg_cashTotal QLabel, QWidget#wdg_debitTotal QLabel, QWidget#wdg_cheqTotal QLabel, QWidget#wdg_shiftTotal QLabel,
-QWidget#wdg_logsOnShift QLabel, QWidget#wdg_occRate QLabel, QWidget#wdg_totalESP QLabel, QWidget#wdg_transTotal QLabel,
-QWidget#wdg_totalESPVac QLabel, QWidget#wdg_totalVac QLabel, QWidget#wdg_ESPBedsAvail QLabel, QWidget#wdg_totalBeds QLabel
+QWidget#wdg_cashTotal QLabel, QWidget#wdg_debitTotal QLabel, QWidget#wdg_cheqTotal QLabel,QWidget#wdg_depoTotal QLabel, QWidget#wdg_shiftTotal QLabel, QWidget#wdg_logsOnShift QLabel, QWidget#wdg_occRate QLabel, QWidget#wdg_totalESP QLabel, QWidget#wdg_transTotal QLabel, QWidget#wdg_totalESPVac QLabel, QWidget#wdg_totalVac QLabel, QWidget#wdg_ESPBedsAvail QLabel, QWidget#wdg_totalBeds QLabel
 {
         color: white;
 }
@@ -83,22 +84,18 @@ QLabel#lbl_editUserWarning, QLabel#lbl_floatWarning, QLabel#lbl_editProgWarning{
 }
 
 QWidget#wdg_logsOnShift {
-        /*background-color: #75B500;*/
         background-color: #CC0000;
 }
 
 QWidget#wdg_occRate {
-        /*background-color: #EBB925;*/
         background-color: #CC0000;
 }
 
 QWidget#wdg_totalESP {
-/*	background-color: #6AD0E1; */
         background-color: #CC0000;
 }
 
 QWidget#wdg_transTotal {
-/*	background-color: #F18430;*/
         background-color: #CC0000;
 }
 </string>
@@ -109,12 +106,12 @@ QWidget#wdg_transTotal {
      <rect>
       <x>0</x>
       <y>10</y>
-      <width>1366</width>
+      <width>1389</width>
       <height>735</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>11</number>
     </property>
     <widget class="QWidget" name="mainMenu">
      <layout class="QGridLayout" name="gridLayout_5">
@@ -756,7 +753,7 @@ QWidget#wdg_transTotal {
                   <x>20</x>
                   <y>20</y>
                   <width>291</width>
-                  <height>211</height>
+                  <height>218</height>
                  </rect>
                 </property>
                 <layout class="QFormLayout" name="formLayout_client_info_personal">
@@ -1105,7 +1102,7 @@ QWidget#wdg_transTotal {
                    <x>9</x>
                    <y>19</y>
                    <width>291</width>
-                   <height>101</height>
+                   <height>107</height>
                   </rect>
                  </property>
                  <layout class="QFormLayout" name="formLayout_14">
@@ -1507,7 +1504,7 @@ QWidget#wdg_transTotal {
                    <x>9</x>
                    <y>19</y>
                    <width>291</width>
-                   <height>48</height>
+                   <height>49</height>
                   </rect>
                  </property>
                  <layout class="QFormLayout" name="formLayout_18">
@@ -4034,8 +4031,8 @@ QWidget#wdg_transTotal {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>348</width>
-               <height>2218</height>
+               <width>989</width>
+               <height>2305</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_47">
@@ -5898,6 +5895,90 @@ QWidget#wdg_transTotal {
               <string>Contact Details</string>
              </property>
              <layout class="QFormLayout" name="formLayout_5">
+              <item row="0" column="0">
+               <widget class="QGroupBox" name="groupBox_cl_nok">
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                 </font>
+                </property>
+                <property name="title">
+                 <string>Next Of Kin</string>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                 <item>
+                  <layout class="QFormLayout" name="formLayout_2">
+                   <property name="horizontalSpacing">
+                    <number>4</number>
+                   </property>
+                   <property name="verticalSpacing">
+                    <number>4</number>
+                   </property>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_cl_nok_name">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Name</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QLineEdit" name="lineEdit_cl_nok_name"/>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="label_cl_nok_relationship">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Relationship</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QLineEdit" name="lineEdit_cl_nok_relationship"/>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QLabel" name="label_cl_nok_loc">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Location</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="1">
+                    <widget class="QLineEdit" name="lineEdit_cl_nok_loc"/>
+                   </item>
+                   <item row="3" column="0">
+                    <widget class="QLabel" name="label_cl_nok_ContactNo">
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Contact Number</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="1">
+                    <widget class="QLineEdit" name="lineEdit_cl_nok_ContactNo"/>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </widget>
+              </item>
               <item row="1" column="0">
                <widget class="QGroupBox" name="groupBox_cl_phys">
                 <property name="font">
@@ -6042,90 +6123,6 @@ QWidget#wdg_transTotal {
                    </item>
                    <item row="1" column="1">
                     <widget class="QLineEdit" name="lineEdit_cl_supporter2_ContactNo"/>
-                   </item>
-                  </layout>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item row="0" column="0">
-               <widget class="QGroupBox" name="groupBox_cl_nok">
-                <property name="font">
-                 <font>
-                  <pointsize>9</pointsize>
-                 </font>
-                </property>
-                <property name="title">
-                 <string>Next Of Kin</string>
-                </property>
-                <layout class="QHBoxLayout" name="horizontalLayout_2">
-                 <item>
-                  <layout class="QFormLayout" name="formLayout_2">
-                   <property name="horizontalSpacing">
-                    <number>4</number>
-                   </property>
-                   <property name="verticalSpacing">
-                    <number>4</number>
-                   </property>
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="label_cl_nok_name">
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>Name</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="1">
-                    <widget class="QLineEdit" name="lineEdit_cl_nok_name"/>
-                   </item>
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="label_cl_nok_relationship">
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>Relationship</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="1">
-                    <widget class="QLineEdit" name="lineEdit_cl_nok_relationship"/>
-                   </item>
-                   <item row="2" column="0">
-                    <widget class="QLabel" name="label_cl_nok_loc">
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>Location</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="1">
-                    <widget class="QLineEdit" name="lineEdit_cl_nok_loc"/>
-                   </item>
-                   <item row="3" column="0">
-                    <widget class="QLabel" name="label_cl_nok_ContactNo">
-                     <property name="font">
-                      <font>
-                       <pointsize>10</pointsize>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>Contact Number</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="3" column="1">
-                    <widget class="QLineEdit" name="lineEdit_cl_nok_ContactNo"/>
                    </item>
                   </layout>
                  </item>
@@ -6380,6 +6377,8 @@ QWidget#wdg_transTotal {
        </widget>
       </item>
      </layout>
+     <zorder>widget</zorder>
+     <zorder></zorder>
     </widget>
     <widget class="QWidget" name="page">
      <layout class="QGridLayout" name="gridLayout_11">
@@ -6396,7 +6395,141 @@ QWidget#wdg_transTotal {
             <height>0</height>
            </size>
           </property>
-          <layout class="QGridLayout" name="gridLayout_31">
+          <layout class="QGridLayout" name="gridLayout_50">
+           <item row="0" column="0">
+            <widget class="QGroupBox" name="grpBox_reports">
+             <property name="font">
+              <font>
+               <pointsize>12</pointsize>
+              </font>
+             </property>
+             <property name="title">
+              <string>Report Type</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_12">
+              <item row="0" column="0">
+               <widget class="QPushButton" name="btn_dailyReport">
+                <property name="minimumSize">
+                 <size>
+                  <width>225</width>
+                  <height>80</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>15</pointsize>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Daily Report</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QPushButton" name="btn_shiftReport">
+                <property name="minimumSize">
+                 <size>
+                  <width>225</width>
+                  <height>80</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>15</pointsize>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Shift Report</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QPushButton" name="btn_dailyLog">
+                <property name="minimumSize">
+                 <size>
+                  <width>225</width>
+                  <height>80</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>15</pointsize>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Daily Log</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QPushButton" name="btn_floatCount">
+                <property name="minimumSize">
+                 <size>
+                  <width>225</width>
+                  <height>80</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>15</pointsize>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Float Count</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QPushButton" name="btn_monthlyReport">
+                <property name="minimumSize">
+                 <size>
+                  <width>225</width>
+                  <height>80</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>15</pointsize>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Monthly Report</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0">
+               <widget class="QPushButton" name="btn_restrictedList">
+                <property name="minimumSize">
+                 <size>
+                  <width>225</width>
+                  <height>80</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>15</pointsize>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Restricted List</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
            <item row="0" column="1">
             <widget class="QStackedWidget" name="swdg_reports">
              <property name="currentIndex">
@@ -6885,7 +7018,279 @@ QWidget#wdg_transTotal {
               <zorder>tabWidget</zorder>
              </widget>
              <widget class="QWidget" name="page_2">
-              <layout class="QGridLayout" name="gridLayout_18">
+              <layout class="QGridLayout" name="gridLayout_31">
+               <item row="2" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_8">
+                 <item>
+                  <widget class="QWidget" name="wdg_cashTotal" native="true">
+                   <property name="minimumSize">
+                    <size>
+                     <width>207</width>
+                     <height>151</height>
+                    </size>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_14">
+                    <item row="2" column="0">
+                     <spacer name="horizontalSpacer_6">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeType">
+                       <enum>QSizePolicy::Expanding</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item row="2" column="1">
+                     <widget class="QLabel" name="lbl_cashTotal">
+                      <property name="font">
+                       <font>
+                        <pointsize>12</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>Cash Total</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="0" colspan="2">
+                     <widget class="QLabel" name="lbl_cashAmt">
+                      <property name="font">
+                       <font>
+                        <pointsize>25</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>$0.00</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QWidget" name="wdg_debitTotal" native="true">
+                   <property name="minimumSize">
+                    <size>
+                     <width>207</width>
+                     <height>151</height>
+                    </size>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_15">
+                    <item row="1" column="1">
+                     <widget class="QLabel" name="lbl_debitTotal">
+                      <property name="font">
+                       <font>
+                        <pointsize>12</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>Electronic Total</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="0">
+                     <spacer name="horizontalSpacer_7">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeType">
+                       <enum>QSizePolicy::Expanding</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item row="0" column="0" colspan="2">
+                     <widget class="QLabel" name="lbl_debitAmt">
+                      <property name="font">
+                       <font>
+                        <pointsize>25</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>$0.00</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QWidget" name="wdg_cheqTotal" native="true">
+                   <property name="minimumSize">
+                    <size>
+                     <width>207</width>
+                     <height>151</height>
+                    </size>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_16">
+                    <item row="1" column="1">
+                     <widget class="QLabel" name="lbl_cheqTotal">
+                      <property name="font">
+                       <font>
+                        <pointsize>12</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>Cheque Total</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="0">
+                     <spacer name="horizontalSpacer_8">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeType">
+                       <enum>QSizePolicy::Expanding</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item row="0" column="0" colspan="2">
+                     <widget class="QLabel" name="lbl_chequeAmt">
+                      <property name="font">
+                       <font>
+                        <pointsize>25</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>$0.00</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QWidget" name="wdg_depoTotal" native="true">
+                   <property name="minimumSize">
+                    <size>
+                     <width>207</width>
+                     <height>151</height>
+                    </size>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_18">
+                    <item row="1" column="1">
+                     <widget class="QLabel" name="lbl_depoTotal">
+                      <property name="font">
+                       <font>
+                        <pointsize>12</pointsize>
+                        <weight>50</weight>
+                        <bold>false</bold>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>Deposit Total</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="0">
+                     <spacer name="horizontalSpacer_31">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeType">
+                       <enum>QSizePolicy::Expanding</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item row="0" column="0" colspan="2">
+                     <widget class="QLabel" name="lbl_depoAmt">
+                      <property name="font">
+                       <font>
+                        <pointsize>25</pointsize>
+                        <weight>50</weight>
+                        <bold>false</bold>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>$0.00</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QWidget" name="wdg_shiftTotal" native="true">
+                   <property name="minimumSize">
+                    <size>
+                     <width>207</width>
+                     <height>151</height>
+                    </size>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_17">
+                    <item row="1" column="0">
+                     <spacer name="horizontalSpacer_9">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeType">
+                       <enum>QSizePolicy::Expanding</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item row="1" column="1">
+                     <widget class="QLabel" name="lbl_shiftTotal">
+                      <property name="font">
+                       <font>
+                        <pointsize>12</pointsize>
+                        <weight>75</weight>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>Shift Total</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="0" colspan="2">
+                     <widget class="QLabel" name="lbl_shiftAmt">
+                      <property name="font">
+                       <font>
+                        <pointsize>25</pointsize>
+                        <weight>75</weight>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>$0.00</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
                <item row="0" column="0">
                 <widget class="QWidget" name="wdg_shiftReport" native="true">
                  <layout class="QGridLayout" name="gridLayout_13">
@@ -7081,222 +7486,6 @@ QWidget#wdg_transTotal {
                </item>
                <item row="1" column="0">
                 <widget class="QTableView" name="tableView_2"/>
-               </item>
-               <item row="2" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_8">
-                 <item>
-                  <widget class="QWidget" name="wdg_cashTotal" native="true">
-                   <property name="minimumSize">
-                    <size>
-                     <width>180</width>
-                     <height>151</height>
-                    </size>
-                   </property>
-                   <layout class="QGridLayout" name="gridLayout_14">
-                    <item row="2" column="0">
-                     <spacer name="horizontalSpacer_6">
-                      <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                      <property name="sizeType">
-                       <enum>QSizePolicy::Expanding</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>40</width>
-                        <height>20</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                    <item row="2" column="1">
-                     <widget class="QLabel" name="lbl_cashTotal">
-                      <property name="font">
-                       <font>
-                        <pointsize>12</pointsize>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>Cash Total</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="0" colspan="2">
-                     <widget class="QLabel" name="lbl_cashAmt">
-                      <property name="font">
-                       <font>
-                        <pointsize>25</pointsize>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>$0.00</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QWidget" name="wdg_debitTotal" native="true">
-                   <property name="minimumSize">
-                    <size>
-                     <width>180</width>
-                     <height>151</height>
-                    </size>
-                   </property>
-                   <layout class="QGridLayout" name="gridLayout_15">
-                    <item row="1" column="1">
-                     <widget class="QLabel" name="lbl_debitTotal">
-                      <property name="font">
-                       <font>
-                        <pointsize>12</pointsize>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>Debit Total</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="0">
-                     <spacer name="horizontalSpacer_7">
-                      <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                      <property name="sizeType">
-                       <enum>QSizePolicy::Expanding</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>40</width>
-                        <height>20</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                    <item row="0" column="0" colspan="2">
-                     <widget class="QLabel" name="lbl_debitAmt">
-                      <property name="font">
-                       <font>
-                        <pointsize>25</pointsize>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>$0.00</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QWidget" name="wdg_cheqTotal" native="true">
-                   <property name="minimumSize">
-                    <size>
-                     <width>180</width>
-                     <height>151</height>
-                    </size>
-                   </property>
-                   <layout class="QGridLayout" name="gridLayout_16">
-                    <item row="1" column="1">
-                     <widget class="QLabel" name="lbl_cheqTotal">
-                      <property name="font">
-                       <font>
-                        <pointsize>12</pointsize>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>Cheque Total</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="0">
-                     <spacer name="horizontalSpacer_8">
-                      <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                      <property name="sizeType">
-                       <enum>QSizePolicy::Expanding</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>40</width>
-                        <height>20</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                    <item row="0" column="0" colspan="2">
-                     <widget class="QLabel" name="lbl_chequeAmt">
-                      <property name="font">
-                       <font>
-                        <pointsize>25</pointsize>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>$0.00</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QWidget" name="wdg_shiftTotal" native="true">
-                   <property name="minimumSize">
-                    <size>
-                     <width>180</width>
-                     <height>151</height>
-                    </size>
-                   </property>
-                   <layout class="QGridLayout" name="gridLayout_17">
-                    <item row="1" column="1">
-                     <widget class="QLabel" name="lbl_shiftTotal">
-                      <property name="font">
-                       <font>
-                        <pointsize>12</pointsize>
-                        <weight>75</weight>
-                        <bold>true</bold>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>Shift Total</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="0">
-                     <spacer name="horizontalSpacer_9">
-                      <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                      <property name="sizeType">
-                       <enum>QSizePolicy::Expanding</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>40</width>
-                        <height>20</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                    <item row="0" column="0" colspan="2">
-                     <widget class="QLabel" name="lbl_shiftAmt">
-                      <property name="font">
-                       <font>
-                        <pointsize>25</pointsize>
-                        <weight>75</weight>
-                        <bold>true</bold>
-                       </font>
-                      </property>
-                      <property name="text">
-                       <string>$0.00</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </widget>
-                 </item>
-                </layout>
                </item>
               </layout>
              </widget>
@@ -8234,140 +8423,6 @@ QWidget#wdg_transTotal {
                </item>
               </layout>
              </widget>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QGroupBox" name="grpBox_reports">
-             <property name="font">
-              <font>
-               <pointsize>12</pointsize>
-              </font>
-             </property>
-             <property name="title">
-              <string>Report Type</string>
-             </property>
-             <layout class="QGridLayout" name="gridLayout_12">
-              <item row="0" column="0">
-               <widget class="QPushButton" name="btn_dailyReport">
-                <property name="minimumSize">
-                 <size>
-                  <width>225</width>
-                  <height>80</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>15</pointsize>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Daily Report</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="QPushButton" name="btn_shiftReport">
-                <property name="minimumSize">
-                 <size>
-                  <width>225</width>
-                  <height>80</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>15</pointsize>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Shift Report</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0">
-               <widget class="QPushButton" name="btn_dailyLog">
-                <property name="minimumSize">
-                 <size>
-                  <width>225</width>
-                  <height>80</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>15</pointsize>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Daily Log</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="0">
-               <widget class="QPushButton" name="btn_floatCount">
-                <property name="minimumSize">
-                 <size>
-                  <width>225</width>
-                  <height>80</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>15</pointsize>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Float Count</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="0">
-               <widget class="QPushButton" name="btn_monthlyReport">
-                <property name="minimumSize">
-                 <size>
-                  <width>225</width>
-                  <height>80</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>15</pointsize>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Monthly Report</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0">
-               <widget class="QPushButton" name="btn_restrictedList">
-                <property name="minimumSize">
-                 <size>
-                  <width>225</width>
-                  <height>80</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>15</pointsize>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Restricted List</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
             </widget>
            </item>
           </layout>
@@ -9938,7 +9993,7 @@ QWidget#wdg_transTotal {
      <x>0</x>
      <y>0</y>
      <width>1409</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="acceptDrops">
