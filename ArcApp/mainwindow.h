@@ -33,6 +33,9 @@
 #include "client.h"
 #include "shared.h"
 #include "casefile.h"
+#include "mymodel.h"
+#include "report.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -51,7 +54,6 @@ public:
     void populateBooking();
     void setBooking(int row);
     void setup_searchClientTable(QSqlQuery results);
-    void displayPicThread(QByteArray val);
     void displayClientInfoThread(QString val);
     void clientSearchedInfo();
     void initClientLookupInfo();
@@ -59,7 +61,13 @@ public:
     QImage profilePic;
     void popEditPage();
 
+
+signals:
+    void displayPic(QByteArray a);
+
 private slots:
+
+    void displayPicThread();
 
     void initCurrentWidget(int idx);
     void resizeEvent(QResizeEvent *event);
@@ -73,7 +81,7 @@ private slots:
     void on_actionPrint_Db_Connections_triggered();
     void on_actionUpload_Display_Picture_triggered();
     void on_actionDownload_Profile_Picture_triggered();
-    
+
     /*==========================================================================
     DEV TESTING AUXILIARY FUNCTIONS
     ==========================================================================*/
@@ -82,10 +90,11 @@ private slots:
     /*==========================================================================
     REPORT FUNCTIONS
     ==========================================================================*/
-    void updateCheckoutView(QDate date = QDate::currentDate());
-    void updateVacancyView(QDate date = QDate::currentDate());
-    void updateLunchView(QDate date = QDate::currentDate());
-    void updateWakeupView(QDate date = QDate::currentDate());
+//    void updateCheckoutView(QDate date = QDate::currentDate());
+//    void updateVacancyView(QDate date = QDate::currentDate());
+//    void updateLunchView(QDate date = QDate::currentDate());
+//    void updateWakeupView(QDate date = QDate::currentDate());
+//    void updateCheckoutModel();
 
 
     void on_bookButton_clicked();
@@ -273,7 +282,11 @@ private slots:
     void getTransactionFromRow(int row);
     void on_btn_payOutstanding_clicked();
     void updateCheque(int row);
+
+
+
 private:
+
     Ui::MainWindow *ui;
     MainWindow * mw;
     Booking * curBook;
@@ -283,7 +296,8 @@ private:
     
     bool pic_available = true;
     bool table_available = true;
-    QMap <QString, int> caseWorkerList;
+
+    QMap <QString, int> caseWorkerList;    //caseworker list
 
     QDir dir;
 

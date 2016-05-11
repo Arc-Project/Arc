@@ -4,11 +4,15 @@
 #include <QTableView>
 #include <QItemDelegate>
 #include <QStandardItemModel>
-#include <QDebug>
 #include "payment.h"
 
+//MyModel* checkoutModel;
+Report *checkoutReport, *vacancyReport, *lunchReport, *wakeupReport;
 bool firstTime = true;
+
+QFuture<void> displayPicFuture;
 std::vector<QTableWidget*> pcp_tables;
+
 //QSqlQuery resultssss;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -27,6 +31,11 @@ MainWindow::MainWindow(QWidget *parent) :
     curBook = 0;
     trans = 0;
     setPcpVector();
+
+    checkoutReport = new Report(this, ui->checkout_tableView, CHECKOUT_REPORT);
+    vacancyReport = new Report(this, ui->vacancy_tableView, VACANCY_REPORT);
+    lunchReport = new Report(this, ui->lunch_tableView, LUNCH_REPORT);
+    wakeupReport = new Report(this, ui->wakeup_tableView, WAKEUP_REPORT);
 }
 
 MainWindow::~MainWindow()
@@ -88,6 +97,12 @@ void MainWindow::initCurrentWidget(int idx){
             if(curClientID != NULL || curClientID != "")
                 read_curClient_Information(curClientID);
             break;
+        case 11:    //WIDGET 11
+            checkoutReport->updateModel(QDate::currentDate());
+            vacancyReport->updateModel(QDate::currentDate());
+            lunchReport->updateModel(QDate::currentDate());
+            wakeupReport->updateModel(QDate::currentDate());
+            break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
 
@@ -142,21 +157,19 @@ DEV TESTING BUTTONS (START)
 ==============================================================================*/
 void MainWindow::on_actionDB_Connection_triggered()
 {
-    QSqlQuery results= dbManager->selectAll("Test");
-    dbManager->printAll(results);
+    //QSqlQuery results= dbManager->selectAll("Test");
+    //dbManager->printAll(results);
+//    QStringList* data = new QStringList();
+//    *data << "11" << "12" << "21" << "22";
+//    checkoutModel->setData(data, 2, 2);
 }
 
 void MainWindow::on_actionTest_Query_triggered()
 {
-    QStringList fieldList;
-    getListRegisterFields(&fieldList);
-
-    for(int i = 0; i < fieldList.size(); ++i)
-    {
-        qDebug() << fieldList.at(i);
-    }
-
+    ui->stackedWidget->setCurrentIndex(11);
 }
+
+
 
 void MainWindow::on_actionFile_Upload_triggered()
 {
@@ -222,118 +235,149 @@ DEV TESTING AUXILIARY FUNCTIONS (END)
 /*==============================================================================
 REPORT FUNCTIONS (START)
 ==============================================================================*/
-void MainWindow::updateCheckoutView(QDate date)
-{
-    QSqlQuery query;
-    ui->checkout_tableWidget->setRowCount(0);
-    if (dbManager->getCheckoutQuery(&query, date))
-    {
-        int rowNo = 0;
-        while(query.next())
-        {
-            ui->checkout_tableWidget->insertRow(rowNo);
-            for (int colNo = 0; colNo < NUM_CHKOUT_TBL_COLS; ++colNo)
-            {
-                if (colNo == 5 || colNo == 6)
-                {
-                    ui->checkout_tableWidget->setItem(rowNo, colNo,
-                        new QTableWidgetItem("tbd"));
-                }
-                else if (colNo == 7)
-                {
-                    ui->checkout_tableWidget->setItem(rowNo, colNo,
-                        new QTableWidgetItem(query.value(5).toString()));
-                }
-                else
-                {
-                    ui->checkout_tableWidget->setItem(rowNo, colNo,
-                        new QTableWidgetItem(query.value(colNo).toString()));
-                }
-            }
-            rowNo++;
-        }
-    }
-    else
-    {
-        qDebug() << "updateCheckoutView() failed";
-    }
-    ui->checkout_tableWidget->show();
-}
+//void MainWindow::updateCheckoutModel()
+//{
+//    QSqlDatabase tempDb = QSqlDatabase::database();
+//    QString connName = QString::number(dbManager->getDbCounter());
+//    if (dbManager->createDatabase(&tempDb, connName))
+//    {
+//        QSqlQuery query;
+//        if (dbManager->getCheckoutQuery(&query, QDate::currentDate()))
+//        {
+////            int numCols = query.record().count();
 
-void MainWindow::updateVacancyView(QDate date)
-{
-    QSqlQuery query;
-    ui->vacancy_tableWidget->setRowCount(0);
-    if (dbManager->getVacancyQuery(&query, date))
-    {
-        int rowNo = 0;
-        while(query.next())
-        {
-            ui->vacancy_tableWidget->insertRow(rowNo);
-            for (int colNo = 0; colNo < NUM_VACANCY_TBL_COLS; ++colNo)
-            {
-                ui->vacancy_tableWidget->setItem(rowNo,
-                    colNo, new QTableWidgetItem(query.value(colNo).toString()));
-            }
-            rowNo++;
-        }
-    }
-    else
-    {
-        qDebug() << "updateVacancyView() failed";
-    }
-    ui->vacancy_tableWidget->show();
-}
+////            int numRows = 0;
+////            QStringList *data = new QStringList();
+////            while (query.next()) {
+////                numRows++;
+////                for (int i = 0; i < numCols; ++i)
+////                {
+////                    *data << query.value(i).toString();
+////                }
+////            }
+////            checkoutModel->setData(data, numRows, numCols);
+//            qDebug() << "test";
+//            //report->setData(&query);
+//        }
+//        tempDb.close();
+//        QSqlDatabase::removeDatabase(connName);
+//    }
+//}
 
-void MainWindow::updateLunchView(QDate date)
-{
-    QSqlQuery query;
-    ui->lunch_tableWidget->setRowCount(0);
-    if (dbManager->getLunchQuery(&query, date))
-    {
-        int rowNo = 0;
-        while(query.next())
-        {
-            ui->lunch_tableWidget->insertRow(rowNo);
-            for (int colNo = 0; colNo < NUM_LUNCH_TBL_COLS; ++colNo)
-            {
-                ui->lunch_tableWidget->setItem(rowNo,
-                    colNo, new QTableWidgetItem(query.value(colNo).toString()));
-            }
-            rowNo++;
-        }
-    }
-    else
-    {
-        qDebug() << "updateLunchView() failed";
-    }
-    ui->lunch_tableWidget->show();
-}
 
-void MainWindow::updateWakeupView(QDate date)
-{
-    QSqlQuery query;
-    ui->wakeup_tableWidget->setRowCount(0);
-    if (dbManager->getWakeupQuery(&query, date))
-    {
-        int rowNo = 0;
-        while(query.next())
-        {
-            ui->wakeup_tableWidget->insertRow(rowNo);
-            for (int colNo = 0; colNo < NUM_WAKEUP_TBL_COLS; ++colNo)
-            {
-                ui->wakeup_tableWidget->setItem(rowNo,
-                    colNo, new QTableWidgetItem(query.value(colNo).toString()));
-            }
-            rowNo++;
-        }
-    }
-    else
-    {
-        qDebug() << "updateWakeupView() failed";
-    }
-    ui->wakeup_tableWidget->show();
-}
+//void MainWindow::updateCheckoutView(QDate date)
+//{
+//    QSqlQuery query;
+
+//    ui->checkout_tableWidget->setRowCount(0);
+//    if (dbManager->getCheckoutQuery(&query, date))
+//    {
+//        int rowNo = 0;
+//        while(query.next())
+//        {
+//            ui->checkout_tableWidget->insertRow(rowNo);
+//            for (int colNo = 0; colNo < NUM_CHKOUT_TBL_COLS; ++colNo)
+//            {
+//                if (colNo == 5 || colNo == 6)
+//                {
+//                    ui->checkout_tableWidget->setItem(rowNo, colNo,
+//                        new QTableWidgetItem("tbd"));
+//                }
+//                else if (colNo == 7)
+//                {
+//                    ui->checkout_tableWidget->setItem(rowNo, colNo,
+//                        new QTableWidgetItem(query.value(5).toString()));
+//                }
+//                else
+//                {
+//                    ui->checkout_tableWidget->setItem(rowNo, colNo,
+//                        new QTableWidgetItem(query.value(colNo).toString()));
+//                }
+//            }
+//            rowNo++;
+//        }
+//    }
+//    else
+//    {
+//        qDebug() << "updateCheckoutView() failed";
+//    }
+//    ui->checkout_tableWidget->show();
+//}
+
+//void MainWindow::updateVacancyView(QDate date)
+//{
+//    QSqlQuery query;
+//    ui->vacancy_tableWidget->setRowCount(0);
+//    if (dbManager->getVacancyQuery(&query, date))
+//    {
+//        int rowNo = 0;
+//        while(query.next())
+//        {
+//            ui->vacancy_tableWidget->insertRow(rowNo);
+//            for (int colNo = 0; colNo < NUM_VACANCY_TBL_COLS; ++colNo)
+//            {
+//                ui->vacancy_tableWidget->setItem(rowNo,
+//                    colNo, new QTableWidgetItem(query.value(colNo).toString()));
+//            }
+//            rowNo++;
+//        }
+//    }
+//    else
+//    {
+//        qDebug() << "updateVacancyView() failed";
+//    }
+//    ui->vacancy_tableWidget->show();
+//}
+
+//void MainWindow::updateLunchView(QDate date)
+//{
+//    QSqlQuery query;
+//    ui->lunch_tableWidget->setRowCount(0);
+//    if (dbManager->getLunchQuery(&query, date))
+//    {
+//        int rowNo = 0;
+//        while(query.next())
+//        {
+//            ui->lunch_tableWidget->insertRow(rowNo);
+//            for (int colNo = 0; colNo < NUM_LUNCH_TBL_COLS; ++colNo)
+//            {
+//                ui->lunch_tableWidget->setItem(rowNo,
+//                    colNo, new QTableWidgetItem(query.value(colNo).toString()));
+//            }
+//            rowNo++;
+//        }
+//    }
+//    else
+//    {
+//        qDebug() << "updateLunchView() failed";
+//    }
+//    ui->lunch_tableWidget->show();
+//}
+
+//void MainWindow::updateWakeupView(QDate date)
+//{
+//    QSqlQuery query;
+//    ui->wakeup_tableWidget->setRowCount(0);
+//    if (dbManager->getWakeupQuery(&query, date))
+//    {
+//        int rowNo = 0;
+//        while(query.next())
+//        {
+//            ui->wakeup_tableWidget->insertRow(rowNo);
+//            for (int colNo = 0; colNo < NUM_WAKEUP_TBL_COLS; ++colNo)
+//            {
+//                ui->wakeup_tableWidget->setItem(rowNo,
+//                    colNo, new QTableWidgetItem(query.value(colNo).toString()));
+//            }
+//            rowNo++;
+//        }
+//    }
+//    else
+//    {
+//        qDebug() << "updateWakeupView() failed";
+//    }
+//    ui->wakeup_tableWidget->show();
+//}
 /*==============================================================================
 REPORT FUNCTIONS (END)
 ==============================================================================*/
@@ -589,10 +633,10 @@ void MainWindow::on_button_cancel_client_register_clicked()
 
 void MainWindow::on_reportsButton_clicked()
 {
-    MainWindow::updateCheckoutView();
-    MainWindow::updateVacancyView();
-    MainWindow::updateLunchView();
-    MainWindow::updateWakeupView();
+//    MainWindow::updateCheckoutView();
+//    MainWindow::updateVacancyView();
+//    MainWindow::updateLunchView();
+//    MainWindow::updateWakeupView();
     ui->stackedWidget->setCurrentIndex(11);
 }
 
@@ -732,6 +776,12 @@ void MainWindow::read_curClient_Information(QString ClientId){
     ui->lineEdit_cl_supporter2_ContactNo->setText(clientInfo.value(23).toString());
 
     ui->comboBox_cl_status->setCurrentText(clientInfo.value(17).toString());
+
+
+    QByteArray data = clientInfo.value(20).toByteArray();
+    QImage profile = QImage::fromData(data, "PNG");
+    addPic(profile);
+
 }
 
 //Client information input and register click
@@ -826,13 +876,13 @@ void MainWindow::on_pushButton_search_client_clicked()
     setup_searchClientTable(results);
 
     QSqlQuery resultQ;
-    /*
+
     if(!(dbManager->searchClientList(&resultQ, curClientID)))
     {
         qDebug()<<"Select Fail";
         return;
     }
-*/
+
     connect(ui->tableWidget_search_client, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(selected_client_info(int,int)));
     // dbManager->printAll(results);
 
@@ -868,39 +918,30 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
 
 void MainWindow::selected_client_info(int nRow, int nCol)
 {
+
     if(!pic_available || !table_available)
         return;
-
-    curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
-/*    QSqlQuery resultQ;
-
-    if(!(dbManager->searchClientList(&resultQ, curClientID)))
-    {
-        qDebug()<<"Select Fail";
-        return;
+    if(displayPicFuture.isRunning()){
+        qDebug()<<"ProfilePic Is RUNNING";
+        displayPicFuture.cancel();
     }
+    curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
 
-*/
-//    dbManager->printAll(resultQ);
-
-
-
-
-
-//    qDebug()<<"GET DATA:" << curClientID;
-
-/*
-    pic_available = false;
-    QtConcurrent::run(this, &displayPicThread, val);
-    */
     table_available = false;
     QFuture<void> displayFuture = QtConcurrent::run(this, &displayClientInfoThread, curClientID);
     displayFuture.waitForFinished();
+    displayPicFuture = QtConcurrent::run(this, &displayPicThread);
+    displayPicFuture.waitForFinished();
 
+    /*
+        pic_available = false;
+        QtConcurrent::run(this, &displayPicThread, val);
+        */
 //    qDebug()<<"Finish Select Query to tableview";
 
     //connect(&displayFuture, SIGNAL(displayPictThread(QByteArray val)))
 }
+
 
 void MainWindow::clientSearchedInfo(){
 
@@ -913,50 +954,12 @@ void MainWindow::displayClientInfoThread(QString val){
 
     qDebug()<<"DISPLAY THREAD: " <<val;
 
-    QSqlQuery clientInfoR = dbManager->searchClientInfo(val);
+    QSqlQuery clientInfo = dbManager->searchClientInfo(val);
 //    QString searchQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, DateRulesSigned, status FROM Client WHERE ClientId =" + val;
 
     // QString searchQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance FROM Client WHERE ClientId =" + val;
 //    QSqlQuery clientInfoR = dbManager->execQuery(searchQuery);
 
-    ui->tableWidget_clientInfo->setRowCount(0);
-    ui->tableWidget_clientInfo2->setRowCount(0);
-
-    int column = clientInfoR.record().count();
-    ui->tableWidget_clientInfo->setColumnCount(5);
-    ui->tableWidget_clientInfo->clear();
-//    ui->tableWidget_clientInfo->setHorizontalHeaderLabels(QStringList()<<"FirstName"<< "MiddleName"<< "LastName" << "Dob" << "Balance"<< "SinNo" << "GaNo" << "DateRulesSigned");
-
-    ui->tableWidget_clientInfo->setHorizontalHeaderLabels(QStringList()<<"FirstName"<< "MiddleName"<< "LastName" << "Dob" << "Balance");
-/*
-    ui->tableWidget_clientInfo2->setColumnCount(5);
-    ui->tableWidget_clientInfo2->clear();
-    ui->tableWidget_clientInfo2->setHorizontalHeaderLabels(QStringList()<<"SinNo" << "GaNo" << "IsParolee" << "AllowComm" << "DateRulesSigned");
-*/
-    QSqlQuery clientInfo = clientInfoR;
-    int row = 0;
-    int col = 0;
-/*
-    while(clientInfoR.next()){
-        ui->tableWidget_clientInfo->insertRow(row);
- //       ui->tableWidget_clientInfo2->insertRow(row);
-        for(col =0; col <5; col++){
-            ui->tableWidget_clientInfo->setItem(row, col, new QTableWidgetItem(clientInfoR.value(col).toString()));
-        //    qDebug() <<"row : "<<row << ", col: " << col << "item" << clientInfoR.value(col).toString();
-        }
-
-        while(col<column){
-            ui->tableWidget_clientInfo2->setItem(row, col-5, new QTableWidgetItem(clientInfoR.value(col).toString()));
-         //   qDebug() <<"row : "<<row << ", col: " << col << "item" << clientInfoR.value(col).toString();
-            col++;
-        }
-
-        row++;
-    }
-
-   ui->tableWidget_clientInfo->show();
-*/
-//   ui->tableWidget_clientInfo2->show();
 
    clientInfo.next();
 
@@ -967,22 +970,30 @@ void MainWindow::displayClientInfoThread(QString val){
    ui->label_cl_info_balance_amt->setText(clientInfo.value(4).toString());
    ui->label_cl_info_sin_val->setText(clientInfo.value(5).toString());
    ui->label_cl_info_gaNum_val->setText(clientInfo.value(6).toString());
-   ui->label_cl_info_ruleSignDate_val->setText(clientInfo.value(7).toString());
-   ui->label_cl_info_status->setText(clientInfo.value(8).toString());
+   QString caseWorkerName = caseWorkerList.key(clientInfo.value(7).toInt());
+   ui->label_cl_info_caseWorker_val->setText(caseWorkerName);
+   ui->label_cl_info_ruleSignDate_val->setText(clientInfo.value(8).toString());
+   ui->label_cl_info_status->setText(clientInfo.value(9).toString());
 
-   ui->label_cl_info_nok_name_val->setText(clientInfo.value(9).toString());
-   ui->label_cl_info_nok_relationship_val->setText(clientInfo.value(10).toString());
-   ui->label_cl_info_nok_loc_val->setText(clientInfo.value(11).toString());
-   ui->label_cl_info_nok_contatct_val->setText(clientInfo.value(12).toString());
+   ui->label_cl_info_nok_name_val->setText(clientInfo.value(10).toString());
+   ui->label_cl_info_nok_relationship_val->setText(clientInfo.value(11).toString());
+   ui->label_cl_info_nok_loc_val->setText(clientInfo.value(12).toString());
+   ui->label_cl_info_nok_contatct_val->setText(clientInfo.value(13).toString());
 
-   ui->label_cl_info_phys_name_val->setText(clientInfo.value(13).toString());
-   ui->label_cl_info_phys_contact_val->setText(clientInfo.value(14).toString());
+   ui->label_cl_info_phys_name_val->setText(clientInfo.value(14).toString());
+   ui->label_cl_info_phys_contact_val->setText(clientInfo.value(15).toString());
 
-   ui->label_cl_info_Supporter_name_val->setText(clientInfo.value(15).toString());
-   ui->label_cl_info_Supporter_contact_val->setText(clientInfo.value(16).toString());
+   ui->label_cl_info_Supporter_name_val->setText(clientInfo.value(16).toString());
+   ui->label_cl_info_Supporter_contact_val->setText(clientInfo.value(17).toString());
 
-   ui->label_cl_info_Supporter2_name_val->setText(clientInfo.value(17).toString());
-   ui->label_cl_info_Supporter2_contact_val->setText(clientInfo.value(18).toString());
+   ui->label_cl_info_Supporter2_name_val->setText(clientInfo.value(18).toString());
+   ui->label_cl_info_Supporter2_contact_val->setText(clientInfo.value(19).toString());
+   ui->label_cl_info_comment->setText(clientInfo.value(20).toString());
+
+   QByteArray a = clientInfo.value(21).toByteArray();
+   qDebug()<< "asdfa" <<a;
+   profilePic =  QImage::fromData(a, "PNG");
+
 /*
    ui->label_cl_info_status->setText(clientInfo.value(8).toString());
    if(clientInfo.value(8).toString() == "green"){
@@ -996,32 +1007,26 @@ void MainWindow::displayClientInfoThread(QString val){
 */
 
 
-
-//   ui->label_cl_info_status->setStyleSheet("QLabel { color: blue }");
-
-
-
-
    table_available = true;
 
 
 
 }
 
-void MainWindow::displayPicThread(QByteArray val)
+void MainWindow::displayPicThread()
 {
     qDebug()<<"displayPicThread";
-    QImage *ClientFace = new QImage();
-    //QByteArray data = query.value(0).toByteArray();
-    *ClientFace = QImage::fromData(val, "PNG");
-   // if(dbManager->downloadProfilePic2(ClientFace, val)){
-    QPixmap item2 = QPixmap::fromImage(*ClientFace);
+   // QImage profile = QImage::fromData(a, "PNG");
+    QPixmap item2 = QPixmap::fromImage(profilePic);
     QPixmap scaled = QPixmap(item2.scaledToWidth((int)(ui->graphicsView_getInfo->width()*0.9), Qt::SmoothTransformation));
     QGraphicsScene *scene2 = new QGraphicsScene();
     scene2->addPixmap(QPixmap(scaled));
     ui->graphicsView_getInfo->setScene(scene2);
     ui->graphicsView_getInfo->show();
     pic_available=true;
+
+
+
 
 }
 
@@ -1324,7 +1329,6 @@ void MainWindow::initClientLookupInfo(){
     }
 
     //init client Info Form Field
-
     ui->label_cl_info_fName_val->clear();
     ui->label_cl_info_mName_val->clear();
     ui->label_cl_info_lName_val->clear();
@@ -1349,8 +1353,13 @@ void MainWindow::initClientLookupInfo(){
     ui->label_cl_info_Supporter2_name_val->clear();
     ui->label_cl_info_Supporter2_contact_val->clear();
 
-    ui->textBrowser_client_info_comment->clear();
+    ui->label_cl_info_comment->clear();
 
+    QGraphicsScene *scene = new QGraphicsScene();
+    scene->clear();
+    ui->graphicsView_getInfo->setScene(scene);
+
+    profilePic = (QImage)NULL;
 
     //init client info table
     if(ui->tableWidget_clientInfo->columnCount()>0){
