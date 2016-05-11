@@ -48,7 +48,6 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case CLIENTLOOKUP:  //WIDGET 1
             initClientLookupInfo();
-
             //initimageview
 
 
@@ -696,7 +695,7 @@ void MainWindow::clear_client_register_form(){
 //read client information to edit
 void MainWindow::read_curClient_Information(QString ClientId){
     QString searchClientQ = "SELECT * FROM Client WHERE ClientId = "+ ClientId;
-    qDebug()<<"SEARCH QUERY: " + searchClientQ;
+//    qDebug()<<"SEARCH QUERY: " + searchClientQ;
     QSqlQuery clientInfo = dbManager->execQuery("SELECT * FROM Client WHERE ClientId = "+ ClientId);
 //    dbManager->printAll(clientInfo);
     clientInfo.next();
