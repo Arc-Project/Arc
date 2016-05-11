@@ -378,9 +378,9 @@ bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage
 
     query.prepare(QString("INSERT INTO Client ")
         + QString("(FirstName, MiddleName, LastName, Dob, SinNo, GaNo, EmpId, ")
-        + QString("IsParolee, AllowComm, DateRulesSigned, NokName, NokRelationship, ")
-        + QString("NokLocation, NokContactNo, PhysName, PhysContactNo, MsdWorkerName, ")
-        + QString("MsdWorkerContactNo, Status, Comments, ProfilePic) ")
+        + QString("DateRulesSigned, NokName, NokRelationship, NokLocation, NokContactNo, ")
+        + QString("PhysName, PhysContactNo, SuppWorker1Name, SuppWorker1ContactNo, ")
+        + QString("SuppWorker2Name, SuppWorker2ContactNo, Status, Comments, ProfilePic) ")
         + QString("VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 
     for (int i = 0; i < registerFieldList->size(); ++i)
@@ -388,6 +388,7 @@ bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage
         if (registerFieldList->at(i) != NULL)
         {
             qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
+            query.addBindValue(registerFieldList->at(i));
         }
         else
         {

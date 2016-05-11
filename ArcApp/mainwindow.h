@@ -53,6 +53,7 @@ public:
     void displayPicThread(QString val);
     void displayClientInfoThread(QString val);
     void clientSearchedInfo();
+    void initClientLookupInfo();
     void populateConfirm();
     QImage profilePic;
     void popEditPage();
