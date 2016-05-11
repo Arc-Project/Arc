@@ -464,6 +464,7 @@ void MainWindow::getProgramCodes(){
 void MainWindow::on_EditUserButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(EDITUSERS);
+
 }
 
 void MainWindow::on_EditProgramButton_clicked()
@@ -575,8 +576,11 @@ void MainWindow::on_pushButton_editClientInfo_clicked()
     ui->stackedWidget->setCurrentIndex(10);
     ui->label_cl_infoedit_title->setText("Edit Client Information");
     ui->button_register_client->setText("Edit");
+    int nRow = ui->tableWidget_search_client->currentRow();
+    if (nRow <0)
+        return;
+    curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
 }
-
 void MainWindow::on_button_cancel_client_register_clicked()
 {
     clear_client_register_form();
@@ -733,19 +737,13 @@ void MainWindow::read_curClient_Information(QString ClientId){
 //Client information input and register click
 void MainWindow::on_button_register_client_clicked()
 {
-    QString queryOption;
-    if(ui->button_register_client->text()=="Register"){
-        queryOption = "SELECT";
-    }
-    else
-        queryOption = "ALTER";
 
     if (MainWindow::check_client_register_form())
     {
+        QStringList registerFieldList;
+        MainWindow::getListRegisterFields(&registerFieldList);
         if(ui->label_cl_infoedit_title->text() == "Register Client")
         {
-            QStringList registerFieldList;
-            MainWindow::getListRegisterFields(&registerFieldList);
             if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
             {
                 qDebug() << "Client registered successfully";
@@ -759,7 +757,16 @@ void MainWindow::on_button_register_client_clicked()
         }
         else
         {
-            qDebug() << "Edit Client";
+            if (dbManager->updateClientWithPic(&registerFieldList, curClientID, &profilePic))
+            {
+                qDebug() << "Client info edit successfully";
+                clear_client_register_form();
+                ui->stackedWidget->setCurrentIndex(1);
+            }
+            else
+            {
+                qDebug() << "Could not edit client info";
+            }
         }
 
     }
@@ -961,6 +968,21 @@ void MainWindow::displayClientInfoThread(QString val){
    ui->label_cl_info_sin_val->setText(clientInfo.value(5).toString());
    ui->label_cl_info_gaNum_val->setText(clientInfo.value(6).toString());
    ui->label_cl_info_ruleSignDate_val->setText(clientInfo.value(7).toString());
+   ui->label_cl_info_status->setText(clientInfo.value(8).toString());
+
+   ui->label_cl_info_nok_name_val->setText(clientInfo.value(9).toString());
+   ui->label_cl_info_nok_relationship_val->setText(clientInfo.value(10).toString());
+   ui->label_cl_info_nok_loc_val->setText(clientInfo.value(11).toString());
+   ui->label_cl_info_nok_contatct_val->setText(clientInfo.value(12).toString());
+
+   ui->label_cl_info_phys_name_val->setText(clientInfo.value(13).toString());
+   ui->label_cl_info_phys_contact_val->setText(clientInfo.value(14).toString());
+
+   ui->label_cl_info_Supporter_name_val->setText(clientInfo.value(15).toString());
+   ui->label_cl_info_Supporter_contact_val->setText(clientInfo.value(16).toString());
+
+   ui->label_cl_info_Supporter2_name_val->setText(clientInfo.value(17).toString());
+   ui->label_cl_info_Supporter2_contact_val->setText(clientInfo.value(18).toString());
 /*
    ui->label_cl_info_status->setText(clientInfo.value(8).toString());
    if(clientInfo.value(8).toString() == "green"){

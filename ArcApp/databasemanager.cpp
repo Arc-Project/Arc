@@ -317,7 +317,11 @@ bool DatabaseManager::searchClientList(QSqlQuery* query, QString ClientId){
 QSqlQuery DatabaseManager::searchClientInfo(QString ClientId){
     QSqlQuery selectquery(db);
 
-    selectquery.prepare("SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, DateRulesSigned, status FROM Client WHERE ClientId ="+ClientId);
+    selectquery.prepare(QString("SELECT FirstName, MiddleName, LastName, Dob, Balance, ")
+                      + QString("SinNo, GaNo, DateRulesSigned, status, NokName, ")
+                      + QString("NokRelationship, NokLocation, NokContactNo, PhysName, PhysContactNo, ")
+                      + QString("SuppWorker1Name, SuppWorker1ContactNo, SuppWorker2Name, SuppWorker2ContactNo, Comments ")
+                      + QString("FROM Client WHERE ClientId ="+ClientId));
 //    selectquery.prepare("SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId = :id");
 //    selectquery.bindValue("id", ClientId);
 
@@ -406,6 +410,45 @@ bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage
     }
     return false;
 }
+
+bool DatabaseManager::updateClientWithPic(QStringList* registerFieldList, QString clientId, QImage* profilePic)//QObject sth, QImage profilePic)
+{
+    QByteArray ba;
+    QBuffer buffer(&ba);
+    buffer.open(QIODevice::WriteOnly);
+    profilePic->save(&buffer, "PNG");  // writes image into ba in PNG format
+
+    QSqlQuery query(db);
+
+    query.prepare(QString("UPDATE Client ")
+        + QString("SET FirstName = ? , MiddleName = ?, LastName = ?, Dob = ?, SinNo = ?, GaNo = ?, EmpId = ?, ")
+        + QString("DateRulesSigned = ?, NokName = ?, NokRelationship = ?, NokLocation = ?, NokContactNo = ?, ")
+        + QString("PhysName = ?, PhysContactNo = ?, SuppWorker1Name = ?, SuppWorker1ContactNo = ?, ")
+        + QString("SuppWorker2Name = ?, SuppWorker2ContactNo = ?, Status = ?, Comments = ?, ProfilePic = ? ")
+        + QString("WHERE ClientId = " + clientId));
+
+    for (int i = 0; i < registerFieldList->size(); ++i)
+    {
+        if (registerFieldList->at(i) != NULL)
+        {
+            qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
+            query.addBindValue(registerFieldList->at(i));
+        }
+        else
+        {
+            query.addBindValue(QVariant(QVariant::String));
+        }
+    }
+
+    query.addBindValue(ba, QSql::In | QSql::Binary);
+
+    if (query.exec())
+    {
+        return true;
+    }
+    return false;
+}
+
 QSqlQuery DatabaseManager::getTransactions(QDate start, QDate end){
     QSqlQuery query(db);
     QString q = "SELECT * FROM Transac JOIN Client on Transac.ClientId = Client.ClientID WHERE Date >= '" + start.toString(Qt::ISODate) + "' AND Date <= '"

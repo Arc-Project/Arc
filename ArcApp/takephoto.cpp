@@ -19,10 +19,33 @@ TakePhoto::~TakePhoto()
 void TakePhoto::processImage(int i, QImage img)
 {
     qDebug()<<"processImg";
+    img.scaledToWidth(300);
     emit showPic(img);
 
     cam->stop();
     close();
+}
+
+
+//BLOCK TO STORE IMAGE
+void TakePhoto::deleteImage(int id, QString fileName){
+
+    qDebug()<<"\nsavedimage : "<<fileName;
+    QFile file(fileName);
+      QFileInfo fi(file);
+      qint64 fileSize = fi.size();
+      if (! file.open(QIODevice::ReadWrite | QIODevice::Unbuffered)) return;
+
+      QByteArray block(65536, '\0');
+      while (fileSize > 0) {
+        if (fileSize < block.size()) block.truncate(fileSize);
+        qint64 written = file.write(block);
+        if (written != block.size()) return;
+        fileSize -= written;
+      }
+      Q_ASSERT(fileSize == 0);
+      file.remove();
+      return;
 }
 
 void TakePhoto::on_pushButtons_camstart_clicked()
@@ -39,9 +62,11 @@ void TakePhoto::on_pushButtons_camstart_clicked()
         cam->setViewfinder(vf);
         qDebug()<<"CAMERA STATUS 2: " <<cam->status();
         cic = new QCameraImageCapture(cam);
-        cic->setCaptureDestination(QCameraImageCapture::CaptureToBuffer);
-        connect(cam, SIGNAL(stateChanged(QCamera::State)),this, SLOT(checkCam(QCamera::Status)));
+
         connect(cic,SIGNAL(imageCaptured(int,QImage)),this,SLOT(processImage(int,QImage)));
+        connect(cic, SIGNAL(imageSaved(int,QString)),this, SLOT(deleteImage(int, QString)));
+        connect(cic, SIGNAL(readyForCaptureChanged(bool)), this, SLOT(readyForCapture(bool)));
+
         connect(cam, SIGNAL(error(QCamera::Error)), this, SLOT(checkCam(QCamera::Error)));
         cam->setCaptureMode(QCamera::CaptureStillImage);
         qDebug()<<"CAMERA STATUS 3: " <<cam->status();
@@ -49,7 +74,7 @@ void TakePhoto::on_pushButtons_camstart_clicked()
         cam->start();
         cameraon = true;
         ui->pushButtons_camstart->setText("Cam OFF");
-        ui->pushButton_piccapture->setEnabled(true);
+  //      ui->pushButton_piccapture->setEnabled(true);
     }
     else{
         ui->verticalLayout->removeWidget(vf);
@@ -58,13 +83,13 @@ void TakePhoto::on_pushButtons_camstart_clicked()
         cam->destroyed();
         cameraon = false;
         ui->pushButtons_camstart->setText("Cam ON");
-        ui->pushButton_piccapture->setEnabled(false);
+   //     ui->pushButton_piccapture->setEnabled(false);
     }
 
 }
 
 //need to fix;;;
-void TakePhoto::checkCam(QCamera::Status error){
+void TakePhoto::checkCam(QCamera::Error error){
     /*
     switch(status){
         case QCamera::ActiveState:
@@ -95,6 +120,10 @@ void TakePhoto::checkCam(QCamera::Status error){
             qDebug()<<"The feature is not supported.";
             break;
     }
+}
+
+void TakePhoto::readyForCapture(bool available){
+    ui->pushButton_piccapture->setEnabled(available);
 }
 
 void TakePhoto::on_pushButton_piccapture_clicked()
