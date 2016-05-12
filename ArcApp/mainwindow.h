@@ -271,6 +271,10 @@ private slots:
 
     void on_btn_pcpKey_clicked();
 
+    void populatePcp();
+
+    void insertPcp(QTableWidget *tw, QString type);
+
     void on_btn_createNewUser_2_clicked();
 
     void on_pushButton_24_clicked();
@@ -296,6 +300,8 @@ private slots:
     void on_lunchCheck_clicked();
 
     void on_startDateEdit_dateChanged(const QDate &date);
+
+    void on_btn_pcpRelaSave_clicked();
 
 private:
 
