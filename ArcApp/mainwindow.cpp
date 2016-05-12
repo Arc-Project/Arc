@@ -616,15 +616,7 @@ void MainWindow::populateConfirm(){
 
 void MainWindow::on_monthCheck_stateChanged(int arg1)
 {
-    if(arg1)
-    {
-        QDate month = ui->startDateEdit->date();
-        //month = month.addMonths(1);
-        int days = month.daysInMonth();
-        days = days - month.day();
-        month = month.addDays(days + 1);
-        ui->endDateEdit->setDate(month);
-    }
+
 }
 
 void MainWindow::on_pushButton_RegisterClient_clicked()
@@ -2839,7 +2831,7 @@ void MainWindow::on_lunchCheck_clicked()
   //curClient = new Client();
    //curClient->clientId = "1";
 
-   MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient);
+   MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,1);
    mc->exec();
 }
 
@@ -2848,6 +2840,35 @@ void MainWindow::on_startDateEdit_dateChanged(const QDate &date)
     if(ui->startDateEdit->date() > ui->endDateEdit->date()){
         QDate newD = ui->startDateEdit->date().addDays(1);
         ui->endDateEdit->setDate(newD);
+    }
+}
+
+
+void MainWindow::on_wakeupCheck_clicked()
+{
+    MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,2);
+    mc->exec();
+}
+
+void MainWindow::on_endDateEdit_dateChanged(const QDate &date)
+{
+    ui->monthCheck->setChecked(false);
+}
+
+void MainWindow::on_monthCheck_clicked(bool checked)
+{
+    if(checked)
+    {
+        QDate month = ui->startDateEdit->date();
+        //month = month.addMonths(1);
+        int days = month.daysInMonth();
+        days = days - month.day();
+        month = month.addDays(days + 1);
+        ui->endDateEdit->setDate(month);
+        ui->monthCheck->setChecked(true);
+    }
+    else{
+        ui->monthCheck->setChecked(true);
     }
 }
 
@@ -2873,8 +2894,8 @@ void MainWindow::insertPcp(QTableWidget *tw, QString type){
         QSqlQuery result = dbManager->addPcp(i, curClientID, type, goal, strategy, date);
         qDebug() << result.lastError();
     }
-
 }
+
 void MainWindow::on_btn_pcpRelaSave_clicked()
 {
     insertPcp(ui->tw_pcpRela, "relationship");

@@ -35,7 +35,7 @@
      <x>10</x>
      <y>30</y>
      <width>931</width>
-     <height>551</height>
+     <height>531</height>
     </rect>
    </property>
    <property name="rowCount">
@@ -55,6 +55,16 @@
    <column/>
    <column/>
   </widget>
+  <widget class="QTimeEdit" name="calendarTime">
+   <property name="geometry">
+    <rect>
+     <x>320</x>
+     <y>590</y>
+     <width>118</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections>
@@ -65,8 +75,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>698</x>
+     <y>600</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -81,8 +91,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>766</x>
+     <y>600</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
