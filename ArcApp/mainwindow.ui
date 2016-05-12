@@ -111,7 +111,7 @@ QWidget#wdg_transTotal {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>7</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="mainMenu">
      <layout class="QGridLayout" name="gridLayout_5">
@@ -4303,6 +4303,42 @@ QWidget#wdg_transTotal {
                      </property>
                     </widget>
                    </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpRelaUndo_2">
+                     <property name="minimumSize">
+                      <size>
+                       <width>130</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Undo Changes</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpEduSave">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Save</string>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
                  </item>
                  <item row="3" column="0">
@@ -4417,6 +4453,42 @@ QWidget#wdg_transTotal {
                      </property>
                      <property name="text">
                       <string>Add Row</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpRelaUndo_3">
+                     <property name="minimumSize">
+                      <size>
+                       <width>130</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Undo Changes</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpSubSave">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Save</string>
                      </property>
                     </widget>
                    </item>
@@ -4537,6 +4609,42 @@ QWidget#wdg_transTotal {
                      </property>
                     </widget>
                    </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpRelaUndo_4">
+                     <property name="minimumSize">
+                      <size>
+                       <width>130</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Undo Changes</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpAccoSave">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Save</string>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
                  </item>
                  <item row="7" column="0">
@@ -4651,6 +4759,42 @@ QWidget#wdg_transTotal {
                      </property>
                      <property name="text">
                       <string>Add Row</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpRelaUndo_5">
+                     <property name="minimumSize">
+                      <size>
+                       <width>130</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Undo Changes</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpLifeSave">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Save</string>
                      </property>
                     </widget>
                    </item>
@@ -4771,6 +4915,42 @@ QWidget#wdg_transTotal {
                      </property>
                     </widget>
                    </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpRelaUndo_6">
+                     <property name="minimumSize">
+                      <size>
+                       <width>130</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Undo Changes</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpMentSave">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Save</string>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
                  </item>
                  <item row="11" column="0">
@@ -4885,6 +5065,42 @@ QWidget#wdg_transTotal {
                      </property>
                      <property name="text">
                       <string>Add Row</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpRelaUndo_7">
+                     <property name="minimumSize">
+                      <size>
+                       <width>130</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Undo Changes</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpPhySave">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Save</string>
                      </property>
                     </widget>
                    </item>
@@ -5005,6 +5221,42 @@ QWidget#wdg_transTotal {
                      </property>
                     </widget>
                    </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpRelaUndo_15">
+                     <property name="minimumSize">
+                      <size>
+                       <width>130</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Undo Changes</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpLegSave">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Save</string>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
                  </item>
                  <item row="15" column="0">
@@ -5119,6 +5371,42 @@ QWidget#wdg_transTotal {
                      </property>
                      <property name="text">
                       <string>Add Row</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpRelaUndo_16">
+                     <property name="minimumSize">
+                      <size>
+                       <width>130</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Undo Changes</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpActSave_2">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Save</string>
                      </property>
                     </widget>
                    </item>
@@ -5239,6 +5527,42 @@ QWidget#wdg_transTotal {
                      </property>
                     </widget>
                    </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpRelaUndo_17">
+                     <property name="minimumSize">
+                      <size>
+                       <width>130</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Undo Changes</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpTradSave">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Save</string>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
                  </item>
                  <item row="19" column="0">
@@ -5356,6 +5680,42 @@ QWidget#wdg_transTotal {
                      </property>
                     </widget>
                    </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpRelaUndo_18">
+                     <property name="minimumSize">
+                      <size>
+                       <width>130</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Undo Changes</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpOtherSave">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Save</string>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
                  </item>
                  <item row="21" column="0">
@@ -5470,6 +5830,42 @@ QWidget#wdg_transTotal {
                      </property>
                      <property name="text">
                       <string>Add Row</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpRelaUndo_19">
+                     <property name="minimumSize">
+                      <size>
+                       <width>130</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Undo Changes</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="btn_pcpKeySave">
+                     <property name="minimumSize">
+                      <size>
+                       <width>90</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>10</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Save</string>
                      </property>
                     </widget>
                    </item>
@@ -9985,7 +10381,7 @@ QWidget#wdg_transTotal {
      <x>0</x>
      <y>0</y>
      <width>1409</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="acceptDrops">
@@ -10015,6 +10411,7 @@ QWidget#wdg_transTotal {
     <addaction name="actionPrint_Db_Connections"/>
     <addaction name="actionUpload_Display_Picture"/>
     <addaction name="actionDownload_Profile_Picture"/>
+    <addaction name="actionPcptables"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -10116,6 +10513,11 @@ QWidget#wdg_transTotal {
   <action name="actionDownload_Profile_Picture">
    <property name="text">
     <string>Download Profile Picture</string>
+   </property>
+  </action>
+  <action name="actionPcptables">
+   <property name="text">
+    <string>pcptables</string>
    </property>
   </action>
  </widget>

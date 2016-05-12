@@ -13,8 +13,11 @@ QStack<int> backStack;
 QStack<int> forwardStack;
 
 QFuture<void> displayPicFuture;
+
+//CaseFiles stuff
 QVector<QTableWidget*> pcp_tables;
 QVector<QString> pcpTypes;
+bool loaded = false;
 
 //QSqlQuery resultssss;
 MainWindow::MainWindow(QWidget *parent) :
@@ -33,8 +36,6 @@ MainWindow::MainWindow(QWidget *parent) :
     curClient = 0;
     curBook = 0;
     trans = 0;
-    setPcpVector();
-
     checkoutReport = new Report(this, ui->checkout_tableView, CHECKOUT_REPORT);
     vacancyReport = new Report(this, ui->vacancy_tableView, VACANCY_REPORT);
     lunchReport = new Report(this, ui->lunch_tableView, LUNCH_REPORT);
@@ -88,7 +89,7 @@ void MainWindow::initCurrentWidget(int idx){
             //initcode
             break;
         case CASEFILE: //WIDGET 8
-            //initcode
+            initPcp();
             break;
         case EDITBOOKING: //WIDGET 9
             //initcode
@@ -1437,20 +1438,6 @@ void MainWindow::on_tableWidget_3_doubleClicked(const QModelIndex &index)
 
 void MainWindow::on_pushButton_CaseFiles_clicked()
 {
-    pcpTypes = {
-                    "relationship",
-                    "educationEmployment",
-                    "substanceUse",
-                    "accomodationsPlanning",
-                    "lifeSkills",
-                    "mentalHealth",
-                    "physicalHealth",
-                    "legalInvolvement",
-                    "activities",
-                    "traditions",
-                    "other",
-                    "people"
-                };
     addHistory(CLIENTLOOKUP);
     ui->stackedWidget->setCurrentIndex(CASEFILE);
 
@@ -1468,8 +1455,10 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
 //    if (nRow <0)
 //        return;
 //    curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
-
-    populatePcp();
+    if (!loaded) {
+        loaded = true;
+        populatePcp();
+    }
 
 }
 
@@ -1477,25 +1466,37 @@ void MainWindow::populatePcp() {
 
 
 //    QSqlQuery result = dbManager->execQuery("SELECT ProgramCode, Description FROM Program");
-
+    int tableIdx = 0;
     for (auto x: pcpTypes) {
-        QString query = "SELECT PcpId, Goal, Strategy, Date "
+        QString query = "SELECT rowId, Goal, Strategy, Date "
                         "FROM Pcp "
                         "WHERE ClientId = 2 "
                         " AND Type = '" + x + "'";
-
-        qDebug() << query;
         QSqlQuery result = dbManager->execQuery(query);
-
         qDebug() << result.lastError();
-        while (result.next()){
-            qDebug() << result.value(0).toString();
-            qDebug() << result.value(1).toString();
-            qDebug() << result.value(2).toString();
-            qDebug() << result.value(3).toString();
+        int numRows = result.numRowsAffected();
+        auto table = (pcp_tables.at(tableIdx++));
 
+        //set height of table
+        table->setMinimumHeight(table->minimumHeight() + (35 * numRows));
+
+        //set number of rows
+        for (int i = 0; i < numRows-1; i++) {
+            table->insertRow(0);
+        }
+
+        //populate table
+        while (result.next()){
+            for (int i = 0; i < 3; i++) {
+                table->setItem(result.value(0).toString().toInt(), i, new QTableWidgetItem(result.value(i+1).toString()));
+            }
         }
     }
+
+//    ui->tw_pcpRela->setItem(3,0,new QTableWidgetItem("blah3"));
+//    ui->tw_pcpRela->setItem(2,0,new QTableWidgetItem("blah2"));
+//    ui->tw_pcpRela->setItem(1,0,new QTableWidgetItem("blah1"));
+//    ui->tw_pcpRela->setItem(0,0,new QTableWidgetItem("blah0"));
 
 }
 
@@ -2198,7 +2199,6 @@ void MainWindow::populate_tw_caseFiles(QStringList filter){
     if (i > 0) {
         ui->btn_caseFilter->setEnabled(true);
     }
-
 }
 
 // create new program button
@@ -2300,26 +2300,41 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
     }
 }
 
-void MainWindow::on_tw_pcpRela_itemChanged(QTableWidgetItem *item)
-{
-    for (auto x: pcp_tables){
-        x->resizeRowsToContents();
-    }
-}
+//void MainWindow::on_tw_pcpRela_itemChanged(QTableWidgetItem *item)
+//{
+//    for (auto x: pcp_tables){
+//        x->resizeRowsToContents();
+//    }
+//}
 
-void MainWindow::setPcpVector(){
-    pcp_tables.push_back(ui->tw_pcpAcco);
-    pcp_tables.push_back(ui->tw_pcpAct);
+void MainWindow::initPcp(){
+    pcp_tables.push_back(ui->tw_pcpRela);
     pcp_tables.push_back(ui->tw_pcpEdu);
-    pcp_tables.push_back(ui->tw_pcpLeg);
+    pcp_tables.push_back(ui->tw_pcpSub);
+    pcp_tables.push_back(ui->tw_pcpAcco);
     pcp_tables.push_back(ui->tw_pcpLife);
     pcp_tables.push_back(ui->tw_pcpMent);
-    pcp_tables.push_back(ui->tw_pcpOther);
     pcp_tables.push_back(ui->tw_pcpPhy);
-    pcp_tables.push_back(ui->tw_pcpPpl);
-    pcp_tables.push_back(ui->tw_pcpRela);
-    pcp_tables.push_back(ui->tw_pcpSub);
+    pcp_tables.push_back(ui->tw_pcpLeg);
+    pcp_tables.push_back(ui->tw_pcpAct);
     pcp_tables.push_back(ui->tw_pcpTrad);
+    pcp_tables.push_back(ui->tw_pcpOther);
+    pcp_tables.push_back(ui->tw_pcpPpl);
+
+    pcpTypes = {
+                    "relationship",
+                    "educationEmployment",
+                    "substanceUse",
+                    "accomodationsPlanning",
+                    "lifeSkills",
+                    "mentalHealth",
+                    "physicalHealth",
+                    "legalInvolvement",
+                    "activities",
+                    "traditions",
+                    "other",
+                    "people"
+                };
 }
 
 void MainWindow::on_btn_pcpRela_clicked()
@@ -2621,16 +2636,12 @@ void MainWindow::on_startDateEdit_dateChanged(const QDate &date)
     }
 }
 
-void MainWindow::on_btn_pcpRelaSave_clicked()
-{
-    insertPcp(ui->tw_pcpRela, "relationship");
-}
-
 void MainWindow::insertPcp(QTableWidget *tw, QString type){
     int client = 2;
     QString goal;
     QString strategy;
     QString date;
+
     int rows = tw->rowCount();
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < 3; j++) {
@@ -2645,8 +2656,78 @@ void MainWindow::insertPcp(QTableWidget *tw, QString type){
 
               }
         }
-        QSqlQuery result = dbManager->addPcp(client, type, goal, strategy, date);
+        QSqlQuery result = dbManager->addPcp(i, client, type, goal, strategy, date);
         qDebug() << result.lastError();
     }
 
+}
+void MainWindow::on_btn_pcpRelaSave_clicked()
+{
+    insertPcp(ui->tw_pcpRela, "relationship");
+}
+
+void MainWindow::on_btn_pcpEduSave_clicked()
+{
+    insertPcp(ui->tw_pcpEdu, "educationEmployment");
+}
+
+void MainWindow::on_btn_pcpSubSave_clicked()
+{
+    insertPcp(ui->tw_pcpSub, "substanceUse");
+}
+
+void MainWindow::on_btn_pcpAccoSave_clicked()
+{
+    insertPcp(ui->tw_pcpAcco, "accomodationsPlanning");
+}
+
+void MainWindow::on_btn_pcpLifeSave_clicked()
+{
+    insertPcp(ui->tw_pcpLife, "lifeSkills");
+}
+
+void MainWindow::on_btn_pcpMentSave_clicked()
+{
+    insertPcp(ui->tw_pcpMent, "mentalHealth");
+}
+
+void MainWindow::on_btn_pcpPhySave_clicked()
+{
+    insertPcp(ui->tw_pcpPhy, "physicalHealth");
+}
+
+void MainWindow::on_btn_pcpLegSave_clicked()
+{
+    insertPcp(ui->tw_pcpLeg, "legalInvolvement");
+}
+
+void MainWindow::on_btn_pcpActSave_2_clicked()
+{
+    insertPcp(ui->tw_pcpAct, "activities");
+}
+
+void MainWindow::on_btn_pcpTradSave_clicked()
+{
+    insertPcp(ui->tw_pcpTrad, "traditions");
+}
+
+void MainWindow::on_btn_pcpOtherSave_clicked()
+{
+    insertPcp(ui->tw_pcpOther, "other");
+}
+
+void MainWindow::on_btn_pcpKeySave_clicked()
+{
+    insertPcp(ui->tw_pcpPpl, "people");
+}
+
+void MainWindow::on_actionPcptables_triggered()
+{
+    int tableIdx = 0;
+    initPcp();
+    for (int i = 0; i < pcp_tables.size(); i++) {
+        auto table = (pcp_tables.at(tableIdx++));
+        qDebug() << table->height();
+    }
+//    qDebug() << pcp_tables.size();
 }
