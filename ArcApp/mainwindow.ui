@@ -1651,14 +1651,14 @@ QWidget#wdg_transTotal {
            <rect>
             <x>-1</x>
             <y>-1</y>
-            <width>591</width>
+            <width>671</width>
             <height>681</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout">
-             <item>
+            <layout class="QGridLayout" name="gridLayout_49">
+             <item row="0" column="0">
               <widget class="QLabel" name="label_cl_info_transaction">
                <property name="font">
                 <font>
@@ -1668,10 +1668,29 @@ QWidget#wdg_transTotal {
                <property name="text">
                 <string>Recent TransactionList</string>
                </property>
+               <property name="indent">
+                <number>5</number>
+               </property>
               </widget>
              </item>
-             <item>
-              <widget class="QTableWidget" name="tableWidget"/>
+             <item row="2" column="0">
+              <widget class="QTableWidget" name="tableWidget_cl_info_transaction"/>
+             </item>
+             <item row="1" column="0">
+              <spacer name="verticalSpacer_22">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Minimum</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>10</height>
+                </size>
+               </property>
+              </spacer>
              </item>
             </layout>
            </item>
@@ -4121,8 +4140,8 @@ QWidget#wdg_transTotal {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>1047</width>
-               <height>1325</height>
+               <width>447</width>
+               <height>1294</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_47">
