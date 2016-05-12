@@ -665,30 +665,30 @@ bool DatabaseManager::getWakeupQuery(QSqlQuery* queryResults, QDate date)
 
 int DatabaseManager::getEspCheckouts(QDate date)
 {
-    QString queryString = 
+    QString queryString =
             QString("SELECT COUNT(ClientId) ")
             + QString("FROM Booking ")
             + QString("WHERE EndDate = '" + date.toString(Qt::ISODate))
             + QString("' AND FirstBook = 'YES' AND ProgramCode = 'ESP'");
     qDebug() << queryString;
-    return DatabaseManager::getIntFromQuery(queryString);   
+    return DatabaseManager::getIntFromQuery(queryString);
 }
 
 int DatabaseManager::getTotalCheckouts(QDate date)
 {
-    QString queryString = 
+    QString queryString =
             QString("SELECT COUNT(ClientId) ")
             + QString("FROM Booking ")
             + QString("WHERE EndDate = '" + date.toString(Qt::ISODate))
             + QString("' AND FirstBook = 'YES'");
     qDebug() << queryString;
-    return DatabaseManager::getIntFromQuery(queryString);   
+    return DatabaseManager::getIntFromQuery(queryString);
 }
 
 
 int DatabaseManager::getEspVacancies(QDate date)
 {
-    QString queryString = 
+    QString queryString =
             QString("SELECT COUNT(s.SpaceId) ")
             + QString("FROM SPACE s LEFT JOIN ")
             + QString("(SELECT SpaceId, Date FROM Booking WHERE Date = '")
@@ -701,7 +701,7 @@ int DatabaseManager::getEspVacancies(QDate date)
 
 int DatabaseManager::getTotalVacancies(QDate date)
 {
-    QString queryString = 
+    QString queryString =
             QString("SELECT COUNT(s.SpaceId) ")
             + QString("FROM SPACE s LEFT JOIN ")
             + QString("(SELECT SpaceId, Date FROM Booking WHERE Date = '")
@@ -709,7 +709,7 @@ int DatabaseManager::getTotalVacancies(QDate date)
             + QString("ON s.SpaceId = b.SpaceId ")
             + QString("WHERE b.Date IS NULL");
     qDebug() << queryString;
-    return DatabaseManager::getIntFromQuery(queryString);   
+    return DatabaseManager::getIntFromQuery(queryString);
 }
 
 void DatabaseManager::getDailyReportStatsThread(QDate date)
@@ -732,7 +732,7 @@ int DatabaseManager::getIntFromQuery(QString queryString)
         if (DatabaseManager::createDatabase(&tempDb, connName))
         {
             QSqlQuery query(tempDb);
-            
+
             qDebug() << queryString;
             if (query.exec(queryString))
             {
@@ -973,18 +973,28 @@ QSqlQuery DatabaseManager::updateProgram(QString pcode, QString pdesc) {
     return query;
 }
 
-
 QSqlQuery DatabaseManager::updateSpaceProgram(QString spaceid, QString program) {
     QSqlQuery query(db);
 
     query.exec("UPDATE Space SET ProgramCodes='" + program + "' WHERE SpaceId=" + spaceid);
 
 }
-QSqlQuery DatabaseManager::addPcp(int clientId, QString type, QString goal, QString strategy, QString date) {
+
+QSqlQuery DatabaseManager::addPcp(int rowId, QString clientId, QString type, QString goal, QString strategy, QString date) {
     QSqlQuery query(db);
 
-    query.exec("INSERT INTO Pcp VALUES(" + QString::number(clientId) + ", '"
-               + type + "', '" + goal + "', '" + strategy + "', '" + date + "')");
+//    query.exec("INSERT INTO Pcp (rowId, clientId, Type, Goal, Strategy, Date) VALUES(" + QString::number(rowId) + ", " + clientId + ", '"
+//               + type + "', '" + goal + "', '" + strategy + "', '" + date + "')");
+
+    query.prepare("INSERT INTO Pcp (rowId, clientId, Type, Goal, Strategy, Date) "
+                  "VALUES (?, ?, ?, ?, ? ,?)");
+    query.addBindValue(QString::number(rowId));
+    query.addBindValue(clientId);
+    query.addBindValue(type);
+    query.addBindValue(goal);
+    query.addBindValue(strategy);
+    query.addBindValue(date);
+    query.exec();
 
     return query;
 }

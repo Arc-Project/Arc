@@ -246,9 +246,9 @@ private slots:
 
     void on_tw_caseFiles_cellDoubleClicked(int row, int column);
 
-    void on_tw_pcpRela_itemChanged(QTableWidgetItem *item);
+//    void on_tw_pcpRela_itemChanged(QTableWidgetItem *item);
 
-    void setPcpVector();
+    void initPcp();
 
     void on_btn_pcpRela_clicked();
 
@@ -325,6 +325,30 @@ private slots:
     void on_lunchCheck_clicked();
 
     void on_startDateEdit_dateChanged(const QDate &date);
+
+    void on_btn_pcpEduSave_clicked();
+
+    void on_btn_pcpSubSave_clicked();
+
+    void on_btn_pcpAccoSave_clicked();
+
+    void on_btn_pcpLifeSave_clicked();
+
+    void on_btn_pcpMentSave_clicked();
+
+    void on_btn_pcpPhySave_clicked();
+
+    void on_btn_pcpLegSave_clicked();
+
+    void on_btn_pcpActSave_2_clicked();
+
+    void on_btn_pcpTradSave_clicked();
+
+    void on_btn_pcpOtherSave_clicked();
+
+    void on_btn_pcpKeySave_clicked();
+
+    void on_actionPcptables_triggered();
 
     void on_wakeupCheck_clicked();
 
