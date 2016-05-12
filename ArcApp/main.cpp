@@ -3,15 +3,18 @@
 #include <QApplication>
 #include <QFile>
 #include <QByteArray>
+
 DatabaseManager* dbManager;
 QSettings settings;
+
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    dbManager = new DatabaseManager();
     MainWindow w;
     //LoginPrompt w; //
-    dbManager = new DatabaseManager();
+
     QCoreApplication::setOrganizationName("The Salvation Army ARC");
     QCoreApplication::setApplicationName("ARC Manager");
     w.show();
