@@ -19,8 +19,8 @@ TakePhoto::~TakePhoto()
 void TakePhoto::processImage(int i, QImage img)
 {
     qDebug()<<"processImg";
-    img.scaledToWidth(300);
-    emit showPic(img);
+    QImage scaledImg = img.scaledToWidth(300);
+    emit showPic(scaledImg);
 
     cam->stop();
     close();
