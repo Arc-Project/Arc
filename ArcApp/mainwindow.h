@@ -314,13 +314,18 @@ private:
     transaction * trans;
     Client * curClient;
     QString curClientID;
-    
+
     bool pic_available = true;
     bool table_available = true;
 
     QMap <QString, int> caseWorkerList;    //caseworker list
 
     QDir dir;
+
+    QModelIndex lastprogramclicked = QModelIndex();
+    QModelIndex assignedBedIndex;
+    QModelIndex availableBedIndex;
+
 
 };
 
