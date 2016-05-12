@@ -33,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //default signal of stackedWidget
     //detect if the widget is changed
     connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(initCurrentWidget(int)));
+    connect(dbManager, SIGNAL(dailyReportStatsChanged(QList<int>)), this, SLOT(updateDailyReportStats(QList<int>)));
     curClient = 0;
     curBook = 0;
     trans = 0;
@@ -40,6 +41,9 @@ MainWindow::MainWindow(QWidget *parent) :
     vacancyReport = new Report(this, ui->vacancy_tableView, VACANCY_REPORT);
     lunchReport = new Report(this, ui->lunch_tableView, LUNCH_REPORT);
     wakeupReport = new Report(this, ui->wakeup_tableView, WAKEUP_REPORT);
+
+    MainWindow::setupReportsScreen();
+
 }
 
 MainWindow::~MainWindow()
@@ -101,10 +105,8 @@ void MainWindow::initCurrentWidget(int idx){
                 read_curClient_Information(curClientID);
             break;
         case 11:    //WIDGET 11
-            checkoutReport->updateModel(QDate::currentDate());
-            vacancyReport->updateModel(QDate::currentDate());
-            lunchReport->updateModel(QDate::currentDate());
-            wakeupReport->updateModel(QDate::currentDate());
+            MainWindow::updateReportTables();
+            MainWindow::getDailyReportStats();
             break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
@@ -180,10 +182,9 @@ void MainWindow::on_actionDB_Connection_triggered()
 
 void MainWindow::on_actionTest_Query_triggered()
 {
-    ui->stackedWidget->setCurrentIndex(11);
+    //ui->stackedWidget->setCurrentIndex(11);
+    qDebug() << "test";
 }
-
-
 
 void MainWindow::on_actionFile_Upload_triggered()
 {
@@ -1979,8 +1980,9 @@ void MainWindow::on_btn_payListAllUsers_clicked()
     ui->mpTable->setColumnHidden(4, true);
     populateATable(ui->mpTable, heads, cols, tempSql, false);
 
-// list all rooms
 }
+
+// list all rooms
 void MainWindow::on_btn_listAllUsers_3_clicked()
 {
 
@@ -2100,58 +2102,125 @@ void MainWindow::on_pushButton_25_clicked()
 // program clicked + selected HANK
 void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
 {
-    // populate the fields on the right
-    QString pcode = ui->tableWidget_2->model()->data(ui->tableWidget_2->model()->index(index.row(), 0)).toString();
-    QString description = ui->tableWidget_2->model()->data(ui->tableWidget_2->model()->index(index.row(), 1)).toString();
+    if (lastprogramclicked != index) {
+        ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+        ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+        ui->lbl_editProgWarning->setText("Please hold while we set your beds");
+        qApp->processEvents();
 
-    ui->le_userName_2->setText(pcode);
-    ui->textEdit->setText(description);
+        ui->availablebedslist->clear();
+        ui->availablebedslist->setRowCount(0);
+        ui->assignedbedslist->clear();
+        ui->assignedbedslist->setRowCount(0);
 
-    // populate the beds list
-    QSqlQuery availSpaces = dbManager->getAvailableBeds(pcode);
-    int numrowsavail = availSpaces.numRowsAffected();
+        ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+        ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
 
-    QStandardItemModel* availmodel = new QStandardItemModel();
+        // populate the fields on the right
+        QString pcode = ui->tableWidget_2->model()->data(ui->tableWidget_2->model()->index(index.row(), 0)).toString();
+        QString description = ui->tableWidget_2->model()->data(ui->tableWidget_2->model()->index(index.row(), 1)).toString();
 
-    while (availSpaces.next()) {
-        QString buildingNo = availSpaces.value(0).toString();
-        QString floorNo = availSpaces.value(1).toString();
-        QString roomNo = availSpaces.value(2).toString();
-        QString spaceNo = availSpaces.value(4).toString();
-        QString type = availSpaces.value(5).toString();
+        ui->le_userName_2->setText(pcode);
+        ui->textEdit->setText(description);
 
-        //1-319-3
-        QString roomCode = buildingNo + "-" + floorNo + "-" + roomNo + "-" + spaceNo + type[0];
+        // populate the beds list
+        QSqlQuery availSpaces = dbManager->getAvailableBeds(pcode);
+        int numrowsavail = availSpaces.numRowsAffected();
+        if (numrowsavail > 0) {
+            int numCols = availSpaces.record().count();
+            ui->availablebedslist->setColumnCount(1);
+            int x = 0;
+            int qt = availSpaces.size();
+            qDebug() << qt;
+            while (availSpaces.next()) {
+                ui->availablebedslist->insertRow(x);
+                QStringList row;
+                QString buildingNo = availSpaces.value(0).toString();
+                QString floorNo = availSpaces.value(1).toString();
+                QString roomNo = availSpaces.value(2).toString();
+                QString spaceNo = availSpaces.value(4).toString();
+                QString type = availSpaces.value(5).toString();
 
-        // QStandardItem* Items = new QStandardItem(availSpaces.value(1).toString());
-        QStandardItem* Items = new QStandardItem(roomCode);
-        availmodel->appendRow(Items);
+                //1-319-3
+                QString roomCode = buildingNo + "-" + floorNo + "-" + roomNo + "-" + spaceNo + type[0];
+
+                ui->availablebedslist->setItem(x, 0, new QTableWidgetItem(roomCode));
+                x++;
+            }
+        }
+        ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+        ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+        qApp->processEvents();
+
+    //    QStandardItemModel* availmodel = new QStandardItemModel();
+
+    //    while (availSpaces.next()) {
+    //        QString buildingNo = availSpaces.value(0).toString();
+    //        QString floorNo = availSpaces.value(1).toString();
+    //        QString roomNo = availSpaces.value(2).toString();
+    //        QString spaceNo = availSpaces.value(4).toString();
+    //        QString type = availSpaces.value(5).toString();
+
+    //        //1-319-3
+    //        QString roomCode = buildingNo + "-" + floorNo + "-" + roomNo + "-" + spaceNo + type[0];
+
+    //        // QStandardItem* Items = new QStandardItem(availSpaces.value(1).toString());
+    //        QStandardItem* Items = new QStandardItem(roomCode);
+    //        availmodel->appendRow(Items);
+    //    }
+
+    //    ui->availablebedslist->setModel(availmodel);
+
+          QSqlQuery assignedspaces = dbManager->getAssignedBeds(pcode);
+          int numrowsassigned = assignedspaces.numRowsAffected();
+          if (numrowsassigned > 0) {
+              int numCols = assignedspaces.record().count();
+              ui->assignedbedslist->setColumnCount(1);
+              int x = 0;
+              int qt = assignedspaces.size();
+              qDebug() << qt;
+              while (assignedspaces.next()) {
+                  ui->assignedbedslist->insertRow(x);
+                  QStringList row;
+                  QString buildingNo = assignedspaces.value(0).toString();
+                  QString floorNo = assignedspaces.value(1).toString();
+                  QString roomNo = assignedspaces.value(2).toString();
+                  QString spaceNo = assignedspaces.value(4).toString();
+                  QString type = assignedspaces.value(5).toString();
+
+                  //1-319-3
+                  QString roomCode = buildingNo + "-" + floorNo + "-" + roomNo + "-" + spaceNo + type[0];
+
+                  ui->assignedbedslist->setItem(x, 0, new QTableWidgetItem(roomCode));
+                  x++;
+              }
+          }
+          ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+          ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+          ui->lbl_editProgWarning->setText("");
+
+    //    int numrowsassigned = assignedspaces.numRowsAffected();
+
+    //    QStandardItemModel* assignedmodel = new QStandardItemModel();
+
+    //    while (assignedspaces.next()) {
+    //        QString buildingNo = assignedspaces.value(0).toString();
+    //        QString floorNo = assignedspaces.value(1).toString();
+    //        QString roomNo = assignedspaces.value(2).toString();
+    //        QString spaceNo = assignedspaces.value(4).toString();
+    //        QString type = assignedspaces.value(5).toString();
+
+    //        //1-319-3
+    //        QString roomCode = buildingNo + "-" + floorNo + "-" + roomNo + "-" + spaceNo + type[0];
+
+    //        // QStandardItem* Items = new QStandardItem(availSpaces.value(1).toString());
+    //        QStandardItem* Items = new QStandardItem(roomCode);
+    //        assignedmodel->appendRow(Items);
+    //    }
+
+        // ui->assignedbedslist->setModel(assignedmodel);
+          lastprogramclicked = index;
     }
-
-    ui->availablebedslist->setModel(availmodel);
-
-    QSqlQuery assignedspaces = dbManager->getAssignedBeds(pcode);
-    int numrowsassigned = assignedspaces.numRowsAffected();
-
-    QStandardItemModel* assignedmodel = new QStandardItemModel();
-
-    while (assignedspaces.next()) {
-        QString buildingNo = assignedspaces.value(0).toString();
-        QString floorNo = assignedspaces.value(1).toString();
-        QString roomNo = assignedspaces.value(2).toString();
-        QString spaceNo = assignedspaces.value(4).toString();
-        QString type = assignedspaces.value(5).toString();
-
-        //1-319-3
-        QString roomCode = buildingNo + "-" + floorNo + "-" + roomNo + "-" + spaceNo + type[0];
-
-        // QStandardItem* Items = new QStandardItem(availSpaces.value(1).toString());
-        QStandardItem* Items = new QStandardItem(roomCode);
-        assignedmodel->appendRow(Items);
-    }
-
-    ui->assignedbedslist->setModel(assignedmodel);
-
 
 }
 
@@ -2414,30 +2483,59 @@ void MainWindow::on_addbedtoprogram_clicked()
     // add program tag to bed
     QString pcode = ui->le_userName_2->text();
 
-    // get current tag
+    // QModelIndexList qil = ui->availablebedslist->selectedIndexes();
+
+    // get selected bed
+    qDebug() << ui->availablebedslist->currentItem()->text();
+    std::string selectedtag = ui->availablebedslist->currentItem()->text().toStdString();
+
+    std::vector<std::string> tagbreakdown = split(selectedtag, '-');
+
     // parse space code to check building number + floor number + room number + space number
-    // and obtain space id
+    QString buildingnum = QString::fromStdString(tagbreakdown[0]);
+    QString floornum = QString::fromStdString(tagbreakdown[1]);
+    QString roomnum = QString::fromStdString(tagbreakdown[2]);
+    std::string bednumtype = tagbreakdown[3];
+    // strip the last character
+    QString bednumber = QString::fromStdString(bednumtype.substr(0, bednumtype.size()-1));
+
+    // get space id
+    QSqlQuery singlebedquery = dbManager->searchSingleBed(buildingnum, floornum, roomnum, bednumber);
+    singlebedquery.next();
+    QString spaceid = singlebedquery.value(3).toString();
+
+    // get curr tag
+    QString currenttag = singlebedquery.value(8).toString();
 
     // append to tag
+    currenttag += ",";
+    currenttag += pcode;
+
+    qDebug() << currenttag;
 
     // update tag value
-}
+    dbManager->updateSpaceProgram(spaceid, currenttag);
 
-void MainWindow::on_removebedfromprogram_clicked()
-{
-    // remove program tag from bed
-    QString pcode = ui->le_userName_2->text();
+    ui->availablebedslist->clear();
+    ui->availablebedslist->setRowCount(0);
+    ui->assignedbedslist->clear();
+    ui->assignedbedslist->setRowCount(0);
+    ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+    ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+    ui->lbl_editProgWarning->setText("Bed Added to Program");
 
-    // get current tag
-    // populate the fields on the right
+//    const auto selectedIdxs = ui->availablebedslist->selectedIndexes();
+//    if (!selectedIdxs.isEmpty()) {
+//        const QVariant var = ui->availablebedslist->model()->data(selectedIdxs.first());
+//        // next you need to convert your `var` from `QVariant` to something that you show from your data with default (`Qt::DisplayRole`) role, usually it is a `QString`:
+//        const QString selectedItemString = var.toString();
 
-//    QString pcode = ui->tableWidget_2->model()->data(ui->tableWidget_2->model()->index(index.row(), 0)).toString();
-//    QString description = ui->tableWidget_2->model()->data(ui->tableWidget_2->model()->index(index.row(), 1)).toString();
+//        // or you also may do this by using `QStandardItemModel::itemFromIndex()` method:
+//        const QStandardItem* selectedItem = dynamic_cast<QStandardItemModel*>(model())->itemFromIndex(selectedIdxs.first());
+//        // use your `QStandardItem`
+//    }
 
-//    ui->le_userName_2->setText(pcode);
-//    ui->textEdit->setText(description);
-
-//    // populate the beds list
+    // populate the beds list
 //    QSqlQuery availSpaces = dbManager->getAvailableBeds(pcode);
 //    int numrowsavail = availSpaces.numRowsAffected();
 
@@ -2459,26 +2557,79 @@ void MainWindow::on_removebedfromprogram_clicked()
 //    }
 
 //    ui->availablebedslist->setModel(availmodel);
+
+
+}
+
+void MainWindow::on_removebedfromprogram_clicked()
+{
+    // remove program tag from bed
+    QString pcode = ui->le_userName_2->text();
+
+    // get selected bed
+    qDebug() << ui->assignedbedslist->currentItem()->text();
+    std::string selectedtag = ui->assignedbedslist->currentItem()->text().toStdString();
+
+    std::vector<std::string> tagbreakdown = split(selectedtag, '-');
+
     // parse space code to check building number + floor number + room number + space number
-    // and obtain space id
+    QString buildingnum = QString::fromStdString(tagbreakdown[0]);
+    QString floornum = QString::fromStdString(tagbreakdown[1]);
+    QString roomnum = QString::fromStdString(tagbreakdown[2]);
+    std::string bednumtype = tagbreakdown[3];
+    // strip the last character
+    QString bednumber = QString::fromStdString(bednumtype.substr(0, bednumtype.size()-1));
 
-    // split current tag
+    // get space id
+    QSqlQuery singlebedquery = dbManager->searchSingleBed(buildingnum, floornum, roomnum, bednumber);
+    singlebedquery.next();
+    QString spaceid = singlebedquery.value(3).toString();
 
-    // remove from the list the tag we are removing
+    // get curr tag
+    QString currenttag = singlebedquery.value(8).toString();
 
-    // re-add tags
+    // remove tag
+    QString newtag = "";
+    std::string curtagtogether = currenttag.toStdString();
+    std::vector<std::string> curtagbreakdown = split(curtagtogether, ',');
+    for (std::string t : curtagbreakdown) {
+        if (QString::fromStdString(t) != pcode) {
+            newtag += QString::fromStdString(t);
+            newtag += ",";
+        }
+    }
+    std::string tempstr = newtag.toStdString();
+    tempstr.pop_back();
+    newtag = QString::fromStdString(tempstr);
+
+    qDebug() << newtag;
 
     // update tag value
+    dbManager->updateSpaceProgram(spaceid, newtag);
+    ui->availablebedslist->clear();
+    ui->availablebedslist->setRowCount(0);
+    ui->assignedbedslist->clear();
+    ui->assignedbedslist->setRowCount(0);
+    ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+    ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+    ui->lbl_editProgWarning->setText("Bed Removed from Program");
 }
 
 void MainWindow::on_availablebedslist_clicked(const QModelIndex &index)
 {
     // clicked available bed
+//    availableBedIndex = index;
+//    QStringList list;
+//    QStandardItemModel model = (QStandardItemModel) ui->availablebedslist->model();
+//    foreach(const QModelIndex &index, ui->availablebedslist->selectionModel()->selectedIndexes()) {
+//        list.append(model->itemFromIndex(index)->text());
+//    }
 }
 
 void MainWindow::on_assignedbedslist_clicked(const QModelIndex &index)
 {
     // clicked assigned bed
+    assignedBedIndex = index;
 }
 
 void MainWindow::on_btn_monthlyReport_clicked()
@@ -2584,6 +2735,58 @@ void MainWindow::on_btn_payOutstanding_clicked()
     ui->mpTable->setColumnHidden(6, true);
     ui->mpTable->setColumnHidden(5, true);
 }
+
+/*==============================================================================
+REPORTS
+==============================================================================*/
+void MainWindow::setupReportsScreen()
+{
+    ui->lbl_shiftReportDateVal_2->setText(QDate::currentDate().toString("yyyy-MM-dd"));
+    ui->reports_dateEdit->setDate(QDate::currentDate());
+    checkoutReport = new Report(this, ui->checkout_tableView, CHECKOUT_REPORT);
+    vacancyReport = new Report(this, ui->vacancy_tableView, VACANCY_REPORT);
+    lunchReport = new Report(this, ui->lunch_tableView, LUNCH_REPORT);
+    wakeupReport = new Report(this, ui->wakeup_tableView, WAKEUP_REPORT);
+}
+
+void MainWindow::updateReportTables(QDate date)
+{
+    checkoutReport->updateModel(date);
+    vacancyReport->updateModel(date);
+    lunchReport->updateModel(date);
+    wakeupReport->updateModel(date);
+    ui->lbl_shiftReportDateVal_2->setText(date.toString("yyyy-MM-dd"));
+    ui->reports_dateEdit->setDate(date);
+}
+
+void MainWindow::on_reportsDateSelectorGo_btn_clicked()
+{
+    QDate date = ui->reports_dateEdit->date();
+    MainWindow::updateReportTables(date);
+    MainWindow::getDailyReportStats(date);
+}
+
+void MainWindow::on_reportsSetCurrentDate_btn_clicked()
+{
+    ui->reports_dateEdit->setDate(QDate::currentDate());
+}
+
+void MainWindow::getDailyReportStats(QDate date)
+{
+    qDebug() << "getDailyReportStats  called";
+    QtConcurrent::run(dbManager, &DatabaseManager::getDailyReportStatsThread, date);
+}
+
+void MainWindow::updateDailyReportStats(QList<int> list)
+{
+    ui->lbl_espCheckouts->setText(QString::number(list.at(0)));
+    ui->lbl_totalCheckouts->setText(QString::number(list.at(1)));
+    ui->lbl_espVacancies->setText(QString::number(list.at(2)));
+    ui->lbl_totalVacancies->setText(QString::number(list.at(3)));
+}
+/*==============================================================================
+REPORTS (END)
+==============================================================================*/
 
 void MainWindow::on_actionBack_triggered()
 {

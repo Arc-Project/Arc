@@ -1651,14 +1651,14 @@ QWidget#wdg_transTotal {
            <rect>
             <x>-1</x>
             <y>-1</y>
-            <width>591</width>
+            <width>671</width>
             <height>681</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout">
-             <item>
+            <layout class="QGridLayout" name="gridLayout_49">
+             <item row="0" column="0">
               <widget class="QLabel" name="label_cl_info_transaction">
                <property name="font">
                 <font>
@@ -1668,10 +1668,29 @@ QWidget#wdg_transTotal {
                <property name="text">
                 <string>Recent TransactionList</string>
                </property>
+               <property name="indent">
+                <number>5</number>
+               </property>
               </widget>
              </item>
-             <item>
-              <widget class="QTableWidget" name="tableWidget"/>
+             <item row="2" column="0">
+              <widget class="QTableWidget" name="tableWidget_cl_info_transaction"/>
+             </item>
+             <item row="1" column="0">
+              <spacer name="verticalSpacer_22">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Minimum</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>10</height>
+                </size>
+               </property>
+              </spacer>
              </item>
             </layout>
            </item>
@@ -3575,6 +3594,12 @@ QWidget#wdg_transTotal {
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::SingleSelection</enum>
+           </property>
            <property name="selectionBehavior">
             <enum>QAbstractItemView::SelectRows</enum>
            </property>
@@ -3676,25 +3701,6 @@ QWidget#wdg_transTotal {
            </property>
           </widget>
          </item>
-         <item row="4" column="0" colspan="2">
-          <widget class="QListView" name="availablebedslist">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>275</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="selectionBehavior">
-            <enum>QAbstractItemView::SelectRows</enum>
-           </property>
-          </widget>
-         </item>
          <item row="3" column="0">
           <widget class="QLabel" name="label_29">
            <property name="font">
@@ -3750,25 +3756,6 @@ QWidget#wdg_transTotal {
              <width>0</width>
              <height>28</height>
             </size>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="3">
-          <widget class="QListView" name="assignedbedslist">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>275</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="selectionBehavior">
-            <enum>QAbstractItemView::SelectRows</enum>
            </property>
           </widget>
          </item>
@@ -3940,6 +3927,62 @@ QWidget#wdg_transTotal {
            </item>
           </layout>
          </item>
+         <item row="4" column="0" colspan="2">
+          <widget class="QTableWidget" name="availablebedslist">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>275</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::SingleSelection</enum>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
+           </property>
+           <attribute name="horizontalHeaderStretchLastSection">
+            <bool>true</bool>
+           </attribute>
+          </widget>
+         </item>
+         <item row="4" column="3">
+          <widget class="QTableWidget" name="assignedbedslist">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>275</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::SingleSelection</enum>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
+           </property>
+           <attribute name="horizontalHeaderStretchLastSection">
+            <bool>true</bool>
+           </attribute>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -4097,8 +4140,8 @@ QWidget#wdg_transTotal {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>1012</width>
-               <height>1381</height>
+               <width>447</width>
+               <height>1294</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_47">
@@ -7077,7 +7120,7 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                  <item>
-                  <widget class="QDateEdit" name="dateEdit_2">
+                  <widget class="QDateEdit" name="reports_dateEdit">
                    <property name="minimumSize">
                     <size>
                      <width>100</width>
@@ -7095,7 +7138,7 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="pushButton_7">
+                  <widget class="QPushButton" name="reportsDateSelectorGo_btn">
                    <property name="minimumSize">
                     <size>
                      <width>28</width>
@@ -7119,7 +7162,7 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="pushButton_8">
+                  <widget class="QPushButton" name="reportsSetCurrentDate_btn">
                    <property name="minimumSize">
                     <size>
                      <width>110</width>
@@ -7215,7 +7258,7 @@ QWidget#wdg_transTotal {
                        </font>
                       </property>
                       <property name="text">
-                       <string>Total ESP Vacancies</string>
+                       <string>ESP Check-outs</string>
                       </property>
                      </widget>
                     </item>
@@ -7233,14 +7276,14 @@ QWidget#wdg_transTotal {
                      </spacer>
                     </item>
                     <item row="0" column="0">
-                     <widget class="QLabel" name="lbl_cashAmt_3">
+                     <widget class="QLabel" name="lbl_espCheckouts">
                       <property name="font">
                        <font>
                         <pointsize>22</pointsize>
                        </font>
                       </property>
                       <property name="text">
-                       <string>99</string>
+                       <string>0</string>
                       </property>
                      </widget>
                     </item>
@@ -7264,7 +7307,7 @@ QWidget#wdg_transTotal {
                        </font>
                       </property>
                       <property name="text">
-                       <string>Total Vacancies</string>
+                       <string>Total Check-outs</string>
                       </property>
                      </widget>
                     </item>
@@ -7282,14 +7325,14 @@ QWidget#wdg_transTotal {
                      </spacer>
                     </item>
                     <item row="0" column="0">
-                     <widget class="QLabel" name="lbl_debitAmt_3">
+                     <widget class="QLabel" name="lbl_totalCheckouts">
                       <property name="font">
                        <font>
                         <pointsize>22</pointsize>
                        </font>
                       </property>
                       <property name="text">
-                       <string>99</string>
+                       <string>0</string>
                       </property>
                      </widget>
                     </item>
@@ -7313,7 +7356,7 @@ QWidget#wdg_transTotal {
                        </font>
                       </property>
                       <property name="text">
-                       <string>ESP Beds Available</string>
+                       <string>ESP Vacancies</string>
                       </property>
                      </widget>
                     </item>
@@ -7331,14 +7374,14 @@ QWidget#wdg_transTotal {
                      </spacer>
                     </item>
                     <item row="0" column="0">
-                     <widget class="QLabel" name="lbl_chequeAmt_3">
+                     <widget class="QLabel" name="lbl_espVacancies">
                       <property name="font">
                        <font>
                         <pointsize>22</pointsize>
                        </font>
                       </property>
                       <property name="text">
-                       <string>99</string>
+                       <string>0</string>
                       </property>
                      </widget>
                     </item>
@@ -7364,7 +7407,7 @@ QWidget#wdg_transTotal {
                        </font>
                       </property>
                       <property name="text">
-                       <string>Total Beds Available</string>
+                       <string>Total Vacancies</string>
                       </property>
                      </widget>
                     </item>
@@ -7382,7 +7425,7 @@ QWidget#wdg_transTotal {
                      </spacer>
                     </item>
                     <item row="0" column="0">
-                     <widget class="QLabel" name="lbl_shiftAmt_3">
+                     <widget class="QLabel" name="lbl_totalVacancies">
                       <property name="font">
                        <font>
                         <pointsize>22</pointsize>
@@ -7391,7 +7434,7 @@ QWidget#wdg_transTotal {
                        </font>
                       </property>
                       <property name="text">
-                       <string>99</string>
+                       <string>0</string>
                       </property>
                      </widget>
                     </item>

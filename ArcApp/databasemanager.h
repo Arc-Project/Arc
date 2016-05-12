@@ -1,6 +1,7 @@
 #ifndef DATABASEMANAGER_H
 #define DATABASEMANAGER_H
 
+#include <QObject>
 #include <QString>
 #include <QtSql/QtSql>
 #include <stdio.h>
@@ -12,14 +13,16 @@
 #include <QDesktopServices>
 #include <QStringList>
 #include <QMutex>
+typedef QList<int> IntList;
 
-class DatabaseManager
+class DatabaseManager : public QObject
 {
+    Q_OBJECT
 public:
     /*==========================================================================
     DATABASE MANAGER SETUP
     ==========================================================================*/
-    DatabaseManager();
+    explicit DatabaseManager(QObject *parent = 0);
     bool createDatabase(QSqlDatabase* tempDbPtr, QString connName);
 
     /*==========================================================================
@@ -64,6 +67,14 @@ public:
     bool getVacancyQuery(QSqlQuery* queryResults, QDate date);
     bool getLunchQuery(QSqlQuery* queryResults, QDate date);
     bool getWakeupQuery(QSqlQuery* queryResults, QDate date);
+    int getEspCheckouts(QDate date);
+    int getTotalCheckouts(QDate date);
+    int getEspVacancies(QDate date);
+    int getTotalVacancies(QDate date);
+    void getDailyReportStatsThread(QDate date);
+    int getIntFromQuery(QString queryString);
+
+
 
     void print();
     QSqlQuery loginSelect(QString username, QString password);
@@ -87,6 +98,8 @@ public:
     QSqlQuery updateProgram(QString pcode, QString pdesc);
     QSqlQuery getAvailableBeds(QString pcode);
     QSqlQuery getAssignedBeds(QString pcode);
+    QSqlQuery searchSingleBed(QString buildingno, QString floorno, QString roomno, QString spaceno);
+    QSqlQuery updateSpaceProgram(QString spaceid, QString program);
     bool removeTransaction(QString id);
     bool setPaid(QString id);
     QSqlQuery getOutstanding();
@@ -96,6 +109,9 @@ public:
     bool updateLunches(QDate date, int num, QString id);
     bool removeLunches(QDate date, QString id);
     QSqlQuery addPcp(int rowid, int clientId, QString type, QString goal, QString strategy, QString date);
+
+signals:
+    void dailyReportStatsChanged(QList<int> list);
 
 private:
     QSqlDatabase db = QSqlDatabase::database();
