@@ -74,32 +74,17 @@ public:
     void getDailyReportStatsThread(QDate date);
     int getIntFromQuery(QString queryString);
 
-
-
-    void print();
-    QSqlQuery loginSelect(QString username, QString password);
-    QSqlQuery findUser(QString username);
-    QSqlQuery addNewEmployee(QString username, QString password, QString role);
-    QSqlQuery updateEmployee(QString username, QString password, QString role);
-    QSqlQuery deleteEmployee(QString username, QString password, QString role);
+    //COLIN STUFF/////////////////////////////////////////////////////////////
     QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);
     QSqlQuery getPrograms();
     bool insertBookingTable(QString insert);
     int getMonthlyRate(QString room, QString program);
     bool addPayment(QString values);
     QSqlQuery getActiveBooking(QString user, bool userLook);
-    bool downloadLatestCaseFile();
-    QSqlQuery getTransactions(QDate start, QDate end);
     double getRoomCost(QString roomNo);
     bool updateBooking(QString q);
     QSqlQuery pullClient(QString id);
     bool updateBalance(double d, QString id);
-    QSqlQuery AddProgram(QString pcode, QString pdesc);
-    QSqlQuery updateProgram(QString pcode, QString pdesc);
-    QSqlQuery getAvailableBeds(QString pcode);
-    QSqlQuery getAssignedBeds(QString pcode);
-    QSqlQuery searchSingleBed(QString buildingno, QString floorno, QString roomno, QString spaceno);
-    QSqlQuery updateSpaceProgram(QString spaceid, QString program);
     bool removeTransaction(QString id);
     bool setPaid(QString id);
     QSqlQuery getOutstanding();
@@ -113,6 +98,22 @@ public:
     bool updateWakeups(QDate date, QString time, QString id);
     bool deleteWakeups(QDate date, QString id);
 
+
+    //END COLIN STUFF///////////////////////////////////////////////////////
+    void print();
+    QSqlQuery loginSelect(QString username, QString password);
+    QSqlQuery findUser(QString username);
+    QSqlQuery addNewEmployee(QString username, QString password, QString role);
+    QSqlQuery updateEmployee(QString username, QString password, QString role);
+    QSqlQuery deleteEmployee(QString username, QString password, QString role);
+    bool downloadLatestCaseFile();
+    QSqlQuery getTransactions(QDate start, QDate end);
+    QSqlQuery AddProgram(QString pcode, QString pdesc);
+    QSqlQuery updateProgram(QString pcode, QString pdesc);
+    QSqlQuery getAvailableBeds(QString pcode);
+    QSqlQuery getAssignedBeds(QString pcode);
+    QSqlQuery searchSingleBed(QString buildingno, QString floorno, QString roomno, QString spaceno);
+    QSqlQuery updateSpaceProgram(QString spaceid, QString program);
     QSqlQuery addPcp(int clientId, QString type, QString goal, QString strategy, QString date);
 
 signals:
