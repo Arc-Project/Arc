@@ -50,7 +50,12 @@ void MyCalendar::populateCells(){
     if(totalShow > 1)
         totalShow = 1;
     if(totalShow){
-        totalShow = sDate.daysInMonth() + nextMonth.daysInMonth();
+        if(eDate.day() == 1){
+            totalShow = sDate.daysInMonth();
+        }
+        else{
+            totalShow = sDate.daysInMonth() + nextMonth.daysInMonth();
+        }
     }
     else{
         totalShow = sDate.daysInMonth();
@@ -63,13 +68,14 @@ void MyCalendar::populateCells(){
     int x = 1;
     int q = 1;
     int startUnlock = sDate.day();
+    QDate insertString;
     int endUnlock = startUnlock + lengthOfStay - 1;
     lowEnd = startUnlock -1 + offset;
     highEnd = endUnlock - 1 + offset;
     ui->calendarTable->setHorizontalHeaderLabels(QStringList()<< "Sunday" << "Monday"  << "Tuesday" << "Wednesday" << "Thursday" << "Friday" << "Saturday");
     for(int i = startIndex; i < totalShow + startIndex; i++){
-
-        ui->calendarTable->setItem(i / 7, i % 7, new QTableWidgetItem(QString::number(x)));
+        insertString = calStart.addDays(q - 1);
+        ui->calendarTable->setItem(i / 7, i % 7, new QTableWidgetItem(insertString.toString("MMM d")));
         if(q < startUnlock || q > endUnlock)
             ui->calendarTable->item(i / 7, i % 7)->setBackgroundColor(QColor(155,155,155));
         x++;

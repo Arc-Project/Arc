@@ -289,6 +289,8 @@ private slots:
 
     void on_lunchCheck_clicked();
 
+    void on_startDateEdit_dateChanged(const QDate &date);
+
 private:
 
     Ui::MainWindow *ui;

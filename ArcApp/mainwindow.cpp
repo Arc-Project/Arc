@@ -600,7 +600,7 @@ void MainWindow::on_monthCheck_stateChanged(int arg1)
         //month = month.addMonths(1);
         int days = month.daysInMonth();
         days = days - month.day();
-        month = month.addDays(days);
+        month = month.addDays(days + 1);
         ui->endDateEdit->setDate(month);
     }
 }
@@ -2381,4 +2381,12 @@ void MainWindow::on_lunchCheck_clicked()
 
    MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient);
    mc->exec();
+}
+
+void MainWindow::on_startDateEdit_dateChanged(const QDate &date)
+{
+    if(ui->startDateEdit->date() > ui->endDateEdit->date()){
+        QDate newD = ui->startDateEdit->date().addDays(1);
+        ui->endDateEdit->setDate(newD);
+    }
 }
