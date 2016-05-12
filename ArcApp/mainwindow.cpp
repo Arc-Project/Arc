@@ -13,7 +13,8 @@ QStack<int> backStack;
 QStack<int> forwardStack;
 
 QFuture<void> displayPicFuture;
-std::vector<QTableWidget*> pcp_tables;
+QVector<QTableWidget*> pcp_tables;
+QVector<QString> pcpTypes;
 
 //QSqlQuery resultssss;
 MainWindow::MainWindow(QWidget *parent) :
@@ -1436,6 +1437,20 @@ void MainWindow::on_tableWidget_3_doubleClicked(const QModelIndex &index)
 
 void MainWindow::on_pushButton_CaseFiles_clicked()
 {
+    pcpTypes = {
+                    "relationship",
+                    "educationEmployment",
+                    "substanceUse",
+                    "accomodationsPlanning",
+                    "lifeSkills",
+                    "mentalHealth",
+                    "physicalHealth",
+                    "legalInvolvement",
+                    "activities",
+                    "traditions",
+                    "other",
+                    "people"
+                };
     addHistory(CLIENTLOOKUP);
     ui->stackedWidget->setCurrentIndex(CASEFILE);
 
@@ -1447,6 +1462,41 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
         x->setColumnWidth(1, width*0.41);
         x->setColumnWidth(2, width*0.16);
     }
+
+    //get client id
+//    int nRow = ui->tableWidget_search_client->currentRow();
+//    if (nRow <0)
+//        return;
+//    curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
+
+    populatePcp();
+
+}
+
+void MainWindow::populatePcp() {
+
+
+//    QSqlQuery result = dbManager->execQuery("SELECT ProgramCode, Description FROM Program");
+
+    for (auto x: pcpTypes) {
+        QString query = "SELECT PcpId, Goal, Strategy, Date "
+                        "FROM Pcp "
+                        "WHERE ClientId = 2 "
+                        " AND Type = '" + x + "'";
+
+        qDebug() << query;
+        QSqlQuery result = dbManager->execQuery(query);
+
+        qDebug() << result.lastError();
+        while (result.next()){
+            qDebug() << result.value(0).toString();
+            qDebug() << result.value(1).toString();
+            qDebug() << result.value(2).toString();
+            qDebug() << result.value(3).toString();
+
+        }
+    }
+
 }
 
 void MainWindow::on_EditRoomsButton_clicked()
@@ -2546,8 +2596,6 @@ void MainWindow::addHistory(int n){
     ui->actionForward->setEnabled(false);
 }
 
-
-
 void MainWindow::on_pushButton_processPaymeent_clicked()
 {
     addHistory(CLIENTLOOKUP);
@@ -2571,4 +2619,34 @@ void MainWindow::on_startDateEdit_dateChanged(const QDate &date)
         QDate newD = ui->startDateEdit->date().addDays(1);
         ui->endDateEdit->setDate(newD);
     }
+}
+
+void MainWindow::on_btn_pcpRelaSave_clicked()
+{
+    insertPcp(ui->tw_pcpRela, "relationship");
+}
+
+void MainWindow::insertPcp(QTableWidget *tw, QString type){
+    int client = 2;
+    QString goal;
+    QString strategy;
+    QString date;
+    int rows = tw->rowCount();
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (tw->item(i,j)) {
+                switch (j) {
+                case 0: goal = tw->item(i,j)->text();
+                    break;
+                case 1: strategy = tw->item(i,j)->text();
+                    break;
+                case 2: date = tw->item(i,j)->text();
+                }
+
+              }
+        }
+        QSqlQuery result = dbManager->addPcp(client, type, goal, strategy, date);
+        qDebug() << result.lastError();
+    }
+
 }

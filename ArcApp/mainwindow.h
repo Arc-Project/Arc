@@ -272,6 +272,10 @@ private slots:
 
     void on_btn_pcpKey_clicked();
 
+    void populatePcp();
+
+    void insertPcp(QTableWidget *tw, QString type);
+
     void on_btn_createNewUser_2_clicked();
 
     void on_pushButton_24_clicked();
@@ -298,6 +302,8 @@ private slots:
 
     void on_startDateEdit_dateChanged(const QDate &date);
 
+    void on_btn_pcpRelaSave_clicked();
+
     void on_addbedtoprogram_clicked();
 
     void on_removebedfromprogram_clicked();
@@ -305,6 +311,7 @@ private slots:
     void on_availablebedslist_clicked(const QModelIndex &index);
 
     void on_assignedbedslist_clicked(const QModelIndex &index);
+
 
 private:
 

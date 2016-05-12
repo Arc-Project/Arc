@@ -849,3 +849,12 @@ QSqlQuery DatabaseManager::updateProgram(QString pcode, QString pdesc) {
 
     return query;
 }
+
+QSqlQuery DatabaseManager::addPcp(int clientId, QString type, QString goal, QString strategy, QString date) {
+    QSqlQuery query(db);
+
+    query.exec("INSERT INTO Pcp VALUES(" + QString::number(clientId) + ", '"
+               + type + "', '" + goal + "', '" + strategy + "', '" + date + "')");
+
+    return query;
+}
