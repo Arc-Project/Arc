@@ -285,7 +285,13 @@ private slots:
     void handleNewPayment(int row);
     void updateCheque(int row);
 
+    void on_actionBack_triggered();
 
+    void on_actionForward_triggered();
+
+    void addHistory(int n);
+
+    void on_pushButton_processPaymeent_clicked();
 
     void on_lunchCheck_clicked();
 
