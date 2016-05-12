@@ -815,6 +815,7 @@ void MainWindow::on_button_register_client_clicked()
         MainWindow::getListRegisterFields(&registerFieldList);
         if(ui->label_cl_infoedit_title->text() == "Register Client")
         {
+
             if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
             {
                 qDebug() << "Client registered successfully";
@@ -1011,6 +1012,8 @@ void MainWindow::displayClientInfoThread(QString val){
    ui->label_cl_info_Supporter2_contact_val->setText(clientInfo.value(19).toString());
    ui->label_cl_info_comment->setText(clientInfo.value(20).toString());
 
+
+// WITHOUT PICTURE
    QByteArray a = clientInfo.value(21).toByteArray();
    qDebug()<< "asdfa" <<a;
    profilePic =  QImage::fromData(a, "PNG");
@@ -1037,7 +1040,11 @@ void MainWindow::displayClientInfoThread(QString val){
 void MainWindow::displayPicThread()
 {
     qDebug()<<"displayPicThread";
-   // QImage profile = QImage::fromData(a, "PNG");
+   // QSqlQuery testQuery = dbManager->execQuery("SELECT  ProfilePic FROM Client WHERE ClientId = "+ curClientID);
+   // testQuery.next();
+   // QByteArray test = testQuery.value(0).toByteArray();
+  //  profilePic = QImage::fromData(test, "PNG");
+    // QImage profile = QImage::fromData(a, "PNG");
     QPixmap item2 = QPixmap::fromImage(profilePic);
     QPixmap scaled = QPixmap(item2.scaledToWidth((int)(ui->graphicsView_getInfo->width()*0.9), Qt::SmoothTransformation));
     QGraphicsScene *scene2 = new QGraphicsScene();
