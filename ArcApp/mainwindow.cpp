@@ -35,10 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
     trans = 0;
     setPcpVector();
 
-    checkoutReport = new Report(this, ui->checkout_tableView, CHECKOUT_REPORT);
-    vacancyReport = new Report(this, ui->vacancy_tableView, VACANCY_REPORT);
-    lunchReport = new Report(this, ui->lunch_tableView, LUNCH_REPORT);
-    wakeupReport = new Report(this, ui->wakeup_tableView, WAKEUP_REPORT);
+    MainWindow::setupReportsScreen();
 }
 
 MainWindow::~MainWindow()
@@ -100,10 +97,8 @@ void MainWindow::initCurrentWidget(int idx){
                 read_curClient_Information(curClientID);
             break;
         case 11:    //WIDGET 11
-            checkoutReport->updateModel(QDate::currentDate());
-            vacancyReport->updateModel(QDate::currentDate());
-            lunchReport->updateModel(QDate::currentDate());
-            wakeupReport->updateModel(QDate::currentDate());
+            MainWindow::updateReportTables();
+            MainWindow::getDailyReportStats();
             break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
@@ -2569,6 +2564,57 @@ void MainWindow::on_btn_payOutstanding_clicked()
     ui->mpTable->setColumnHidden(6, true);
     ui->mpTable->setColumnHidden(5, true);
 }
+
+/*==============================================================================
+REPORTS
+==============================================================================*/
+void MainWindow::setupReportsScreen()
+{
+    ui->lbl_shiftReportDateVal_2->setText(QDate::currentDate().toString("yyyy-MM-dd"));
+    ui->reports_dateEdit->setDate(QDate::currentDate());
+    checkoutReport = new Report(this, ui->checkout_tableView, CHECKOUT_REPORT);
+    vacancyReport = new Report(this, ui->vacancy_tableView, VACANCY_REPORT);
+    lunchReport = new Report(this, ui->lunch_tableView, LUNCH_REPORT);
+    wakeupReport = new Report(this, ui->wakeup_tableView, WAKEUP_REPORT);
+}
+
+void MainWindow::updateReportTables(QDate date)
+{
+    checkoutReport->updateModel(date);
+    vacancyReport->updateModel(date);
+    lunchReport->updateModel(date);
+    wakeupReport->updateModel(date);
+}
+
+void MainWindow::on_reportsDateSelectorGo_Btn_clicked()
+{
+    QDate date = ui->reports_dateEdit->date();
+    updateReportTables(date);
+    ui->lbl_shiftReportDateVal_2->setText(date.toString("yyyy-MM-dd"));
+}
+
+void MainWindow::on_reportsSetCurrentDate_Btn_clicked()
+{
+    ui->lbl_shiftReportDateVal_2->setText(QDate::currentDate().toString("yyyy-MM-dd"));
+}
+
+void MainWindow::getDailyReportStats(QDate date)
+{
+    qDebug() << "getDailyReportStats  called";
+    QtConcurrent::run(dbManager, &DatabaseManager::getDailyReportStatsThread, date);
+}
+
+void MainWindow::updateDailyReportStats(QList<int> list)
+{
+    qDebug() << "updateDailyReportStats slot";
+    foreach(int val, list)
+    {
+        qDebug() << val;
+    }
+}
+/*==============================================================================
+REPORTS (END)
+==============================================================================*/
 
 void MainWindow::on_actionBack_triggered()
 {

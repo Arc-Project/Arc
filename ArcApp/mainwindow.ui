@@ -111,7 +111,7 @@ QWidget#wdg_transTotal {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>7</number>
+     <number>11</number>
     </property>
     <widget class="QWidget" name="mainMenu">
      <layout class="QGridLayout" name="gridLayout_5">
@@ -4097,8 +4097,8 @@ QWidget#wdg_transTotal {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>1012</width>
-               <height>1381</height>
+               <width>1047</width>
+               <height>1325</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_47">
@@ -6681,7 +6681,7 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                  <item>
-                  <widget class="QDateEdit" name="dateEdit_2">
+                  <widget class="QDateEdit" name="reports_dateEdit">
                    <property name="minimumSize">
                     <size>
                      <width>100</width>
@@ -6699,7 +6699,7 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="pushButton_7">
+                  <widget class="QPushButton" name="reportsDateSelectorGo_btn">
                    <property name="minimumSize">
                     <size>
                      <width>28</width>
@@ -6723,7 +6723,7 @@ QWidget#wdg_transTotal {
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="pushButton_8">
+                  <widget class="QPushButton" name="reportsSetCurrentDate_Btn">
                    <property name="minimumSize">
                     <size>
                      <width>110</width>
@@ -6819,7 +6819,7 @@ QWidget#wdg_transTotal {
                        </font>
                       </property>
                       <property name="text">
-                       <string>Total ESP Vacancies</string>
+                       <string>ESP Check-outs</string>
                       </property>
                      </widget>
                     </item>
@@ -6837,14 +6837,14 @@ QWidget#wdg_transTotal {
                      </spacer>
                     </item>
                     <item row="0" column="0">
-                     <widget class="QLabel" name="lbl_cashAmt_3">
+                     <widget class="QLabel" name="lbl_espCheckouts">
                       <property name="font">
                        <font>
                         <pointsize>22</pointsize>
                        </font>
                       </property>
                       <property name="text">
-                       <string>99</string>
+                       <string>0</string>
                       </property>
                      </widget>
                     </item>
@@ -6868,7 +6868,7 @@ QWidget#wdg_transTotal {
                        </font>
                       </property>
                       <property name="text">
-                       <string>Total Vacancies</string>
+                       <string>Total Check-outs</string>
                       </property>
                      </widget>
                     </item>
@@ -6886,14 +6886,14 @@ QWidget#wdg_transTotal {
                      </spacer>
                     </item>
                     <item row="0" column="0">
-                     <widget class="QLabel" name="lbl_debitAmt_3">
+                     <widget class="QLabel" name="lbl_totalCheckouts">
                       <property name="font">
                        <font>
                         <pointsize>22</pointsize>
                        </font>
                       </property>
                       <property name="text">
-                       <string>99</string>
+                       <string>0</string>
                       </property>
                      </widget>
                     </item>
@@ -6917,7 +6917,7 @@ QWidget#wdg_transTotal {
                        </font>
                       </property>
                       <property name="text">
-                       <string>ESP Beds Available</string>
+                       <string>ESP Vacancies</string>
                       </property>
                      </widget>
                     </item>
@@ -6935,14 +6935,14 @@ QWidget#wdg_transTotal {
                      </spacer>
                     </item>
                     <item row="0" column="0">
-                     <widget class="QLabel" name="lbl_chequeAmt_3">
+                     <widget class="QLabel" name="lbl_espVacancies">
                       <property name="font">
                        <font>
                         <pointsize>22</pointsize>
                        </font>
                       </property>
                       <property name="text">
-                       <string>99</string>
+                       <string>0</string>
                       </property>
                      </widget>
                     </item>
@@ -6968,7 +6968,7 @@ QWidget#wdg_transTotal {
                        </font>
                       </property>
                       <property name="text">
-                       <string>Total Beds Available</string>
+                       <string>Total Vacancies</string>
                       </property>
                      </widget>
                     </item>
@@ -6986,7 +6986,7 @@ QWidget#wdg_transTotal {
                      </spacer>
                     </item>
                     <item row="0" column="0">
-                     <widget class="QLabel" name="lbl_shiftAmt_3">
+                     <widget class="QLabel" name="lbl_totalVacancies">
                       <property name="font">
                        <font>
                         <pointsize>22</pointsize>
@@ -6995,7 +6995,7 @@ QWidget#wdg_transTotal {
                        </font>
                       </property>
                       <property name="text">
-                       <string>99</string>
+                       <string>0</string>
                       </property>
                      </widget>
                     </item>
