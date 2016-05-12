@@ -35,6 +35,7 @@
 #include "casefile.h"
 #include "mymodel.h"
 #include "report.h"
+#include "mycalendar.h"
 
 namespace Ui {
 class MainWindow;
@@ -281,9 +282,12 @@ private slots:
     void on_btn_payDelete_clicked();
     void getTransactionFromRow(int row);
     void on_btn_payOutstanding_clicked();
+    void handleNewPayment(int row);
     void updateCheque(int row);
 
 
+
+    void on_lunchCheck_clicked();
 
 private:
 

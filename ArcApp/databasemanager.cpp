@@ -458,6 +458,42 @@ QSqlQuery DatabaseManager::getTransactions(QDate start, QDate end){
     query.exec(q);
     return query;
 }
+QSqlQuery DatabaseManager::getOwingClients(){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Client WHERE Balance < 0";
+    query.exec(q);
+    return query;
+}
+QSqlQuery DatabaseManager::setLunches(QDate date, int num, QString id){
+    QSqlQuery query(db);
+    QString q = "INSERT INTO Lunches Values('" + id + "','" + date.toString(Qt::ISODate) + "','" + QString::number(num) + "')";
+    qDebug() << q;
+    query.exec(q);
+    return query;
+
+}
+QSqlQuery DatabaseManager::getLunches(QDate start, QDate end, QString id){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Lunches WHERE ClientId = '" + id + "' AND LunchDate >= '" + start.toString(Qt::ISODate)
+            + "' AND LunchDate <= '" + end.toString(Qt::ISODate) + "'";
+    qDebug() << q;
+    query.exec(q);
+    return query;
+ }
+bool DatabaseManager::updateLunches(QDate date, int num, QString id){
+    QSqlQuery query(db);
+    QString q = "UPDATE Lunches SET Number ='" + QString::number(num) + "' WHERE LunchDate = '"
+            + date.toString(Qt::ISODate) + "' AND ClientId = '" + id + "'";
+    qDebug() << q;
+    return query.exec(q);
+}
+bool DatabaseManager::removeLunches(QDate date, QString id){
+    QSqlQuery query(db);
+    QString q = "DELETE FROM Lunches WHERE LunchDate = '" + date.toString(Qt::ISODate) + "' AND ClientID ='"+
+            id + "'";
+    qDebug() << q;
+    return query.exec(q);
+}
 
 void DatabaseManager::uploadProfilePicThread(QString strFilePath)
 {
