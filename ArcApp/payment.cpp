@@ -9,21 +9,19 @@ payment::payment(QWidget *parent) :
     ui->setupUi(this);
 
 }
-payment::payment(QWidget *parent, transaction * trans, double balance, double cost, Client * client, Booking * book, bool paymentType ) :
+payment::payment(QWidget *parent, transaction * trans, double balance, double cost, Client * client, QString note, bool paymentType ) :
     QDialog(parent),
     ui(new Ui::payment)
 {
     ui->setupUi(this);
     transact = trans;
     hideCheque();
-    curBook = book;
     this->client = client;
     ui->chequeDate->setDate(QDate::currentDate());
     ui->balanceLabel->setText(QString::number(balance));
     ui->transactionLabel->setText(QString::number(cost));
     ui->owedLabel->setText(QString::number(cost - balance));
-    ui->plainTextEdit->insertPlainText("Booking: " + book->stringStart + " to " + book->stringEnd + " Total Cost: "
-                                       + QString::number(book->cost, 'f', 2));
+    ui->plainTextEdit->insertPlainText(note);
     if(paymentType){
         doPayment();
         ui->paymentRadio->setChecked(true);
@@ -61,7 +59,6 @@ bool payment::makePayment(){
 
     }
     if(dbManager->addPayment(values)){
-        curBook->paidTotal+= transact->amount;
         return true;
 
     }
