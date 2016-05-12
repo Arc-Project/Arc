@@ -334,7 +334,7 @@ private:
     transaction * trans;
     Client * curClient;
     QString curClientID;
-    
+
     bool pic_available = true;
     bool table_available = true;
 
@@ -345,6 +345,11 @@ private:
     void setupReportsScreen();
     void updateReportTables(QDate date = QDate::currentDate());
     void getDailyReportStats(QDate date = QDate::currentDate());
+
+    QModelIndex lastprogramclicked = QModelIndex();
+    QModelIndex assignedBedIndex;
+    QModelIndex availableBedIndex;
+
 
 };
 

@@ -98,6 +98,8 @@ public:
     QSqlQuery updateProgram(QString pcode, QString pdesc);
     QSqlQuery getAvailableBeds(QString pcode);
     QSqlQuery getAssignedBeds(QString pcode);
+    QSqlQuery searchSingleBed(QString buildingno, QString floorno, QString roomno, QString spaceno);
+    QSqlQuery updateSpaceProgram(QString spaceid, QString program);
     bool removeTransaction(QString id);
     bool setPaid(QString id);
     QSqlQuery getOutstanding();
