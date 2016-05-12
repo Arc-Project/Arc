@@ -111,7 +111,7 @@ QWidget#wdg_transTotal {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="mainMenu">
      <layout class="QGridLayout" name="gridLayout_5">
@@ -574,7 +574,7 @@ QWidget#wdg_transTotal {
       <item row="0" column="1">
        <widget class="QTabWidget" name="tabWidget_cl_info">
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tab_cl_general">
          <attribute name="title">
@@ -1655,7 +1655,27 @@ QWidget#wdg_transTotal {
             <height>681</height>
            </rect>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_6"/>
+          <layout class="QVBoxLayout" name="verticalLayout_6">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <item>
+              <widget class="QLabel" name="label_cl_info_transaction">
+               <property name="font">
+                <font>
+                 <pointsize>12</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>Recent TransactionList</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QTableWidget" name="tableWidget"/>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </widget>
         </widget>
         <widget class="QWidget" name="tab_7">
@@ -4071,8 +4091,8 @@ QWidget#wdg_transTotal {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>421</width>
-               <height>2305</height>
+               <width>348</width>
+               <height>2218</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_47">
@@ -9947,7 +9967,7 @@ QWidget#wdg_transTotal {
      <x>0</x>
      <y>0</y>
      <width>1409</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="acceptDrops">
