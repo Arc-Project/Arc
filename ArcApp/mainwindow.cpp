@@ -12,6 +12,7 @@ bool firstTime = true;
 QStack<int> backStack;
 QStack<int> forwardStack;
 
+QFuture<void> displayFuture ;
 QFuture<void> displayPicFuture;
 
 //CaseFiles stuff
@@ -1321,13 +1322,16 @@ void MainWindow::on_button_clear_client_regForm_clicked()
 
 void MainWindow::getListRegisterFields(QStringList* fieldList)
 {
+    QString caseWorkerId = QString::number(caseWorkerList.value(ui->comboBox_cl_caseWorker->currentText()));
+    if(caseWorkerId == "0")
+        caseWorkerId = "";
     *fieldList << ui->lineEdit_cl_fName->text()
                << ui->lineEdit_cl_mName->text()
                << ui->lineEdit_cl_lName->text()
                << ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd")
                << ui->lineEdit_cl_SIN->text()
                << ui->lineEdit_cl_GANum->text()
-               << QString::number(caseWorkerList.value(ui->comboBox_cl_caseWorker->currentText())) //grab value from case worker dropdown I don't know how to do it
+               << caseWorkerId//QString::number(caseWorkerList.value(ui->comboBox_cl_caseWorker->currentText())) //grab value from case worker dropdown I don't know how to do it
                << ui->dateEdit_cl_rulesign->date().toString("yyyy-MM-dd")
                << ui->lineEdit_cl_nok_name->text()
                << ui->lineEdit_cl_nok_relationship->text()
@@ -1477,19 +1481,23 @@ bool MainWindow::check_client_register_form(){
 
 void MainWindow::defaultRegisterOptions(){
     //add caseWorker Name
-    QString caseWorkerquery = "SELECT Username, EmpId FROM Employee WHERE Role = 'CASE WORKER' ORDER BY Username";
-    QSqlQuery caseWorkers = dbManager->execQuery(caseWorkerquery);
-    //dbManager->printAll(caseWorkers);
+
     if(ui->comboBox_cl_caseWorker->findText("NONE")==-1){
         ui->comboBox_cl_caseWorker->addItem("NONE");
-
     }
-    while(caseWorkers.next()){
-     //   qDebug()<<"CASEWORKER: " <<caseWorkers.value(0).toString() << caseWorkers.value(1).toString();
-        caseWorkerList.insert(caseWorkers.value(0).toString(), caseWorkers.value(1).toInt());
-        if(ui->comboBox_cl_caseWorker->findText(caseWorkers.value(0).toString())==-1){
-            ui->comboBox_cl_caseWorker->addItem(caseWorkers.value(0).toString());
+
+    if(caseWorkerUpdated){
+        QString caseWorkerquery = "SELECT Username, EmpId FROM Employee WHERE Role = 'CASE WORKER' ORDER BY Username";
+        QSqlQuery caseWorkers = dbManager->execQuery(caseWorkerquery);
+        //dbManager->printAll(caseWorkers);
+        while(caseWorkers.next()){
+         //   qDebug()<<"CASEWORKER: " <<caseWorkers.value(0).toString() << caseWorkers.value(1).toString();
+            caseWorkerList.insert(caseWorkers.value(0).toString(), caseWorkers.value(1).toInt());
+            if(ui->comboBox_cl_caseWorker->findText(caseWorkers.value(0).toString())==-1){
+                ui->comboBox_cl_caseWorker->addItem(caseWorkers.value(0).toString());
+            }
         }
+        caseWorkerUpdated = false;
     }
     if(ui->comboBox_cl_status->findText("Green")==-1){
         ui->comboBox_cl_status->addItem("Green");
@@ -1558,6 +1566,10 @@ void MainWindow::selected_client_info(int nRow, int nCol)
 
     if(!pic_available || !table_available)
         return;
+    if(displayFuture.isRunning()){
+        qDebug()<<"ProfilePic Is RUNNING";
+        displayFuture.cancel();
+    }
     if(displayPicFuture.isRunning()){
         qDebug()<<"ProfilePic Is RUNNING";
         displayPicFuture.cancel();
@@ -1565,18 +1577,11 @@ void MainWindow::selected_client_info(int nRow, int nCol)
     curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
 
     table_available = false;
-    QFuture<void> displayFuture = QtConcurrent::run(this, &displayClientInfoThread, curClientID);
+    displayFuture = QtConcurrent::run(this, &displayClientInfoThread, curClientID);
     displayFuture.waitForFinished();
     displayPicFuture = QtConcurrent::run(this, &displayPicThread);
     displayPicFuture.waitForFinished();
 
-    /*
-        pic_available = false;
-        QtConcurrent::run(this, &displayPicThread, val);
-        */
-//    qDebug()<<"Finish Select Query to tableview";
-
-    //connect(&displayFuture, SIGNAL(displayPictThread(QByteArray val)))
 }
 
 
@@ -1629,10 +1634,11 @@ void MainWindow::displayClientInfoThread(QString val){
 
 
 // WITHOUT PICTURE
+   /*
    QByteArray a = clientInfo.value(21).toByteArray();
    qDebug()<< "asdfa" <<a;
    profilePic =  QImage::fromData(a, "PNG");
-
+*/
 /*
    ui->label_cl_info_status->setText(clientInfo.value(8).toString());
    if(clientInfo.value(8).toString() == "green"){
@@ -1655,11 +1661,21 @@ void MainWindow::displayClientInfoThread(QString val){
 void MainWindow::displayPicThread()
 {
     qDebug()<<"displayPicThread";
+
+    if(!dbManager->searchClientInfoPic(&profilePic, curClientID)){
+            qDebug()<<"ERROR to get pic";
+            return;
+        }
+    qDebug()<<"Add picture";
+
+    addInfoPic(profilePic);
+
    // QSqlQuery testQuery = dbManager->execQuery("SELECT  ProfilePic FROM Client WHERE ClientId = "+ curClientID);
    // testQuery.next();
    // QByteArray test = testQuery.value(0).toByteArray();
   //  profilePic = QImage::fromData(test, "PNG");
     // QImage profile = QImage::fromData(a, "PNG");
+    /*
     QPixmap item2 = QPixmap::fromImage(profilePic);
     QPixmap scaled = QPixmap(item2.scaledToWidth((int)(ui->graphicsView_getInfo->width()*0.9), Qt::SmoothTransformation));
     QGraphicsScene *scene2 = new QGraphicsScene();
@@ -1668,10 +1684,21 @@ void MainWindow::displayPicThread()
     ui->graphicsView_getInfo->show();
     pic_available=true;
 
-
-
-
+*/
 }
+
+
+void MainWindow::addInfoPic(QImage img){
+    qDebug()<<"Add Info Picture??";
+    QPixmap item2 = QPixmap::fromImage(img);
+    QPixmap scaled = QPixmap(item2.scaledToWidth((int)(ui->graphicsView_getInfo->width()*0.9), Qt::SmoothTransformation));
+    QGraphicsScene *scene2 = new QGraphicsScene();
+    scene2->addPixmap(QPixmap(scaled));
+    ui->graphicsView_getInfo->setScene(scene2);
+    ui->graphicsView_getInfo->show();
+    pic_available=true;
+}
+
 
 
 

@@ -54,6 +54,7 @@ public:
     bookingManager book;
     void setup_searchClientTable(QSqlQuery results);
     void displayClientInfoThread(QString val);
+    void addInfoPic(QImage img);
     void clientSearchedInfo();
     void initClientLookupInfo();
     QImage profilePic;
@@ -372,6 +373,8 @@ private:
 
     bool pic_available = true;
     bool table_available = true;
+
+    bool caseWorkerUpdated = true;
 
     QMap <QString, int> caseWorkerList;    //caseworker list
 
