@@ -108,6 +108,11 @@ public:
     QSqlQuery getLunches(QDate start, QDate end, QString id);
     bool updateLunches(QDate date, int num, QString id);
     bool removeLunches(QDate date, QString id);
+    QSqlQuery getWakeups(QDate start, QDate end, QString id);
+    bool setWakeup(QDate date, QString time, QString id);
+    bool updateWakeups(QDate date, QString time, QString id);
+    bool deleteWakeups(QDate date, QString id);
+
     QSqlQuery addPcp(int clientId, QString type, QString goal, QString strategy, QString date);
 
 signals:

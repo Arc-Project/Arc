@@ -326,6 +326,12 @@ private slots:
 
     void on_startDateEdit_dateChanged(const QDate &date);
 
+    void on_wakeupCheck_clicked();
+
+    void on_endDateEdit_dateChanged(const QDate &date);
+
+    void on_monthCheck_clicked(bool checked);
+
 private:
 
     Ui::MainWindow *ui;

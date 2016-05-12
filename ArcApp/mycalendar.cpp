@@ -8,10 +8,11 @@ MyCalendar::MyCalendar(QWidget *parent) :
 {
     ui->setupUi(this);
 }
-MyCalendar::MyCalendar(QWidget *parent,  QDate start, QDate end, Client *client) :
+MyCalendar::MyCalendar(QWidget *parent,  QDate start, QDate end, Client *client, int mode) :
     QDialog(parent),
     ui(new Ui::MyCalendar)
 {
+    this->mode = mode;
     curClient = client;
     sDate = start;
     eDate = end;
@@ -20,9 +21,19 @@ MyCalendar::MyCalendar(QWidget *parent,  QDate start, QDate end, Client *client)
     noL = QColor(255,255,255);
     ui->setupUi(this);
     populateCells();
+
+    if(mode == 1){
+        ui->calendarTime->setHidden(true);
+    }
+    if(mode == 2){
+
+    }
     for(int i = 0; i < 70; i++){
         lunchDays[i] = 0;
+        wakeFlag[i] = 0;
+
     }
+
     loadPrevious();
     ui->calendarTable->setSelectionMode(QTableWidget::NoSelection);
     ui->calendarTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -95,24 +106,39 @@ void MyCalendar::on_calendarTable_cellClicked(int row, int column)
     if(clicked > 62){
         return;
     }
-    if(lunchDays[clicked] == 2)
-        lunchDays[clicked] = 0;
-    else{
-        lunchDays[clicked]++;
+    if(mode == 1){
+        if(lunchDays[clicked] == 2)
+            lunchDays[clicked] = 0;
+        else{
+            lunchDays[clicked]++;
+        }
+        switch(lunchDays[clicked]){
+        case 0:
+            colorRow(row, column, noL);
+            break;
+        case 1:
+            colorRow(row, column, oneL);
+            break;
+        case 2:
+            colorRow(row, column, twoL);
+            break;
+
+        }
     }
-    switch(lunchDays[clicked]){
-    case 0:
-        colorRow(row, column, noL);
-        break;
-    case 1:
-        colorRow(row, column, oneL);
-        break;
-    case 2:
-        colorRow(row, column, twoL);
-        break;
+    else if(mode == 2){
+        if(wakeFlag[clicked] == 1){
+            QDate resetDate = calStart.addDays(clicked - offset);
+            ui->calendarTable->item(row,column)->setText(resetDate.toString("MMM d"));
+
+            wakeFlag[clicked] = 0;
+        }
+        else{
+            ui->calendarTable->item(row,column)->setText(ui->calendarTable->item(row,column)->text() + " " + ui->calendarTime->time().toString());
+            wakeUps[clicked] = ui->calendarTime->time();
+             wakeFlag[clicked]++;
+        }
 
     }
-
 
 
     qDebug() << clicked;
@@ -125,25 +151,52 @@ void MyCalendar::colorRow(int row, int column, QColor c){
 void MyCalendar::on_buttonBox_accepted()
 {
     QDate insDate;
-    for(int i = 0; i < 70; i++){
-        if(lunchDays[i]){
-            insDate = calStart.addDays(i - offset);
-            if(lunchDays[i] == oldLunch[i])
-                continue;
-            if(!oldLunch[i]){
+    if(mode == 1){
+        for(int i = 0; i < 70; i++){
+            if(lunchDays[i]){
+                insDate = calStart.addDays(i - offset);
+                if(lunchDays[i] == oldLunch[i])
+                    continue;
+                if(!oldLunch[i]){
 
-                dbManager->setLunches(insDate, lunchDays[i], curClient->clientId);
-                qDebug() << insDate;
+                    dbManager->setLunches(insDate, lunchDays[i], curClient->clientId);
+                    qDebug() << insDate;
+                }
+                else{
+                    insDate = calStart.addDays(i - offset);
+                    dbManager->updateLunches(insDate, lunchDays[i], curClient->clientId);
+                }
             }
             else{
-                insDate = calStart.addDays(i - offset);
-                dbManager->updateLunches(insDate, lunchDays[i], curClient->clientId);
+                if(oldLunch[i]){
+                    insDate = calStart.addDays(i - offset);
+                    dbManager->removeLunches(insDate, curClient->clientId);
+                }
             }
         }
-        else{
-            if(oldLunch[i]){
+    }
+    else if(mode == 2){
+        for(int i = 0; i < 70; i++){
+            if(wakeFlag[i]){
                 insDate = calStart.addDays(i - offset);
-                dbManager->removeLunches(insDate, curClient->clientId);
+                if(oldWakeFlag[i]){
+                    if(wakeUps[i] == oldWakeUps[i]){
+                        continue;
+                    }
+                    else{
+                        dbManager->updateWakeups(insDate, wakeUps[i].toString(), curClient->clientId);
+                    }
+                }else{
+                    dbManager->setWakeup(insDate, wakeUps[i].toString(), curClient->clientId);
+                }
+
+            }
+            else{
+                if(oldWakeFlag[i]){
+                    insDate = calStart.addDays(i - offset);
+
+                    dbManager->deleteWakeups(insDate, curClient->clientId);
+                }
             }
         }
     }
@@ -154,19 +207,43 @@ void MyCalendar::loadPrevious(){
     QDate pull;
     for(int i = 0; i < 70; i++){
         oldLunch[i] = 0;
+        oldWakeFlag[i] = 0;
     }
-    result = dbManager->getLunches(sDate, eDate, curClient->clientId);
-    while(result.next()){
-        pull = QDate::fromString(result.value("LunchDate").toString(), "yyyy-MM-dd");
-        ins = pull.toJulianDay() - calStart.toJulianDay();
-        ins += offset;
-        qDebug() << ins;
-        nL = result.value("Number").toString().toInt();
-        oldLunch[ins] = nL;
-        lunchDays[ins] =  nL;
-        row = ins / 7;
-        col = ins % 7;
-        oldLunch[ins] == 1 ? colorRow(row, col, oneL) : colorRow(row, col, twoL);
+    if(mode == 1){
+        result = dbManager->getLunches(sDate, eDate, curClient->clientId);
+        while(result.next()){
+            pull = QDate::fromString(result.value("LunchDate").toString(), "yyyy-MM-dd");
+            ins = pull.toJulianDay() - calStart.toJulianDay();
+            ins += offset;
+            qDebug() << ins;
+            nL = result.value("Number").toString().toInt();
+            oldLunch[ins] = nL;
+            lunchDays[ins] =  nL;
+            row = ins / 7;
+            col = ins % 7;
+            oldLunch[ins] == 1 ? colorRow(row, col, oneL) : colorRow(row, col, twoL);
 
+        }
     }
+    else if(mode == 2){
+        result = dbManager->getWakeups(sDate, eDate, curClient->clientId);
+
+        while(result.next()){
+            pull = QDate::fromString(result.value("WakeDate").toString(), "yyyy-MM-dd");
+            ins = pull.toJulianDay() - calStart.toJulianDay();
+            ins += offset;
+            qDebug() << ins;
+            oldWakeUps[ins] = QTime::fromString(result.value("WakeTime").toString(), "hh:mm:ss");
+            wakeUps[ins] = QTime::fromString(result.value("WakeTime").toString(), "hh:mm:ss");
+            wakeFlag[ins] = 1;
+            oldWakeFlag[ins] = 1;
+            qDebug() << oldWakeUps[ins].toString();
+            row = ins / 7;
+            col = ins % 7;
+            addTime(row, col, oldWakeUps[ins].toString());
+        }
+    }
+}
+void MyCalendar::addTime(int row, int col, QString time){
+    ui->calendarTable->item(row,col)->setText(ui->calendarTable->item(row,col)->text() + " " + time);
 }
