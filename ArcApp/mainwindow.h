@@ -19,18 +19,25 @@
 #define SHIFTREPORT 1
 #define DAILYLOG 2
 #define FLOATCOUNT 3
+#define MONTHLYREPORT 4
+#define RESTRICTIONS 5
 #include <QMainWindow>
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
 #include "databasemanager.h"
 #include "bookingmanager.h"
 #include <QTableWidgetItem>
+#include <QMap>
 #include "booking.h"
 #include "transaction.h"
 #include "client.h"
 #include "shared.h"
 #include "casefile.h"
 #include "Utility.h"
+#include "mymodel.h"
+#include "report.h"
+#include "mycalendar.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -49,14 +56,20 @@ public:
     void populateBooking();
     void setBooking(int row);
     void setup_searchClientTable(QSqlQuery results);
-    void displayPicThread(QString val);
     void displayClientInfoThread(QString val);
     void clientSearchedInfo();
+    void initClientLookupInfo();
     void populateConfirm();
     QImage profilePic;
     void popEditPage();
 
+
+signals:
+    void displayPic(QByteArray a);
+
 private slots:
+
+    void displayPicThread();
 
     void initCurrentWidget(int idx);
     void resizeEvent(QResizeEvent *event);
@@ -70,7 +83,7 @@ private slots:
     void on_actionPrint_Db_Connections_triggered();
     void on_actionUpload_Display_Picture_triggered();
     void on_actionDownload_Profile_Picture_triggered();
-    
+
     /*==========================================================================
     DEV TESTING AUXILIARY FUNCTIONS
     ==========================================================================*/
@@ -79,10 +92,11 @@ private slots:
     /*==========================================================================
     REPORT FUNCTIONS
     ==========================================================================*/
-    void updateCheckoutView(QDate date = QDate::currentDate());
-    void updateVacancyView(QDate date = QDate::currentDate());
-    void updateLunchView(QDate date = QDate::currentDate());
-    void updateWakeupView(QDate date = QDate::currentDate());
+//    void updateCheckoutView(QDate date = QDate::currentDate());
+//    void updateVacancyView(QDate date = QDate::currentDate());
+//    void updateLunchView(QDate date = QDate::currentDate());
+//    void updateWakeupView(QDate date = QDate::currentDate());
+//    void updateCheckoutModel();
 
 
     void on_bookButton_clicked();
@@ -262,8 +276,27 @@ private slots:
 
     void on_pushButton_24_clicked();
 
+    void on_btn_monthlyReport_clicked();
 
+    void on_btn_restrictedList_clicked();
 
+    void on_btn_payDelete_clicked();
+    void getTransactionFromRow(int row);
+    void on_btn_payOutstanding_clicked();
+    void handleNewPayment(int row);
+    void updateCheque(int row);
+
+    void on_actionBack_triggered();
+
+    void on_actionForward_triggered();
+
+    void addHistory(int n);
+
+    void on_pushButton_processPaymeent_clicked();
+
+    void on_lunchCheck_clicked();
+
+    void on_startDateEdit_dateChanged(const QDate &date);
 
     void on_addbedtoprogram_clicked();
 
@@ -274,6 +307,7 @@ private slots:
     void on_assignedbedslist_clicked(const QModelIndex &index);
 
 private:
+
     Ui::MainWindow *ui;
     MainWindow * mw;
     Booking * curBook;
@@ -283,6 +317,8 @@ private:
     
     bool pic_available = true;
     bool table_available = true;
+
+    QMap <QString, int> caseWorkerList;    //caseworker list
 
     QDir dir;
 

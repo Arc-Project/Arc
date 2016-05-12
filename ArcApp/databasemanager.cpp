@@ -314,14 +314,21 @@ bool DatabaseManager::searchClientList(QSqlQuery* query, QString ClientId){
     return false;
 }
 
-QSqlQuery DatabaseManager::searchClientInfo(QSqlQuery* selectquer, QString ClientId){
+QSqlQuery DatabaseManager::searchClientInfo(QString ClientId){
     QSqlQuery selectquery(db);
-    selectquery.prepare("SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId = :id");
-    selectquery.bindValue("id", ClientId);
+
+    selectquery.prepare(QString("SELECT FirstName, MiddleName, LastName, Dob, Balance, ")
+                      + QString("SinNo, GaNo, EmpId, DateRulesSigned, status, ")
+                      + QString("NokName, NokRelationship, NokLocation, NokContactNo, PhysName, ")
+                      + QString("PhysContactNo, SuppWorker1Name, SuppWorker1ContactNo, SuppWorker2Name, SuppWorker2ContactNo, ")
+                      + QString("Comments, ProfilePic ")
+                      + QString("FROM Client WHERE ClientId ="+ClientId));
+//    selectquery.prepare("SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId = :id");
+//    selectquery.bindValue("id", ClientId);
 
     selectquery.exec();
 
-    printAll(selectquery);
+  //  printAll(selectquery);
     return selectquery;
     /*
     if(!selectquery->exec())
@@ -378,9 +385,9 @@ bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage
 
     query.prepare(QString("INSERT INTO Client ")
         + QString("(FirstName, MiddleName, LastName, Dob, SinNo, GaNo, EmpId, ")
-        + QString("IsParolee, AllowComm, DateRulesSigned, NokName, NokRelationship, ")
-        + QString("NokLocation, NokContactNo, PhysName, PhysContactNo, MsdWorkerName, ")
-        + QString("MsdWorkerContactNo, Status, Comments, ProfilePic) ")
+        + QString("DateRulesSigned, NokName, NokRelationship, NokLocation, NokContactNo, ")
+        + QString("PhysName, PhysContactNo, SuppWorker1Name, SuppWorker1ContactNo, ")
+        + QString("SuppWorker2Name, SuppWorker2ContactNo, Status, Comments, ProfilePic) ")
         + QString("VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 
     for (int i = 0; i < registerFieldList->size(); ++i)
@@ -388,6 +395,7 @@ bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage
         if (registerFieldList->at(i) != NULL)
         {
             qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
+            query.addBindValue(registerFieldList->at(i));
         }
         else
         {
@@ -403,13 +411,88 @@ bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage
     }
     return false;
 }
+
+bool DatabaseManager::updateClientWithPic(QStringList* registerFieldList, QString clientId, QImage* profilePic)//QObject sth, QImage profilePic)
+{
+    QByteArray ba;
+    QBuffer buffer(&ba);
+    buffer.open(QIODevice::WriteOnly);
+    profilePic->save(&buffer, "PNG");  // writes image into ba in PNG format
+
+    QSqlQuery query(db);
+
+    query.prepare(QString("UPDATE Client ")
+        + QString("SET FirstName = ? , MiddleName = ?, LastName = ?, Dob = ?, SinNo = ?, GaNo = ?, EmpId = ?, ")
+        + QString("DateRulesSigned = ?, NokName = ?, NokRelationship = ?, NokLocation = ?, NokContactNo = ?, ")
+        + QString("PhysName = ?, PhysContactNo = ?, SuppWorker1Name = ?, SuppWorker1ContactNo = ?, ")
+        + QString("SuppWorker2Name = ?, SuppWorker2ContactNo = ?, Status = ?, Comments = ?, ProfilePic = ? ")
+        + QString("WHERE ClientId = " + clientId));
+
+    for (int i = 0; i < registerFieldList->size(); ++i)
+    {
+        if (registerFieldList->at(i) != NULL)
+        {
+            qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
+            query.addBindValue(registerFieldList->at(i));
+        }
+        else
+        {
+            query.addBindValue(QVariant(QVariant::String));
+        }
+    }
+
+    query.addBindValue(ba, QSql::In | QSql::Binary);
+
+    if (query.exec())
+    {
+        return true;
+    }
+    return false;
+}
+
 QSqlQuery DatabaseManager::getTransactions(QDate start, QDate end){
     QSqlQuery query(db);
-    QString q = "SELECT * FROM Transac WHERE Date >= '" + start.toString(Qt::ISODate) + "' AND Date <= '"
-            + end.toString(Qt::ISODate) + "'";
+    QString q = "SELECT * FROM Transac JOIN Client on Transac.ClientId = Client.ClientID WHERE Date >= '" + start.toString(Qt::ISODate) + "' AND Date <= '"
+            + end.toString(Qt::ISODate) + "'  AND Deleted = 0";
     qDebug() << q;
     query.exec(q);
     return query;
+}
+QSqlQuery DatabaseManager::getOwingClients(){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Client WHERE Balance < 0";
+    query.exec(q);
+    return query;
+}
+QSqlQuery DatabaseManager::setLunches(QDate date, int num, QString id){
+    QSqlQuery query(db);
+    QString q = "INSERT INTO Lunches Values('" + id + "','" + date.toString(Qt::ISODate) + "','" + QString::number(num) + "')";
+    qDebug() << q;
+    query.exec(q);
+    return query;
+
+}
+QSqlQuery DatabaseManager::getLunches(QDate start, QDate end, QString id){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Lunches WHERE ClientId = '" + id + "' AND LunchDate >= '" + start.toString(Qt::ISODate)
+            + "' AND LunchDate <= '" + end.toString(Qt::ISODate) + "'";
+    qDebug() << q;
+    query.exec(q);
+    return query;
+ }
+bool DatabaseManager::updateLunches(QDate date, int num, QString id){
+    QSqlQuery query(db);
+    QString q = "UPDATE Lunches SET Number ='" + QString::number(num) + "' WHERE LunchDate = '"
+            + date.toString(Qt::ISODate) + "' AND ClientId = '" + id + "'";
+    qDebug() << q;
+    return query.exec(q);
+}
+bool DatabaseManager::removeLunches(QDate date, QString id){
+    QSqlQuery query(db);
+    QString q = "DELETE FROM Lunches WHERE LunchDate = '" + date.toString(Qt::ISODate) + "' AND ClientID ='"+
+            id + "'";
+    qDebug() << q;
+    return query.exec(q);
 }
 
 void DatabaseManager::uploadProfilePicThread(QString strFilePath)
@@ -564,6 +647,32 @@ QSqlQuery DatabaseManager::getPrograms(){
     query.exec(q);
     return query;
 }
+bool DatabaseManager::removeTransaction(QString id){
+    QSqlQuery query(db);
+    QString curDate = QDate::currentDate().toString(Qt::ISODate);
+    QString q = "UPDATE Transac Set Deleted = 1, Date = '" + curDate + "' WHERE TransacId ='" + id + "'";
+    qDebug() << q;
+    if(query.exec(q))
+        return true;
+    return false;
+
+}
+bool DatabaseManager::setPaid(QString id){
+    QSqlQuery query(db);
+    QString curDate = QDate::currentDate().toString(Qt::ISODate);
+    QString q = "UPDATE Transac SET Outstanding = 0, Date = '" + curDate + "' WHERE TransacId ='" + id + "'";
+    qDebug() << q;
+    if(query.exec(q))
+        return true;
+    return false;
+}
+QSqlQuery DatabaseManager::getOutstanding(){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Transac JOIN Client on Transac.ClientId = Client.ClientId WHERE Outstanding = 1";
+    query.exec(q);
+    return query;
+}
+
 bool DatabaseManager::addPayment(QString values){
     QSqlQuery query(db);
     QString q = "INSERT INTO Transac Values( " + values + ")";

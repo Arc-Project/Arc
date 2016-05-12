@@ -9,21 +9,19 @@ payment::payment(QWidget *parent) :
     ui->setupUi(this);
 
 }
-payment::payment(QWidget *parent, transaction * trans, double balance, double cost, Client * client, Booking * book, bool paymentType ) :
+payment::payment(QWidget *parent, transaction * trans, double balance, double cost, Client * client, QString note, bool paymentType ) :
     QDialog(parent),
     ui(new Ui::payment)
 {
     ui->setupUi(this);
     transact = trans;
     hideCheque();
-    curBook = book;
     this->client = client;
     ui->chequeDate->setDate(QDate::currentDate());
     ui->balanceLabel->setText(QString::number(balance));
     ui->transactionLabel->setText(QString::number(cost));
     ui->owedLabel->setText(QString::number(cost - balance));
-    ui->plainTextEdit->insertPlainText("Booking: " + book->stringStart + " to " + book->stringEnd + " Total Cost: "
-                                       + QString::number(book->cost, 'f', 2));
+    ui->plainTextEdit->insertPlainText(note);
     if(paymentType){
         doPayment();
         ui->paymentRadio->setChecked(true);
@@ -45,22 +43,22 @@ bool payment::makePayment(){
         if(ui->paymentDrop->currentIndex() == 1){
             values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
                     + "','" + QString::number(transact->amount) + "','" + "6" + "','" + transact->type + "','" + transact->notes
-                    + "','" + transact->chequeNo + "','" + transact->MSQ + "','" + transact->issuedString + "','" + transact->transType + "'";
+                    + "','" + transact->chequeNo + "','" + transact->MSQ + "','" + transact->issuedString + "','" + transact->transType
+                    + "', 0" + ",'" + transact->outstanding + "'";
         }
         else{
         values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
                 + "','" + QString::number(transact->amount) + "','" + "6" + "','" + transact->type + "','" + transact->notes
-                + "', NULL, NULL, NULL" + ",'" + transact->transType + "'";
+                + "', NULL, NULL, NULL" + ",'" + transact->transType + "', 0" + ",'" + transact->outstanding + "'";
         }
     }
     else{
         values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
                 + "','" + QString::number(transact->amount) + "','" + "6" + "','" + transact->type + "','" + transact->notes
-                + "', NULL, NULL, NULL" + ",'" + transact->transType + "'";
+                + "', NULL, NULL, NULL" + ",'" + transact->transType + "', 0" + ",'" + transact->outstanding + "'";
 
     }
     if(dbManager->addPayment(values)){
-        curBook->paidTotal+= transact->amount;
         return true;
 
     }
@@ -85,6 +83,13 @@ bool payment::addTransaction(){
     else{
         transact->amount = amt;
     }*/
+    if(ui->payWaitMSD->isChecked()){
+
+        transact->outstanding = "1";
+    }
+    else{
+        transact->outstanding= "0";
+    }
     transact->amount = ui->paymentInput->text().toDouble();
     transact->type = ui->paymentDrop->currentText();
     transact->notes = ui->plainTextEdit->toPlainText();
@@ -113,7 +118,10 @@ void payment::on_addPaymentButton_clicked()
         return;
     double newBal;
     if(ui->paymentRadio->isChecked()){
-        newBal = client->balance + transact->amount;
+        if(ui->payWaitMSD->isChecked())
+            newBal = client->balance;
+        else
+            newBal = client->balance + transact->amount;
     }
     else{
         newBal = client->balance - transact->amount;
@@ -168,6 +176,7 @@ void payment::showCheque(){
     ui->chequeInput->show();
     ui->msqCheck->show();
     ui->chequeLabel->show();
+    ui->payWaitMSD->show();
     ui->dateLabel->show();
 }
 void payment::hideCheque(){
@@ -175,9 +184,11 @@ void payment::hideCheque(){
     ui->chequeLabel->hide();
     ui->dateLabel->hide();
     ui->chequeInput->hide();
+    ui->payWaitMSD->hide();
     ui->msqCheck->hide();
     ui->chequeInput->setText("");
     ui->msqCheck->setChecked(false);
+    ui->payWaitMSD->setChecked(false);
 }
 void payment::doPayment(){
     ui->paymentDrop->setEnabled(true);
