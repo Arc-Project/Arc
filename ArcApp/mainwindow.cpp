@@ -30,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //default signal of stackedWidget
     //detect if the widget is changed
     connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(initCurrentWidget(int)));
+    connect(dbManager, SIGNAL(dailyReportStatsChanged(QList<int>)), this, SLOT(updateDailyReportStats(QList<int>)));
     curClient = 0;
     curBook = 0;
     trans = 0;
@@ -174,10 +175,9 @@ void MainWindow::on_actionDB_Connection_triggered()
 
 void MainWindow::on_actionTest_Query_triggered()
 {
-    ui->stackedWidget->setCurrentIndex(11);
+    //ui->stackedWidget->setCurrentIndex(11);
+    qDebug() << "test";
 }
-
-
 
 void MainWindow::on_actionFile_Upload_triggered()
 {
@@ -2586,14 +2586,14 @@ void MainWindow::updateReportTables(QDate date)
     wakeupReport->updateModel(date);
 }
 
-void MainWindow::on_reportsDateSelectorGo_Btn_clicked()
+void MainWindow::on_reportsDateSelectorGo_btn_clicked()
 {
     QDate date = ui->reports_dateEdit->date();
     updateReportTables(date);
     ui->lbl_shiftReportDateVal_2->setText(date.toString("yyyy-MM-dd"));
 }
 
-void MainWindow::on_reportsSetCurrentDate_Btn_clicked()
+void MainWindow::on_reportsSetCurrentDate_btn_clicked()
 {
     ui->lbl_shiftReportDateVal_2->setText(QDate::currentDate().toString("yyyy-MM-dd"));
 }
@@ -2606,11 +2606,10 @@ void MainWindow::getDailyReportStats(QDate date)
 
 void MainWindow::updateDailyReportStats(QList<int> list)
 {
-    qDebug() << "updateDailyReportStats slot";
-    foreach(int val, list)
-    {
-        qDebug() << val;
-    }
+    ui->lbl_espCheckouts->setText(QString::number(list.at(0)));
+    ui->lbl_totalCheckouts->setText(QString::number(list.at(1)));
+    ui->lbl_espVacancies->setText(QString::number(list.at(2)));
+    ui->lbl_totalVacancies->setText(QString::number(list.at(3)));
 }
 /*==============================================================================
 REPORTS (END)

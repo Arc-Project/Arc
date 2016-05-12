@@ -106,8 +106,8 @@ private slots:
     /*==========================================================================
     REPORTS -slots
     ==========================================================================*/
-    void on_reportsDateSelectorGo_Btn_clicked();
-    void on_reportsSetCurrentDate_Btn_clicked();
+    void on_reportsDateSelectorGo_btn_clicked();
+    void on_reportsSetCurrentDate_btn_clicked();
 
     
     
