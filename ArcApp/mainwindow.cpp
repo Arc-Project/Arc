@@ -2584,18 +2584,20 @@ void MainWindow::updateReportTables(QDate date)
     vacancyReport->updateModel(date);
     lunchReport->updateModel(date);
     wakeupReport->updateModel(date);
+    ui->lbl_shiftReportDateVal_2->setText(date.toString("yyyy-MM-dd"));
+    ui->reports_dateEdit->setDate(date);
 }
 
 void MainWindow::on_reportsDateSelectorGo_btn_clicked()
 {
     QDate date = ui->reports_dateEdit->date();
-    updateReportTables(date);
-    ui->lbl_shiftReportDateVal_2->setText(date.toString("yyyy-MM-dd"));
+    MainWindow::updateReportTables(date);
+    MainWindow::getDailyReportStats(date);
 }
 
 void MainWindow::on_reportsSetCurrentDate_btn_clicked()
 {
-    ui->lbl_shiftReportDateVal_2->setText(QDate::currentDate().toString("yyyy-MM-dd"));
+    ui->reports_dateEdit->setDate(QDate::currentDate());
 }
 
 void MainWindow::getDailyReportStats(QDate date)
