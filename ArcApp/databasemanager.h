@@ -85,6 +85,8 @@ public:
     bool updateBalance(double d, QString id);
     QSqlQuery AddProgram(QString pcode, QString pdesc);
     QSqlQuery updateProgram(QString pcode, QString pdesc);
+    QSqlQuery getAvailableBeds(QString pcode);
+    QSqlQuery getAssignedBeds(QString pcode);
     bool removeTransaction(QString id);
     bool setPaid(QString id);
     QSqlQuery getOutstanding();

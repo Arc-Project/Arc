@@ -33,6 +33,7 @@
 #include "client.h"
 #include "shared.h"
 #include "casefile.h"
+#include "Utility.h"
 #include "mymodel.h"
 #include "report.h"
 #include "mycalendar.h"
@@ -302,6 +303,15 @@ private slots:
     void on_startDateEdit_dateChanged(const QDate &date);
 
     void on_btn_pcpRelaSave_clicked();
+
+    void on_addbedtoprogram_clicked();
+
+    void on_removebedfromprogram_clicked();
+
+    void on_availablebedslist_clicked(const QModelIndex &index);
+
+    void on_assignedbedslist_clicked(const QModelIndex &index);
+
 
 private:
 
