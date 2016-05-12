@@ -111,7 +111,7 @@ QWidget#wdg_transTotal {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>11</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="mainMenu">
      <layout class="QGridLayout" name="gridLayout_5">
@@ -496,7 +496,7 @@ QWidget#wdg_transTotal {
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_5">
+           <widget class="QPushButton" name="pushButton_processPaymeent">
             <property name="minimumSize">
              <size>
               <width>150</width>
@@ -4071,7 +4071,7 @@ QWidget#wdg_transTotal {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>989</width>
+               <width>421</width>
                <height>2305</height>
               </rect>
              </property>
@@ -6417,8 +6417,6 @@ QWidget#wdg_transTotal {
        </widget>
       </item>
      </layout>
-     <zorder>widget</zorder>
-     <zorder></zorder>
     </widget>
     <widget class="QWidget" name="page">
      <layout class="QGridLayout" name="gridLayout_11">
@@ -6720,7 +6718,7 @@ QWidget#wdg_transTotal {
                   </font>
                  </property>
                  <property name="currentIndex">
-                  <number>3</number>
+                  <number>0</number>
                  </property>
                  <widget class="QWidget" name="tab_4">
                   <attribute name="title">
@@ -10060,6 +10058,9 @@ QWidget#wdg_transTotal {
    </property>
   </action>
   <action name="actionForward">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Forward</string>
    </property>
