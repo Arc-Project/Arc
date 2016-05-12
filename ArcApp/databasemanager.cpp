@@ -904,7 +904,7 @@ QSqlQuery DatabaseManager::getAvailableBeds(QString pcode) {
                "INNER JOIN Building b ON f.BuildingId = b.BuildingId "
                "WHERE s.ProgramCodes NOT LIKE '%" + pcode + "%'");
 
-    //qDebug() << ":" + pcode+ ":";
+    // qDebug() << ":" + pcode+ ":";
 
     return query;
 }
@@ -920,6 +920,19 @@ QSqlQuery DatabaseManager::getAssignedBeds(QString pcode) {
     return query;
 }
 
+QSqlQuery DatabaseManager::searchSingleBed(QString buildingno, QString floorno, QString roomno, QString spaceno) {
+    QSqlQuery query(db);
+
+    query.exec("SELECT b.BuildingNo, f.FloorNo, r.RoomNo, s.SpaceId, s.SpaceNo, s.type, s.cost, s.Monthly, s.ProgramCodes "
+               "FROM Space s INNER JOIN Room r ON s.RoomId = r.RoomId INNER JOIN Floor f ON r.FloorId = f.FloorId "
+               "INNER JOIN Building b ON f.BuildingId = b.BuildingId "
+               "WHERE b.BuildingNo =" + buildingno + " "
+               "AND f.FloorNo =" + floorno + " "
+               "AND r.RoomNo =" + roomno + " "
+               "AND s.SpaceNo =" + spaceno);
+
+    return query;
+}
 
 QSqlQuery DatabaseManager::updateProgram(QString pcode, QString pdesc) {
     QSqlQuery query(db);
@@ -929,6 +942,13 @@ QSqlQuery DatabaseManager::updateProgram(QString pcode, QString pdesc) {
     return query;
 }
 
+
+QSqlQuery DatabaseManager::updateSpaceProgram(QString spaceid, QString program) {
+    QSqlQuery query(db);
+
+    query.exec("UPDATE Space SET ProgramCodes='" + program + "' WHERE SpaceId=" + spaceid);
+
+}
 QSqlQuery DatabaseManager::addPcp(int clientId, QString type, QString goal, QString strategy, QString date) {
     QSqlQuery query(db);
 
