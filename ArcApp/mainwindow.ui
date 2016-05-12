@@ -111,7 +111,7 @@ QWidget#wdg_transTotal {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>7</number>
     </property>
     <widget class="QWidget" name="mainMenu">
      <layout class="QGridLayout" name="gridLayout_5">
@@ -3677,7 +3677,7 @@ QWidget#wdg_transTotal {
           </widget>
          </item>
          <item row="4" column="0" colspan="2">
-          <widget class="QListView" name="listView">
+          <widget class="QListView" name="availablebedslist">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -3689,6 +3689,9 @@ QWidget#wdg_transTotal {
              <width>275</width>
              <height>0</height>
             </size>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
            </property>
           </widget>
          </item>
@@ -3707,7 +3710,7 @@ QWidget#wdg_transTotal {
          <item row="4" column="2">
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
-            <widget class="QPushButton" name="pushButton_16">
+            <widget class="QPushButton" name="addbedtoprogram">
              <property name="minimumSize">
               <size>
                <width>80</width>
@@ -3720,7 +3723,7 @@ QWidget#wdg_transTotal {
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_17">
+            <widget class="QPushButton" name="removebedfromprogram">
              <property name="minimumSize">
               <size>
                <width>80</width>
@@ -3751,7 +3754,7 @@ QWidget#wdg_transTotal {
           </widget>
          </item>
          <item row="4" column="3">
-          <widget class="QListView" name="listView_2">
+          <widget class="QListView" name="assignedbedslist">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -3763,6 +3766,9 @@ QWidget#wdg_transTotal {
              <width>275</width>
              <height>0</height>
             </size>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
            </property>
           </widget>
          </item>

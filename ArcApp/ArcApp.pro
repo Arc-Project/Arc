@@ -24,6 +24,7 @@ SOURCES += main.cpp\
     transaction.cpp \
     payment.cpp \
     client.cpp \
+    Utility.cpp \
     mymodel.cpp \
     report.cpp \
     mycalendar.cpp
@@ -39,6 +40,8 @@ HEADERS  += mainwindow.h \
     transaction.h \
     payment.h \
     client.h \
+    casefile.h \
+    Utility.h \
     mymodel.h \
     casefile.h \
     report.h \

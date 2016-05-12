@@ -2046,7 +2046,7 @@ void MainWindow::on_pushButton_25_clicked()
     return;
 }
 
-// program clicked + selected
+// program clicked + selected HANK
 void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
 {
     // populate the fields on the right
@@ -2055,6 +2055,53 @@ void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
 
     ui->le_userName_2->setText(pcode);
     ui->textEdit->setText(description);
+
+    // populate the beds list
+    QSqlQuery availSpaces = dbManager->getAvailableBeds(pcode);
+    int numrowsavail = availSpaces.numRowsAffected();
+
+    QStandardItemModel* availmodel = new QStandardItemModel();
+
+    while (availSpaces.next()) {
+        QString buildingNo = availSpaces.value(0).toString();
+        QString floorNo = availSpaces.value(1).toString();
+        QString roomNo = availSpaces.value(2).toString();
+        QString spaceNo = availSpaces.value(4).toString();
+        QString type = availSpaces.value(5).toString();
+
+        //1-319-3
+        QString roomCode = buildingNo + "-" + floorNo + "-" + roomNo + "-" + spaceNo + type[0];
+
+        // QStandardItem* Items = new QStandardItem(availSpaces.value(1).toString());
+        QStandardItem* Items = new QStandardItem(roomCode);
+        availmodel->appendRow(Items);
+    }
+
+    ui->availablebedslist->setModel(availmodel);
+
+    QSqlQuery assignedspaces = dbManager->getAssignedBeds(pcode);
+    int numrowsassigned = assignedspaces.numRowsAffected();
+
+    QStandardItemModel* assignedmodel = new QStandardItemModel();
+
+    while (assignedspaces.next()) {
+        QString buildingNo = assignedspaces.value(0).toString();
+        QString floorNo = assignedspaces.value(1).toString();
+        QString roomNo = assignedspaces.value(2).toString();
+        QString spaceNo = assignedspaces.value(4).toString();
+        QString type = assignedspaces.value(5).toString();
+
+        //1-319-3
+        QString roomCode = buildingNo + "-" + floorNo + "-" + roomNo + "-" + spaceNo + type[0];
+
+        // QStandardItem* Items = new QStandardItem(availSpaces.value(1).toString());
+        QStandardItem* Items = new QStandardItem(roomCode);
+        assignedmodel->appendRow(Items);
+    }
+
+    ui->assignedbedslist->setModel(assignedmodel);
+
+
 }
 
 // set case files directory
@@ -2297,6 +2344,78 @@ void MainWindow::on_btn_pcpKey_clicked()
     ui->tw_pcpPpl->setMinimumHeight(ui->tw_pcpPpl->minimumHeight()+35);
 }
 
+void MainWindow::on_addbedtoprogram_clicked()
+{
+    // add program tag to bed
+    QString pcode = ui->le_userName_2->text();
+
+    // get current tag
+    // parse space code to check building number + floor number + room number + space number
+    // and obtain space id
+
+    // append to tag
+
+    // update tag value
+}
+
+void MainWindow::on_removebedfromprogram_clicked()
+{
+    // remove program tag from bed
+    QString pcode = ui->le_userName_2->text();
+
+    // get current tag
+    // populate the fields on the right
+
+//    QString pcode = ui->tableWidget_2->model()->data(ui->tableWidget_2->model()->index(index.row(), 0)).toString();
+//    QString description = ui->tableWidget_2->model()->data(ui->tableWidget_2->model()->index(index.row(), 1)).toString();
+
+//    ui->le_userName_2->setText(pcode);
+//    ui->textEdit->setText(description);
+
+//    // populate the beds list
+//    QSqlQuery availSpaces = dbManager->getAvailableBeds(pcode);
+//    int numrowsavail = availSpaces.numRowsAffected();
+
+//    QStandardItemModel* availmodel = new QStandardItemModel();
+
+//    while (availSpaces.next()) {
+//        QString buildingNo = availSpaces.value(0).toString();
+//        QString floorNo = availSpaces.value(1).toString();
+//        QString roomNo = availSpaces.value(2).toString();
+//        QString spaceNo = availSpaces.value(4).toString();
+//        QString type = availSpaces.value(5).toString();
+
+//        //1-319-3
+//        QString roomCode = buildingNo + "-" + floorNo + "-" + roomNo + "-" + spaceNo + type[0];
+
+//        // QStandardItem* Items = new QStandardItem(availSpaces.value(1).toString());
+//        QStandardItem* Items = new QStandardItem(roomCode);
+//        availmodel->appendRow(Items);
+//    }
+
+//    ui->availablebedslist->setModel(availmodel);
+    // parse space code to check building number + floor number + room number + space number
+    // and obtain space id
+
+    // split current tag
+
+    // remove from the list the tag we are removing
+
+    // re-add tags
+
+    // update tag value
+}
+
+void MainWindow::on_availablebedslist_clicked(const QModelIndex &index)
+{
+    // clicked available bed
+}
+
+void MainWindow::on_assignedbedslist_clicked(const QModelIndex &index)
+{
+    // clicked assigned bed
+}
+
 void MainWindow::on_btn_monthlyReport_clicked()
 {
     ui->swdg_reports->setCurrentIndex(MONTHLYREPORT);
@@ -2331,6 +2450,7 @@ void MainWindow::on_btn_payDelete_clicked()
         handleNewPayment(index);
     }
 }
+
 void MainWindow::handleNewPayment(int row){
     curClient = new Client();
     trans = new transaction();
@@ -2342,9 +2462,6 @@ void MainWindow::handleNewPayment(int row){
     payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true);
     pay->exec();
     ui->mpTable->removeRow(row);
-
-
-
 }
 
 void MainWindow::updateCheque(int row){
