@@ -9,6 +9,8 @@
 //MyModel* checkoutModel;
 Report *checkoutReport, *vacancyReport, *lunchReport, *wakeupReport;
 bool firstTime = true;
+QStack<int> backStack;
+QStack<int> forwardStack;
 
 QFuture<void> displayPicFuture;
 std::vector<QTableWidget*> pcp_tables;
@@ -112,6 +114,8 @@ void MainWindow::initCurrentWidget(int idx){
 void MainWindow::on_bookButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
+    addHistory(MAINMENU);
+    qDebug() << "pushed page " << MAINMENU;
     ui->startDateEdit->setDate(QDate::currentDate());
     ui->endDateEdit->setDate(QDate::currentDate().addDays(1));
     if(firstTime){
@@ -127,28 +131,37 @@ void MainWindow::on_bookButton_clicked()
 void MainWindow::on_clientButton_clicked()
 {
      ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
+     addHistory(MAINMENU);
+     qDebug() << "pushed page " << MAINMENU;
 }
 
 void MainWindow::on_paymentButton_clicked()
 {
      ui->stackedWidget->setCurrentIndex(PAYMENTPAGE);
+     addHistory(MAINMENU);
+     qDebug() << "pushed page " << MAINMENU;
 }
 
 void MainWindow::on_editbookButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(EDITBOOKING);
-
+    addHistory(MAINMENU);
+    qDebug() << "pushed page " << MAINMENU;
 }
 
 void MainWindow::on_caseButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
+    addHistory(MAINMENU);
+    qDebug() << "pushed page " << MAINMENU;
 
 }
 
 void MainWindow::on_adminButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(ADMINPAGE);
+    addHistory(MAINMENU);
+    qDebug() << "pushed page " << MAINMENU;
 
 }
 
@@ -508,17 +521,22 @@ void MainWindow::getProgramCodes(){
 void MainWindow::on_EditUserButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(EDITUSERS);
+    addHistory(ADMINPAGE);
+    qDebug() << "pushed page " << ADMINPAGE;
 
 }
 
 void MainWindow::on_EditProgramButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(EDITPROGRAM);
+    addHistory(ADMINPAGE);
+    qDebug() << "pushed page " << ADMINPAGE;
 
 }
 
 void MainWindow::on_actionMain_Menu_triggered()
 {
+    addHistory(ui->stackedWidget->currentIndex());
     ui->stackedWidget->setCurrentIndex(MAINMENU);
 }
 
@@ -607,8 +625,9 @@ void MainWindow::on_monthCheck_stateChanged(int arg1)
 
 void MainWindow::on_pushButton_RegisterClient_clicked()
 {
+    addHistory(CLIENTLOOKUP);
     curClientID = "";
-    ui->stackedWidget->setCurrentIndex(10);
+    ui->stackedWidget->setCurrentIndex(CLIENTREGISTER);
     ui->label_cl_infoedit_title->setText("Register Client");
     ui->button_register_client->setText("Register");
     ui->dateEdit_cl_rulesign->setDate(QDate::currentDate());
@@ -617,7 +636,8 @@ void MainWindow::on_pushButton_RegisterClient_clicked()
 
 void MainWindow::on_pushButton_editClientInfo_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(10);
+    addHistory(CLIENTLOOKUP);
+    ui->stackedWidget->setCurrentIndex(CLIENTREGISTER);
     ui->label_cl_infoedit_title->setText("Edit Client Information");
     ui->button_register_client->setText("Edit");
     int nRow = ui->tableWidget_search_client->currentRow();
@@ -628,7 +648,7 @@ void MainWindow::on_pushButton_editClientInfo_clicked()
 void MainWindow::on_button_cancel_client_register_clicked()
 {
     clear_client_register_form();
-    ui->stackedWidget->setCurrentIndex(0);
+    ui->stackedWidget->setCurrentIndex(MAINMENU);
 }
 
 void MainWindow::on_reportsButton_clicked()
@@ -638,6 +658,8 @@ void MainWindow::on_reportsButton_clicked()
 //    MainWindow::updateLunchView();
 //    MainWindow::updateWakeupView();
     ui->stackedWidget->setCurrentIndex(11);
+    addHistory(MAINMENU);
+    qDebug() << "pushed page " << MAINMENU;
 }
 
 /*===================================================================
@@ -1407,6 +1429,7 @@ void MainWindow::on_tableWidget_3_doubleClicked(const QModelIndex &index)
 
 void MainWindow::on_pushButton_CaseFiles_clicked()
 {
+    addHistory(CLIENTLOOKUP);
     ui->stackedWidget->setCurrentIndex(CASEFILE);
 
     double width = ui->tw_pcpRela->size().width();
@@ -1422,6 +1445,8 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
 void MainWindow::on_EditRoomsButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(EDITROOM);
+    addHistory(ADMINPAGE);
+    qDebug() << "pushed page " << ADMINPAGE;
 }
 
 void MainWindow::on_editUpdate_clicked()
@@ -1608,6 +1633,7 @@ void MainWindow::on_editRoom_clicked()
 
 void MainWindow::on_pushButton_bookRoom_clicked()
 {
+    addHistory(CLIENTLOOKUP);
     curClient = new Client();
     int nRow = ui->tableWidget_search_client->currentRow();
     if (nRow <0)
@@ -2345,4 +2371,37 @@ void MainWindow::on_btn_payOutstanding_clicked()
     populateATable(ui->mpTable, headers, cols, result, false);
     ui->mpTable->setColumnHidden(6, true);
     ui->mpTable->setColumnHidden(5, true);
+}
+
+void MainWindow::on_actionBack_triggered()
+{
+    if (!backStack.isEmpty()){
+        int page = backStack.pop();
+        forwardStack.push(ui->stackedWidget->currentIndex());
+        ui->stackedWidget->setCurrentIndex(page);
+        ui->actionForward->setEnabled(true);
+    }
+}
+
+void MainWindow::on_actionForward_triggered()
+{
+    if (!forwardStack.isEmpty()) {
+        int page = forwardStack.pop();
+        backStack.push(ui->stackedWidget->currentIndex());
+        ui->stackedWidget->setCurrentIndex(page);
+
+    }
+}
+
+void MainWindow::addHistory(int n){
+    backStack.push(n);
+    forwardStack.clear();
+    ui->actionForward->setEnabled(false);
+}
+
+
+
+void MainWindow::on_pushButton_processPaymeent_clicked()
+{
+    addHistory(CLIENTLOOKUP);
 }

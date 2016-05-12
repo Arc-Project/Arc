@@ -285,6 +285,14 @@ private slots:
 
 
 
+    void on_actionBack_triggered();
+
+    void on_actionForward_triggered();
+
+    void addHistory(int n);
+
+    void on_pushButton_processPaymeent_clicked();
+
 private:
 
     Ui::MainWindow *ui;
