@@ -17,13 +17,14 @@ class Report
 {
 public:
     Report(QObject *parent, QTableView* tableView, int type);
-    updateModel(QDate date);
+    void updateModel(QDate date);
     
 private:
     MyModel model;
     int reportType;
-    updateModelThread(QDate date);
-    setData(QSqlQuery* query);
+    void updateModelThread(QDate date);
+    void setData(QSqlQuery* query);
+    void setTitle();
 };
     
 #endif // REPORT_H
