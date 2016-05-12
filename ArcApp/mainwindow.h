@@ -1,26 +1,27 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#define MAINMENU 0
-#define CLIENTLOOKUP 1
-#define BOOKINGLOOKUP 2
-#define BOOKINGPAGE 3
-#define PAYMENTPAGE 4
-#define ADMINPAGE 5
-#define EDITUSERS 6
-#define EDITPROGRAM 7
-#define CASEFILE 8
-#define EDITBOOKING 9
-#define CLIENTREGISTER 10
-#define EDITROOM 12
-#define CONFIRMBOOKING 13
-#define EDITPAGE 14
-#define DAILYREPORT 0
-#define SHIFTREPORT 1
-#define DAILYLOG 2
-#define FLOATCOUNT 3
-#define MONTHLYREPORT 4
-#define RESTRICTIONS 5
+#define MAINMENU            0
+#define CLIENTLOOKUP        1
+#define BOOKINGLOOKUP       2
+#define BOOKINGPAGE         3
+#define PAYMENTPAGE         4
+#define ADMINPAGE           5
+#define EDITUSERS           6
+#define EDITPROGRAM         7
+#define CASEFILE            8
+#define EDITBOOKING         9
+#define CLIENTREGISTER      10
+#define REPORTS             11
+#define EDITROOM            12
+#define CONFIRMBOOKING      13
+#define EDITPAGE            14
+#define DAILYREPORT         0
+#define SHIFTREPORT         1
+#define DAILYLOG            2
+#define FLOATCOUNT          3
+#define MONTHLYREPORT       4
+#define RESTRICTIONS        5
 #include <QMainWindow>
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
@@ -63,18 +64,18 @@ public:
     QImage profilePic;
     void popEditPage();
 
+    /*==========================================================================
+    DEV TESTING AUXILIARY FUNCTIONS
+    ==========================================================================*/
+    QString browse();
+
 
 signals:
     void displayPic(QByteArray a);
 
 private slots:
-
-    void displayPicThread();
-
-    void initCurrentWidget(int idx);
-    void resizeEvent(QResizeEvent *event);
     /*==========================================================================
-    DEV TESTING BUTTONS
+    DEV TESTING - slots
     ==========================================================================*/
     void on_actionDB_Connection_triggered();
     void on_actionTest_Query_triggered();
@@ -83,33 +84,34 @@ private slots:
     void on_actionPrint_Db_Connections_triggered();
     void on_actionUpload_Display_Picture_triggered();
     void on_actionDownload_Profile_Picture_triggered();
+    void displayPicThread();
+    void updateDailyReportStats(QList<int> list);
 
     /*==========================================================================
-    DEV TESTING AUXILIARY FUNCTIONS
+    DETECT WIDGET CHANGING SIGNAL
     ==========================================================================*/
-    QString browse();
+    void initCurrentWidget(int idx);
 
     /*==========================================================================
-    REPORT FUNCTIONS
+    DASHBOARD - slots
     ==========================================================================*/
-//    void updateCheckoutView(QDate date = QDate::currentDate());
-//    void updateVacancyView(QDate date = QDate::currentDate());
-//    void updateLunchView(QDate date = QDate::currentDate());
-//    void updateWakeupView(QDate date = QDate::currentDate());
-//    void updateCheckoutModel();
-
-
     void on_bookButton_clicked();
-
     void on_clientButton_clicked();
-
     void on_paymentButton_clicked();
-
-    void on_editbookButton_clicked();
-
-    void on_caseButton_clicked();
-
     void on_adminButton_clicked();
+    void on_editbookButton_clicked();
+    void on_reportsButton_clicked();
+    void on_caseButton_clicked();
+    
+    /*==========================================================================
+    REPORTS -slots
+    ==========================================================================*/
+    void on_reportsDateSelectorGo_btn_clicked();
+    void on_reportsSetCurrentDate_btn_clicked();
+
+    
+    
+    void resizeEvent(QResizeEvent *event);
 
     void on_bookingSearchButton_clicked();
 
@@ -129,7 +131,7 @@ private slots:
 
     void on_button_cancel_client_register_clicked();
 
-    void on_reportsButton_clicked();
+    
 
     void on_pushButton_search_client_clicked();
 
@@ -272,6 +274,10 @@ private slots:
 
     void on_btn_pcpKey_clicked();
 
+    void populatePcp();
+
+    void insertPcp(QTableWidget *tw, QString type);
+
     void on_btn_createNewUser_2_clicked();
 
     void on_pushButton_24_clicked();
@@ -286,6 +292,28 @@ private slots:
     void handleNewPayment(int row);
     void updateCheque(int row);
 
+//    void on_actionBack_triggered();
+
+//    void on_actionForward_triggered();
+
+//    void addHistory(int n);
+
+//    void on_pushButton_processPaymeent_clicked();
+
+//    void on_lunchCheck_clicked();
+
+//    void on_startDateEdit_dateChanged(const QDate &date);
+
+    void on_btn_pcpRelaSave_clicked();
+
+    void on_addbedtoprogram_clicked();
+
+    void on_removebedfromprogram_clicked();
+
+    void on_availablebedslist_clicked(const QModelIndex &index);
+
+    void on_assignedbedslist_clicked(const QModelIndex &index);
+
     void on_actionBack_triggered();
 
     void on_actionForward_triggered();
@@ -297,14 +325,6 @@ private slots:
     void on_lunchCheck_clicked();
 
     void on_startDateEdit_dateChanged(const QDate &date);
-
-    void on_addbedtoprogram_clicked();
-
-    void on_removebedfromprogram_clicked();
-
-    void on_availablebedslist_clicked(const QModelIndex &index);
-
-    void on_assignedbedslist_clicked(const QModelIndex &index);
 
 private:
 
@@ -321,6 +341,10 @@ private:
     QMap <QString, int> caseWorkerList;    //caseworker list
 
     QDir dir;
+    
+    void setupReportsScreen();
+    void updateReportTables(QDate date = QDate::currentDate());
+    void getDailyReportStats(QDate date = QDate::currentDate());
 
     QModelIndex lastprogramclicked = QModelIndex();
     QModelIndex assignedBedIndex;
