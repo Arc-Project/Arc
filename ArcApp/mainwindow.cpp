@@ -18,6 +18,8 @@ QFuture<void> displayPicFuture;
 QVector<QTableWidget*> pcp_tables;
 QVector<QString> pcpTypes;
 bool loaded = false;
+QString idDisplayed;
+
 
 //QSqlQuery resultssss;
 MainWindow::MainWindow(QWidget *parent) :
@@ -1452,38 +1454,48 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
     }
 
     //get client id
-//    int nRow = ui->tableWidget_search_client->currentRow();
-//    if (nRow <0)
-//        return;
-//    curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
-    if (!loaded) {
-        loaded = true;
+    int nRow = ui->tableWidget_search_client->currentRow();
+    if (nRow <0)
+        return;
+    curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
+    qDebug() << "id displayed:" << idDisplayed;
+    qDebug() << "id selected:" << curClientID;
+    if (idDisplayed != curClientID) {
+        idDisplayed = curClientID;
         populatePcp();
     }
 
 }
 
 void MainWindow::populatePcp() {
+    //reset tables
+    for (auto x: pcp_tables) {
+        x->clearContents();
+        x->resizeRowsToContents();
 
+        x->setRowCount(1);
+    }
 
 //    QSqlQuery result = dbManager->execQuery("SELECT ProgramCode, Description FROM Program");
     int tableIdx = 0;
     for (auto x: pcpTypes) {
         QString query = "SELECT rowId, Goal, Strategy, Date "
                         "FROM Pcp "
-                        "WHERE ClientId = 2 "
+                        "WHERE ClientId = " + curClientID +
                         " AND Type = '" + x + "'";
         QSqlQuery result = dbManager->execQuery(query);
         qDebug() << result.lastError();
         int numRows = result.numRowsAffected();
         auto table = (pcp_tables.at(tableIdx++));
 
-        //set height of table
-        table->setMinimumHeight(table->minimumHeight() + (35 * numRows));
+
 
         //set number of rows
         for (int i = 0; i < numRows-1; i++) {
             table->insertRow(0);
+
+            //set height of table
+            table->setMinimumHeight(table->minimumHeight() + 35);
         }
 
         //populate table
@@ -2840,7 +2852,6 @@ void MainWindow::on_startDateEdit_dateChanged(const QDate &date)
 }
 
 void MainWindow::insertPcp(QTableWidget *tw, QString type){
-    int client = 2;
     QString goal;
     QString strategy;
     QString date;
@@ -2859,7 +2870,7 @@ void MainWindow::insertPcp(QTableWidget *tw, QString type){
 
               }
         }
-        QSqlQuery result = dbManager->addPcp(i, client, type, goal, strategy, date);
+        QSqlQuery result = dbManager->addPcp(i, curClientID, type, goal, strategy, date);
         qDebug() << result.lastError();
     }
 
@@ -2926,11 +2937,5 @@ void MainWindow::on_btn_pcpKeySave_clicked()
 
 void MainWindow::on_actionPcptables_triggered()
 {
-    int tableIdx = 0;
-    initPcp();
-    for (int i = 0; i < pcp_tables.size(); i++) {
-        auto table = (pcp_tables.at(tableIdx++));
-        qDebug() << table->height();
-    }
-//    qDebug() << pcp_tables.size();
+
 }

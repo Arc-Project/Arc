@@ -949,11 +949,21 @@ QSqlQuery DatabaseManager::updateSpaceProgram(QString spaceid, QString program) 
 
 }
 
-QSqlQuery DatabaseManager::addPcp(int rowId, int clientId, QString type, QString goal, QString strategy, QString date) {
+QSqlQuery DatabaseManager::addPcp(int rowId, QString clientId, QString type, QString goal, QString strategy, QString date) {
     QSqlQuery query(db);
 
-    query.exec("INSERT INTO Pcp (rowId, clientId, Type, Goal, Strategy, Date) VALUES(" + QString::number(rowId) + ", " + QString::number(clientId) + ", '"
-               + type + "', '" + goal + "', '" + strategy + "', '" + date + "')");
+//    query.exec("INSERT INTO Pcp (rowId, clientId, Type, Goal, Strategy, Date) VALUES(" + QString::number(rowId) + ", " + clientId + ", '"
+//               + type + "', '" + goal + "', '" + strategy + "', '" + date + "')");
+
+    query.prepare("INSERT INTO Pcp (rowId, clientId, Type, Goal, Strategy, Date) "
+                  "VALUES (?, ?, ?, ?, ? ,?)");
+    query.addBindValue(QString::number(rowId));
+    query.addBindValue(clientId);
+    query.addBindValue(type);
+    query.addBindValue(goal);
+    query.addBindValue(strategy);
+    query.addBindValue(date);
+    query.exec();
 
     return query;
 }

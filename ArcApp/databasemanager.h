@@ -108,7 +108,7 @@ public:
     QSqlQuery getLunches(QDate start, QDate end, QString id);
     bool updateLunches(QDate date, int num, QString id);
     bool removeLunches(QDate date, QString id);
-    QSqlQuery addPcp(int rowid, int clientId, QString type, QString goal, QString strategy, QString date);
+    QSqlQuery addPcp(int rowid, QString clientId, QString type, QString goal, QString strategy, QString date);
 
 signals:
     void dailyReportStatsChanged(QList<int> list);
