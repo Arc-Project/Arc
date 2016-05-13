@@ -70,14 +70,24 @@ void MainWindow::initCurrentWidget(int idx){
 
             break;
         case BOOKINGLOOKUP: //WIDGET 2
-            bookingSetup();
+
+            ui->startDateEdit->setDate(QDate::currentDate());
+            ui->endDateEdit->setDate(QDate::currentDate().addDays(1));
+            if(firstTime){
+                firstTime = false;
+                getProgramCodes();
+                bookingSetup();
+
+            }
             //initcode
+            /*
             qDebug()<<"Client INFO";
             if(curClient != NULL){
                 qDebug()<<"ID: " << curClientID << curClient->clientId;
                 qDebug()<<"NAME: " << curClient->fullName;
                 qDebug()<<"Balance: " << curClient->balance;
             }
+            */
             break;
         case BOOKINGPAGE: //WIDGET 3
             //initcode
@@ -1516,7 +1526,9 @@ void MainWindow::on_pushButton_search_client_clicked()
 {
     qDebug() <<"START SEARCH CLIENT";
     QString clientName = ui->lineEdit_search_clientName->text();
-    QString searchQuery = "SELECT ClientId, FirstName, LastName, Dob, Balance FROM Client WHERE LastName LIKE '%"+clientName+"%' OR FirstName Like '%"+clientName+"%'";
+    QString searchQuery = "SELECT ClientId, FirstName, LastName, Dob, Balance FROM Client WHERE LastName LIKE '%"+clientName
+                        + "%' OR MiddleName Like '%"+ clientName
+                        + "%' OR FirstName Like '%"+clientName+"%'";
     QSqlQuery results = dbManager->execQuery(searchQuery);
     setup_searchClientTable(results);
 
@@ -1566,13 +1578,15 @@ void MainWindow::selected_client_info(int nRow, int nCol)
 
     if(!pic_available || !table_available)
         return;
-    if(displayFuture.isRunning()){
+    if(displayFuture.isRunning()|| !displayFuture.isFinished()){
         qDebug()<<"ProfilePic Is RUNNING";
-        displayFuture.cancel();
+        return;
+        //displayFuture.cancel();
     }
-    if(displayPicFuture.isRunning()){
+    if(displayPicFuture.isRunning() || !displayPicFuture.isFinished()){
         qDebug()<<"ProfilePic Is RUNNING";
-        displayPicFuture.cancel();
+         return;
+       // displayPicFuture.cancel();
     }
     curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
 
