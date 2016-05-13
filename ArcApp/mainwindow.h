@@ -16,6 +16,7 @@
 #define EDITROOM            12
 #define CONFIRMBOOKING      13
 #define EDITPAGE            14
+#define EDITSHIFT           15
 #define DAILYREPORT         0
 #define SHIFTREPORT         1
 #define DAILYLOG            2
@@ -224,7 +225,7 @@ private slots:
 
     void on_EditRoomsButton_clicked();
 
-
+    void on_EditShiftsButton_clicked();
 
 
     void on_editRoom_clicked();
@@ -290,7 +291,7 @@ private slots:
 
     void on_btn_pcpKey_clicked();
 
-    void populatePcp();
+    void populateCaseFiles(QString type = "all", int tableId = -1);
 
     void insertPcp(QTableWidget *tw, QString type);
 
@@ -359,10 +360,45 @@ private slots:
 
     void on_actionPcptables_triggered();
 
+    void on_btn_pcpRelaUndo_clicked();
 
+    void on_btn_pcpEduUndo_clicked();
 
+    void on_btn_pcpSubUndo_clicked();
+
+    void on_btn_pcpAccoUndo_clicked();
+
+    void on_btn_pcpLifeUndo_clicked();
+
+    void on_btn_pcpMentUndo_clicked();
+
+    void on_btn_pcpPhyUndo_2_clicked();
+
+    void on_btn_pcpLegUndo_clicked();
+
+    void on_btn_pcpActUndo_clicked();
+
+    void on_btn_pcpTradUndo_clicked();
+
+    void on_btn_pcpOtherUndo_clicked();
+
+    void on_btn_pcpPplUndo_clicked();
+
+    void on_btn_notesSave_clicked();
+
+    void on_btn_notesUndo_clicked();
 
     void on_btn_searchUsers_3_clicked();
+
+
+
+    void on_btn_modRoomBdlg_clicked();
+
+    void on_btn_modRoomFloor_clicked();
+
+    void on_btn_modRoomRoom_clicked();
+
+    void on_btn_modRoomType_clicked();
 
 private:
 
@@ -389,6 +425,8 @@ private:
     QModelIndex lastprogramclicked = QModelIndex();
     QModelIndex assignedBedIndex;
     QModelIndex availableBedIndex;
+
+    int curmodifyingspace = NOT_SET;
 
 
 };
