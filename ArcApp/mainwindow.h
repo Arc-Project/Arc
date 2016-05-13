@@ -58,6 +58,7 @@ public:
     void addInfoPic(QImage img);
     void clientSearchedInfo();
     void initClientLookupInfo();
+    void setSelectedClientInfo();
     QImage profilePic;
 
     //COLIN STUFF////
@@ -197,7 +198,7 @@ private slots:
 
     void defaultRegisterOptions();
 
-    void searchTransaction();
+    void searchTransaction(QString clientId);
 
     /*========================================================================*/
 

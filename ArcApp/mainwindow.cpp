@@ -14,7 +14,7 @@ QStack<int> forwardStack;
 
 QFuture<void> displayFuture ;
 QFuture<void> displayPicFuture;
-
+QFuture<void> transacFuture;
 //CaseFiles stuff
 QVector<QTableWidget*> pcp_tables;
 QVector<QString> pcpTypes;
@@ -65,6 +65,7 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case CLIENTLOOKUP:  //WIDGET 1
             initClientLookupInfo();
+            ui->tabWidget_cl_info->setCurrentIndex(0);
             //initimageview
 
 
@@ -1489,6 +1490,7 @@ bool MainWindow::check_client_register_form(){
     return true;
 }
 
+
 void MainWindow::defaultRegisterOptions(){
     //add caseWorker Name
 
@@ -1540,7 +1542,7 @@ void MainWindow::on_pushButton_search_client_clicked()
         return;
     }
 
-    connect(ui->tableWidget_search_client, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(selected_client_info(int,int)));
+    connect(ui->tableWidget_search_client, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(selected_client_info(int,int)),Qt::UniqueConnection);
     // dbManager->printAll(results);
 
 }
@@ -1713,6 +1715,26 @@ void MainWindow::addInfoPic(QImage img){
     pic_available=true;
 }
 
+
+void MainWindow::setSelectedClientInfo(){
+
+    curClient = new Client();
+    int nRow = ui->tableWidget_search_client->currentRow();
+    if (nRow <0)
+        return;
+
+    curClientID = curClient->clientId = ui->tableWidget_search_client->item(nRow, 0)->text();
+    curClient->fName =  ui->tableWidget_search_client->item(nRow, 1)->text();
+    curClient->mName =  ui->tableWidget_search_client->item(nRow, 2)->text();
+    curClient->lName =  ui->tableWidget_search_client->item(nRow, 3)->text();
+    curClient->balance =  ui->tableWidget_search_client->item(nRow, 4)->text().toFloat();
+
+    curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
+
+}
+
+
+
 void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
 {
     switch(index){
@@ -1721,8 +1743,15 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
             break;
 
         case 1:
+            if(transacFuture.isRunning()|| !transacFuture.isFinished()){
+                qDebug()<<"ProfilePic Is RUNNING";
+                return;
+                //displayFuture.cancel();
+            }
+            transacFuture = QtConcurrent::run(this, &searchTransaction, curClientID);
+            transacFuture.waitForFinished();
             qDebug()<<"client Transaction list";
-            MainWindow::searchTransaction();
+
             break;
 
     }
@@ -1730,10 +1759,10 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
 
 
 
-void MainWindow::searchTransaction(){
-    QString transStr;
-    qDebug()<<"search transaction";
-    transStr = "SELECT TOP 5 * FROM Transac WHERE ClientId = " + curClientID + "ORDER BY Date DESC";
+void MainWindow::searchTransaction(QString clientId){
+    qDebug()<<"search transaction STaRt";
+    QString transStr = "SELECT TOP 5 * FROM Transac WHERE ClientId = " + clientId + " ORDER BY Date DESC";
+    qDebug()<<transStr;
     QSqlQuery transQuery = dbManager->execQuery(transStr);
     dbManager->printAll(transQuery);
     /*
@@ -1981,6 +2010,7 @@ void MainWindow::on_tableWidget_3_doubleClicked(const QModelIndex &index)
 void MainWindow::on_pushButton_CaseFiles_clicked()
 {
     addHistory(CLIENTLOOKUP);
+    setSelectedClientInfo();
     ui->stackedWidget->setCurrentIndex(CASEFILE);
 
     double width = ui->tw_pcpRela->size().width();
