@@ -1456,15 +1456,15 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
         idDisplayed = curClientID;
         populatePcp();
     }
-
 }
 
 void MainWindow::populatePcp() {
     //reset tables
     for (auto x: pcp_tables) {
         x->clearContents();
-        x->resizeRowsToContents();
-
+        x->setMinimumHeight(73);
+        x->setMaximumHeight(1);
+        x->setMaximumHeight(16777215);
         x->setRowCount(1);
     }
 
@@ -1497,12 +1497,6 @@ void MainWindow::populatePcp() {
             }
         }
     }
-
-//    ui->tw_pcpRela->setItem(3,0,new QTableWidgetItem("blah3"));
-//    ui->tw_pcpRela->setItem(2,0,new QTableWidgetItem("blah2"));
-//    ui->tw_pcpRela->setItem(1,0,new QTableWidgetItem("blah1"));
-//    ui->tw_pcpRela->setItem(0,0,new QTableWidgetItem("blah0"));
-
 }
 
 void MainWindow::on_EditRoomsButton_clicked()
