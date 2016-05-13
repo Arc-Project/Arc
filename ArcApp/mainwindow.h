@@ -387,6 +387,8 @@ private slots:
 
     void on_btn_notesUndo_clicked();
 
+    void on_btn_searchUsers_3_clicked();
+
 private:
 
     Ui::MainWindow *ui;
@@ -412,6 +414,8 @@ private:
     QModelIndex lastprogramclicked = QModelIndex();
     QModelIndex assignedBedIndex;
     QModelIndex availableBedIndex;
+
+    int curmodifyingspace = NOT_SET;
 
 
 };

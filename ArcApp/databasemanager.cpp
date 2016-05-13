@@ -1007,6 +1007,7 @@ QSqlQuery DatabaseManager::updateSpaceProgram(QString spaceid, QString program) 
 
     query.exec("UPDATE Space SET ProgramCodes='" + program + "' WHERE SpaceId=" + spaceid);
 
+    return query;
 }
 
 QSqlQuery DatabaseManager::addPcp(int rowId, QString clientId, QString type, QString goal, QString strategy, QString date) {
