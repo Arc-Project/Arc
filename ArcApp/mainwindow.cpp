@@ -2163,15 +2163,18 @@ void MainWindow::on_btn_listAllUsers_3_clicked()
     QSqlQuery result = dbManager->execQuery("SELECT SpaceCode FROM Space");
 
     int numCols = result.record().count();
-    ui->tableWidget_5->setColumnCount(numCols);
+    ui->tableWidget_5->setColumnCount(6);
     ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type");
     int x = 0;
     int qt = result.size();
-    qDebug() << qt;
+    qDebug() << "<" << qt;
     while (result.next()) {
         // break down the spacecode
 
         QString spacecode = result.value(0).toString();
+        if (spacecode == "") {
+            break;
+        }
         std::string strspacecode = spacecode.toStdString();
 
         std::vector<std::string> brokenupspacecode = split(strspacecode, '-');
@@ -3022,7 +3025,7 @@ void MainWindow::on_btn_searchUsers_3_clicked()
     QSqlQuery result = dbManager->execQuery("SELECT SpaceCode FROM Space WHERE SpaceCode LIKE '%"+ ename +"%'");
 
     int numCols = result.record().count();
-    ui->tableWidget_5->setColumnCount(numCols);
+    ui->tableWidget_5->setColumnCount(6);
     ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type");
     int x = 0;
     int qt = result.size();
