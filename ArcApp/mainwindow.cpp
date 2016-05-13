@@ -3071,3 +3071,23 @@ void MainWindow::on_btn_searchUsers_3_clicked()
         x++;
     }
 }
+
+void MainWindow::on_btn_modRoomBdlg_clicked()
+{
+    curmodifyingspace = BUILDINGS;
+}
+
+void MainWindow::on_btn_modRoomFloor_clicked()
+{
+    curmodifyingspace = FLOORS;
+}
+
+void MainWindow::on_btn_modRoomRoom_clicked()
+{
+    curmodifyingspace = ROOMS;
+}
+
+void MainWindow::on_btn_modRoomType_clicked()
+{
+    curmodifyingspace = TYPE;
+}

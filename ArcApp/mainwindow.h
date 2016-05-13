@@ -390,6 +390,8 @@ private:
     QModelIndex assignedBedIndex;
     QModelIndex availableBedIndex;
 
+    int curmodifyingspace = NOT_SET;
+
 
 };
 
