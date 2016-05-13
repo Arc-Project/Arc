@@ -2168,30 +2168,56 @@ void MainWindow::on_pushButton_6_clicked()
 // list all rooms
 void MainWindow::on_btn_listAllUsers_3_clicked()
 {
+    QString ename = ui->le_users_3->text();
+    ui->tableWidget_5->setRowCount(0);
+    ui->tableWidget_5->clear();
+    ui->tableWidget_5->horizontalHeader()->setStretchLastSection(true);
 
-//    QString ename = ui->le_users->text();
-//    ui->tableWidget_3->setRowCount(0);
-//    ui->tableWidget_3->clear();
-//    ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+    // FIX THIS QUERY
+    QSqlQuery result = dbManager->execQuery("SELECT SpaceCode FROM Space");
 
-//    QSqlQuery result = dbManager->execQuery("SELECT Username, Password, Role FROM Employee WHERE Username LIKE '%"+ ename +"%'");
+    int numCols = result.record().count();
+    ui->tableWidget_5->setColumnCount(6);
+    ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type");
+    int x = 0;
+    int qt = result.size();
+    qDebug() << "<" << qt;
+    while (result.next()) {
+        // break down the spacecode
 
-//    int numCols = result.record().count();
-//    ui->tableWidget_3->setColumnCount(numCols);
-//    ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
-//    int x = 0;
-//    int qt = result.size();
-//    qDebug() << qt;
-//    while (result.next()) {
-//        ui->tableWidget_3->insertRow(x);
-//        QStringList row;
-//        row << result.value(0).toString() << result.value(1).toString() << result.value(2).toString();
-//        for (int i = 0; i < 3; ++i)
-//        {
-//            ui->tableWidget_3->setItem(x, i, new QTableWidgetItem(row.at(i)));
-//        }
-//        x++;
-//    }
+        QString spacecode = result.value(0).toString();
+        if (spacecode == "") {
+            break;
+        }
+        std::string strspacecode = spacecode.toStdString();
+
+        std::vector<std::string> brokenupspacecode = split(strspacecode, '-');
+        // parse space code to check building number + floor number + room number + space number
+        QString buildingnum = QString::fromStdString(brokenupspacecode[0]);
+        QString floornum = QString::fromStdString(brokenupspacecode[1]);
+        QString roomnum = QString::fromStdString(brokenupspacecode[2]);
+        std::string bednumtype = brokenupspacecode[3];
+        // strip the last character
+        QString bednumber = QString::fromStdString(bednumtype.substr(0, bednumtype.size()-1));
+
+        // get the last character to figure out the type
+        char typechar = bednumtype[bednumtype.size()-1];
+        QString thetype = "" + typechar;
+
+        ui->tableWidget_5->insertRow(x);
+        QStringList row;
+        row << spacecode
+            << buildingnum
+            << floornum
+            << roomnum
+            << bednumber
+            << thetype;
+        for (int i = 0; i < 6; ++i)
+        {
+            ui->tableWidget_5->setItem(x, i, new QTableWidgetItem(row.at(i)));
+        }
+        x++;
+    }
 }
 
 // list all programs
@@ -2282,7 +2308,7 @@ void MainWindow::on_pushButton_25_clicked()
     return;
 }
 
-// program clicked + selected HANK
+// program clicked + selected
 void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
 {
     if (lastprogramclicked != index) {
@@ -2999,4 +3025,61 @@ void MainWindow::on_btn_pcpKeySave_clicked()
 void MainWindow::on_actionPcptables_triggered()
 {
 
+}
+
+// UNTESTED
+void MainWindow::on_btn_searchUsers_3_clicked()
+{
+    QString ename = ui->le_users_3->text();
+    ui->tableWidget_5->setRowCount(0);
+    ui->tableWidget_5->clear();
+    ui->tableWidget_5->horizontalHeader()->setStretchLastSection(true);
+
+    // FIX THIS QUERY
+    QSqlQuery result = dbManager->execQuery("SELECT SpaceCode FROM Space WHERE SpaceCode LIKE '%"+ ename +"%'");
+
+    int numCols = result.record().count();
+    ui->tableWidget_5->setColumnCount(6);
+    ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type");
+    int x = 0;
+    int qt = result.size();
+    qDebug() << qt;
+    while (result.next()) {
+        // break down the spacecode
+
+        QString spacecode = result.value(0).toString();
+        std::string strspacecode = spacecode.toStdString();
+
+        std::vector<std::string> brokenupspacecode = split(strspacecode, '-');
+        // parse space code to check building number + floor number + room number + space number
+        QString buildingnum = QString::fromStdString(brokenupspacecode[0]);
+        QString floornum = QString::fromStdString(brokenupspacecode[1]);
+        QString roomnum = QString::fromStdString(brokenupspacecode[2]);
+        std::string bednumtype = brokenupspacecode[3];
+        // strip the last character
+        QString bednumber = QString::fromStdString(bednumtype.substr(0, bednumtype.size()-1));
+
+        // get the last character to figure out the type
+        char typechar = bednumtype[bednumtype.size()-1];
+        QString thetype = "" + typechar;
+
+    // get space id
+//    QSqlQuery singlebedquery = dbManager->searchSingleBed(buildingnum, floornum, roomnum, bednumber);
+//    singlebedquery.next();
+//    QString spaceid = singlebedquery.value(3).toString();
+
+        ui->tableWidget_5->insertRow(x);
+        QStringList row;
+        row << spacecode
+            << buildingnum
+            << floornum
+            << roomnum
+            << bednumber
+            << thetype;
+        for (int i = 0; i < 6; ++i)
+        {
+            ui->tableWidget_5->setItem(x, i, new QTableWidgetItem(row.at(i)));
+        }
+        x++;
+    }
 }

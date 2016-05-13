@@ -111,7 +111,7 @@ QWidget#wdg_transTotal {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="mainMenu">
      <layout class="QGridLayout" name="gridLayout_5">
@@ -4179,8 +4179,8 @@ QWidget#wdg_transTotal {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>655</width>
-               <height>1381</height>
+               <width>1049</width>
+               <height>1294</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_47">
@@ -11046,17 +11046,6 @@ QWidget#wdg_transTotal {
          </item>
         </layout>
         <zorder>label_47</zorder>
-        <zorder>label_66</zorder>
-        <zorder>availablebedslist_3</zorder>
-        <zorder>assignedbedslist_3</zorder>
-        <zorder>assignedbedslist_2</zorder>
-        <zorder>layoutWidget</zorder>
-        <zorder>availablebedslist_2</zorder>
-        <zorder>formLayoutWidget_6</zorder>
-        <zorder>timeEdit</zorder>
-        <zorder>timeEdit_2</zorder>
-        <zorder>lineEdit_3</zorder>
-        <zorder>horizontalSpacer_49</zorder>
         <zorder>label_65</zorder>
         <zorder>verticalSpacer_24</zorder>
         <zorder>horizontalSpacer_50</zorder>
@@ -11072,7 +11061,7 @@ QWidget#wdg_transTotal {
      <x>0</x>
      <y>0</y>
      <width>1408</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="acceptDrops">
