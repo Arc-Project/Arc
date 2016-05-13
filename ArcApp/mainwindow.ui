@@ -4178,8 +4178,8 @@ QWidget#wdg_transTotal {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>655</width>
-               <height>1381</height>
+               <width>1049</width>
+               <height>1294</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_47">
@@ -9689,6 +9689,9 @@ QWidget#wdg_transTotal {
                <property name="frameShape">
                 <enum>QFrame::StyledPanel</enum>
                </property>
+               <attribute name="verticalHeaderVisible">
+                <bool>false</bool>
+               </attribute>
               </widget>
              </item>
             </layout>
@@ -11130,7 +11133,7 @@ QWidget#wdg_transTotal {
      <x>0</x>
      <y>0</y>
      <width>1408</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="acceptDrops">

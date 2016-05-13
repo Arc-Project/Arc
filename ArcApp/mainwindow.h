@@ -391,6 +391,7 @@ private slots:
     void on_btn_searchUsers_3_clicked();
 
 
+    void populate_modRoom_cboxes();
 
     void on_btn_modRoomBdlg_clicked();
 
@@ -399,6 +400,16 @@ private slots:
     void on_btn_modRoomRoom_clicked();
 
     void on_btn_modRoomType_clicked();
+
+    void on_cbox_roomLoc_currentTextChanged(const QString &arg1);
+
+    void on_cbox_roomFloor_currentTextChanged(const QString &arg1);
+
+    void on_cbox_roomRoom_currentTextChanged(const QString &arg1);
+
+    void on_cbox_roomType_currentIndexChanged(int index);
+
+    void on_cbox_roomType_currentTextChanged(const QString &arg1);
 
 private:
 
@@ -425,6 +436,10 @@ private:
     QModelIndex lastprogramclicked = QModelIndex();
     QModelIndex assignedBedIndex;
     QModelIndex availableBedIndex;
+
+
+    QString userLoggedIn = "SOMEUSER";
+    int currentshiftid = 0;
 
     int curmodifyingspace = NOT_SET;
 
