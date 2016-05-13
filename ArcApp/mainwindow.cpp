@@ -3108,11 +3108,11 @@ void MainWindow::on_btn_notesSave_clicked()
     QString notes = ui->te_notes->toPlainText();
     QSqlQuery result = dbManager->addNote(curClientID, notes);
     if (result.numRowsAffected() == 1) {
-        ui->lbl_noteWarning->setStyleSheet("QLabel#lbl_noteWarning {color = black;}");
-        ui->lbl_noteWarning->setText("Saved");
+//        ui->lbl_noteWarning->setStyleSheet("QLabel#lbl_noteWarning {color = black;}");
+//        ui->lbl_noteWarning->setText("Saved");
     } else {
-        ui->lbl_noteWarning->setStyleSheet("QLabel#lbl_noteWarning {color = red;}");
-        ui->lbl_noteWarning->setText(result.lastError().text());
+//        ui->lbl_noteWarning->setStyleSheet("QLabel#lbl_noteWarning {color = red;}");
+//        ui->lbl_noteWarning->setText(result.lastError().text());
         QSqlQuery result2 = dbManager->updateNote(curClientID, notes);
         qDebug() << result2.lastError();
 
