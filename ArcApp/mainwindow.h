@@ -290,7 +290,7 @@ private slots:
 
     void on_btn_pcpKey_clicked();
 
-    void populatePcp();
+    void populateCaseFiles(QString type = "all", int tableId = -1);
 
     void insertPcp(QTableWidget *tw, QString type);
 
@@ -359,8 +359,33 @@ private slots:
 
     void on_actionPcptables_triggered();
 
+    void on_btn_pcpRelaUndo_clicked();
 
+    void on_btn_pcpEduUndo_clicked();
 
+    void on_btn_pcpSubUndo_clicked();
+
+    void on_btn_pcpAccoUndo_clicked();
+
+    void on_btn_pcpLifeUndo_clicked();
+
+    void on_btn_pcpMentUndo_clicked();
+
+    void on_btn_pcpPhyUndo_2_clicked();
+
+    void on_btn_pcpLegUndo_clicked();
+
+    void on_btn_pcpActUndo_clicked();
+
+    void on_btn_pcpTradUndo_clicked();
+
+    void on_btn_pcpOtherUndo_clicked();
+
+    void on_btn_pcpPplUndo_clicked();
+
+    void on_btn_notesSave_clicked();
+
+    void on_btn_notesUndo_clicked();
 
 private:
 

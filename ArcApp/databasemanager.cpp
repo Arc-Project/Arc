@@ -1012,9 +1012,6 @@ QSqlQuery DatabaseManager::updateSpaceProgram(QString spaceid, QString program) 
 QSqlQuery DatabaseManager::addPcp(int rowId, QString clientId, QString type, QString goal, QString strategy, QString date) {
     QSqlQuery query(db);
 
-//    query.exec("INSERT INTO Pcp (rowId, clientId, Type, Goal, Strategy, Date) VALUES(" + QString::number(rowId) + ", " + clientId + ", '"
-//               + type + "', '" + goal + "', '" + strategy + "', '" + date + "')");
-
     query.prepare("INSERT INTO Pcp (rowId, clientId, Type, Goal, Strategy, Date) "
                   "VALUES (?, ?, ?, ?, ? ,?)");
     query.addBindValue(QString::number(rowId));
@@ -1024,6 +1021,49 @@ QSqlQuery DatabaseManager::addPcp(int rowId, QString clientId, QString type, QSt
     query.addBindValue(strategy);
     query.addBindValue(date);
     query.exec();
+
+    return query;
+}
+
+QSqlQuery DatabaseManager::deletePcpRow(int rowId, QString type) {
+    QSqlQuery query(db);
+
+    query.exec("DELETE FROM Pcp WHERE Type = '" + type + "' AND rowId = " + QString::number(rowId));
+
+    return query;
+}
+
+QSqlQuery DatabaseManager::addNote(QString clientId, QString notes) {
+    QSqlQuery query(db);
+
+    query.prepare("INSERT INTO RunningNotes (ClientId, Notes) "
+                  "VALUES (?, ?)");
+
+    query.addBindValue(clientId);
+    query.addBindValue(notes);
+
+    query.exec();
+
+    return query;
+}
+
+QSqlQuery DatabaseManager::updateNote(QString clientId, QString notes) {
+    QSqlQuery query(db);
+
+    query.prepare("UPDATE RunningNotes SET Notes=:notes WHERE ClientId=:client");
+
+    query.bindValue(":notes", notes);
+    query.bindValue(":client", clientId);
+
+    query.exec();
+
+    return query;
+}
+
+QSqlQuery DatabaseManager::readNote(QString clientId) {
+    QSqlQuery query(db);
+
+    query.exec("SELECT Notes FROM RunningNotes WHERE ClientId = " + clientId);
 
     return query;
 }
