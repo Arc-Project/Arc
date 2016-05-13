@@ -326,6 +326,8 @@ private slots:
 
     void on_startDateEdit_dateChanged(const QDate &date);
 
+    void on_btn_searchUsers_3_clicked();
+
 private:
 
     Ui::MainWindow *ui;
