@@ -1713,7 +1713,40 @@ void MainWindow::addInfoPic(QImage img){
     pic_available=true;
 }
 
+void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
+{
+    switch(index){
+        case 0:
+            qDebug()<<"Client information tab";
+            break;
 
+        case 1:
+            qDebug()<<"client Transaction list";
+            MainWindow::searchTransaction();
+            break;
+
+    }
+}
+
+
+
+void MainWindow::searchTransaction(){
+    QString transStr;
+    qDebug()<<"search transaction";
+    transStr = "SELECT TOP 5 * FROM Transac WHERE ClientId = " + curClientID + "ORDER BY Date DESC";
+    QSqlQuery transQuery = dbManager->execQuery(transStr);
+    dbManager->printAll(transQuery);
+    /*
+            while(transQuery.next()){
+
+    }
+            */
+}
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////
 
 
 // the add user button
@@ -3252,3 +3285,4 @@ void MainWindow::on_EditShiftsButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(EDITSHIFT);
 }
+

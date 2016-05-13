@@ -197,6 +197,8 @@ private slots:
 
     void defaultRegisterOptions();
 
+    void searchTransaction();
+
     /*========================================================================*/
 
 
@@ -399,6 +401,8 @@ private slots:
     void on_btn_modRoomRoom_clicked();
 
     void on_btn_modRoomType_clicked();
+
+    void on_tabWidget_cl_info_currentChanged(int index);
 
 private:
 
