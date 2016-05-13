@@ -2160,7 +2160,7 @@ void MainWindow::on_btn_listAllUsers_3_clicked()
     ui->tableWidget_5->horizontalHeader()->setStretchLastSection(true);
 
     // FIX THIS QUERY
-    QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, BuildingNo, Role FROM Space");
+    QSqlQuery result = dbManager->execQuery("SELECT SpaceCode FROM Space");
 
     int numCols = result.record().count();
     ui->tableWidget_5->setColumnCount(numCols);
@@ -2169,15 +2169,33 @@ void MainWindow::on_btn_listAllUsers_3_clicked()
     int qt = result.size();
     qDebug() << qt;
     while (result.next()) {
+        // break down the spacecode
+
+        QString spacecode = result.value(0).toString();
+        std::string strspacecode = spacecode.toStdString();
+
+        std::vector<std::string> brokenupspacecode = split(strspacecode, '-');
+        // parse space code to check building number + floor number + room number + space number
+        QString buildingnum = QString::fromStdString(brokenupspacecode[0]);
+        QString floornum = QString::fromStdString(brokenupspacecode[1]);
+        QString roomnum = QString::fromStdString(brokenupspacecode[2]);
+        std::string bednumtype = brokenupspacecode[3];
+        // strip the last character
+        QString bednumber = QString::fromStdString(bednumtype.substr(0, bednumtype.size()-1));
+
+        // get the last character to figure out the type
+        char typechar = bednumtype[bednumtype.size()-1];
+        QString thetype = "" + typechar;
+
         ui->tableWidget_5->insertRow(x);
         QStringList row;
-        row << result.value(0).toString()
-            << result.value(1).toString()
-            << result.value(2).toString()
-            << result.value(3).toString()
-            << result.value(4).toString()
-            << result.value(5).toString();
-        for (int i = 0; i < 3; ++i)
+        row << spacecode
+            << buildingnum
+            << floornum
+            << roomnum
+            << bednumber
+            << thetype;
+        for (int i = 0; i < 6; ++i)
         {
             ui->tableWidget_5->setItem(x, i, new QTableWidgetItem(row.at(i)));
         }
