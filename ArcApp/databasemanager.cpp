@@ -323,7 +323,7 @@ QSqlQuery DatabaseManager::searchClientInfo(QString ClientId){
                       + QString("SinNo, GaNo, EmpId, DateRulesSigned, status, ")
                       + QString("NokName, NokRelationship, NokLocation, NokContactNo, PhysName, ")
                       + QString("PhysContactNo, SuppWorker1Name, SuppWorker1ContactNo, SuppWorker2Name, SuppWorker2ContactNo, ")
-                      + QString("Comments, ProfilePic ")
+                      + QString("Comments ")//, ProfilePic ")
                       + QString("FROM Client WHERE ClientId =" + ClientId));
 //    selectquery.prepare("SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId = :id");
 //    selectquery.bindValue("id", ClientId);
@@ -347,6 +347,35 @@ QSqlQuery DatabaseManager::searchClientInfo(QString ClientId){
     //return true;
 }
 
+
+bool DatabaseManager::searchClientInfoPic(QImage * img, QString ClientId){
+
+
+
+    QString connName = QString::number(DatabaseManager::getDbCounter());
+    {
+        QSqlDatabase tempDb = QSqlDatabase::database();
+        if (DatabaseManager::createDatabase(&tempDb, connName))
+        {
+            QSqlQuery query(tempDb);
+            if (!query.exec("SELECT ProfilePic FROM Client WHERE ClientId =" + ClientId))
+            {
+                qDebug() << "downloadProfilePic query failed";
+                return false;
+            }
+            query.next();
+            QByteArray data = query.value(0).toByteArray();
+            *img = QImage::fromData(data, "PNG");
+
+            tempDb.close();
+
+        }
+        tempDb.close();
+    } // Necessary braces: tempDb and query are destroyed because out of scope
+    QSqlDatabase::removeDatabase(connName);
+
+    return true;
+}
 
 
 /*==============================================================================
@@ -489,6 +518,37 @@ bool DatabaseManager::updateLunches(QDate date, int num, QString id){
     qDebug() << q;
     return query.exec(q);
 }
+QSqlQuery DatabaseManager::getWakeups(QDate start, QDate end, QString id){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Wakeup WHERE ClientId = '" + id + "' AND WakeDate >= '" + start.toString(Qt::ISODate)
+            + "' AND WakeDate <= '" + end.toString(Qt::ISODate) + "'";
+    qDebug() << q;
+    query.exec(q);
+    return query;
+}
+bool DatabaseManager::deleteWakeups(QDate date, QString id){
+    QSqlQuery query(db);
+    QString q = "DELETE FROM Wakeup WHERE ClientId ='" + id + "' AND WakeDate = '" + date.toString(Qt::ISODate) + "'";
+    qDebug() << q;
+    return query.exec(q);
+}
+
+bool DatabaseManager::updateWakeups(QDate date, QString time, QString id){
+    QSqlQuery query(db);
+    QString q = "UPDATE Wakeup SET WakeTime ='" + time + "' WHERE WakeDate = '"
+            + date.toString(Qt::ISODate) + "' AND ClientId = '" + id + "'";
+    qDebug() << q;
+    return query.exec(q);
+}
+
+bool DatabaseManager::setWakeup(QDate date, QString time, QString id){
+    QSqlQuery query(db);
+    QString q = "INSERT INTO Wakeup Values('" + id + "','" + date.toString(Qt::ISODate) + "','" + time + "')";
+    qDebug() << q;
+    return query.exec(q);
+
+}
+
 bool DatabaseManager::removeLunches(QDate date, QString id){
     QSqlQuery query(db);
     QString q = "DELETE FROM Lunches WHERE LunchDate = '" + date.toString(Qt::ISODate) + "' AND ClientID ='"+
@@ -634,30 +694,30 @@ bool DatabaseManager::getWakeupQuery(QSqlQuery* queryResults, QDate date)
 
 int DatabaseManager::getEspCheckouts(QDate date)
 {
-    QString queryString = 
+    QString queryString =
             QString("SELECT COUNT(ClientId) ")
             + QString("FROM Booking ")
             + QString("WHERE EndDate = '" + date.toString(Qt::ISODate))
             + QString("' AND FirstBook = 'YES' AND ProgramCode = 'ESP'");
     qDebug() << queryString;
-    return DatabaseManager::getIntFromQuery(queryString);   
+    return DatabaseManager::getIntFromQuery(queryString);
 }
 
 int DatabaseManager::getTotalCheckouts(QDate date)
 {
-    QString queryString = 
+    QString queryString =
             QString("SELECT COUNT(ClientId) ")
             + QString("FROM Booking ")
             + QString("WHERE EndDate = '" + date.toString(Qt::ISODate))
             + QString("' AND FirstBook = 'YES'");
     qDebug() << queryString;
-    return DatabaseManager::getIntFromQuery(queryString);   
+    return DatabaseManager::getIntFromQuery(queryString);
 }
 
 
 int DatabaseManager::getEspVacancies(QDate date)
 {
-    QString queryString = 
+    QString queryString =
             QString("SELECT COUNT(s.SpaceId) ")
             + QString("FROM SPACE s LEFT JOIN ")
             + QString("(SELECT SpaceId, Date FROM Booking WHERE Date = '")
@@ -670,7 +730,7 @@ int DatabaseManager::getEspVacancies(QDate date)
 
 int DatabaseManager::getTotalVacancies(QDate date)
 {
-    QString queryString = 
+    QString queryString =
             QString("SELECT COUNT(s.SpaceId) ")
             + QString("FROM SPACE s LEFT JOIN ")
             + QString("(SELECT SpaceId, Date FROM Booking WHERE Date = '")
@@ -678,7 +738,7 @@ int DatabaseManager::getTotalVacancies(QDate date)
             + QString("ON s.SpaceId = b.SpaceId ")
             + QString("WHERE b.Date IS NULL");
     qDebug() << queryString;
-    return DatabaseManager::getIntFromQuery(queryString);   
+    return DatabaseManager::getIntFromQuery(queryString);
 }
 
 void DatabaseManager::getDailyReportStatsThread(QDate date)
@@ -701,7 +761,7 @@ int DatabaseManager::getIntFromQuery(QString queryString)
         if (DatabaseManager::createDatabase(&tempDb, connName))
         {
             QSqlQuery query(tempDb);
-            
+
             qDebug() << queryString;
             if (query.exec(queryString))
             {
@@ -802,7 +862,7 @@ bool DatabaseManager::updateBalance(double d, QString id){
 
 QSqlQuery DatabaseManager::getCurrentBooking(QDate start, QDate end, QString program){
     QSqlQuery query(db);
-    QString q = "SELECT Space.SpaceId, Space.Location, Space.ProgramCodes, Space.type, Space.cost, Space.Monthly FROM Space"
+    QString q = "SELECT Space.SpaceId, Space.SpaceCode, Space.ProgramCodes, Space.type, Space.cost, Space.Monthly FROM Space"
                 " LEFT JOIN (SELECT * from Booking WHERE StartDate <= '" + start.toString(Qt::ISODate) + "' AND EndDate >= '"
                 + start.toString(Qt::ISODate) + "') AS a on Space.SpaceId = a.SpaceId WHERE BookingID IS NULL AND Space.ProgramCodes = '" + program + "'";
 
@@ -942,7 +1002,6 @@ QSqlQuery DatabaseManager::updateProgram(QString pcode, QString pdesc) {
     return query;
 }
 
-
 QSqlQuery DatabaseManager::updateSpaceProgram(QString spaceid, QString program) {
     QSqlQuery query(db);
 
@@ -951,11 +1010,21 @@ QSqlQuery DatabaseManager::updateSpaceProgram(QString spaceid, QString program) 
     return query;
 }
 
-QSqlQuery DatabaseManager::addPcp(int clientId, QString type, QString goal, QString strategy, QString date) {
+QSqlQuery DatabaseManager::addPcp(int rowId, QString clientId, QString type, QString goal, QString strategy, QString date) {
     QSqlQuery query(db);
 
-    query.exec("INSERT INTO Pcp VALUES(" + QString::number(clientId) + ", '"
-               + type + "', '" + goal + "', '" + strategy + "', '" + date + "')");
+//    query.exec("INSERT INTO Pcp (rowId, clientId, Type, Goal, Strategy, Date) VALUES(" + QString::number(rowId) + ", " + clientId + ", '"
+//               + type + "', '" + goal + "', '" + strategy + "', '" + date + "')");
+
+    query.prepare("INSERT INTO Pcp (rowId, clientId, Type, Goal, Strategy, Date) "
+                  "VALUES (?, ?, ?, ?, ? ,?)");
+    query.addBindValue(QString::number(rowId));
+    query.addBindValue(clientId);
+    query.addBindValue(type);
+    query.addBindValue(goal);
+    query.addBindValue(strategy);
+    query.addBindValue(date);
+    query.exec();
 
     return query;
 }
