@@ -52,17 +52,32 @@ public:
     ~MainWindow();
 
     bookingManager book;
+    void setup_searchClientTable(QSqlQuery results);
+    void displayClientInfoThread(QString val);
+    void addInfoPic(QImage img);
+    void clientSearchedInfo();
+    void initClientLookupInfo();
+    QImage profilePic;
+
+    //COLIN STUFF////
     void getProgramCodes();
     void bookingSetup();
     void populateBooking();
     void setBooking(int row);
-    void setup_searchClientTable(QSqlQuery results);
-    void displayClientInfoThread(QString val);
-    void clientSearchedInfo();
-    void initClientLookupInfo();
     void populateConfirm();
-    QImage profilePic;
     void popEditPage();
+    void populateATable(QTableWidget * table, QStringList headers, QStringList items, QSqlQuery result, bool stretch);
+    void handleNewPayment(int row);
+    void updateCheque(int row);
+    double calcRefund(QDate old, QDate n);
+    bool checkNumber(QString num);
+    bool updateBooking(Booking b);
+    void popClientFromId(QString id);
+    void getTransactionFromRow(int row);
+    void popBookFromRow();
+
+
+    //COLIN END//////
 
     /*==========================================================================
     DEV TESTING AUXILIARY FUNCTIONS
@@ -74,6 +89,32 @@ signals:
     void displayPic(QByteArray a);
 
 private slots:
+    //COLIN SLOTS ////////////////////////////////////////
+    void on_editManagePayment_clicked();
+    void on_editCost_textChanged(const QString &arg1);
+    void on_editCancel_textChanged(const QString &arg1);
+    void on_pushButton_bookRoom_clicked();
+
+    void on_btn_payDelete_clicked();
+    void on_bookingSearchButton_clicked();
+    void on_makeBookingButton_clicked();
+    void on_makeBookingButton_2_clicked();
+    void on_monthCheck_stateChanged(int arg1);
+    void on_pushButton_processPaymeent_clicked();
+    void on_lunchCheck_clicked();
+    void on_startDateEdit_dateChanged(const QDate &date);
+    void on_wakeupCheck_clicked();
+    void on_endDateEdit_dateChanged(const QDate &date);
+    void on_monthCheck_clicked(bool checked);
+    void on_paymentButton_2_clicked();
+    void on_cbox_payDateRange_activated(int index);
+    void popManagePayment();
+    void on_editDate_dateChanged(const QDate &date);
+    void on_btn_payOutstanding_clicked();
+    void on_editUpdate_clicked();
+
+    //END COLIN///////////////////////////////////////////
+
     /*==========================================================================
     DEV TESTING - slots
     ==========================================================================*/
@@ -113,9 +154,6 @@ private slots:
     
     void resizeEvent(QResizeEvent *event);
 
-    void on_bookingSearchButton_clicked();
-
-    void on_makeBookingButton_clicked();
 
     void on_EditUserButton_clicked();
 
@@ -123,9 +161,6 @@ private slots:
 
     void on_actionMain_Menu_triggered();
 
-    void on_makeBookingButton_2_clicked();
-
-    void on_monthCheck_stateChanged(int arg1);
 
     void on_pushButton_RegisterClient_clicked();
 
@@ -163,7 +198,6 @@ private slots:
 
     /*========================================================================*/
 
-    void on_paymentButton_2_clicked();
 
     void on_btn_createNewUser_clicked();
 
@@ -180,7 +214,6 @@ private slots:
     void on_confirmationFinal_clicked();
 
     void on_editButton_clicked();
-    void popBookFromRow();
     void on_pushButton_editClientInfo_clicked();
 
     void on_btn_listAllUsers_clicked();
@@ -191,23 +224,9 @@ private slots:
 
     void on_EditRoomsButton_clicked();
 
-    void on_editUpdate_clicked();
-    bool checkNumber(QString num);
-    double calcRefund(QDate old, QDate n);
-
-    void on_editDate_dateChanged(const QDate &date);
-    bool updateBooking(Booking b);
-    void popClientFromId(QString id);
-    void on_editManagePayment_clicked();
 
 
 
-    void on_editCost_textChanged(const QString &arg1);
-
-    void on_editCancel_textChanged(const QString &arg1);
-
-
-    void on_pushButton_bookRoom_clicked();
     void on_editRoom_clicked();
 
     void on_pushButton_4_clicked();
@@ -220,9 +239,6 @@ private slots:
 
     void on_tableWidget_3_doubleClicked(const QModelIndex &index);
 
-    void on_cbox_payDateRange_activated(int index);
-    void popManagePayment();
-    void populateATable(QTableWidget * table, QStringList headers, QStringList items, QSqlQuery result, bool stretch);
 
     void on_btn_payListAllUsers_clicked();
     void on_btn_listAllUsers_3_clicked();
@@ -286,11 +302,6 @@ private slots:
 
     void on_btn_restrictedList_clicked();
 
-    void on_btn_payDelete_clicked();
-    void getTransactionFromRow(int row);
-    void on_btn_payOutstanding_clicked();
-    void handleNewPayment(int row);
-    void updateCheque(int row);
 
 //    void on_actionBack_triggered();
 
@@ -320,11 +331,9 @@ private slots:
 
     void addHistory(int n);
 
-    void on_pushButton_processPaymeent_clicked();
 
-    void on_lunchCheck_clicked();
 
-    void on_startDateEdit_dateChanged(const QDate &date);
+
 
     void on_btn_pcpEduSave_clicked();
 
@@ -350,11 +359,8 @@ private slots:
 
     void on_actionPcptables_triggered();
 
-    void on_wakeupCheck_clicked();
 
-    void on_endDateEdit_dateChanged(const QDate &date);
 
-    void on_monthCheck_clicked(bool checked);
 
 private:
 
@@ -367,6 +373,8 @@ private:
 
     bool pic_available = true;
     bool table_available = true;
+
+    bool caseWorkerUpdated = true;
 
     QMap <QString, int> caseWorkerList;    //caseworker list
 

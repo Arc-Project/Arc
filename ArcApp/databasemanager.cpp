@@ -323,7 +323,7 @@ QSqlQuery DatabaseManager::searchClientInfo(QString ClientId){
                       + QString("SinNo, GaNo, EmpId, DateRulesSigned, status, ")
                       + QString("NokName, NokRelationship, NokLocation, NokContactNo, PhysName, ")
                       + QString("PhysContactNo, SuppWorker1Name, SuppWorker1ContactNo, SuppWorker2Name, SuppWorker2ContactNo, ")
-                      + QString("Comments, ProfilePic ")
+                      + QString("Comments ")//, ProfilePic ")
                       + QString("FROM Client WHERE ClientId =" + ClientId));
 //    selectquery.prepare("SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId = :id");
 //    selectquery.bindValue("id", ClientId);
@@ -347,6 +347,35 @@ QSqlQuery DatabaseManager::searchClientInfo(QString ClientId){
     //return true;
 }
 
+
+bool DatabaseManager::searchClientInfoPic(QImage * img, QString ClientId){
+
+
+
+    QString connName = QString::number(DatabaseManager::getDbCounter());
+    {
+        QSqlDatabase tempDb = QSqlDatabase::database();
+        if (DatabaseManager::createDatabase(&tempDb, connName))
+        {
+            QSqlQuery query(tempDb);
+            if (!query.exec("SELECT ProfilePic FROM Client WHERE ClientId =" + ClientId))
+            {
+                qDebug() << "downloadProfilePic query failed";
+                return false;
+            }
+            query.next();
+            QByteArray data = query.value(0).toByteArray();
+            *img = QImage::fromData(data, "PNG");
+
+            tempDb.close();
+
+        }
+        tempDb.close();
+    } // Necessary braces: tempDb and query are destroyed because out of scope
+    QSqlDatabase::removeDatabase(connName);
+
+    return true;
+}
 
 
 /*==============================================================================
