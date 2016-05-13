@@ -105,6 +105,7 @@ void DatabaseManager::printAll(QSqlQuery queryResults)
 
 QSqlQuery DatabaseManager::execQuery(QString queryString)
 {
+    qDebug()<<"execQuery. ";
     QSqlQuery query(db);
     query.exec(queryString);
     return query;

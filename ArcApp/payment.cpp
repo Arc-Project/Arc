@@ -42,19 +42,19 @@ bool payment::makePayment(){
     if(ui->paymentRadio->isChecked()){
         if(ui->paymentDrop->currentIndex() == 1){
             values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
-                    + "','" + QString::number(transact->amount) + "','" + "6" + "','" + transact->type + "','" + transact->notes
+                    + "','" + QString::number(transact->amount) + "','" + "2" + "','" + transact->type + "','" + transact->notes
                     + "','" + transact->chequeNo + "','" + transact->MSQ + "','" + transact->issuedString + "','" + transact->transType
                     + "', 0" + ",'" + transact->outstanding + "'";
         }
         else{
         values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
-                + "','" + QString::number(transact->amount) + "','" + "6" + "','" + transact->type + "','" + transact->notes
+                + "','" + QString::number(transact->amount) + "','" + "2" + "','" + transact->type + "','" + transact->notes
                 + "', NULL, NULL, NULL" + ",'" + transact->transType + "', 0" + ",'" + transact->outstanding + "'";
         }
     }
     else{
         values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
-                + "','" + QString::number(transact->amount) + "','" + "6" + "','" + transact->type + "','" + transact->notes
+                + "','" + QString::number(transact->amount) + "','" + "2" + "','" + transact->type + "','" + transact->notes
                 + "', NULL, NULL, NULL" + ",'" + transact->transType + "', 0" + ",'" + transact->outstanding + "'";
 
     }
@@ -108,7 +108,6 @@ bool payment::addTransaction(){
 
 void payment::on_paymentBox_accepted()
 {
-    qDebug() << "Anthony hates his project";
 
 }
 
