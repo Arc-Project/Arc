@@ -2122,10 +2122,15 @@ void MainWindow::populateCaseFiles(QString type, int tableId) {
     }
 }
 
+// HANK
 void MainWindow::on_EditRoomsButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(EDITROOM);
     addHistory(ADMINPAGE);
+
+    // set dropdowns
+    populate_modRoom_cboxes();
+
     qDebug() << "pushed page " << ADMINPAGE;
 }
 
@@ -3295,19 +3300,125 @@ void MainWindow::on_btn_searchUsers_3_clicked()
     }
 }
 
+void MainWindow::populate_modRoom_cboxes() {
+    ui->cbox_roomLoc->clear();
+    ui->cbox_roomFloor->clear();
+    ui->cbox_roomRoom->clear();
+    ui->cbox_roomType->clear();
+
+    QSqlQuery buildings = dbManager->execQuery("SELECT BuildingNo FROM Building");
+    ui->cbox_roomLoc->addItems(QStringList() << "");
+    while (buildings.next()) {
+        ui->cbox_roomLoc->addItems(QStringList() << buildings.value(0).toString());
+    }
+}
+
 void MainWindow::on_btn_modRoomBdlg_clicked()
 {
     curmodifyingspace = BUILDINGS;
+    ui->editroommodifybox->clear();
+    ui->editroommodifybox->setColumnCount(1);
+    ui->editroommodifybox->setRowCount(0);
+    ui->editroommodifybox->horizontalHeader()->setStretchLastSection(true);
+    ui->editroommodifybox->setHorizontalHeaderLabels(QStringList() << "Building Number");
+
+    // get all buildings
+    QSqlQuery result = dbManager->execQuery("SELECT BuildingNo FROM Building");
+
+    // populate table
+    int x = 0;
+    int qt = result.size();
+    qDebug() << qt;
+    while (result.next()) {
+        QString buildingno = result.value(0).toString();
+        ui->editroommodifybox->insertRow(x);
+        QStringList row;
+        row << buildingno;
+        for (int i = 0; i < 1; ++i)
+        {
+            ui->editroommodifybox->setItem(x, i, new QTableWidgetItem(row.at(i)));
+            ui->editroommodifybox->item(x, i)->setTextAlignment(Qt::AlignCenter);
+        }
+        x++;
+    }
 }
 
 void MainWindow::on_btn_modRoomFloor_clicked()
 {
     curmodifyingspace = FLOORS;
+    ui->editroommodifybox->clear();
+    ui->editroommodifybox->setColumnCount(1);
+    ui->editroommodifybox->setRowCount(0);
+    ui->editroommodifybox->horizontalHeader()->setStretchLastSection(true);
+    ui->editroommodifybox->setHorizontalHeaderLabels(QStringList() << "Floor Number");
+    // get building id
+    QString building = ui->cbox_roomLoc->currentText();
+    QSqlQuery qry = dbManager->execQuery("SELECT BuildingId FROM Building WHERE BuildingNo=" + building);
+
+    qry.next();
+    QString buildingid = qry.value(0).toString();
+
+    QSqlQuery result = dbManager->execQuery("SELECT FloorNo FROM Floor WHERE BuildingId=" + buildingid);
+
+    // populate table
+    int x = 0;
+    int qt = result.size();
+    qDebug() << qt;
+    while (result.next()) {
+        QString buildingno = result.value(0).toString();
+        ui->editroommodifybox->insertRow(x);
+        QStringList row;
+        row << buildingno;
+        for (int i = 0; i < 1; ++i)
+        {
+            ui->editroommodifybox->setItem(x, i, new QTableWidgetItem(row.at(i)));
+            ui->editroommodifybox->item(x, i)->setTextAlignment(Qt::AlignCenter);
+        }
+        x++;
+    }
 }
 
 void MainWindow::on_btn_modRoomRoom_clicked()
 {
     curmodifyingspace = ROOMS;
+    ui->editroommodifybox->clear();
+    ui->editroommodifybox->setColumnCount(1);
+    ui->editroommodifybox->setRowCount(0);
+    ui->editroommodifybox->horizontalHeader()->setStretchLastSection(true);
+    ui->editroommodifybox->setHorizontalHeaderLabels(QStringList() << "Room Number");
+    // get building id
+    QString building = ui->cbox_roomLoc->currentText();
+    QSqlQuery qry = dbManager->execQuery("SELECT BuildingId FROM Building WHERE BuildingNo=" + building);
+
+    qry.next();
+    QString buildingid = qry.value(0).toString();
+
+    // get Floor id
+    QString floor = ui->cbox_roomFloor->currentText();
+    QSqlQuery qry2 = dbManager->execQuery("SELECT FloorId FROM Floor WHERE BuildingNo=" + building + " AND FloorNo=" + floor);
+
+    qry2.next();
+
+    QString floorid = qry2.value(0).toString();
+
+    QSqlQuery result = dbManager->execQuery("SELECT RoomNo FROM Room WHERE FloorId=" + floorid);
+
+    // populate table
+    int x = 0;
+    int qt = result.size();
+    qDebug() << qt;
+    while (result.next()) {
+        QString buildingno = result.value(0).toString();
+        ui->editroommodifybox->insertRow(x);
+        QStringList row;
+        row << buildingno;
+        for (int i = 0; i < 1; ++i)
+        {
+            ui->editroommodifybox->setItem(x, i, new QTableWidgetItem(row.at(i)));
+            ui->editroommodifybox->item(x, i)->setTextAlignment(Qt::AlignCenter);
+        }
+        x++;
+    }
 }
 
 void MainWindow::on_btn_modRoomType_clicked()
@@ -3320,3 +3431,51 @@ void MainWindow::on_EditShiftsButton_clicked()
     ui->stackedWidget->setCurrentIndex(EDITSHIFT);
 }
 
+void MainWindow::on_cbox_roomLoc_currentTextChanged(const QString &arg1)
+{
+    // ui->cbox_roomLoc->clear();
+    ui->cbox_roomFloor->clear();
+    ui->cbox_roomRoom->clear();
+    ui->cbox_roomType->clear();
+
+//    QSqlQuery buildings = dbManager->execQuery("SELECT BuildingNo FROM Building");
+//    while (buildings.next()) {
+//        ui->cbox_roomLoc->addItems(QStringList() << buildings.value(0).toString());
+//    }
+}
+
+void MainWindow::on_cbox_roomFloor_currentTextChanged(const QString &arg1)
+{
+    // ui->cbox_roomLoc->clear();
+    // ui->cbox_roomFloor->clear();
+    ui->cbox_roomRoom->clear();
+    ui->cbox_roomType->clear();
+
+//    QSqlQuery buildings = dbManager->execQuery("SELECT BuildingNo FROM Building");
+//    while (buildings.next()) {
+//        ui->cbox_roomRoom->addItems(QStringList() << buildings.value(0).toString());
+//    }
+}
+
+void MainWindow::on_cbox_roomRoom_currentTextChanged(const QString &arg1)
+{
+    // ui->cbox_roomLoc->clear();
+    // ui->cbox_roomFloor->clear();
+    // ui->cbox_roomRoom->clear();
+    ui->cbox_roomType->clear();
+
+//    QSqlQuery buildings = dbManager->execQuery("SELECT BuildingNo FROM Building");
+//    while (buildings.next()) {
+//        ui->cbox_roomType->addItems(QStringList() << buildings.value(0).toString());
+//    }
+}
+
+void MainWindow::on_cbox_roomType_currentTextChanged(const QString &arg1)
+{
+
+}
+
+void MainWindow::on_cbox_roomType_currentIndexChanged(int index)
+{
+
+}

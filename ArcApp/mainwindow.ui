@@ -9765,6 +9765,9 @@ QWidget#wdg_transTotal {
                <property name="frameShape">
                 <enum>QFrame::StyledPanel</enum>
                </property>
+               <attribute name="verticalHeaderVisible">
+                <bool>false</bool>
+               </attribute>
               </widget>
              </item>
             </layout>
