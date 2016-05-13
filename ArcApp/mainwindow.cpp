@@ -1931,15 +1931,40 @@ void MainWindow::on_tableWidget_3_doubleClicked(const QModelIndex &index)
     ui->le_password->setText(pw);
 }
 
+void MainWindow::on_pushButton_CaseFiles_clicked()
+{
+    addHistory(CLIENTLOOKUP);
+    ui->stackedWidget->setCurrentIndex(CASEFILE);
 
+    double width = ui->tw_pcpRela->size().width();
 
+    for (auto x: pcp_tables){
+        x->resizeRowsToContents();
+        x->setColumnWidth(0, width*0.41);
+        x->setColumnWidth(1, width*0.41);
+        x->setColumnWidth(2, width*0.16);
+    }
+
+    //get client id
+    int nRow = ui->tableWidget_search_client->currentRow();
+    if (nRow <0)
+        return;
+    curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
+    qDebug() << "id displayed:" << idDisplayed;
+    qDebug() << "id selected:" << curClientID;
+    if (idDisplayed != curClientID) {
+        idDisplayed = curClientID;
+        populatePcp();
+    }
+}
 
 void MainWindow::populatePcp() {
     //reset tables
     for (auto x: pcp_tables) {
         x->clearContents();
-        x->resizeRowsToContents();
-
+        x->setMinimumHeight(73);
+        x->setMaximumHeight(1);
+        x->setMaximumHeight(16777215);
         x->setRowCount(1);
     }
 
@@ -1954,8 +1979,6 @@ void MainWindow::populatePcp() {
         qDebug() << result.lastError();
         int numRows = result.numRowsAffected();
         auto table = (pcp_tables.at(tableIdx++));
-
-
 
         //set number of rows
         for (int i = 0; i < numRows-1; i++) {
@@ -1972,12 +1995,6 @@ void MainWindow::populatePcp() {
             }
         }
     }
-
-//    ui->tw_pcpRela->setItem(3,0,new QTableWidgetItem("blah3"));
-//    ui->tw_pcpRela->setItem(2,0,new QTableWidgetItem("blah2"));
-//    ui->tw_pcpRela->setItem(1,0,new QTableWidgetItem("blah1"));
-//    ui->tw_pcpRela->setItem(0,0,new QTableWidgetItem("blah0"));
-
 }
 
 void MainWindow::on_EditRoomsButton_clicked()
@@ -1986,53 +2003,6 @@ void MainWindow::on_EditRoomsButton_clicked()
     addHistory(ADMINPAGE);
     qDebug() << "pushed page " << ADMINPAGE;
 }
-
-
-
-
-
-
-void MainWindow::on_pushButton_CaseFiles_clicked()
-{
-    pcpTypes = {
-                    "relationship",
-                    "educationEmployment",
-                    "substanceUse",
-                    "accomodationsPlanning",
-                    "lifeSkills",
-                    "mentalHealth",
-                    "physicalHealth",
-                    "legalInvolvement",
-                    "activities",
-                    "traditions",
-                    "other",
-                    "people"
-                };
-    addHistory(CLIENTLOOKUP);
-    ui->stackedWidget->setCurrentIndex(CASEFILE);
-
-    double width = ui->tw_pcpRela->size().width();
-
-    for (auto x: pcp_tables){
-        x->resizeRowsToContents();
-        x->setColumnWidth(0, width*0.41);
-        x->setColumnWidth(1, width*0.41);
-        x->setColumnWidth(2, width*0.16);
-    }
-
-    //get client id
-//    int nRow = ui->tableWidget_search_client->currentRow();
-//    if (nRow <0)
-//        return;
-//    curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
-
-    populatePcp();
-
-}
-
-
-
-
 
 // update employee button
 void MainWindow::on_pushButton_4_clicked()
