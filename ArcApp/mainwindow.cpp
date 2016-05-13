@@ -1954,31 +1954,75 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
     qDebug() << "id selected:" << curClientID;
     if (idDisplayed != curClientID) {
         idDisplayed = curClientID;
-        populatePcp();
+        populateCaseFiles();
     }
 }
 
-void MainWindow::populatePcp() {
-    //reset tables
-    for (auto x: pcp_tables) {
-        x->clearContents();
-        x->setMinimumHeight(73);
-        x->setMaximumHeight(1);
-        x->setMaximumHeight(16777215);
-        x->setRowCount(1);
+void MainWindow::populateCaseFiles(QString type, int tableId) {
+
+    //running notes
+    ui->te_notes->clear();
+    QSqlQuery noteResult = dbManager->readNote(curClientID);
+    qDebug() << noteResult.lastError();
+    while (noteResult.next()) {
+        ui->te_notes->document()->setPlainText(noteResult.value(0).toString());
     }
 
-//    QSqlQuery result = dbManager->execQuery("SELECT ProgramCode, Description FROM Program");
+    //pcp tables
     int tableIdx = 0;
-    for (auto x: pcpTypes) {
+    if (type == "all") {
+
+        for (auto x: pcpTypes) {
+            QString query = "SELECT rowId, Goal, Strategy, Date "
+                            "FROM Pcp "
+                            "WHERE ClientId = " + curClientID +
+                            " AND Type = '" + x + "'";
+            QSqlQuery result = dbManager->execQuery(query);
+            qDebug() << result.lastError();
+            int numRows = result.numRowsAffected();
+            auto table = (pcp_tables.at(tableIdx++));
+
+            //reset table
+            table->clearContents();
+            table->setMinimumHeight(73);
+            table->setMaximumHeight(1);
+            table->setMaximumHeight(16777215);
+            table->setRowCount(1);
+
+            //set number of rows
+            for (int i = 0; i < numRows-1; i++) {
+                table->insertRow(0);
+
+                //set height of table
+                table->setMinimumHeight(table->minimumHeight() + 35);
+            }
+
+            //populate table
+            while (result.next()){
+                for (int i = 0; i < 3; i++) {
+                    table->setItem(result.value(0).toString().toInt(), i, new QTableWidgetItem(result.value(i+1).toString()));
+                }
+            }
+        }
+        return;
+    } else {
+
         QString query = "SELECT rowId, Goal, Strategy, Date "
                         "FROM Pcp "
                         "WHERE ClientId = " + curClientID +
-                        " AND Type = '" + x + "'";
+                        " AND Type = '" + type + "'";
         QSqlQuery result = dbManager->execQuery(query);
+
         qDebug() << result.lastError();
         int numRows = result.numRowsAffected();
-        auto table = (pcp_tables.at(tableIdx++));
+        auto table = (pcp_tables.at(tableId));
+
+        //reset table
+        table->clearContents();
+        table->setMinimumHeight(73);
+        table->setMaximumHeight(1);
+        table->setMaximumHeight(16777215);
+        table->setRowCount(1);
 
         //set number of rows
         for (int i = 0; i < numRows-1; i++) {
@@ -2923,11 +2967,6 @@ void MainWindow::on_pushButton_processPaymeent_clicked()
     addHistory(CLIENTLOOKUP);
 }
 
-void MainWindow::on_btn_pcpRelaSave_clicked()
-{
-    insertPcp(ui->tw_pcpRela, "relationship");
-}
-
 void MainWindow::insertPcp(QTableWidget *tw, QString type){
     QString goal;
     QString strategy;
@@ -2947,12 +2986,17 @@ void MainWindow::insertPcp(QTableWidget *tw, QString type){
 
               }
         }
-        QSqlQuery result = dbManager->addPcp(i, curClientID, type, goal, strategy, date);
-        qDebug() << result.lastError();
+        QSqlQuery delResult = dbManager->deletePcpRow(i, type);
+        qDebug() << delResult.lastError();
+        QSqlQuery addResult = dbManager->addPcp(i, curClientID, type, goal, strategy, date);
+        qDebug() << addResult.lastError();
     }
 }
 
-
+void MainWindow::on_btn_pcpRelaSave_clicked()
+{
+    insertPcp(ui->tw_pcpRela, "relationship");
+}
 
 void MainWindow::on_btn_pcpEduSave_clicked()
 {
@@ -3012,6 +3056,104 @@ void MainWindow::on_btn_pcpKeySave_clicked()
 void MainWindow::on_actionPcptables_triggered()
 {
 
+}
+
+void MainWindow::on_btn_pcpRelaUndo_clicked()
+{
+    qDebug() << "resetting table " << pcpTypes.at(0);
+    populateCaseFiles(pcpTypes.at(0), 0);
+}
+
+void MainWindow::on_btn_pcpEduUndo_clicked()
+{
+    qDebug() << "resetting table " << pcpTypes.at(1);
+    populateCaseFiles(pcpTypes.at(1), 1);
+}
+
+void MainWindow::on_btn_pcpSubUndo_clicked()
+{
+    qDebug() << "resetting table " << pcpTypes.at(2);
+    populateCaseFiles(pcpTypes.at(2), 2);
+}
+
+void MainWindow::on_btn_pcpAccoUndo_clicked()
+{
+    qDebug() << "resetting table " << pcpTypes.at(3);
+    populateCaseFiles(pcpTypes.at(3), 3);
+}
+
+void MainWindow::on_btn_pcpLifeUndo_clicked()
+{
+    qDebug() << "resetting table " << pcpTypes.at(4);
+    populateCaseFiles(pcpTypes.at(4), 4);
+}
+
+void MainWindow::on_btn_pcpMentUndo_clicked()
+{
+    qDebug() << "resetting table " << pcpTypes.at(5);
+    populateCaseFiles(pcpTypes.at(5), 5);
+}
+
+void MainWindow::on_btn_pcpPhyUndo_2_clicked()
+{
+    qDebug() << "resetting table " << pcpTypes.at(6);
+    populateCaseFiles(pcpTypes.at(6), 6);
+}
+
+void MainWindow::on_btn_pcpLegUndo_clicked()
+{
+    qDebug() << "resetting table " << pcpTypes.at(7);
+    populateCaseFiles(pcpTypes.at(7), 7);
+}
+
+void MainWindow::on_btn_pcpActUndo_clicked()
+{
+    qDebug() << "resetting table " << pcpTypes.at(8);
+    populateCaseFiles(pcpTypes.at(8), 8);
+}
+
+void MainWindow::on_btn_pcpTradUndo_clicked()
+{
+    qDebug() << "resetting table " << pcpTypes.at(9);
+    populateCaseFiles(pcpTypes.at(9), 9);
+}
+
+void MainWindow::on_btn_pcpOtherUndo_clicked()
+{
+    qDebug() << "resetting table " << pcpTypes.at(10);
+    populateCaseFiles(pcpTypes.at(10), 10);
+}
+
+void MainWindow::on_btn_pcpPplUndo_clicked()
+{
+    qDebug() << "resetting table " << pcpTypes.at(11);
+    populateCaseFiles(pcpTypes.at(11), 11);
+}
+
+void MainWindow::on_btn_notesSave_clicked()
+{
+    QString notes = ui->te_notes->toPlainText();
+    QSqlQuery result = dbManager->addNote(curClientID, notes);
+    if (result.numRowsAffected() == 1) {
+//        ui->lbl_noteWarning->setStyleSheet("QLabel#lbl_noteWarning {color = black;}");
+//        ui->lbl_noteWarning->setText("Saved");
+    } else {
+//        ui->lbl_noteWarning->setStyleSheet("QLabel#lbl_noteWarning {color = red;}");
+//        ui->lbl_noteWarning->setText(result.lastError().text());
+        QSqlQuery result2 = dbManager->updateNote(curClientID, notes);
+        qDebug() << result2.lastError();
+
+    }
+
+}
+
+void MainWindow::on_btn_notesUndo_clicked()
+{
+    QSqlQuery result = dbManager->readNote(curClientID);
+    qDebug() << result.lastError();
+    while (result.next()) {
+        ui->te_notes->document()->setPlainText(result.value(0).toString());
+    }
 }
 
 // UNTESTED
@@ -3090,4 +3232,9 @@ void MainWindow::on_btn_modRoomRoom_clicked()
 void MainWindow::on_btn_modRoomType_clicked()
 {
     curmodifyingspace = TYPE;
+}
+
+void MainWindow::on_EditShiftsButton_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(EDITSHIFT);
 }

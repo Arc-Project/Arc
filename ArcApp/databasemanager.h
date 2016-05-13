@@ -93,7 +93,6 @@ public:
     QSqlQuery getLunches(QDate start, QDate end, QString id);
     bool updateLunches(QDate date, int num, QString id);
     bool removeLunches(QDate date, QString id);
-    QSqlQuery addPcp(int rowid, QString clientId, QString type, QString goal, QString strategy, QString date);
     QSqlQuery getWakeups(QDate start, QDate end, QString id);
     bool setWakeup(QDate date, QString time, QString id);
     bool updateWakeups(QDate date, QString time, QString id);
@@ -116,7 +115,11 @@ public:
     QSqlQuery getAssignedBeds(QString pcode);
     QSqlQuery searchSingleBed(QString buildingno, QString floorno, QString roomno, QString spaceno);
     QSqlQuery updateSpaceProgram(QString spaceid, QString program);
-    QSqlQuery addPcp(int clientId, QString type, QString goal, QString strategy, QString date);
+    QSqlQuery addPcp(int rowid, QString clientId, QString type, QString goal, QString strategy, QString date);
+    QSqlQuery deletePcpRow(int rowId, QString type);
+    QSqlQuery addNote(QString clientId, QString notes);
+    QSqlQuery updateNote(QString clientId, QString notes);
+    QSqlQuery readNote(QString clientId);
 
 signals:
     void dailyReportStatsChanged(QList<int> list);

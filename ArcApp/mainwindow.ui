@@ -111,7 +111,7 @@ QWidget#wdg_transTotal {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>12</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="mainMenu">
      <layout class="QGridLayout" name="gridLayout_5">
@@ -4149,7 +4149,7 @@ QWidget#wdg_transTotal {
        </layout>
       </item>
       <item row="0" column="1" rowspan="4">
-       <widget class="QTabWidget" name="tabWidget_2">
+       <widget class="QTabWidget" name="tabw_casefiles">
         <property name="font">
          <font>
           <pointsize>10</pointsize>
@@ -4179,8 +4179,8 @@ QWidget#wdg_transTotal {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>1049</width>
-               <height>1294</height>
+               <width>1012</width>
+               <height>1381</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_47">
@@ -4386,7 +4386,7 @@ QWidget#wdg_transTotal {
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="btn_pcpRelaUndo_2">
+                    <widget class="QPushButton" name="btn_pcpEduUndo">
                      <property name="minimumSize">
                       <size>
                        <width>130</width>
@@ -4539,7 +4539,7 @@ QWidget#wdg_transTotal {
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="btn_pcpRelaUndo_3">
+                    <widget class="QPushButton" name="btn_pcpSubUndo">
                      <property name="minimumSize">
                       <size>
                        <width>130</width>
@@ -4692,7 +4692,7 @@ QWidget#wdg_transTotal {
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="btn_pcpRelaUndo_4">
+                    <widget class="QPushButton" name="btn_pcpAccoUndo">
                      <property name="minimumSize">
                       <size>
                        <width>130</width>
@@ -4845,7 +4845,7 @@ QWidget#wdg_transTotal {
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="btn_pcpRelaUndo_5">
+                    <widget class="QPushButton" name="btn_pcpLifeUndo">
                      <property name="minimumSize">
                       <size>
                        <width>130</width>
@@ -4998,7 +4998,7 @@ QWidget#wdg_transTotal {
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="btn_pcpRelaUndo_6">
+                    <widget class="QPushButton" name="btn_pcpMentUndo">
                      <property name="minimumSize">
                       <size>
                        <width>130</width>
@@ -5151,7 +5151,7 @@ QWidget#wdg_transTotal {
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="btn_pcpRelaUndo_7">
+                    <widget class="QPushButton" name="btn_pcpPhyUndo_2">
                      <property name="minimumSize">
                       <size>
                        <width>130</width>
@@ -5304,7 +5304,7 @@ QWidget#wdg_transTotal {
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="btn_pcpRelaUndo_15">
+                    <widget class="QPushButton" name="btn_pcpLegUndo">
                      <property name="minimumSize">
                       <size>
                        <width>130</width>
@@ -5457,7 +5457,7 @@ QWidget#wdg_transTotal {
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="btn_pcpRelaUndo_16">
+                    <widget class="QPushButton" name="btn_pcpActUndo">
                      <property name="minimumSize">
                       <size>
                        <width>130</width>
@@ -5610,7 +5610,7 @@ QWidget#wdg_transTotal {
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="btn_pcpRelaUndo_17">
+                    <widget class="QPushButton" name="btn_pcpTradUndo">
                      <property name="minimumSize">
                       <size>
                        <width>130</width>
@@ -5763,7 +5763,7 @@ QWidget#wdg_transTotal {
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="btn_pcpRelaUndo_18">
+                    <widget class="QPushButton" name="btn_pcpOtherUndo">
                      <property name="minimumSize">
                       <size>
                        <width>130</width>
@@ -5916,7 +5916,7 @@ QWidget#wdg_transTotal {
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="btn_pcpRelaUndo_19">
+                    <widget class="QPushButton" name="btn_pcpPplUndo">
                      <property name="minimumSize">
                       <size>
                        <width>130</width>
@@ -6049,8 +6049,83 @@ QWidget#wdg_transTotal {
           <string>Running Notes</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_46">
-          <item row="0" column="0">
-           <widget class="QTextEdit" name="textEdit_2">
+          <item row="1" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_71">
+            <item>
+             <widget class="QLabel" name="lbl_noteWarning">
+              <property name="minimumSize">
+               <size>
+                <width>500</width>
+                <height>28</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_52">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_64">
+            <item>
+             <widget class="QPushButton" name="btn_notesUndo">
+              <property name="minimumSize">
+               <size>
+                <width>140</width>
+                <height>28</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Undo Changes</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btn_notesSave">
+              <property name="minimumSize">
+               <size>
+                <width>80</width>
+                <height>28</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Save</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="0" column="0" colspan="2">
+           <widget class="QPlainTextEdit" name="te_notes">
             <property name="font">
              <font>
               <pointsize>12</pointsize>
@@ -11061,7 +11136,7 @@ QWidget#wdg_transTotal {
      <x>0</x>
      <y>0</y>
      <width>1408</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="acceptDrops">
