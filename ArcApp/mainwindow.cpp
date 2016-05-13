@@ -416,7 +416,7 @@ void MainWindow::on_lunchCheck_clicked()
 {
    QDate testDate = QDate::currentDate();
    testDate = testDate.addDays(32);
-   QDate otherDate = testDate.addDays(35);
+//   QDate otherDate = testDate.addDays(35);
   //curClient = new Client();
    //curClient->clientId = "1";
 
@@ -679,7 +679,7 @@ void MainWindow::on_editSearch_clicked()
         user = ui->editClient->text();
     }
     result = dbManager->getActiveBooking(user, true);
-    int numCols = result.record().count();
+//    int numCols = result.record().count();
     //dbManager->printAll(result);
     int x = 0;
     int qt = result.size();
@@ -810,7 +810,7 @@ void MainWindow::on_makeBookingButton_clicked()
     //curClient = new Client();
    //popClientFromId("1");
     ui->stackedWidget->setCurrentIndex(BOOKINGPAGE);
-    int rowNum = ui->bookingTable->columnCount();
+//    int rowNum = ui->bookingTable->columnCount();
     QStringList data;
     curBook = new Booking;
     setBooking(row);
@@ -841,7 +841,7 @@ void MainWindow::populateBooking(){
 
 void MainWindow::getProgramCodes(){
     QSqlQuery result = dbManager->getPrograms();
-    int i = 0;
+//    int i = 0;
 
     while(result.next()){
         ui->programDropdown->addItem(result.value(0).toString());
@@ -1174,7 +1174,7 @@ void MainWindow::on_makeBookingButton_2_clicked()
     values = "'" + today.toString(Qt::ISODate) + "','" + curBook->stringStart + "','" + curBook->room + "','" +
              curClient->clientId + "','" + curBook->program + "','" + QString::number(cost) + "','" + curBook->stringStart
              + "','" + curBook->stringEnd + "','" + curBook->lunch + "','" + curBook->wakeTime + "'," + "'YES'" + ",'" + month + "','" + curClient->fullName +"'";
-    QDate next = curBook->startDate;
+//    QDate next = curBook->startDate;
     //QDate::fromString(ui->startLabel->text(), "yyyy-MM-dd");
     curBook->cost = cost;
     if(!dbManager->insertBookingTable(values)){
@@ -2219,7 +2219,7 @@ void MainWindow::on_btn_listAllUsers_3_clicked()
 
     QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, cost, Monthly FROM Space");
 
-    int numCols = result.record().count();
+//    int numCols = result.record().count();
     ui->tableWidget_5->setColumnCount(8);
     ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly");
     int x = 0;
@@ -2381,7 +2381,7 @@ void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
         QSqlQuery availSpaces = dbManager->getAvailableBeds(pcode);
         int numrowsavail = availSpaces.numRowsAffected();
         if (numrowsavail > 0) {
-            int numCols = availSpaces.record().count();
+//            int numCols = availSpaces.record().count();
             ui->availablebedslist->setColumnCount(1);
             int x = 0;
             int qt = availSpaces.size();
@@ -2428,7 +2428,7 @@ void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
           QSqlQuery assignedspaces = dbManager->getAssignedBeds(pcode);
           int numrowsassigned = assignedspaces.numRowsAffected();
           if (numrowsassigned > 0) {
-              int numCols = assignedspaces.record().count();
+//              int numCols = assignedspaces.record().count();
               ui->assignedbedslist->setColumnCount(1);
               int x = 0;
               int qt = assignedspaces.size();
@@ -2613,7 +2613,7 @@ void MainWindow::on_pushButton_24_clicked()
 }
 
 
-void MainWindow::resizeEvent(QResizeEvent *event) {
+void MainWindow::resizeEvent() {
     double width = ui->tw_pcpRela->size().width();
     for (auto x: pcp_tables){
         x->resizeRowsToContents();
@@ -3180,7 +3180,7 @@ void MainWindow::on_btn_searchUsers_3_clicked()
 
     QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, cost, Montly FROM Space WHERE SpaceCode LIKE '%"+ ename +"%'");
 
-    int numCols = result.record().count();
+//    int numCols = result.record().count();
     ui->tableWidget_5->setColumnCount(8);
     ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly");
     int x = 0;

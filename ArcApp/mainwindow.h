@@ -153,7 +153,7 @@ private slots:
 
     
     
-    void resizeEvent(QResizeEvent *event);
+    void resizeEvent();
 
 
     void on_EditUserButton_clicked();
