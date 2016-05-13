@@ -52,6 +52,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    QString userLoggedIn = "SOMEUSER";
+    int currentshiftid = 0;
+
     bookingManager book;
     void setup_searchClientTable(QSqlQuery results);
     void displayClientInfoThread(QString val);
@@ -441,10 +444,6 @@ private:
     QModelIndex lastprogramclicked = QModelIndex();
     QModelIndex assignedBedIndex;
     QModelIndex availableBedIndex;
-
-
-    QString userLoggedIn = "SOMEUSER";
-    int currentshiftid = 0;
 
     int curmodifyingspace = NOT_SET;
 
