@@ -14,7 +14,7 @@ QStack<int> forwardStack;
 
 QFuture<void> displayFuture ;
 QFuture<void> displayPicFuture;
-
+QFuture<void> transacFuture;
 //CaseFiles stuff
 QVector<QTableWidget*> pcp_tables;
 QVector<QString> pcpTypes;
@@ -65,19 +65,30 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case CLIENTLOOKUP:  //WIDGET 1
             initClientLookupInfo();
+            ui->tabWidget_cl_info->setCurrentIndex(0);
             //initimageview
 
 
             break;
         case BOOKINGLOOKUP: //WIDGET 2
-            bookingSetup();
+
+            ui->startDateEdit->setDate(QDate::currentDate());
+            ui->endDateEdit->setDate(QDate::currentDate().addDays(1));
+            if(firstTime){
+                firstTime = false;
+                getProgramCodes();
+                bookingSetup();
+
+            }
             //initcode
+            /*
             qDebug()<<"Client INFO";
             if(curClient != NULL){
                 qDebug()<<"ID: " << curClientID << curClient->clientId;
                 qDebug()<<"NAME: " << curClient->fullName;
                 qDebug()<<"Balance: " << curClient->balance;
             }
+            */
             break;
         case BOOKINGPAGE: //WIDGET 3
             //initcode
@@ -1479,6 +1490,7 @@ bool MainWindow::check_client_register_form(){
     return true;
 }
 
+
 void MainWindow::defaultRegisterOptions(){
     //add caseWorker Name
 
@@ -1515,8 +1527,11 @@ SEARCH CLIENTS USING NAME
 void MainWindow::on_pushButton_search_client_clicked()
 {
     qDebug() <<"START SEARCH CLIENT";
+    ui->tabWidget_cl_info->setCurrentIndex(0);
     QString clientName = ui->lineEdit_search_clientName->text();
-    QString searchQuery = "SELECT ClientId, FirstName, LastName, Dob, Balance FROM Client WHERE LastName LIKE '%"+clientName+"%' OR FirstName Like '%"+clientName+"%'";
+    QString searchQuery = "SELECT ClientId, FirstName, LastName, Dob, Balance FROM Client WHERE LastName LIKE '%"+clientName
+                        + "%' OR MiddleName Like '%"+ clientName
+                        + "%' OR FirstName Like '%"+clientName+"%'";
     QSqlQuery results = dbManager->execQuery(searchQuery);
     setup_searchClientTable(results);
 
@@ -1528,7 +1543,7 @@ void MainWindow::on_pushButton_search_client_clicked()
         return;
     }
 
-    connect(ui->tableWidget_search_client, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(selected_client_info(int,int)));
+    connect(ui->tableWidget_search_client, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(selected_client_info(int,int)),Qt::UniqueConnection);
     // dbManager->printAll(results);
 
 }
@@ -1566,14 +1581,17 @@ void MainWindow::selected_client_info(int nRow, int nCol)
 
     if(!pic_available || !table_available)
         return;
-    if(displayFuture.isRunning()){
+    if(displayFuture.isRunning()|| !displayFuture.isFinished()){
         qDebug()<<"ProfilePic Is RUNNING";
-        displayFuture.cancel();
+        return;
+        //displayFuture.cancel();
     }
-    if(displayPicFuture.isRunning()){
+    if(displayPicFuture.isRunning() || !displayPicFuture.isFinished()){
         qDebug()<<"ProfilePic Is RUNNING";
-        displayPicFuture.cancel();
+         return;
+       // displayPicFuture.cancel();
     }
+    ui->tabWidget_cl_info->setCurrentIndex(0);
     curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
 
     table_available = false;
@@ -1700,6 +1718,66 @@ void MainWindow::addInfoPic(QImage img){
 }
 
 
+void MainWindow::setSelectedClientInfo(){
+
+    curClient = new Client();
+    int nRow = ui->tableWidget_search_client->currentRow();
+    if (nRow <0)
+        return;
+
+    curClientID = curClient->clientId = ui->tableWidget_search_client->item(nRow, 0)->text();
+    curClient->fName =  ui->tableWidget_search_client->item(nRow, 1)->text();
+    curClient->mName =  ui->tableWidget_search_client->item(nRow, 2)->text();
+    curClient->lName =  ui->tableWidget_search_client->item(nRow, 3)->text();
+    curClient->balance =  ui->tableWidget_search_client->item(nRow, 4)->text().toFloat();
+
+    curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
+
+}
+
+
+
+void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
+{
+    switch(index){
+        case 0:
+            qDebug()<<"Client information tab";
+            break;
+
+        case 1:
+            if(transacFuture.isRunning()|| !transacFuture.isFinished()){
+                qDebug()<<"ProfilePic Is RUNNING";
+                return;
+                //displayFuture.cancel();
+            }
+            transacFuture = QtConcurrent::run(this, &searchTransaction, curClientID);
+            transacFuture.waitForFinished();
+            qDebug()<<"client Transaction list";
+
+            break;
+
+    }
+}
+
+
+
+void MainWindow::searchTransaction(QString clientId){
+    qDebug()<<"search transaction STaRt";
+    QString transStr = "SELECT TOP 5 * FROM Transac WHERE ClientId = " + clientId + " ORDER BY Date DESC";
+    qDebug()<<transStr;
+    QSqlQuery transQuery = dbManager->execQuery(transStr);
+    dbManager->printAll(transQuery);
+    /*
+            while(transQuery.next()){
+
+    }
+            */
+}
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////
 
 
 // the add user button
@@ -1934,6 +2012,7 @@ void MainWindow::on_tableWidget_3_doubleClicked(const QModelIndex &index)
 void MainWindow::on_pushButton_CaseFiles_clicked()
 {
     addHistory(CLIENTLOOKUP);
+    setSelectedClientInfo();
     ui->stackedWidget->setCurrentIndex(CASEFILE);
 
     double width = ui->tw_pcpRela->size().width();
@@ -3398,4 +3477,3 @@ void MainWindow::on_cbox_roomType_currentIndexChanged(int index)
 {
 
 }
-

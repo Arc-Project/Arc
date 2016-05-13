@@ -58,6 +58,7 @@ public:
     void addInfoPic(QImage img);
     void clientSearchedInfo();
     void initClientLookupInfo();
+    void setSelectedClientInfo();
     QImage profilePic;
 
     //COLIN STUFF////
@@ -196,6 +197,8 @@ private slots:
     void addPic(QImage pict);
 
     void defaultRegisterOptions();
+
+    void searchTransaction(QString clientId);
 
     /*========================================================================*/
 
@@ -410,6 +413,8 @@ private slots:
     void on_cbox_roomType_currentIndexChanged(int index);
 
     void on_cbox_roomType_currentTextChanged(const QString &arg1);
+
+    void on_tabWidget_cl_info_currentChanged(int index);
 
 private:
 
