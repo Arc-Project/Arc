@@ -3233,3 +3233,8 @@ void MainWindow::on_btn_modRoomType_clicked()
 {
     curmodifyingspace = TYPE;
 }
+
+void MainWindow::on_EditShiftsButton_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(EDITSHIFT);
+}

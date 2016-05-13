@@ -111,7 +111,7 @@ QWidget#wdg_transTotal {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>12</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="mainMenu">
      <layout class="QGridLayout" name="gridLayout_5">
@@ -4178,7 +4178,7 @@ QWidget#wdg_transTotal {
              <property name="geometry">
               <rect>
                <x>0</x>
-               <y>-663</y>
+               <y>0</y>
                <width>1012</width>
                <height>1381</height>
               </rect>
@@ -11136,7 +11136,7 @@ QWidget#wdg_transTotal {
      <x>0</x>
      <y>0</y>
      <width>1408</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="acceptDrops">

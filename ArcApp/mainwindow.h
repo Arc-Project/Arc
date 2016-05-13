@@ -16,6 +16,7 @@
 #define EDITROOM            12
 #define CONFIRMBOOKING      13
 #define EDITPAGE            14
+#define EDITSHIFT           15
 #define DAILYREPORT         0
 #define SHIFTREPORT         1
 #define DAILYLOG            2
@@ -224,7 +225,7 @@ private slots:
 
     void on_EditRoomsButton_clicked();
 
-
+    void on_EditShiftsButton_clicked();
 
 
     void on_editRoom_clicked();
@@ -388,6 +389,16 @@ private slots:
     void on_btn_notesUndo_clicked();
 
     void on_btn_searchUsers_3_clicked();
+
+
+
+    void on_btn_modRoomBdlg_clicked();
+
+    void on_btn_modRoomFloor_clicked();
+
+    void on_btn_modRoomRoom_clicked();
+
+    void on_btn_modRoomType_clicked();
 
 private:
 
