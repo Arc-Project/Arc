@@ -1527,6 +1527,7 @@ SEARCH CLIENTS USING NAME
 void MainWindow::on_pushButton_search_client_clicked()
 {
     qDebug() <<"START SEARCH CLIENT";
+    ui->tabWidget_cl_info->setCurrentIndex(0);
     QString clientName = ui->lineEdit_search_clientName->text();
     QString searchQuery = "SELECT ClientId, FirstName, LastName, Dob, Balance FROM Client WHERE LastName LIKE '%"+clientName
                         + "%' OR MiddleName Like '%"+ clientName
@@ -1590,6 +1591,7 @@ void MainWindow::selected_client_info(int nRow, int nCol)
          return;
        // displayPicFuture.cancel();
     }
+    ui->tabWidget_cl_info->setCurrentIndex(0);
     curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
 
     table_available = false;
