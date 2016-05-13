@@ -2159,12 +2159,11 @@ void MainWindow::on_btn_listAllUsers_3_clicked()
     ui->tableWidget_5->clear();
     ui->tableWidget_5->horizontalHeader()->setStretchLastSection(true);
 
-    // FIX THIS QUERY
-    QSqlQuery result = dbManager->execQuery("SELECT SpaceCode FROM Space");
+    QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, cost, Monthly FROM Space");
 
     int numCols = result.record().count();
-    ui->tableWidget_5->setColumnCount(6);
-    ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type");
+    ui->tableWidget_5->setColumnCount(8);
+    ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly");
     int x = 0;
     int qt = result.size();
     qDebug() << "<" << qt;
@@ -2197,8 +2196,10 @@ void MainWindow::on_btn_listAllUsers_3_clicked()
             << floornum
             << roomnum
             << bednumber
-            << thetype;
-        for (int i = 0; i < 6; ++i)
+            << thetype
+            << result.value(1).toString()
+            << result.value(2).toString();
+        for (int i = 0; i < 8; ++i)
         {
             ui->tableWidget_5->setItem(x, i, new QTableWidgetItem(row.at(i)));
         }
@@ -3021,12 +3022,11 @@ void MainWindow::on_btn_searchUsers_3_clicked()
     ui->tableWidget_5->clear();
     ui->tableWidget_5->horizontalHeader()->setStretchLastSection(true);
 
-    // FIX THIS QUERY
-    QSqlQuery result = dbManager->execQuery("SELECT SpaceCode FROM Space WHERE SpaceCode LIKE '%"+ ename +"%'");
+    QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, cost, Montly FROM Space WHERE SpaceCode LIKE '%"+ ename +"%'");
 
     int numCols = result.record().count();
-    ui->tableWidget_5->setColumnCount(6);
-    ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type");
+    ui->tableWidget_5->setColumnCount(8);
+    ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly");
     int x = 0;
     int qt = result.size();
     qDebug() << qt;
@@ -3061,11 +3061,33 @@ void MainWindow::on_btn_searchUsers_3_clicked()
             << floornum
             << roomnum
             << bednumber
-            << thetype;
-        for (int i = 0; i < 6; ++i)
+            << thetype
+            << result.value(1).toString()
+            << result.value(2).toString();
+        for (int i = 0; i < 8; ++i)
         {
             ui->tableWidget_5->setItem(x, i, new QTableWidgetItem(row.at(i)));
         }
         x++;
     }
+}
+
+void MainWindow::on_btn_modRoomBdlg_clicked()
+{
+    curmodifyingspace = BUILDINGS;
+}
+
+void MainWindow::on_btn_modRoomFloor_clicked()
+{
+    curmodifyingspace = FLOORS;
+}
+
+void MainWindow::on_btn_modRoomRoom_clicked()
+{
+    curmodifyingspace = ROOMS;
+}
+
+void MainWindow::on_btn_modRoomType_clicked()
+{
+    curmodifyingspace = TYPE;
 }
