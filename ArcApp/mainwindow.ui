@@ -111,7 +111,7 @@ QWidget#wdg_transTotal {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>12</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="mainMenu">
      <layout class="QGridLayout" name="gridLayout_5">
@@ -9557,13 +9557,6 @@ QWidget#wdg_transTotal {
            </property>
            <widget class="QWidget" name="page_4">
             <layout class="QGridLayout" name="gridLayout_42">
-             <item row="0" column="0">
-              <widget class="QListWidget" name="list_roomTypeLoc">
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-              </widget>
-             </item>
              <item row="1" column="0">
               <layout class="QHBoxLayout" name="horizontalLayout_32">
                <item>
@@ -9619,6 +9612,13 @@ QWidget#wdg_transTotal {
                 </widget>
                </item>
               </layout>
+             </item>
+             <item row="0" column="0">
+              <widget class="QTableWidget" name="editroommodifybox">
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>
