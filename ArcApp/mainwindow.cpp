@@ -1766,11 +1766,13 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
 
 void MainWindow::searchTransaction(QString clientId){
     qDebug()<<"search transaction STaRt";
-    QString transStr = QString("SELECT TOP 5 t.Date, t.Amount, t.Type, e.Username, t.ChequeNo, t.ChequeDate, t.TransType, t.Deleted ")
+/*    QString transStr = QString("SELECT TOP 5 t.Date, t.Amount, t.Type, e.Username, t.ChequeNo, t.ChequeDate, t.TransType, t.Deleted ")
                      + QString("FROM Transac t INNER JOIN Employee e ON t.EmpId = e.EmpId ")
                      + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC");
     qDebug()<<transStr;
     QSqlQuery transQuery = dbManager->execQuery(transStr);
+    */
+    QSqlQuery transQuery = dbManager->searchClientTransList(5, clientId);
     dbManager->printAll(transQuery);
     /*
             while(transQuery.next()){

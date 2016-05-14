@@ -51,6 +51,7 @@ public:
 
     QSqlQuery searchClientInfo(QString ClientId);
     bool searchClientInfoPic(QImage * img, QString ClientId);
+    QSqlQuery searchClientTransList(int maxNum, QString ClientId);
     /*==========================================================================
     PROFILE PICTURE UPLOAD AND DOWNLOAD RELATED FUNCTIONS
     ==========================================================================*/
