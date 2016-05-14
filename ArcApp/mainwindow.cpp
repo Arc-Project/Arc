@@ -1773,6 +1773,7 @@ void MainWindow::searchTransaction(QString clientId){
     QSqlQuery transQuery = dbManager->execQuery(transStr);
     */
     QSqlQuery transQuery = dbManager->searchClientTransList(5, clientId);
+    displayTransaction(transQuery);
     dbManager->printAll(transQuery);
     /*
             while(transQuery.next()){
@@ -1781,7 +1782,25 @@ void MainWindow::searchTransaction(QString clientId){
             */
 }
 
+void MainWindow::displayTransaction(QSqlQuery results){
+    ui->tableWidget_transaction->setRowCount(0);
 
+    int colCnt = results.record().count() -1;
+    ui->tableWidget_transaction->setColumnCount(colCnt);
+    ui->tableWidget_transaction->clear();
+
+    ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Amount"<<"Type"<<"Employee"<<"ChequeNo"<<"ChequeDate"<<"TransType");
+    int row =0;
+    while(results.next()){
+        ui->tableWidget_transaction->insertRow(0);
+        for(int i =0; i<colCnt; i++){
+            ui->tableWidget_transaction->setItem(0, i, new QTableWidgetItem(results.value(i).toString()));
+            //qDebug() <<"row : "<<row << ", col: " << i << "item" << results.value(i).toString();
+        }
+        row++;
+    }
+    ui->tableWidget_search_client->show();
+}
 
 
 /////////////////////////////////////////////////////////////////////////////////
