@@ -596,7 +596,7 @@ QStatusBar::item {
       <item row="0" column="1">
        <widget class="QTabWidget" name="tabWidget_cl_info">
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tab_cl_general">
          <attribute name="title">
@@ -1719,6 +1719,26 @@ QStatusBar::item {
              </item>
              <item row="2" column="0">
               <widget class="QTableWidget" name="tableWidget_transaction">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>170</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
+               <property name="contextMenuPolicy">
+                <enum>Qt::NoContextMenu</enum>
+               </property>
                <property name="editTriggers">
                 <set>QAbstractItemView::NoEditTriggers</set>
                </property>
@@ -1731,9 +1751,63 @@ QStatusBar::item {
                <attribute name="verticalHeaderVisible">
                 <bool>false</bool>
                </attribute>
+               <attribute name="verticalHeaderMinimumSectionSize">
+                <number>30</number>
+               </attribute>
               </widget>
              </item>
             </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_17">
+             <item>
+              <spacer name="horizontalSpacer_15">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_cl_trans_more">
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>5 MORE &gt;&gt;</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_26">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
          </widget>
@@ -4108,8 +4182,8 @@ QStatusBar::item {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>655</width>
-               <height>1381</height>
+               <width>1049</width>
+               <height>1294</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_47">
@@ -11190,8 +11264,6 @@ QStatusBar::item {
      </layout>
     </widget>
    </widget>
-   <zorder>stackedWidget</zorder>
-   <zorder>wdg_mainScreen</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -11199,7 +11271,7 @@ QStatusBar::item {
      <x>0</x>
      <y>0</y>
      <width>1408</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="acceptDrops">

@@ -434,6 +434,8 @@ private slots:
 
     void on_actionQuit_triggered();
 
+    void on_pushButton_cl_trans_more_clicked();
+
 private:
 
     Ui::MainWindow *ui;
