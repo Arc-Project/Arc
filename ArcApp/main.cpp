@@ -5,8 +5,6 @@
 #include <QByteArray>
 
 DatabaseManager* dbManager;
-QSettings settings;
-
 
 int main(int argc, char *argv[])
 {
@@ -15,8 +13,6 @@ int main(int argc, char *argv[])
     MainWindow w;
     //LoginPrompt w; //
 
-    QCoreApplication::setOrganizationName("The Salvation Army ARC");
-    QCoreApplication::setApplicationName("ARC Manager");
     w.show();
     /*QFile styleFile(":qdarkstyle/style.qss");
     styleFile.open(QFile::ReadOnly | QFile::Text);

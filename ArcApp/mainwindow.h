@@ -343,9 +343,6 @@ private slots:
     void addHistory(int n);
 
 
-
-
-
     void on_btn_pcpEduSave_clicked();
 
     void on_btn_pcpSubSave_clicked();
@@ -422,6 +419,8 @@ private slots:
     void on_cbox_roomType_currentTextChanged(const QString &arg1);
 
     void on_tabWidget_cl_info_currentChanged(int index);
+
+    void on_tableWidget_search_client_itemClicked();
 
     void on_programDropdown_currentIndexChanged(int index);
 

@@ -68,6 +68,11 @@ void MainWindow::initCurrentWidget(int idx){
             ui->tabWidget_cl_info->setCurrentIndex(0);
             //initimageview
 
+            //disable buttons that need a clientId
+            ui->pushButton_bookRoom->setEnabled(false);
+            ui->pushButton_processPaymeent->setEnabled(false);
+            ui->pushButton_editClientInfo->setEnabled(false);
+            ui->pushButton_CaseFiles->setEnabled(false);
 
             break;
         case BOOKINGLOOKUP: //WIDGET 2
@@ -811,6 +816,7 @@ void MainWindow::setBooking(int row){
 
 void MainWindow::on_makeBookingButton_clicked()
 {
+    addHistory(BOOKINGLOOKUP);
     int row = ui->bookingTable->selectionModel()->currentIndex().row();
     if(row == - 1){
         return;
@@ -1191,6 +1197,8 @@ void MainWindow::on_pushButton_bookRoom_clicked()
 
 void MainWindow::on_makeBookingButton_2_clicked()
 {
+    backStack.clear();
+    ui->actionBack->setEnabled(false);
     ui->makeBookingButton_2->setEnabled(false);
 
     curBook->lunch = "NULL";
@@ -3102,6 +3110,7 @@ void MainWindow::on_actionForward_triggered()
 void MainWindow::addHistory(int n){
     backStack.push(n);
     forwardStack.clear();
+    ui->actionBack->setEnabled(true);
     ui->actionForward->setEnabled(false);
 }
 
@@ -3487,6 +3496,7 @@ void MainWindow::on_btn_modRoomType_clicked()
 
 void MainWindow::on_EditShiftsButton_clicked()
 {
+    addHistory(ADMINPAGE);
     ui->stackedWidget->setCurrentIndex(EDITSHIFT);
 }
 
@@ -3584,6 +3594,16 @@ void MainWindow::on_cbox_roomType_currentIndexChanged(int index)
 {
 
 }
+
+
+void MainWindow::on_tableWidget_search_client_itemClicked()
+{
+    ui->pushButton_bookRoom->setEnabled(true);
+    ui->pushButton_processPaymeent->setEnabled(true);
+    ui->pushButton_editClientInfo->setEnabled(true);
+    ui->pushButton_CaseFiles->setEnabled(true);
+}
+
 
 void MainWindow::on_programDropdown_currentIndexChanged(int index)
 {
