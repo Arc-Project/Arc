@@ -62,8 +62,8 @@ public:
     bool downloadProfilePic2(QImage* img,QString idNum);
     void testuploadProfilePicThread(QString strFilePath);
     bool insertClientWithPic(QStringList* registerFieldList, QImage* profilePic);
+    bool insertClientLog(QStringList* registerFieldList);
     bool updateClientWithPic(QStringList* registerFieldList, QString clientId, QImage* profilePic);
-
     /*==========================================================================
     REPORT QUERYS
     ==========================================================================*/
