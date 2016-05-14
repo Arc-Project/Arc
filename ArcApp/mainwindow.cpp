@@ -1482,7 +1482,7 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
 
 //get client information after searching
 
-void MainWindow::selected_client_info(int nRow)
+void MainWindow::selected_client_info(int nRow, int nCol)
 {
 
 
