@@ -448,6 +448,19 @@ QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId){
     return clientTransQuery;
 }
 
+QSqlQuery DatabaseManager::searchTransBookList(int maxNum, QString clientId){
+    QSqlQuery clientTransQuery;
+    clientTransQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) )
+                             + QString(" DateCreated, ProgramCode, StartDate, EndDate, Cost, ")
+                             + QString("SpaceId, Lunch, Wakeup, FirstBook ")
+                         + QString("FROM Booking ")
+                         + QString("WHERE ClientId = " + clientId + " ORDER BY EndDate DESC, DateCreated DESC"));
+    clientTransQuery.exec();
+    return clientTransQuery;
+}
+
+
+
 /*==============================================================================
 PROFILE PICTURE UPLOAD AND DOWNLOAD RELATED FUNCTIONS (START)
 ==============================================================================*/
@@ -967,28 +980,28 @@ bool DatabaseManager::insertOtherLog(QString empName, int shiftNo, QString logTe
     return query.exec();
 }
 
-bool DatabaseManager::insertCashFloat()
-{
-    int result = -1;
-    QString connName = QString::number(DatabaseManager::getDbCounter());
-    {
-        QSqlDatabase tempDb = QSqlDatabase::database();
-        if (DatabaseManager::createDatabase(&tempDb, connName))
-        {
-            QSqlQuery query(tempDb);
+//bool DatabaseManager::insertCashFloat()
+//{
+//    int result = -1;
+//    QString connName = QString::number(DatabaseManager::getDbCounter());
+//    {
+//        QSqlDatabase tempDb = QSqlDatabase::database();
+//        if (DatabaseManager::createDatabase(&tempDb, connName))
+//        {
+//            QSqlQuery query(tempDb);
 
-            qDebug() << queryString;
-            if (query.exec(queryString))
-            {
-                query.next();
-                result = query.value(0).toInt();
-            }
-        }
-        tempDb.close();
-    } // Necessary braces: tempDb and query are destroyed because out of scope
-    QSqlDatabase::removeDatabase(connName);
-    return result;
-}
+//            qDebug() << queryString;
+//            if (query.exec(queryString))
+//            {
+//                query.next();
+//                result = query.value(0).toInt();
+//            }
+//        }
+//        tempDb.close();
+//    } // Necessary braces: tempDb and query are destroyed because out of scope
+//    QSqlDatabase::removeDatabase(connName);
+//    return result;
+//}
 
 int DatabaseManager::getIntFromQuery(QString queryString)
 {
