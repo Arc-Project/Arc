@@ -5,6 +5,13 @@
 int DatabaseManager::dbCounter = 0;
 QMutex DatabaseManager::mutex;
 
+//ini file stuff
+//QSettings settings;
+//QString SERVER_NAME;
+//QString DB_NAME;
+//QString DB_USERNAME;
+//QString DB_PW;
+
 /*==============================================================================
 DATABASE MANAGER SETUP (START)
 ==============================================================================*/
@@ -16,6 +23,33 @@ DatabaseManager::DatabaseManager(QObject *parent) :
     QObject(parent)
 {
    qRegisterMetaType< IntList >( "IntList" );
+
+   //ini file stuff
+//   QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+//                      "The Salvation Army", "ARCWay");
+//   qDebug() << "ini path" << settings.fileName();
+//   settings.beginGroup("database");
+//   qDebug() << "server name: " << settings.value("SERVER_NAME").toString();
+//   //hack to make this work with this particular server name that has backslashes and commas
+//   QVariant value = settings.value("SERVER_NAME2");
+//   QString server_name2;
+//   if (value.type() == QVariant::StringList) {
+//     server_name2 = value.toStringList().join(",");
+//   } else {
+//     server_name2 = value.toString();
+//   }
+//   qDebug() << "server name part 2: " << server_name2;
+//   qDebug() << "db name: " << settings.value("DB_NAME").toString();
+//   qDebug() << "db username: " << settings.value("DB_USERNAME").toString();
+//   qDebug() << "db pw: " << settings.value("DB_PW").toString();
+
+//   //set constants
+
+//   SERVER_NAME = settings.value("SERVER_NAME").toString() + "\\" + server_name2;
+//   DB_NAME = settings.value("DB_NAME").toString();
+//   DB_USERNAME = settings.value("DB_USERNAME").toString();
+//   DB_PW = settings.value("DB_PW").toString();
+
    if (DatabaseManager::createDatabase(&db, DEFAULT_SQL_CONN_NAME))
    {
        qDebug() << "connected";
