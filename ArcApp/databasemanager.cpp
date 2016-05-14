@@ -307,14 +307,41 @@ FILE DOWLOAD AND UPLOAD RELATED FUNCTIONS (END)
 /*==============================================================================
 SEARCH CLIENT LIST FUNCTION(START)
 ==============================================================================*/
-bool DatabaseManager::searchClientList(QSqlQuery* query, QString ClientId){
-    query =  new QSqlQuery(db);
-    query->prepare("SELECT FirstName, MiddleName, LastName, Dob FROM Client WHERE ClientId = :id");
-    query->bindValue("id", ClientId);
 
-    if(query->exec())
-        return true;
-    return false;
+
+//bool DatabaseManager::searchClientList(QSqlQuery* query, QString ClientName){
+QSqlQuery DatabaseManager::searchClientList(QString ClientName){
+    QSqlQuery query(db);
+    //query->prepare("SELECT FirstName, MiddleName, LastName, Dob FROM Client WHERE ClientId = :id");
+    //query->bindValue("id", ClientId);
+    QString searchQuery = QString("SELECT ClientId, FirstName, MiddleName, LastName, Dob, Balance ")
+            + QString("FROM Client ");
+    QStringList clientNames;
+    if(ClientName != ""){
+        clientNames = ClientName.split(" ");
+    }
+
+    if(clientNames.count() == 1){
+        qDebug()<<"Name 1 words";
+        searchQuery += QString("WHERE (FirstName LIKE '"+clientNames.at(0) + "%' ")
+                     + QString("OR LastName Like '"+clientNames.at(0)+"%') ")
+                     + QString("AND NOT FirstName = 'anonymous' ")
+                     + QString("ORDER BY FirstName ASC, LastName ASC");
+    }
+    else if(clientNames.count() == 2){
+        qDebug() << "Name 2 words";
+        searchQuery += QString("WHERE (LastName LIKE '"+clientNames.at(0) + "%' AND FirstName LIKE '" + clientNames.at(1) + "%') ")
+                     + QString("OR (FirstName Like '"+clientNames.at(0)+"%' AND LastName LIKE '" + clientNames.at(1) + "%') ")
+                     + QString("AND NOT FirstName = 'anonymous' ")
+                     + QString("ORDER BY FirstName ASC, LastName ASC");
+    }
+    else{
+        qDebug()<<"Sth wrong";
+    }
+    query.prepare(searchQuery);
+    query.exec();
+    return query;
+
 }
 
 QSqlQuery DatabaseManager::searchClientInfo(QString ClientId){
@@ -378,6 +405,14 @@ bool DatabaseManager::searchClientInfoPic(QImage * img, QString ClientId){
     return true;
 }
 
+QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId){
+    QSqlQuery clientTransQuery;
+    clientTransQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) +" t.Date, t.Amount, t.Type, e.Username, t.ChequeNo, t.ChequeDate, t.Deleted ")
+                         + QString("FROM Transac t INNER JOIN Employee e ON t.EmpId = e.EmpId ")
+                         + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC"));
+    clientTransQuery.exec();
+    return clientTransQuery;
+}
 
 /*==============================================================================
 PROFILE PICTURE UPLOAD AND DOWNLOAD RELATED FUNCTIONS (START)

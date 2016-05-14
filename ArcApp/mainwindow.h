@@ -205,6 +205,8 @@ private slots:
 
     void searchTransaction(QString clientId);
 
+    void displayTransaction(QSqlQuery results);
+
     /*========================================================================*/
 
 

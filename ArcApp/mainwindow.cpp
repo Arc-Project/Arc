@@ -1565,16 +1565,19 @@ void MainWindow::on_pushButton_search_client_clicked()
     QString searchQuery = "SELECT ClientId, FirstName, LastName, Dob, Balance FROM Client WHERE LastName LIKE '%"+clientName
                         + "%' OR MiddleName Like '%"+ clientName
                         + "%' OR FirstName Like '%"+clientName+"%'";
-    QSqlQuery results = dbManager->execQuery(searchQuery);
-    setup_searchClientTable(results);
+    //QSqlQuery results = dbManager->execQuery(searchQuery);
+    //setup_searchClientTable(results);
 
-    QSqlQuery resultQ;
-
-    if(!(dbManager->searchClientList(&resultQ, curClientID)))
+    QSqlQuery resultQ = dbManager->searchClientList(clientName);
+    /*
+    if(!(dbManager->searchClientList(&resultQ, clientName)))
     {
         qDebug()<<"Select Fail";
         return;
     }
+    */
+    //dbManager->printAll(resultQ);
+    setup_searchClientTable(resultQ);
 
     connect(ui->tableWidget_search_client, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(selected_client_info(int,int)),Qt::UniqueConnection);
     // dbManager->printAll(results);
@@ -1590,7 +1593,7 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
     ui->tableWidget_search_client->setColumnCount(colCnt);
     ui->tableWidget_search_client->clear();
 
-    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"FirstName"<<"LastName"<<"DateOfBirth"<<"Balance");
+    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"FirstName"<<"Middle Initial"<<"LastName"<<"DateOfBirth"<<"Balance");
     int row =0;
     while(results.next()){
         ui->tableWidget_search_client->insertRow(row);
@@ -1796,11 +1799,14 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
 
 void MainWindow::searchTransaction(QString clientId){
     qDebug()<<"search transaction STaRt";
-    QString transStr = QString("SELECT TOP 5 t.Date, t.Amount, t.Type, e.Username, t.ChequeNo, t.ChequeDate, t.TransType, t.Deleted ")
+/*    QString transStr = QString("SELECT TOP 5 t.Date, t.Amount, t.Type, e.Username, t.ChequeNo, t.ChequeDate, t.TransType, t.Deleted ")
                      + QString("FROM Transac t INNER JOIN Employee e ON t.EmpId = e.EmpId ")
                      + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC");
     qDebug()<<transStr;
     QSqlQuery transQuery = dbManager->execQuery(transStr);
+    */
+    QSqlQuery transQuery = dbManager->searchClientTransList(5, clientId);
+    displayTransaction(transQuery);
     dbManager->printAll(transQuery);
     /*
             while(transQuery.next()){
@@ -1809,7 +1815,25 @@ void MainWindow::searchTransaction(QString clientId){
             */
 }
 
+void MainWindow::displayTransaction(QSqlQuery results){
+    ui->tableWidget_transaction->setRowCount(0);
 
+    int colCnt = results.record().count() -1;
+    ui->tableWidget_transaction->setColumnCount(colCnt);
+    ui->tableWidget_transaction->clear();
+
+    ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Amount"<<"Type"<<"Employee"<<"ChequeNo"<<"ChequeDate");
+    int row =0;
+    while(results.next()){
+        ui->tableWidget_transaction->insertRow(row);
+        for(int i =0; i<colCnt; i++){
+            ui->tableWidget_transaction->setItem(row, i, new QTableWidgetItem(results.value(i).toString()));
+            //qDebug() <<"row : "<<row << ", col: " << i << "item" << results.value(i).toString();
+        }
+        row++;
+    }
+    ui->tableWidget_search_client->show();
+}
 
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -3419,6 +3443,7 @@ void MainWindow::on_btn_modRoomRoom_clicked()
     ui->editroommodifybox->setRowCount(0);
     ui->editroommodifybox->horizontalHeader()->setStretchLastSection(true);
     ui->editroommodifybox->setHorizontalHeaderLabels(QStringList() << "Room Number");
+
     // get building id
     QString building = ui->cbox_roomLoc->currentText();
     QSqlQuery qry = dbManager->execQuery("SELECT BuildingId FROM Building WHERE BuildingNo=" + building);
@@ -3428,7 +3453,7 @@ void MainWindow::on_btn_modRoomRoom_clicked()
 
     // get Floor id
     QString floor = ui->cbox_roomFloor->currentText();
-    QSqlQuery qry2 = dbManager->execQuery("SELECT FloorId FROM Floor WHERE BuildingNo=" + building + " AND FloorNo=" + floor);
+    QSqlQuery qry2 = dbManager->execQuery("SELECT FloorId FROM Floor WHERE BuildingId=" + building + " AND FloorNo=" + floor);
 
     qry2.next();
 
@@ -3457,6 +3482,7 @@ void MainWindow::on_btn_modRoomRoom_clicked()
 void MainWindow::on_btn_modRoomType_clicked()
 {
     curmodifyingspace = TYPE;
+    // this shouldn't be modifiable... - there are only ever beds and mats.
 }
 
 void MainWindow::on_EditShiftsButton_clicked()
@@ -3466,15 +3492,32 @@ void MainWindow::on_EditShiftsButton_clicked()
 
 void MainWindow::on_cbox_roomLoc_currentTextChanged(const QString &arg1)
 {
+    qDebug() << arg1;
+    // clear the other boxes
     // ui->cbox_roomLoc->clear();
     ui->cbox_roomFloor->clear();
     ui->cbox_roomRoom->clear();
     ui->cbox_roomType->clear();
 
-//    QSqlQuery buildings = dbManager->execQuery("SELECT BuildingNo FROM Building");
-//    while (buildings.next()) {
-//        ui->cbox_roomLoc->addItems(QStringList() << buildings.value(0).toString());
-//    }
+    if (arg1 == "") {
+        // empty selected, exit function
+        return;
+    }
+
+    // get building id
+    QString building = ui->cbox_roomLoc->currentText();
+    QSqlQuery qry = dbManager->execQuery("SELECT BuildingId FROM Building WHERE BuildingNo=" + arg1);
+
+    qry.next();
+
+    // populate floor numbers based on selected building
+    QSqlQuery floors = dbManager->execQuery("SELECT FloorNo FROM Floor WHERE BuildingId=" + qry.value(0).toString());
+
+    ui->cbox_roomFloor->addItems(QStringList() << "");
+    while (floors.next()) {
+        ui->cbox_roomFloor->addItems(QStringList() << floors.value(0).toString());
+        qDebug() << "added item" + floors.value(0).toString();
+    }
 }
 
 void MainWindow::on_cbox_roomFloor_currentTextChanged(const QString &arg1)
@@ -3484,10 +3527,34 @@ void MainWindow::on_cbox_roomFloor_currentTextChanged(const QString &arg1)
     ui->cbox_roomRoom->clear();
     ui->cbox_roomType->clear();
 
-//    QSqlQuery buildings = dbManager->execQuery("SELECT BuildingNo FROM Building");
-//    while (buildings.next()) {
-//        ui->cbox_roomRoom->addItems(QStringList() << buildings.value(0).toString());
-//    }
+    if (arg1 == "") {
+        // empty selected, exit function
+        return;
+    }
+
+    // get building id
+    QString building = ui->cbox_roomLoc->currentText();
+    QSqlQuery qry = dbManager->execQuery("SELECT BuildingId FROM Building WHERE BuildingNo=" + building);
+
+    qry.next();
+
+    qDebug() << "val:" << qry.value(0).toString();
+
+    // populate room numbers based on selected floor
+    // get floor id
+    QSqlQuery qry2 = dbManager->execQuery("SELECT FloorId FROM Floor WHERE BuildingId=" + qry.value(0).toString() + " AND FloorNo=" + arg1);
+
+    qry2.next();
+
+    QString floorid = qry2.value(0).toString();
+    qDebug() << "floorid:" + floorid;
+
+    QSqlQuery rooms = dbManager->execQuery("SELECT RoomNo FROM Room WHERE FloorId=" + floorid);
+
+    ui->cbox_roomRoom->addItems(QStringList() << "");
+    while (rooms.next()) {
+        ui->cbox_roomRoom->addItems(QStringList() << rooms.value(0).toString());
+    }
 }
 
 void MainWindow::on_cbox_roomRoom_currentTextChanged(const QString &arg1)
@@ -3497,10 +3564,15 @@ void MainWindow::on_cbox_roomRoom_currentTextChanged(const QString &arg1)
     // ui->cbox_roomRoom->clear();
     ui->cbox_roomType->clear();
 
-//    QSqlQuery buildings = dbManager->execQuery("SELECT BuildingNo FROM Building");
-//    while (buildings.next()) {
-//        ui->cbox_roomType->addItems(QStringList() << buildings.value(0).toString());
-//    }
+    if (arg1 == "") {
+        // empty selected, exit function
+        return;
+    }
+
+    QSqlQuery types = dbManager->execQuery("SELECT TypeDesc FROM Type");
+    while (types.next()) {
+        ui->cbox_roomType->addItems(QStringList() << types.value(0).toString());
+    }
 }
 
 void MainWindow::on_cbox_roomType_currentTextChanged(const QString &arg1)
