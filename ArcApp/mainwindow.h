@@ -436,6 +436,8 @@ private slots:
 
     void on_pushButton_cl_trans_more_clicked();
 
+    void useProgressDialog(QString msg, QFuture<void> future);
+
 private:
 
     Ui::MainWindow *ui;
@@ -465,8 +467,6 @@ private:
     int curmodifyingspace = NOT_SET;
 
     QFutureWatcher<void> futureWatcher;
-
-
 };
 
 #endif // MAINWINDOW_H
