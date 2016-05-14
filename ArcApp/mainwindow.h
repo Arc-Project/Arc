@@ -38,6 +38,7 @@
 #include "Utility.h"
 #include "mymodel.h"
 #include "report.h"
+#include "editrooms.h"
 #include "mycalendar.h"
 
 namespace Ui {
@@ -80,7 +81,8 @@ public:
     void popClientFromId(QString id);
     void getTransactionFromRow(int row);
     void popBookFromRow();
-
+    void clearTable(QTableWidget * table);
+    void setBookSummary();
 
     //COLIN END//////
 
@@ -419,6 +421,16 @@ private slots:
 
     void on_tabWidget_cl_info_currentChanged(int index);
 
+    void on_programDropdown_currentIndexChanged(int index);
+
+    void on_confirmAddLunch_clicked();
+
+    void on_confirmAddWake_clicked();
+
+    void on_editLunches_clicked();
+
+    void on_editWakeup_clicked();
+
 private:
 
     Ui::MainWindow *ui;
@@ -427,7 +439,7 @@ private:
     transaction * trans;
     Client * curClient;
     QString curClientID;
-
+    bool editOverLap;
     bool pic_available = true;
     bool table_available = true;
 

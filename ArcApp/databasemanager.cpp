@@ -533,7 +533,12 @@ bool DatabaseManager::deleteWakeups(QDate date, QString id){
     qDebug() << q;
     return query.exec(q);
 }
-
+bool DatabaseManager::deleteWakeupsMulti(QDate date, QString id){
+    QSqlQuery query(db);
+    QString q = "DELETE FROM Wakeup WHERE ClientId ='" + id + "' AND WakeDate >= '" + date.toString(Qt::ISODate) + "'";
+    qDebug() << q;
+    return query.exec(q);
+}
 bool DatabaseManager::updateWakeups(QDate date, QString time, QString id){
     QSqlQuery query(db);
     QString q = "UPDATE Wakeup SET WakeTime ='" + time + "' WHERE WakeDate = '"
@@ -549,7 +554,13 @@ bool DatabaseManager::setWakeup(QDate date, QString time, QString id){
     return query.exec(q);
 
 }
-
+bool DatabaseManager::removeLunchesMulti(QDate date, QString id){
+    QSqlQuery query(db);
+    QString q = "DELETE FROM Lunches WHERE LunchDate >= '" + date.toString(Qt::ISODate) + "' AND ClientID ='"+
+            id + "'";
+    qDebug() << q;
+    return query.exec(q);
+}
 bool DatabaseManager::removeLunches(QDate date, QString id){
     QSqlQuery query(db);
     QString q = "DELETE FROM Lunches WHERE LunchDate = '" + date.toString(Qt::ISODate) + "' AND ClientID ='"+
@@ -783,7 +794,7 @@ REPORT QUERYS (END)
 
 QSqlQuery DatabaseManager::getPrograms(){
     QSqlQuery query(db);
-    QString q = "SELECT DISTINCT ProgramCodes from Space";
+    QString q = "SELECT ProgramCode from Program";
     query.exec(q);
     return query;
 }
