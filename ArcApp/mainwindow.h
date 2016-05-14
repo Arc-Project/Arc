@@ -23,6 +23,8 @@
 #define FLOATCOUNT          3
 #define MONTHLYREPORT       4
 #define RESTRICTIONS        5
+#define DEFAULTTAB          0
+
 #include <QMainWindow>
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
@@ -154,8 +156,10 @@ private slots:
     /*==========================================================================
     REPORTS -slots
     ==========================================================================*/
-    void on_reportsDateSelectorGo_btn_clicked();
-    void on_reportsSetCurrentDate_btn_clicked();
+    void on_dailyReportGo_btn_clicked();
+    void on_dailyReportCurrent_btn_clicked();
+    void on_shiftReportGo_btn_clicked();
+    void on_shiftReportCurrent_btn_clicked();
 
     
     
@@ -456,9 +460,15 @@ private:
 
     QDir dir;
     
-    void setupReportsScreen();
-    void updateReportTables(QDate date = QDate::currentDate());
-    void getDailyReportStats(QDate date = QDate::currentDate());
+    /*==========================================================================
+    REPORTS - private
+    ==========================================================================*/
+    void setupReportsScreen(); 
+    void updateDailyReportTables(QDate date);
+    void getDailyReportStats(QDate date);
+    void updateShiftReportTables(QDate date, int shiftNo);
+
+
 
     QModelIndex lastprogramclicked = QModelIndex();
     QModelIndex assignedBedIndex;
