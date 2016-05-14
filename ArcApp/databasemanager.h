@@ -82,7 +82,9 @@ public:
     int getShiftReportTotal(QDate date, int shiftNo, QString payType);
     void getShiftReportStatsThread(QDate date, int shiftNo);
     bool getShiftReportClientLogQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
-    
+    bool getShiftReportOtherQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
+    bool insertOtherLog(QString empName, int shiftNo, QString logText);
+
     //COLIN STUFF/////////////////////////////////////////////////////////////
     QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);
     QSqlQuery getPrograms();

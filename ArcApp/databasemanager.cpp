@@ -929,7 +929,6 @@ void DatabaseManager::getShiftReportStatsThread(QDate date, int shiftNo)
 bool DatabaseManager::getShiftReportClientLogQuery(QSqlQuery* queryResults,
     QDate date, int shiftNo)
 {
-    qDebug() << "getShiftReportClientLogQuery called";
     QString queryString =
         QString("SELECT CONVERT(VARCHAR(15), Time, 100), EmpName, Action, ClientName ")
         + QString("FROM ClientLog ")
@@ -938,6 +937,57 @@ bool DatabaseManager::getShiftReportClientLogQuery(QSqlQuery* queryResults,
         + QString("ORDER BY Time Desc");
     qDebug() << queryString;
     return queryResults->exec(queryString);
+}
+
+bool DatabaseManager::getShiftReportOtherQuery(QSqlQuery* queryResults,
+    QDate date, int shiftNo)
+{
+    QString queryString = 
+        QString("SELECT Time, EmpName, Log ")
+        + QString("FROM OtherLog ")
+        + QString("WHERE Date = '" + date.toString(Qt::ISODate) + "' AND ")
+        + QString("ShiftNo = " + QString::number(shiftNo))
+        + QString("ORDER BY Time Desc");
+    qDebug() << queryString;
+    return queryResults->exec(queryString);
+}
+
+bool DatabaseManager::insertOtherLog(QString empName, int shiftNo, QString logText)
+{
+    QSqlQuery query(db);
+
+    query.prepare("INSERT INTO OtherLog (Date, ShiftNo, Time, EmpName, Log) "
+                  "VALUES (?, ?, ?, ?, ?)");
+    query.addBindValue(QDate::currentDate().toString("yyyy-MM-dd"));
+    query.addBindValue(shiftNo);
+    query.addBindValue(QTime::currentTime().toString("hh:mm:ss"));
+    query.addBindValue(empName);
+    query.addBindValue(logText);
+    
+    return query.exec();
+}
+
+bool DatabaseManager::insertCashFloat()
+{
+    int result = -1;
+    QString connName = QString::number(DatabaseManager::getDbCounter());
+    {
+        QSqlDatabase tempDb = QSqlDatabase::database();
+        if (DatabaseManager::createDatabase(&tempDb, connName))
+        {
+            QSqlQuery query(tempDb);
+
+            qDebug() << queryString;
+            if (query.exec(queryString))
+            {
+                query.next();
+                result = query.value(0).toInt();
+            }
+        }
+        tempDb.close();
+    } // Necessary braces: tempDb and query are destroyed because out of scope
+    QSqlDatabase::removeDatabase(connName);
+    return result;
 }
 
 int DatabaseManager::getIntFromQuery(QString queryString)

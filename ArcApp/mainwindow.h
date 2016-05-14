@@ -19,10 +19,9 @@
 #define EDITSHIFT           15
 #define DAILYREPORT         0
 #define SHIFTREPORT         1
-#define DAILYLOG            2
-#define FLOATCOUNT          3
-#define MONTHLYREPORT       4
-#define RESTRICTIONS        5
+#define FLOATCOUNT          2
+#define MONTHLYREPORT       3
+#define RESTRICTIONS        4
 #define DEFAULTTAB          0
 
 #include <QMainWindow>
@@ -165,6 +164,7 @@ private slots:
     void on_shiftReportCurrent_btn_clicked();
     void updateShiftReportStats(QList<int> list);
     void on_saveOther_btn_clicked();
+    void on_otherSave_btn_textEdited(const QString &text);
 
 
     
@@ -227,8 +227,6 @@ private slots:
     void on_btn_dailyReport_clicked();
 
     void on_btn_shiftReport_clicked();
-
-    void on_btn_dailyLog_clicked();
 
     void on_btn_floatCount_clicked();
 

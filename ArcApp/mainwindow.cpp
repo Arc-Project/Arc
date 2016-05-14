@@ -10,7 +10,7 @@
 
 //MyModel* checkoutModel;
 Report *checkoutReport, *vacancyReport, *lunchReport, *wakeupReport,
-    *bookingReport, *transactionReport, *clientLogReport;
+    *bookingReport, *transactionReport, *clientLogReport, *otherReport;
 bool firstTime = true;
 QStack<int> backStack;
 QStack<int> forwardStack;
@@ -44,6 +44,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(initCurrentWidget(int)));
     connect(dbManager, SIGNAL(dailyReportStatsChanged(QList<int>)), this, SLOT(updateDailyReportStats(QList<int>)));
     connect(dbManager, SIGNAL(shiftReportStatsChanged(QList<int>)), this, SLOT(updateShiftReportStats(QList<int>)));
+    connect(ui->other_lineEdit, SIGNAL(textEdited(const QString &)), this, SLOT(on_otherSave_btn_textEdited(const QString &)));
     curClient = 0;
     curBook = 0;
     trans = 0;
@@ -1806,11 +1807,6 @@ void MainWindow::on_btn_shiftReport_clicked()
     ui->swdg_reports->setCurrentIndex(SHIFTREPORT);
 }
 
-void MainWindow::on_btn_dailyLog_clicked()
-{
-    ui->swdg_reports->setCurrentIndex(DAILYLOG);
-}
-
 void MainWindow::on_btn_floatCount_clicked()
 {
     ui->swdg_reports->setCurrentIndex(FLOATCOUNT);
@@ -2971,6 +2967,9 @@ void MainWindow::setupReportsScreen()
     bookingReport = new Report(this, ui->booking_tableView, BOOKING_REPORT);
     transactionReport = new Report(this, ui->transaction_tableView, TRANSACTION_REPORT);
     clientLogReport = new Report(this, ui->clientLog_tableView, CLIENT_REPORT);
+    otherReport = new Report(this, ui->other_tableView, OTHER_REPORT);
+
+    ui->saveOther_btn->setEnabled(false);
 }
 
 void MainWindow::updateDailyReportTables(QDate date)
@@ -2989,6 +2988,7 @@ void MainWindow::updateShiftReportTables(QDate date, int shiftNo)
     bookingReport->updateModel(date, shiftNo);
     transactionReport->updateModel(date, shiftNo);
     clientLogReport->updateModel(date, shiftNo);
+    otherReport->updateModel(date, shiftNo);
 
     ui->lbl_shiftReportDateVal->setText(date.toString("yyyy-MM-dd"));
     ui->lbl_shiftReportShiftVal->setText(QString::number(shiftNo));
@@ -3019,7 +3019,16 @@ void MainWindow::on_shiftReportGo_btn_clicked()
 
 void MainWindow::on_saveOther_btn_clicked()
 {
-
+    QString logText = ui->other_lineEdit->text();
+    if (dbManager->insertOtherLog(userLoggedIn, currentshiftid, logText))
+    {
+        statusBar()->showMessage(tr("New log saved"), 5000);
+        ui->other_lineEdit->clear();
+    }
+    else
+    {
+        statusBar()->showMessage(tr("Could not save new log"), 5000);
+    }
 }
 
 void MainWindow::on_shiftReportCurrent_btn_clicked()
@@ -3053,6 +3062,20 @@ void MainWindow::updateShiftReportStats(QList<int> list)
     ui->lbl_chequeAmt->setText(QString::number(list.at(2)));
     ui->lbl_depoAmt->setText(QString::number(list.at(3)));
     ui->lbl_shiftAmt->setText(QString::number(list.at(4)));
+}
+
+void MainWindow::on_otherSave_btn_textEdited(const QString &text)
+{
+    QString logText = ui->other_lineEdit->text();
+    if (logText.trimmed().isEmpty())
+    {
+        ui->saveOther_btn->setEnabled(false);
+    }
+    else
+    {
+        ui->saveOther_btn->setEnabled(true);
+    }
+
 }
 
 /*==============================================================================
