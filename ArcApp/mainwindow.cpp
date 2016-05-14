@@ -67,6 +67,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&futureWatcher, SIGNAL(progressRangeChanged(int,int)), dialog, SLOT(setRange(int,int)));
     connect(&futureWatcher, SIGNAL(progressValueChanged(int)), dialog, SLOT(setValue(int)));
 
+    this->showMaximized();
 }
 
 MainWindow::~MainWindow()
