@@ -2,7 +2,7 @@
 #define PAYMENT_H
 #include <QDialog>
 #include "transaction.h"
-#include "client.h";
+#include "client.h"
 #include "booking.h"
 
 namespace Ui {

@@ -6,6 +6,8 @@
 #include <QStandardItemModel>
 #include "payment.h"
 
+#include <QProgressDialog>
+
 //MyModel* checkoutModel;
 Report *checkoutReport, *vacancyReport, *lunchReport, *wakeupReport;
 bool firstTime = true;
@@ -20,7 +22,6 @@ QVector<QTableWidget*> pcp_tables;
 QVector<QString> pcpTypes;
 bool loaded = false;
 QString idDisplayed;
-
 
 //QSqlQuery resultssss;
 MainWindow::MainWindow(QWidget *parent) :
@@ -40,10 +41,10 @@ MainWindow::MainWindow(QWidget *parent) :
     curClient = 0;
     curBook = 0;
     trans = 0;
-    checkoutReport = new Report(this, ui->checkout_tableView, CHECKOUT_REPORT);
-    vacancyReport = new Report(this, ui->vacancy_tableView, VACANCY_REPORT);
-    lunchReport = new Report(this, ui->lunch_tableView, LUNCH_REPORT);
-    wakeupReport = new Report(this, ui->wakeup_tableView, WAKEUP_REPORT);
+//    checkoutReport = new Report(this, ui->checkout_tableView, CHECKOUT_REPORT);
+//    vacancyReport = new Report(this, ui->vacancy_tableView, VACANCY_REPORT);
+//    lunchReport = new Report(this, ui->lunch_tableView, LUNCH_REPORT);
+//    wakeupReport = new Report(this, ui->wakeup_tableView, WAKEUP_REPORT);
 
     MainWindow::setupReportsScreen();
 
@@ -52,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QLabel *lbl_curShift = new QLabel("Shift Number: ");
     statusBar()->addPermanentWidget(lbl_curUser);
     statusBar()->addPermanentWidget(lbl_curShift);
+
 }
 
 MainWindow::~MainWindow()
@@ -448,7 +450,7 @@ void MainWindow::on_paymentButton_2_clicked()
 
 
 }
-void MainWindow::on_startDateEdit_dateChanged(const QDate &date)
+void MainWindow::on_startDateEdit_dateChanged()
 {
 
     if(ui->startDateEdit->date() > ui->endDateEdit->date()){
@@ -465,7 +467,7 @@ void MainWindow::on_wakeupCheck_clicked()
     mc->exec();
 }
 
-void MainWindow::on_endDateEdit_dateChanged(const QDate &date)
+void MainWindow::on_endDateEdit_dateChanged()
 {
     if(editOverLap){
 
@@ -549,7 +551,7 @@ void MainWindow::popEditPage(){
     result = dbManager->getPrograms();
     QString curProgram;
     QString compProgram;
-    int index = 0;
+//    int index = 0;
     ui->editOC->setText(QString::number(curBook->cost,'f',2));
     curProgram = curBook->program;
 
@@ -898,7 +900,7 @@ void MainWindow::on_editUpdate_clicked()
         return;
     }
     ui->editOC->setText(QString::number(curBook->cost, 'f', 2));
-    double qt = ui->editRefundAmt->text().toDouble();
+//    double qt = ui->editRefundAmt->text().toDouble();
     ui->editRefundAmt->setText("0.0");
 
     curClient->balance = updateBalance;
@@ -1126,7 +1128,7 @@ void MainWindow::on_editManagePayment_clicked()
     pay->exec();
 }
 
-void MainWindow::on_editCost_textChanged(const QString &arg1)
+void MainWindow::on_editCost_textChanged()
 {
     double newCost = ui->editCost->text().toDouble();
     double refund = ui->editCancel->text().toDouble();
@@ -1148,7 +1150,7 @@ void MainWindow::on_editCost_textChanged(const QString &arg1)
     }
 }
 
-void MainWindow::on_editCancel_textChanged(const QString &arg1)
+void MainWindow::on_editCancel_textChanged()
 {
     double newCost = ui->editCost->text().toDouble();
     double refund = ui->editCancel->text().toDouble();
@@ -1262,10 +1264,10 @@ void MainWindow::populateConfirm(){
 
 }
 
-void MainWindow::on_monthCheck_stateChanged(int arg1)
-{
+//void MainWindow::on_monthCheck_stateChanged(int arg1)
+//{
 
-}
+//}
 
 
 //END COLIN ////////////////////////////////////////////////////////////////////
@@ -1332,6 +1334,7 @@ void MainWindow::on_reportsButton_clicked()
     ui->stackedWidget->setCurrentIndex(11);
     addHistory(MAINMENU);
     qDebug() << "pushed page " << MAINMENU;
+//    dialog.exec();
 }
 
 /*===================================================================
@@ -1625,7 +1628,7 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
 
 //get client information after searching
 
-void MainWindow::selected_client_info(int nRow, int nCol)
+void MainWindow::selected_client_info(int nRow)
 {
 
     if(!pic_available || !table_available)
@@ -3055,7 +3058,23 @@ void MainWindow::setupReportsScreen()
 
 void MainWindow::updateReportTables(QDate date)
 {
-    checkoutReport->updateModel(date);
+    //create progress dialog
+    QProgressDialog dialog;
+    dialog.setLabelText(QString("Processing reports..."));
+
+    // Connect signals and slots for futureWatcher.
+    connect(&futureWatcher, SIGNAL(finished()), &dialog, SLOT(reset()));
+    connect(&dialog, SIGNAL(canceled()), &futureWatcher, SLOT(cancel()));
+    connect(&futureWatcher, SIGNAL(progressRangeChanged(int,int)), &dialog, SLOT(setRange(int,int)));
+    connect(&futureWatcher, SIGNAL(progressValueChanged(int)), &dialog, SLOT(setValue(int)));
+
+    futureWatcher.setFuture(QtConcurrent::run(checkoutReport, &checkoutReport->updateModelThread, date));
+    dialog.setCancelButton(0);
+    dialog.exec();
+    futureWatcher.waitForFinished();
+    // end of progress dialog stuff
+
+//    checkoutReport->updateModel(date);
     vacancyReport->updateModel(date);
     lunchReport->updateModel(date);
     wakeupReport->updateModel(date);
@@ -3610,7 +3629,7 @@ void MainWindow::on_tableWidget_search_client_itemClicked()
 }
 
 
-void MainWindow::on_programDropdown_currentIndexChanged(int index)
+void MainWindow::on_programDropdown_currentIndexChanged()
 {
     clearTable(ui->bookingTable);
     ui->makeBookingButton->hide();
@@ -3652,4 +3671,9 @@ void MainWindow::on_editWakeup_clicked()
         mc = new MyCalendar(this, QDate::currentDate(),curBook->endDate, curClient,2);
     }
         mc->exec();
+}
+
+void MainWindow::on_actionQuit_triggered()
+{
+    QApplication::quit();
 }
