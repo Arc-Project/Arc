@@ -97,6 +97,8 @@ public:
     bool updateLunches(QDate date, int num, QString id);
     bool removeLunches(QDate date, QString id);
     QSqlQuery getWakeups(QDate start, QDate end, QString id);
+    bool removeLunchesMulti(QDate date, QString id);
+    bool deleteWakeupsMulti(QDate date, QString id);
     bool setWakeup(QDate date, QString time, QString id);
     bool updateWakeups(QDate date, QString time, QString id);
     bool deleteWakeups(QDate date, QString id);
