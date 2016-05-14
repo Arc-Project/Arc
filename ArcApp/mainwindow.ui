@@ -104,6 +104,10 @@ QWidget#wdg_totalESP {
 QWidget#wdg_transTotal {
         background-color: #CC0000;
 }
+
+QStatusBar::item {
+	border: none;
+}
 </string>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -4104,7 +4108,7 @@ QWidget#wdg_transTotal {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>1012</width>
+               <width>655</width>
                <height>1381</height>
               </rect>
              </property>
@@ -11186,6 +11190,8 @@ QWidget#wdg_transTotal {
      </layout>
     </widget>
    </widget>
+   <zorder>stackedWidget</zorder>
+   <zorder>wdg_mainScreen</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

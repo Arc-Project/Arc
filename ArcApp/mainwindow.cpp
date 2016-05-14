@@ -47,6 +47,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     MainWindow::setupReportsScreen();
 
+    //display logged in user and current shift in status bar
+    QLabel *lbl_curUser = new QLabel("Logged in as:   ");
+    QLabel *lbl_curShift = new QLabel("Shift Number: ");
+    statusBar()->addPermanentWidget(lbl_curUser);
+    statusBar()->addPermanentWidget(lbl_curShift);
 }
 
 MainWindow::~MainWindow()
