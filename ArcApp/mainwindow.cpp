@@ -3410,6 +3410,7 @@ void MainWindow::on_btn_modRoomRoom_clicked()
     ui->editroommodifybox->setRowCount(0);
     ui->editroommodifybox->horizontalHeader()->setStretchLastSection(true);
     ui->editroommodifybox->setHorizontalHeaderLabels(QStringList() << "Room Number");
+
     // get building id
     QString building = ui->cbox_roomLoc->currentText();
     QSqlQuery qry = dbManager->execQuery("SELECT BuildingId FROM Building WHERE BuildingNo=" + building);
@@ -3419,7 +3420,7 @@ void MainWindow::on_btn_modRoomRoom_clicked()
 
     // get Floor id
     QString floor = ui->cbox_roomFloor->currentText();
-    QSqlQuery qry2 = dbManager->execQuery("SELECT FloorId FROM Floor WHERE BuildingNo=" + building + " AND FloorNo=" + floor);
+    QSqlQuery qry2 = dbManager->execQuery("SELECT FloorId FROM Floor WHERE BuildingId=" + building + " AND FloorNo=" + floor);
 
     qry2.next();
 
@@ -3448,6 +3449,7 @@ void MainWindow::on_btn_modRoomRoom_clicked()
 void MainWindow::on_btn_modRoomType_clicked()
 {
     curmodifyingspace = TYPE;
+    // this shouldn't be modifiable... - there are only ever beds and mats.
 }
 
 void MainWindow::on_EditShiftsButton_clicked()
@@ -3457,15 +3459,32 @@ void MainWindow::on_EditShiftsButton_clicked()
 
 void MainWindow::on_cbox_roomLoc_currentTextChanged(const QString &arg1)
 {
+    qDebug() << arg1;
+    // clear the other boxes
     // ui->cbox_roomLoc->clear();
     ui->cbox_roomFloor->clear();
     ui->cbox_roomRoom->clear();
     ui->cbox_roomType->clear();
 
-//    QSqlQuery buildings = dbManager->execQuery("SELECT BuildingNo FROM Building");
-//    while (buildings.next()) {
-//        ui->cbox_roomLoc->addItems(QStringList() << buildings.value(0).toString());
-//    }
+    if (arg1 == "") {
+        // empty selected, exit function
+        return;
+    }
+
+    // get building id
+    QString building = ui->cbox_roomLoc->currentText();
+    QSqlQuery qry = dbManager->execQuery("SELECT BuildingId FROM Building WHERE BuildingNo=" + arg1);
+
+    qry.next();
+
+    // populate floor numbers based on selected building
+    QSqlQuery floors = dbManager->execQuery("SELECT FloorNo FROM Floor WHERE BuildingId=" + qry.value(0).toString());
+
+    ui->cbox_roomFloor->addItems(QStringList() << "");
+    while (floors.next()) {
+        ui->cbox_roomFloor->addItems(QStringList() << floors.value(0).toString());
+        qDebug() << "added item" + floors.value(0).toString();
+    }
 }
 
 void MainWindow::on_cbox_roomFloor_currentTextChanged(const QString &arg1)
@@ -3475,10 +3494,34 @@ void MainWindow::on_cbox_roomFloor_currentTextChanged(const QString &arg1)
     ui->cbox_roomRoom->clear();
     ui->cbox_roomType->clear();
 
-//    QSqlQuery buildings = dbManager->execQuery("SELECT BuildingNo FROM Building");
-//    while (buildings.next()) {
-//        ui->cbox_roomRoom->addItems(QStringList() << buildings.value(0).toString());
-//    }
+    if (arg1 == "") {
+        // empty selected, exit function
+        return;
+    }
+
+    // get building id
+    QString building = ui->cbox_roomLoc->currentText();
+    QSqlQuery qry = dbManager->execQuery("SELECT BuildingId FROM Building WHERE BuildingNo=" + building);
+
+    qry.next();
+
+    qDebug() << "val:" << qry.value(0).toString();
+
+    // populate room numbers based on selected floor
+    // get floor id
+    QSqlQuery qry2 = dbManager->execQuery("SELECT FloorId FROM Floor WHERE BuildingId=" + qry.value(0).toString() + " AND FloorNo=" + arg1);
+
+    qry2.next();
+
+    QString floorid = qry2.value(0).toString();
+    qDebug() << "floorid:" + floorid;
+
+    QSqlQuery rooms = dbManager->execQuery("SELECT RoomNo FROM Room WHERE FloorId=" + floorid);
+
+    ui->cbox_roomRoom->addItems(QStringList() << "");
+    while (rooms.next()) {
+        ui->cbox_roomRoom->addItems(QStringList() << rooms.value(0).toString());
+    }
 }
 
 void MainWindow::on_cbox_roomRoom_currentTextChanged(const QString &arg1)
@@ -3488,10 +3531,15 @@ void MainWindow::on_cbox_roomRoom_currentTextChanged(const QString &arg1)
     // ui->cbox_roomRoom->clear();
     ui->cbox_roomType->clear();
 
-//    QSqlQuery buildings = dbManager->execQuery("SELECT BuildingNo FROM Building");
-//    while (buildings.next()) {
-//        ui->cbox_roomType->addItems(QStringList() << buildings.value(0).toString());
-//    }
+    if (arg1 == "") {
+        // empty selected, exit function
+        return;
+    }
+
+    QSqlQuery types = dbManager->execQuery("SELECT TypeDesc FROM Type");
+    while (types.next()) {
+        ui->cbox_roomType->addItems(QStringList() << types.value(0).toString());
+    }
 }
 
 void MainWindow::on_cbox_roomType_currentTextChanged(const QString &arg1)
