@@ -21,7 +21,7 @@ QVector<QString> pcpTypes;
 bool loaded = false;
 QString idDisplayed;
 
-
+int transacNum;
 //QSqlQuery resultssss;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -1388,7 +1388,7 @@ void MainWindow::getListRegisterFields(QStringList* fieldList)
                << ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd")
                << ui->lineEdit_cl_SIN->text()
                << ui->lineEdit_cl_GANum->text()
-               << caseWorkerId//QString::number(caseWorkerList.value(ui->comboBox_cl_caseWorker->currentText())) //grab value from case worker dropdown I don't know how to do it
+               << caseWorkerId   //QString::number(caseWorkerList.value(ui->comboBox_cl_caseWorker->currentText())) //grab value from case worker dropdown I don't know how to do it
                << ui->dateEdit_cl_rulesign->date().toString("yyyy-MM-dd")
                << ui->lineEdit_cl_nok_name->text()
                << ui->lineEdit_cl_nok_relationship->text()
@@ -1628,6 +1628,7 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
 void MainWindow::selected_client_info(int nRow, int nCol)
 {
 
+
     if(!pic_available || !table_available)
         return;
     if(displayFuture.isRunning()|| !displayFuture.isFinished()){
@@ -1642,6 +1643,8 @@ void MainWindow::selected_client_info(int nRow, int nCol)
     }
     ui->tabWidget_cl_info->setCurrentIndex(0);
     curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
+    transacNum = 5;
+    ui->pushButton_cl_trans_more->setEnabled(true);
 
     table_available = false;
     displayFuture = QtConcurrent::run(this, &displayClientInfoThread, curClientID);
@@ -1799,6 +1802,7 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
                 return;
                 //displayFuture.cancel();
             }
+            ui->pushButton_cl_trans_more->setEnabled(true);
             transacFuture = QtConcurrent::run(this, &searchTransaction, curClientID);
             transacFuture.waitForFinished();
             qDebug()<<"client Transaction list";
@@ -1818,7 +1822,8 @@ void MainWindow::searchTransaction(QString clientId){
     qDebug()<<transStr;
     QSqlQuery transQuery = dbManager->execQuery(transStr);
     */
-    QSqlQuery transQuery = dbManager->searchClientTransList(5, clientId);
+
+    QSqlQuery transQuery = dbManager->searchClientTransList(transacNum, clientId);
     displayTransaction(transQuery);
     dbManager->printAll(transQuery);
     /*
@@ -1836,7 +1841,7 @@ void MainWindow::displayTransaction(QSqlQuery results){
     ui->tableWidget_transaction->clear();
 
     ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Amount"<<"Type"<<"Employee"<<"ChequeNo"<<"ChequeDate");
-    int row =0;
+    int row =ui->tableWidget_transaction->rowCount();
     while(results.next()){
         ui->tableWidget_transaction->insertRow(row);
         for(int i =0; i<colCnt; i++){
@@ -1845,8 +1850,22 @@ void MainWindow::displayTransaction(QSqlQuery results){
         }
         row++;
     }
+    if(row !=transacNum || row%5 != 0){
+        ui->pushButton_cl_trans_more->setEnabled(false);
+    }
+    ui->tableWidget_transaction->setMinimumHeight(33*row-5);
+
     ui->tableWidget_search_client->show();
 }
+
+void MainWindow::on_pushButton_cl_trans_more_clicked()
+{
+
+    transacNum +=5;
+    searchTransaction(curClientID);
+}
+
+
 
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -3653,3 +3672,7 @@ void MainWindow::on_editWakeup_clicked()
     }
         mc->exec();
 }
+
+
+
+

@@ -432,6 +432,8 @@ private slots:
 
     void on_editWakeup_clicked();
 
+    void on_pushButton_cl_trans_more_clicked();
+
 private:
 
     Ui::MainWindow *ui;
