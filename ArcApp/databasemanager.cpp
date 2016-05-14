@@ -407,7 +407,7 @@ bool DatabaseManager::searchClientInfoPic(QImage * img, QString ClientId){
 
 QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId){
     QSqlQuery clientTransQuery;
-    clientTransQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) +" t.Date, t.Amount, t.Type, e.Username, t.ChequeNo, t.ChequeDate, t.TransType, t.Deleted ")
+    clientTransQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) +" t.Date, t.Amount, t.Type, e.Username, t.ChequeNo, t.ChequeDate, t.Deleted ")
                          + QString("FROM Transac t INNER JOIN Employee e ON t.EmpId = e.EmpId ")
                          + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC"));
     clientTransQuery.exec();

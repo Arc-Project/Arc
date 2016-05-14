@@ -1789,7 +1789,7 @@ void MainWindow::displayTransaction(QSqlQuery results){
     ui->tableWidget_transaction->setColumnCount(colCnt);
     ui->tableWidget_transaction->clear();
 
-    ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Amount"<<"Type"<<"Employee"<<"ChequeNo"<<"ChequeDate"<<"TransType");
+    ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Amount"<<"Type"<<"Employee"<<"ChequeNo"<<"ChequeDate");
     int row =0;
     while(results.next()){
         ui->tableWidget_transaction->insertRow(row);
