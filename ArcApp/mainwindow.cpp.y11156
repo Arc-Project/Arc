@@ -68,11 +68,6 @@ void MainWindow::initCurrentWidget(int idx){
             ui->tabWidget_cl_info->setCurrentIndex(0);
             //initimageview
 
-            //disable buttons that need a clientId
-            ui->pushButton_bookRoom->setEnabled(false);
-            ui->pushButton_processPaymeent->setEnabled(false);
-            ui->pushButton_editClientInfo->setEnabled(false);
-            ui->pushButton_CaseFiles->setEnabled(false);
 
             break;
         case BOOKINGLOOKUP: //WIDGET 2
@@ -519,7 +514,6 @@ void MainWindow::on_editButton_clicked()
     popClientFromId(ui->editLookupTable->item(row, 10)->text());
     ui->stackedWidget->setCurrentIndex(EDITPAGE);
     popEditPage();
-    setBookSummary();
 }
 void MainWindow::popClientFromId(QString id){
     QSqlQuery result;
@@ -536,6 +530,7 @@ void MainWindow::popClientFromId(QString id){
     curClient->balance = result.record().value("Balance").toString().toDouble();
 
 
+
 }
 
 void MainWindow::popEditPage(){
@@ -545,13 +540,27 @@ void MainWindow::popEditPage(){
     QString curProgram;
     QString compProgram;
     int index = 0;
-    ui->editOC->setText(QString::number(curBook->cost,'f',2));
+    int t = 0;
+    ui->editOC->setText("Original Cost: " + QString::number(curBook->cost));
     curProgram = curBook->program;
+    while(result.next()){
+        compProgram = result.value(0).toString();
+        if(compProgram == curProgram)
+            index = t;
+        ui->editProgram_2->addItem(compProgram);
+        t++;
 
+    }
     ui->editRoomLabel->setText(curBook->room);
+    ui->editProgram_2->setCurrentIndex(index);
     ui->editDate->setDate(curBook->endDate);
     ui->editCost->setText(QString::number(curBook->cost));
-    ui->editRoom->setEnabled(true);
+    curBook->lunch == "YES" ? ui->editLunch->setChecked(true) : ui->editLunch->setChecked(false);
+    if(curBook->wakeTime != "NO"){
+        ui->editWakeup->setTime(QTime::fromString(curBook->wakeTime));
+        ui->editWakeCheck->setChecked(true);
+    }
+
 
 }
 
@@ -695,9 +704,6 @@ void MainWindow::on_editSearch_clicked()
     int x = 0;
     int qt = result.size();
     qDebug() << qt;
-
-
-
     while (result.next()) {
         ui->editLookupTable->insertRow(x);
 
@@ -748,6 +754,7 @@ void MainWindow::on_bookingSearchButton_clicked()
 
     }
 
+    dbManager->printAll(result);
     ui->makeBookingButton->show();
 }
 //PARAMS - The table, list of headers, list of table column names, the sqlquery result, STRETCH - stretch mode true/false
@@ -790,7 +797,7 @@ void MainWindow::setBooking(int row){
     curBook->stringStart = ui->startDateEdit->date().toString(Qt::ISODate);
     curBook->stringEnd = ui->endDateEdit->date().toString(Qt::ISODate);
     curBook->monthly = ui->monthCheck->isChecked();
-    curBook->program = ui->programDropdown->currentText();
+    curBook->program = ui->bookingTable->item(row, 2)->text();
     curBook->room = ui->bookingTable->item(row,0)->text();
     curBook->stayLength = ui->endDateEdit->date().toJulianDay() - ui->startDateEdit->date().toJulianDay();
     double potentialCost = 999999;
@@ -816,7 +823,6 @@ void MainWindow::setBooking(int row){
 
 void MainWindow::on_makeBookingButton_clicked()
 {
-    addHistory(BOOKINGLOOKUP);
     int row = ui->bookingTable->selectionModel()->currentIndex().row();
     if(row == - 1){
         return;
@@ -841,6 +847,8 @@ void MainWindow::populateBooking(){
     ui->costInput->setText(QString::number(curBook->cost));
     ui->programLabel->setText(curBook->program);
     ui->lengthOfStayLabel->setText(QString::number(curBook->stayLength));
+    ui->wakeupCheck->setChecked(false);
+    ui->lunchCheck->setChecked(false);
     // - curBook->cost + curBook->paidTotal, 'f', 2)
     ui->stayLabel->setText(QString::number(curClient->balance));
     if(curBook->monthly){
@@ -859,52 +867,36 @@ void MainWindow::getProgramCodes(){
         ui->programDropdown->addItem(result.value(0).toString());
     }
 }
-void MainWindow::setBookSummary(){
-    ui->editStartDate->setText(curBook->stringStart);
-    ui->editEndDate->setText(curBook->stringEnd);
-    ui->editCostLabel->setText(QString::number(curBook->cost, 'f', 2));
-    curBook->monthly == true ? ui->editMonthly->setText("Yes") : ui->editMonthly->setText("No");
-    ui->editProgramLabel->setText(curBook->program);
-    ui->editLengthOfStay->setText(QString::number(curBook->stayLength));
-    ui->editRoomLabel_2->setText(curBook->room);
-    ui->editCost->setText(QString::number(curBook->cost, 'f', 2));
-    //ui->editRefundAmt->setText(QString::number(ui->editOC->text().toDouble() - curBook->cost));
-
-}
-
 void MainWindow::on_editUpdate_clicked()
 {
-    double updateBalance;
+
     if(!checkNumber(ui->editCost->text()))
         return;
 
-    ui->editRoom->setEnabled(true);
-    ui->editDate->setEnabled(true);
-    if(ui->editRefundLabel->text() == "Refund"){
-        curBook->monthly = false;
-        updateBalance = curClient->balance + ui->editRefundAmt->text().toDouble();
-    }
-    else{
-        updateBalance = curClient->balance - ui->editRefundAmt->text().toDouble();
-    }
+    ui->editLunch->isChecked() == true ? curBook->lunch = "YES" : curBook->lunch = "NO";
+    ui->editWakeCheck->isChecked() == true ? curBook->wakeTime = ui->editWakeup->time().toString() :
+            curBook->wakeTime = "NO";
+    double updateBalance = curClient->balance - ui->editRefundAmt->text().toDouble();
     curBook->cost = ui->editCost->text().toDouble();
     if(!dbManager->updateBalance(updateBalance, curClient->clientId)){
         qDebug() << "Error inserting new balance";
         return;
     }
-    ui->editOC->setText(QString::number(curBook->cost, 'f', 2));
+    ui->editOC->setText("Original Cost: " + QString::number(curBook->cost, 'f', 2));
     double qt = ui->editRefundAmt->text().toDouble();
     ui->editRefundAmt->setText("0.0");
-
+    if(qt < 0){
+        curBook->monthly = false;
+    }
     curClient->balance = updateBalance;
     curBook->endDate = ui->editDate->date();
     curBook->stringEnd = curBook->endDate.toString(Qt::ISODate);
 
     updateBooking(*curBook);
-    setBookSummary();
-    dbManager->removeLunchesMulti(curBook->endDate, curClient->clientId);
-    dbManager->deleteWakeupsMulti(curBook->endDate, curClient->clientId);
-    curBook->stayLength = curBook->endDate.toJulianDay() - curBook->startDate.toJulianDay();
+
+
+
+
 }
 
 double MainWindow::calcRefund(QDate old, QDate n){
@@ -1075,15 +1067,6 @@ void MainWindow::on_btn_payOutstanding_clicked()
 
 void MainWindow::on_editDate_dateChanged(const QDate &date)
 {
-    ui->editRoom->setEnabled(false);
-    if(date > curBook->endDate){
-        ui->editDate->setDate(curBook->endDate);
-        return;
-    }
-    if(date < curBook->startDate){
-        ui->editDate->setDate(curBook->startDate);
-    }
-
     qDebug() << "Edit date called";
     double refund = 0;
     double newCost;
@@ -1112,10 +1095,7 @@ void MainWindow::on_editManagePayment_clicked()
 
     owed = ui->editRefundAmt->text().toDouble();
     bool type;
-    ui->editRefundLabel->text() == "Refund" ? type = false : type = true;
-    if(!type){
-        owed *= -1;
-    }
+    owed < 0 ? type = false : type = true;
     QString note = "";
     payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, type);
     pay->exec();
@@ -1125,21 +1105,16 @@ void MainWindow::on_editCost_textChanged(const QString &arg1)
 {
     double newCost = ui->editCost->text().toDouble();
     double refund = ui->editCancel->text().toDouble();
-    double origCost = ui->editOC->text().toDouble();
-
-    qDebug() << "Original Cost " << ui->editOC->text() << " " <<  origCost;
-    if(newCost < origCost){
+    if(newCost < curBook->cost){
         ui->editRefundLabel->setText("Refund");
-        double realRefund = newCost - origCost + refund;
-
+        double realRefund = newCost - curBook->cost + refund;
         if(realRefund > 0)
             realRefund = 0;
-        realRefund = realRefund * -1;
         ui->editRefundAmt->setText(QString::number(realRefund, 'f', 2));
     }
     else{
         ui->editRefundLabel->setText("Owed");
-        ui->editRefundAmt->setText(QString::number(newCost - origCost, 'f', 2));
+        ui->editRefundAmt->setText(QString::number(newCost - curBook->cost, 'f', 2));
     }
 }
 
@@ -1147,27 +1122,22 @@ void MainWindow::on_editCancel_textChanged(const QString &arg1)
 {
     double newCost = ui->editCost->text().toDouble();
     double refund = ui->editCancel->text().toDouble();
-    double origCost = ui->editOC->text().toDouble();
-    if(newCost < origCost){
+    if(newCost < curBook->cost){
         ui->editRefundLabel->setText("Refund");
-        double realRefund = newCost - origCost + refund;
+        double realRefund = newCost - curBook->cost + refund;
         if(realRefund > 0)
             realRefund = 0;
-        realRefund = realRefund * -1;
         ui->editRefundAmt->setText(QString::number(realRefund, 'f', 2));
     }
     else{
         ui->editRefundLabel->setText("Owed");
-        ui->editRefundAmt->setText(QString::number(newCost - origCost, 'f', 2));
+        ui->editRefundAmt->setText(QString::number(newCost - curBook->cost, 'f', 2));
     }
 }
 
 void MainWindow::on_editRoom_clicked()
 {
-    ui->editDate->setEnabled(false);
-    EditRooms * edit = new EditRooms(this, curBook);
-    edit->exec();
-    setBookSummary();
+
 }
 
 void MainWindow::on_pushButton_bookRoom_clicked()
@@ -1197,12 +1167,19 @@ void MainWindow::on_pushButton_bookRoom_clicked()
 
 void MainWindow::on_makeBookingButton_2_clicked()
 {
-    backStack.clear();
-    ui->actionBack->setEnabled(false);
     ui->makeBookingButton_2->setEnabled(false);
-
-    curBook->lunch = "NULL";
-    curBook->wakeTime = "NULL";
+    if(ui->lunchCheck->checkState()){
+        curBook->lunch = "YES";
+    }
+    else{
+        curBook->lunch = "NO";
+    }
+    if(ui->wakeupCheck->checkState()){
+        curBook->wakeTime = ui->wakeTime->time().toString();
+    }
+    else{
+       curBook->wakeTime = "NO";
+    }
     QString month;
     if(curBook->monthly){
         month = "YES";
@@ -1253,7 +1230,8 @@ void MainWindow::populateConfirm(){
     }
     ui->confirmPaid->setText(QString::number(curClient->balance));
     ui->confirmProgram->setText(curBook->program);
-
+    ui->confirmWakeup->setText(curBook->wakeTime);
+    ui->confirmLunch->setText(curBook->lunch);
 
 }
 
@@ -1573,19 +1551,16 @@ void MainWindow::on_pushButton_search_client_clicked()
     QString searchQuery = "SELECT ClientId, FirstName, LastName, Dob, Balance FROM Client WHERE LastName LIKE '%"+clientName
                         + "%' OR MiddleName Like '%"+ clientName
                         + "%' OR FirstName Like '%"+clientName+"%'";
-    //QSqlQuery results = dbManager->execQuery(searchQuery);
-    //setup_searchClientTable(results);
+    QSqlQuery results = dbManager->execQuery(searchQuery);
+    setup_searchClientTable(results);
 
-    QSqlQuery resultQ = dbManager->searchClientList(clientName);
-    /*
-    if(!(dbManager->searchClientList(&resultQ, clientName)))
+    QSqlQuery resultQ;
+
+    if(!(dbManager->searchClientList(&resultQ, curClientID)))
     {
         qDebug()<<"Select Fail";
         return;
     }
-    */
-    //dbManager->printAll(resultQ);
-    setup_searchClientTable(resultQ);
 
     connect(ui->tableWidget_search_client, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(selected_client_info(int,int)),Qt::UniqueConnection);
     // dbManager->printAll(results);
@@ -1601,7 +1576,7 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
     ui->tableWidget_search_client->setColumnCount(colCnt);
     ui->tableWidget_search_client->clear();
 
-    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"FirstName"<<"Middle Initial"<<"LastName"<<"DateOfBirth"<<"Balance");
+    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"FirstName"<<"LastName"<<"DateOfBirth"<<"Balance");
     int row =0;
     while(results.next()){
         ui->tableWidget_search_client->insertRow(row);
@@ -1807,14 +1782,11 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
 
 void MainWindow::searchTransaction(QString clientId){
     qDebug()<<"search transaction STaRt";
-/*    QString transStr = QString("SELECT TOP 5 t.Date, t.Amount, t.Type, e.Username, t.ChequeNo, t.ChequeDate, t.TransType, t.Deleted ")
+    QString transStr = QString("SELECT TOP 5 t.Date, t.Amount, t.Type, e.Username, t.ChequeNo, t.ChequeDate, t.TransType, t.Deleted ")
                      + QString("FROM Transac t INNER JOIN Employee e ON t.EmpId = e.EmpId ")
                      + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC");
     qDebug()<<transStr;
     QSqlQuery transQuery = dbManager->execQuery(transStr);
-    */
-    QSqlQuery transQuery = dbManager->searchClientTransList(5, clientId);
-    displayTransaction(transQuery);
     dbManager->printAll(transQuery);
     /*
             while(transQuery.next()){
@@ -1823,25 +1795,7 @@ void MainWindow::searchTransaction(QString clientId){
             */
 }
 
-void MainWindow::displayTransaction(QSqlQuery results){
-    ui->tableWidget_transaction->setRowCount(0);
 
-    int colCnt = results.record().count() -1;
-    ui->tableWidget_transaction->setColumnCount(colCnt);
-    ui->tableWidget_transaction->clear();
-
-    ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Amount"<<"Type"<<"Employee"<<"ChequeNo"<<"ChequeDate");
-    int row =0;
-    while(results.next()){
-        ui->tableWidget_transaction->insertRow(row);
-        for(int i =0; i<colCnt; i++){
-            ui->tableWidget_transaction->setItem(row, i, new QTableWidgetItem(results.value(i).toString()));
-            //qDebug() <<"row : "<<row << ", col: " << i << "item" << results.value(i).toString();
-        }
-        row++;
-    }
-    ui->tableWidget_search_client->show();
-}
 
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -3110,7 +3064,6 @@ void MainWindow::on_actionForward_triggered()
 void MainWindow::addHistory(int n){
     backStack.push(n);
     forwardStack.clear();
-    ui->actionBack->setEnabled(true);
     ui->actionForward->setEnabled(false);
 }
 
@@ -3452,7 +3405,6 @@ void MainWindow::on_btn_modRoomRoom_clicked()
     ui->editroommodifybox->setRowCount(0);
     ui->editroommodifybox->horizontalHeader()->setStretchLastSection(true);
     ui->editroommodifybox->setHorizontalHeaderLabels(QStringList() << "Room Number");
-
     // get building id
     QString building = ui->cbox_roomLoc->currentText();
     QSqlQuery qry = dbManager->execQuery("SELECT BuildingId FROM Building WHERE BuildingNo=" + building);
@@ -3462,7 +3414,7 @@ void MainWindow::on_btn_modRoomRoom_clicked()
 
     // get Floor id
     QString floor = ui->cbox_roomFloor->currentText();
-    QSqlQuery qry2 = dbManager->execQuery("SELECT FloorId FROM Floor WHERE BuildingId=" + building + " AND FloorNo=" + floor);
+    QSqlQuery qry2 = dbManager->execQuery("SELECT FloorId FROM Floor WHERE BuildingNo=" + building + " AND FloorNo=" + floor);
 
     qry2.next();
 
@@ -3491,43 +3443,24 @@ void MainWindow::on_btn_modRoomRoom_clicked()
 void MainWindow::on_btn_modRoomType_clicked()
 {
     curmodifyingspace = TYPE;
-    // this shouldn't be modifiable... - there are only ever beds and mats.
 }
 
 void MainWindow::on_EditShiftsButton_clicked()
 {
-    addHistory(ADMINPAGE);
     ui->stackedWidget->setCurrentIndex(EDITSHIFT);
 }
 
 void MainWindow::on_cbox_roomLoc_currentTextChanged(const QString &arg1)
 {
-    qDebug() << arg1;
-    // clear the other boxes
     // ui->cbox_roomLoc->clear();
     ui->cbox_roomFloor->clear();
     ui->cbox_roomRoom->clear();
     ui->cbox_roomType->clear();
 
-    if (arg1 == "") {
-        // empty selected, exit function
-        return;
-    }
-
-    // get building id
-    QString building = ui->cbox_roomLoc->currentText();
-    QSqlQuery qry = dbManager->execQuery("SELECT BuildingId FROM Building WHERE BuildingNo=" + arg1);
-
-    qry.next();
-
-    // populate floor numbers based on selected building
-    QSqlQuery floors = dbManager->execQuery("SELECT FloorNo FROM Floor WHERE BuildingId=" + qry.value(0).toString());
-
-    ui->cbox_roomFloor->addItems(QStringList() << "");
-    while (floors.next()) {
-        ui->cbox_roomFloor->addItems(QStringList() << floors.value(0).toString());
-        qDebug() << "added item" + floors.value(0).toString();
-    }
+//    QSqlQuery buildings = dbManager->execQuery("SELECT BuildingNo FROM Building");
+//    while (buildings.next()) {
+//        ui->cbox_roomLoc->addItems(QStringList() << buildings.value(0).toString());
+//    }
 }
 
 void MainWindow::on_cbox_roomFloor_currentTextChanged(const QString &arg1)
@@ -3537,34 +3470,10 @@ void MainWindow::on_cbox_roomFloor_currentTextChanged(const QString &arg1)
     ui->cbox_roomRoom->clear();
     ui->cbox_roomType->clear();
 
-    if (arg1 == "") {
-        // empty selected, exit function
-        return;
-    }
-
-    // get building id
-    QString building = ui->cbox_roomLoc->currentText();
-    QSqlQuery qry = dbManager->execQuery("SELECT BuildingId FROM Building WHERE BuildingNo=" + building);
-
-    qry.next();
-
-    qDebug() << "val:" << qry.value(0).toString();
-
-    // populate room numbers based on selected floor
-    // get floor id
-    QSqlQuery qry2 = dbManager->execQuery("SELECT FloorId FROM Floor WHERE BuildingId=" + qry.value(0).toString() + " AND FloorNo=" + arg1);
-
-    qry2.next();
-
-    QString floorid = qry2.value(0).toString();
-    qDebug() << "floorid:" + floorid;
-
-    QSqlQuery rooms = dbManager->execQuery("SELECT RoomNo FROM Room WHERE FloorId=" + floorid);
-
-    ui->cbox_roomRoom->addItems(QStringList() << "");
-    while (rooms.next()) {
-        ui->cbox_roomRoom->addItems(QStringList() << rooms.value(0).toString());
-    }
+//    QSqlQuery buildings = dbManager->execQuery("SELECT BuildingNo FROM Building");
+//    while (buildings.next()) {
+//        ui->cbox_roomRoom->addItems(QStringList() << buildings.value(0).toString());
+//    }
 }
 
 void MainWindow::on_cbox_roomRoom_currentTextChanged(const QString &arg1)
@@ -3574,15 +3483,10 @@ void MainWindow::on_cbox_roomRoom_currentTextChanged(const QString &arg1)
     // ui->cbox_roomRoom->clear();
     ui->cbox_roomType->clear();
 
-    if (arg1 == "") {
-        // empty selected, exit function
-        return;
-    }
-
-    QSqlQuery types = dbManager->execQuery("SELECT TypeDesc FROM Type");
-    while (types.next()) {
-        ui->cbox_roomType->addItems(QStringList() << types.value(0).toString());
-    }
+//    QSqlQuery buildings = dbManager->execQuery("SELECT BuildingNo FROM Building");
+//    while (buildings.next()) {
+//        ui->cbox_roomType->addItems(QStringList() << buildings.value(0).toString());
+//    }
 }
 
 void MainWindow::on_cbox_roomType_currentTextChanged(const QString &arg1)
@@ -3595,56 +3499,8 @@ void MainWindow::on_cbox_roomType_currentIndexChanged(int index)
 
 }
 
-
-void MainWindow::on_tableWidget_search_client_itemClicked()
-{
-    ui->pushButton_bookRoom->setEnabled(true);
-    ui->pushButton_processPaymeent->setEnabled(true);
-    ui->pushButton_editClientInfo->setEnabled(true);
-    ui->pushButton_CaseFiles->setEnabled(true);
-}
-
-
 void MainWindow::on_programDropdown_currentIndexChanged(int index)
 {
     clearTable(ui->bookingTable);
     ui->makeBookingButton->hide();
-}
-
-void MainWindow::on_confirmAddLunch_clicked()
-{
-    MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,1);
-       mc->exec();
-}
-
-void MainWindow::on_confirmAddWake_clicked()
-{
-    MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,2);
-        mc->exec();
-}
-
-void MainWindow::on_editLunches_clicked()
-{
-    MyCalendar* mc;
-    if(QDate::currentDate() < curBook->startDate){
-        mc = new MyCalendar(this, curBook->startDate, curBook->endDate, curClient,1);
-
-
-    }else{
-       mc = new MyCalendar(this, QDate::currentDate(), curBook->endDate, curClient,1);
-    }
-       mc->exec();
-}
-
-void MainWindow::on_editWakeup_clicked()
-{
-    MyCalendar* mc;
-    if(QDate::currentDate() < curBook->startDate){
-
-        mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,2);
-    }else{
-
-        mc = new MyCalendar(this, QDate::currentDate(),curBook->endDate, curClient,2);
-    }
-        mc->exec();
 }
