@@ -5,6 +5,13 @@
 int DatabaseManager::dbCounter = 0;
 QMutex DatabaseManager::mutex;
 
+//ini file stuff
+//QSettings settings;
+//QString SERVER_NAME;
+//QString DB_NAME;
+//QString DB_USERNAME;
+//QString DB_PW;
+
 /*==============================================================================
 DATABASE MANAGER SETUP (START)
 ==============================================================================*/
@@ -16,6 +23,33 @@ DatabaseManager::DatabaseManager(QObject *parent) :
     QObject(parent)
 {
    qRegisterMetaType< IntList >( "IntList" );
+
+   //ini file stuff
+//   QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+//                      "The Salvation Army", "ARCWay");
+//   qDebug() << "ini path" << settings.fileName();
+//   settings.beginGroup("database");
+//   qDebug() << "server name: " << settings.value("SERVER_NAME").toString();
+//   //hack to make this work with this particular server name that has backslashes and commas
+//   QVariant value = settings.value("SERVER_NAME2");
+//   QString server_name2;
+//   if (value.type() == QVariant::StringList) {
+//     server_name2 = value.toStringList().join(",");
+//   } else {
+//     server_name2 = value.toString();
+//   }
+//   qDebug() << "server name part 2: " << server_name2;
+//   qDebug() << "db name: " << settings.value("DB_NAME").toString();
+//   qDebug() << "db username: " << settings.value("DB_USERNAME").toString();
+//   qDebug() << "db pw: " << settings.value("DB_PW").toString();
+
+//   //set constants
+
+//   SERVER_NAME = settings.value("SERVER_NAME").toString() + "\\" + server_name2;
+//   DB_NAME = settings.value("DB_NAME").toString();
+//   DB_USERNAME = settings.value("DB_USERNAME").toString();
+//   DB_PW = settings.value("DB_PW").toString();
+
    if (DatabaseManager::createDatabase(&db, DEFAULT_SQL_CONN_NAME))
    {
        qDebug() << "connected";
@@ -307,14 +341,41 @@ FILE DOWLOAD AND UPLOAD RELATED FUNCTIONS (END)
 /*==============================================================================
 SEARCH CLIENT LIST FUNCTION(START)
 ==============================================================================*/
-bool DatabaseManager::searchClientList(QSqlQuery* query, QString ClientId){
-    query =  new QSqlQuery(db);
-    query->prepare("SELECT FirstName, MiddleName, LastName, Dob FROM Client WHERE ClientId = :id");
-    query->bindValue("id", ClientId);
 
-    if(query->exec())
-        return true;
-    return false;
+
+//bool DatabaseManager::searchClientList(QSqlQuery* query, QString ClientName){
+QSqlQuery DatabaseManager::searchClientList(QString ClientName){
+    QSqlQuery query(db);
+    //query->prepare("SELECT FirstName, MiddleName, LastName, Dob FROM Client WHERE ClientId = :id");
+    //query->bindValue("id", ClientId);
+    QString searchQuery = QString("SELECT ClientId, FirstName, MiddleName, LastName, Dob, Balance ")
+            + QString("FROM Client ");
+    QStringList clientNames;
+    if(ClientName != ""){
+        clientNames = ClientName.split(" ");
+    }
+
+    if(clientNames.count() == 1){
+        qDebug()<<"Name 1 words";
+        searchQuery += QString("WHERE (FirstName LIKE '"+clientNames.at(0) + "%' ")
+                     + QString("OR LastName Like '"+clientNames.at(0)+"%') ")
+                     + QString("AND NOT FirstName = 'anonymous' ")
+                     + QString("ORDER BY FirstName ASC, LastName ASC");
+    }
+    else if(clientNames.count() == 2){
+        qDebug() << "Name 2 words";
+        searchQuery += QString("WHERE (LastName LIKE '"+clientNames.at(0) + "%' AND FirstName LIKE '" + clientNames.at(1) + "%') ")
+                     + QString("OR (FirstName Like '"+clientNames.at(0)+"%' AND LastName LIKE '" + clientNames.at(1) + "%') ")
+                     + QString("AND NOT FirstName = 'anonymous' ")
+                     + QString("ORDER BY FirstName ASC, LastName ASC");
+    }
+    else{
+        qDebug()<<"Sth wrong";
+    }
+    query.prepare(searchQuery);
+    query.exec();
+    return query;
+
 }
 
 QSqlQuery DatabaseManager::searchClientInfo(QString ClientId){
@@ -378,6 +439,14 @@ bool DatabaseManager::searchClientInfoPic(QImage * img, QString ClientId){
     return true;
 }
 
+QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId){
+    QSqlQuery clientTransQuery;
+    clientTransQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) +" t.Date, t.Amount, t.Type, e.Username, t.ChequeNo, t.ChequeDate, t.Deleted ")
+                         + QString("FROM Transac t INNER JOIN Employee e ON t.EmpId = e.EmpId ")
+                         + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC"));
+    clientTransQuery.exec();
+    return clientTransQuery;
+}
 
 /*==============================================================================
 PROFILE PICTURE UPLOAD AND DOWNLOAD RELATED FUNCTIONS (START)
@@ -533,7 +602,12 @@ bool DatabaseManager::deleteWakeups(QDate date, QString id){
     qDebug() << q;
     return query.exec(q);
 }
-
+bool DatabaseManager::deleteWakeupsMulti(QDate date, QString id){
+    QSqlQuery query(db);
+    QString q = "DELETE FROM Wakeup WHERE ClientId ='" + id + "' AND WakeDate >= '" + date.toString(Qt::ISODate) + "'";
+    qDebug() << q;
+    return query.exec(q);
+}
 bool DatabaseManager::updateWakeups(QDate date, QString time, QString id){
     QSqlQuery query(db);
     QString q = "UPDATE Wakeup SET WakeTime ='" + time + "' WHERE WakeDate = '"
@@ -549,7 +623,13 @@ bool DatabaseManager::setWakeup(QDate date, QString time, QString id){
     return query.exec(q);
 
 }
-
+bool DatabaseManager::removeLunchesMulti(QDate date, QString id){
+    QSqlQuery query(db);
+    QString q = "DELETE FROM Lunches WHERE LunchDate >= '" + date.toString(Qt::ISODate) + "' AND ClientID ='"+
+            id + "'";
+    qDebug() << q;
+    return query.exec(q);
+}
 bool DatabaseManager::removeLunches(QDate date, QString id){
     QSqlQuery query(db);
     QString q = "DELETE FROM Lunches WHERE LunchDate = '" + date.toString(Qt::ISODate) + "' AND ClientID ='"+
@@ -814,7 +894,7 @@ REPORT QUERYS (END)
 
 QSqlQuery DatabaseManager::getPrograms(){
     QSqlQuery query(db);
-    QString q = "SELECT DISTINCT ProgramCodes from Space";
+    QString q = "SELECT ProgramCode from Program";
     query.exec(q);
     return query;
 }

@@ -45,10 +45,13 @@ public:
     void printDbConnections();
 
 
-    bool searchClientList(QSqlQuery* query, QString ClientId);
+    //bool searchClientList(QSqlQuery* query, QString ClientId);
+    //bool searchClientList(QSqlQuery* query, QString ClientName);
+    QSqlQuery searchClientList(QString ClientName);
 
     QSqlQuery searchClientInfo(QString ClientId);
     bool searchClientInfoPic(QImage * img, QString ClientId);
+    QSqlQuery searchClientTransList(int maxNum, QString ClientId);
     /*==========================================================================
     PROFILE PICTURE UPLOAD AND DOWNLOAD RELATED FUNCTIONS
     ==========================================================================*/
@@ -96,6 +99,8 @@ public:
     bool updateLunches(QDate date, int num, QString id);
     bool removeLunches(QDate date, QString id);
     QSqlQuery getWakeups(QDate start, QDate end, QString id);
+    bool removeLunchesMulti(QDate date, QString id);
+    bool deleteWakeupsMulti(QDate date, QString id);
     bool setWakeup(QDate date, QString time, QString id);
     bool updateWakeups(QDate date, QString time, QString id);
     bool deleteWakeups(QDate date, QString id);

@@ -40,6 +40,7 @@
 #include "Utility.h"
 #include "mymodel.h"
 #include "report.h"
+#include "editrooms.h"
 #include "mycalendar.h"
 
 namespace Ui {
@@ -82,7 +83,8 @@ public:
     void popClientFromId(QString id);
     void getTransactionFromRow(int row);
     void popBookFromRow();
-
+    void clearTable(QTableWidget * table);
+    void setBookSummary();
 
     //COLIN END//////
 
@@ -98,20 +100,20 @@ signals:
 private slots:
     //COLIN SLOTS ////////////////////////////////////////
     void on_editManagePayment_clicked();
-    void on_editCost_textChanged(const QString &arg1);
-    void on_editCancel_textChanged(const QString &arg1);
+    void on_editCost_textChanged();
+    void on_editCancel_textChanged();
     void on_pushButton_bookRoom_clicked();
 
     void on_btn_payDelete_clicked();
     void on_bookingSearchButton_clicked();
     void on_makeBookingButton_clicked();
     void on_makeBookingButton_2_clicked();
-    void on_monthCheck_stateChanged(int arg1);
+//    void on_monthCheck_stateChanged(int arg1);
     void on_pushButton_processPaymeent_clicked();
     void on_lunchCheck_clicked();
-    void on_startDateEdit_dateChanged(const QDate &date);
+    void on_startDateEdit_dateChanged();
     void on_wakeupCheck_clicked();
-    void on_endDateEdit_dateChanged(const QDate &date);
+    void on_endDateEdit_dateChanged();
     void on_monthCheck_clicked(bool checked);
     void on_paymentButton_2_clicked();
     void on_cbox_payDateRange_activated(int index);
@@ -179,7 +181,7 @@ private slots:
 
     void on_pushButton_search_client_clicked();
 
-    void selected_client_info(int nRow, int nCol);
+    void selected_client_info(int nRow);
 
     void on_button_register_client_clicked();
 
@@ -206,6 +208,8 @@ private slots:
     void defaultRegisterOptions();
 
     void searchTransaction(QString clientId);
+
+    void displayTransaction(QSqlQuery results);
 
     /*========================================================================*/
 
@@ -343,9 +347,6 @@ private slots:
     void addHistory(int n);
 
 
-
-
-
     void on_btn_pcpEduSave_clicked();
 
     void on_btn_pcpSubSave_clicked();
@@ -423,7 +424,23 @@ private slots:
 
     void on_tabWidget_cl_info_currentChanged(int index);
 
-    
+    void on_tableWidget_search_client_itemClicked();
+
+    void on_programDropdown_currentIndexChanged();
+
+    void on_confirmAddLunch_clicked();
+
+    void on_confirmAddWake_clicked();
+
+    void on_editLunches_clicked();
+
+    void on_editWakeup_clicked();
+
+    void on_actionQuit_triggered();
+
+    void on_pushButton_cl_trans_more_clicked();
+
+    void useProgressDialog(QString msg, QFuture<void> future);
 
 private:
 
@@ -433,7 +450,7 @@ private:
     transaction * trans;
     Client * curClient;
     QString curClientID;
-
+    bool editOverLap;
     bool pic_available = true;
     bool table_available = true;
 
@@ -459,7 +476,7 @@ private:
 
     int curmodifyingspace = NOT_SET;
 
-
+    QFutureWatcher<void> futureWatcher;
 };
 
 #endif // MAINWINDOW_H

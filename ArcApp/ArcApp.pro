@@ -27,7 +27,8 @@ SOURCES += main.cpp\
     Utility.cpp \
     mymodel.cpp \
     report.cpp \
-    mycalendar.cpp
+    mycalendar.cpp \
+    editrooms.cpp
 
 HEADERS  += mainwindow.h \
     databasemanager.h \
@@ -45,13 +46,15 @@ HEADERS  += mainwindow.h \
     mymodel.h \
     casefile.h \
     report.h \
-    mycalendar.h
+    mycalendar.h \
+    editrooms.h
 
 FORMS    += mainwindow.ui \
     loginprompt.ui \
     takephoto.ui \
     payment.ui \
-    mycalendar.ui
+    mycalendar.ui \
+    editrooms.ui
 
 RESOURCES += arcstyle/styling.qrc
 
