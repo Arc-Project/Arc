@@ -117,7 +117,7 @@ QWidget#wdg_transTotal {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="mainMenu">
      <layout class="QGridLayout" name="gridLayout_5">
@@ -485,6 +485,9 @@ QWidget#wdg_transTotal {
          <layout class="QHBoxLayout" name="horizontalLayout_15">
           <item>
            <widget class="QPushButton" name="pushButton_bookRoom">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="minimumSize">
              <size>
               <width>105</width>
@@ -503,6 +506,9 @@ QWidget#wdg_transTotal {
           </item>
           <item>
            <widget class="QPushButton" name="pushButton_processPaymeent">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="minimumSize">
              <size>
               <width>150</width>
@@ -516,6 +522,48 @@ QWidget#wdg_transTotal {
             </property>
             <property name="text">
              <string>Process Payment</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_CaseFiles">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>28</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Case Files</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_editClientInfo">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>100</width>
+              <height>28</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Edit Client</string>
             </property>
            </widget>
           </item>
@@ -537,42 +585,6 @@ QWidget#wdg_transTotal {
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QPushButton" name="pushButton_editClientInfo">
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>28</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Edit Client</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton_CaseFiles">
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>28</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Case Files</string>
-            </property>
-           </widget>
-          </item>
          </layout>
         </item>
        </layout>
@@ -580,7 +592,7 @@ QWidget#wdg_transTotal {
       <item row="0" column="1">
        <widget class="QTabWidget" name="tabWidget_cl_info">
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab_cl_general">
          <attribute name="title">
@@ -4254,8 +4266,8 @@ QWidget#wdg_transTotal {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>1049</width>
-               <height>1294</height>
+               <width>1012</width>
+               <height>1381</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_47">
@@ -9167,7 +9179,7 @@ QWidget#wdg_transTotal {
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="btn_displayUser_3">
+            <widget class="QPushButton" name="btn_clearEditVacancies">
              <property name="minimumSize">
               <size>
                <width>70</width>
@@ -9180,7 +9192,7 @@ QWidget#wdg_transTotal {
               </font>
              </property>
              <property name="text">
-              <string>Display</string>
+              <string>Clear All</string>
              </property>
             </widget>
            </item>
@@ -10671,24 +10683,6 @@ QWidget#wdg_transTotal {
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="btn_displayUser_4">
-             <property name="minimumSize">
-              <size>
-               <width>70</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Display</string>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QPushButton" name="pushButton_16">
              <property name="minimumSize">
               <size>
@@ -11209,7 +11203,7 @@ QWidget#wdg_transTotal {
      <x>0</x>
      <y>0</y>
      <width>1408</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="acceptDrops">
