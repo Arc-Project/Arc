@@ -67,6 +67,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&futureWatcher, SIGNAL(progressRangeChanged(int,int)), dialog, SLOT(setRange(int,int)));
     connect(&futureWatcher, SIGNAL(progressValueChanged(int)), dialog, SLOT(setValue(int)));
 
+    this->showMaximized();
 }
 
 MainWindow::~MainWindow()
@@ -2136,10 +2137,15 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
     if (nRow <0)
         return;
     curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
+    QString curFirstName = ui->tableWidget_search_client->item(nRow, 1)->text();
+    QString curMiddleName = ui->tableWidget_search_client->item(nRow, 2)->text().size() > 0 ? ui->tableWidget_search_client->item(nRow, 2)->text()+ " " : "";
+    QString curLastName = ui->tableWidget_search_client->item(nRow, 3)->text();
+
     qDebug() << "id displayed:" << idDisplayed;
     qDebug() << "id selected:" << curClientID;
     if (idDisplayed != curClientID) {
         idDisplayed = curClientID;
+        ui->lbl_caseClientName->setText(curFirstName + " " + curMiddleName + curLastName + "'s Case Files");
         populateCaseFiles();
     }
 }
@@ -3090,7 +3096,7 @@ void MainWindow::setupReportsScreen()
 
 void MainWindow::updateReportTables(QDate date)
 {
-    useProgressDialog("Processing reports", QtConcurrent::run(checkoutReport, &checkoutReport->updateModelThread, date));
+    useProgressDialog("Processing reports...", QtConcurrent::run(checkoutReport, &checkoutReport->updateModelThread, date));
 
 //    checkoutReport->updateModel(date);
     vacancyReport->updateModel(date);

@@ -16,8 +16,13 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="font">
+   <font>
+    <pointsize>10</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
-   <string>ARC Management</string>
+   <string>ARCWay</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QAction, QToolBar, QStackedWidget, QStatusBar{
@@ -107,6 +112,10 @@ QWidget#wdg_transTotal {
 
 QStatusBar::item {
 	border: none;
+}
+
+QHeaderView { 
+	font-size: 10pt; 
 }
 </string>
   </property>
@@ -4033,7 +4042,7 @@ QStatusBar::item {
     <widget class="QWidget" name="caseFile">
      <layout class="QGridLayout" name="gridLayout_45">
       <item row="0" column="0">
-       <widget class="QLabel" name="label_8">
+       <widget class="QLabel" name="lbl_caseClientName">
         <property name="font">
          <font>
           <pointsize>10</pointsize>
@@ -4104,6 +4113,11 @@ QStatusBar::item {
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
         <property name="editTriggers">
          <set>QAbstractItemView::NoEditTriggers</set>
         </property>
@@ -4127,6 +4141,11 @@ QStatusBar::item {
        <layout class="QHBoxLayout" name="horizontalLayout_49">
         <item>
          <widget class="QLabel" name="label_51">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string>Filter Name</string>
           </property>
@@ -4140,10 +4159,20 @@ QStatusBar::item {
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
          </widget>
         </item>
         <item>
          <widget class="QPushButton" name="btn_caseFilter">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string>Filter</string>
           </property>
@@ -4182,8 +4211,8 @@ QStatusBar::item {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>1049</width>
-               <height>1294</height>
+               <width>996</width>
+               <height>1381</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_47">
@@ -11271,8 +11300,13 @@ QStatusBar::item {
      <x>0</x>
      <y>0</y>
      <width>1408</width>
-     <height>21</height>
+     <height>29</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
    </property>
    <property name="acceptDrops">
     <bool>true</bool>
@@ -11284,6 +11318,11 @@ QStatusBar::item {
     <bool>true</bool>
    </property>
    <widget class="QMenu" name="menuFle">
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
     <property name="title">
      <string>File</string>
     </property>
@@ -11291,6 +11330,13 @@ QStatusBar::item {
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuFor_Testing">
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="title">
      <string>DEV TESTING</string>
     </property>
@@ -11304,6 +11350,11 @@ QStatusBar::item {
     <addaction name="actionPcptables"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
     <property name="title">
      <string>Help</string>
     </property>
@@ -11314,6 +11365,11 @@ QStatusBar::item {
    <addaction name="menuFor_Testing"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
+   <property name="font">
+    <font>
+     <pointsize>9</pointsize>
+    </font>
+   </property>
    <property name="layoutDirection">
     <enum>Qt::LeftToRight</enum>
    </property>
@@ -11336,50 +11392,106 @@ QStatusBar::item {
    <property name="text">
     <string>Main Menu</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
   </action>
   <action name="actionLogout">
    <property name="text">
     <string>Logout</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
    </property>
   </action>
   <action name="actionDB_Connection">
    <property name="text">
     <string>DB Connection</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionTest_Query">
    <property name="text">
     <string>Test Query</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
    </property>
   </action>
   <action name="actionQuit">
    <property name="text">
     <string>Quit</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
    </property>
   </action>
   <action name="actionExport_to_PDF">
    <property name="text">
     <string>Export to PDF</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
   </action>
   <action name="actionFile_Upload">
    <property name="text">
     <string>File Upload</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
    </property>
   </action>
   <action name="actionDownload_Latest_Upload">
    <property name="text">
     <string>Download Latest Upload</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionBack">
    <property name="text">
     <string>Back</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
    </property>
   </action>
   <action name="actionForward">
@@ -11389,25 +11501,52 @@ QStatusBar::item {
    <property name="text">
     <string>Forward</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
+    </font>
+   </property>
   </action>
   <action name="actionPrint_Db_Connections">
    <property name="text">
     <string>Print Db Connections</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
    </property>
   </action>
   <action name="actionUpload_Display_Picture">
    <property name="text">
     <string>Upload Display Picture</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionDownload_Profile_Picture">
    <property name="text">
     <string>Download Profile Picture</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionPcptables">
    <property name="text">
     <string>pcptables</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
    </property>
   </action>
  </widget>
