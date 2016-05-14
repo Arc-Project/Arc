@@ -1792,9 +1792,9 @@ void MainWindow::displayTransaction(QSqlQuery results){
     ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Amount"<<"Type"<<"Employee"<<"ChequeNo"<<"ChequeDate"<<"TransType");
     int row =0;
     while(results.next()){
-        ui->tableWidget_transaction->insertRow(0);
+        ui->tableWidget_transaction->insertRow(row);
         for(int i =0; i<colCnt; i++){
-            ui->tableWidget_transaction->setItem(0, i, new QTableWidgetItem(results.value(i).toString()));
+            ui->tableWidget_transaction->setItem(row, i, new QTableWidgetItem(results.value(i).toString()));
             //qDebug() <<"row : "<<row << ", col: " << i << "item" << results.value(i).toString();
         }
         row++;
