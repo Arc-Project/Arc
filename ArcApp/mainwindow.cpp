@@ -140,7 +140,7 @@ void MainWindow::initCurrentWidget(int idx){
             if(curClientID != NULL || curClientID != "")
                 read_curClient_Information(curClientID);
             break;
-        case 11:    //WIDGET 11
+        case REPORTS:    //WIDGET 11
             ui->dailyReport_tabWidget->setCurrentIndex(DEFAULTTAB);
             ui->shiftReport_tabWidget->setCurrentIndex(DEFAULTTAB);
             MainWindow::updateDailyReportTables(QDate::currentDate());
@@ -213,17 +213,10 @@ DEV TESTING BUTTONS (START)
 ==============================================================================*/
 void MainWindow::on_actionDB_Connection_triggered()
 {
-    //QSqlQuery results= dbManager->selectAll("Test");
-    //dbManager->printAll(results);
-//    QStringList* data = new QStringList();
-//    *data << "11" << "12" << "21" << "22";
-//    checkoutModel->setData(data, 2, 2);
 }
 
 void MainWindow::on_actionTest_Query_triggered()
 {
-    //ui->stackedWidget->setCurrentIndex(11);
-    qDebug() << "test";
 }
 
 void MainWindow::on_actionFile_Upload_triggered()
@@ -286,155 +279,6 @@ QString MainWindow::browse()
 }
 /*==============================================================================
 DEV TESTING AUXILIARY FUNCTIONS (END)
-==============================================================================*/
-/*==============================================================================
-REPORT FUNCTIONS (START)
-==============================================================================*/
-//void MainWindow::updateCheckoutModel()
-//{
-//    QSqlDatabase tempDb = QSqlDatabase::database();
-//    QString connName = QString::number(dbManager->getDbCounter());
-//    if (dbManager->createDatabase(&tempDb, connName))
-//    {
-//        QSqlQuery query;
-//        if (dbManager->getCheckoutQuery(&query, QDate::currentDate()))
-//        {
-////            int numCols = query.record().count();
-
-////            int numRows = 0;
-////            QStringList *data = new QStringList();
-////            while (query.next()) {
-////                numRows++;
-////                for (int i = 0; i < numCols; ++i)
-////                {
-////                    *data << query.value(i).toString();
-////                }
-////            }
-////            checkoutModel->setData(data, numRows, numCols);
-//            qDebug() << "test";
-//            //report->setData(&query);
-//        }
-//        tempDb.close();
-//        QSqlDatabase::removeDatabase(connName);
-//    }
-//}
-
-
-//void MainWindow::updateCheckoutView(QDate date)
-//{
-//    QSqlQuery query;
-
-//    ui->checkout_tableWidget->setRowCount(0);
-//    if (dbManager->getCheckoutQuery(&query, date))
-//    {
-//        int rowNo = 0;
-//        while(query.next())
-//        {
-//            ui->checkout_tableWidget->insertRow(rowNo);
-//            for (int colNo = 0; colNo < NUM_CHKOUT_TBL_COLS; ++colNo)
-//            {
-//                if (colNo == 5 || colNo == 6)
-//                {
-//                    ui->checkout_tableWidget->setItem(rowNo, colNo,
-//                        new QTableWidgetItem("tbd"));
-//                }
-//                else if (colNo == 7)
-//                {
-//                    ui->checkout_tableWidget->setItem(rowNo, colNo,
-//                        new QTableWidgetItem(query.value(5).toString()));
-//                }
-//                else
-//                {
-//                    ui->checkout_tableWidget->setItem(rowNo, colNo,
-//                        new QTableWidgetItem(query.value(colNo).toString()));
-//                }
-//            }
-//            rowNo++;
-//        }
-//    }
-//    else
-//    {
-//        qDebug() << "updateCheckoutView() failed";
-//    }
-//    ui->checkout_tableWidget->show();
-//}
-
-//void MainWindow::updateVacancyView(QDate date)
-//{
-//    QSqlQuery query;
-//    ui->vacancy_tableWidget->setRowCount(0);
-//    if (dbManager->getVacancyQuery(&query, date))
-//    {
-//        int rowNo = 0;
-//        while(query.next())
-//        {
-//            ui->vacancy_tableWidget->insertRow(rowNo);
-//            for (int colNo = 0; colNo < NUM_VACANCY_TBL_COLS; ++colNo)
-//            {
-//                ui->vacancy_tableWidget->setItem(rowNo,
-//                    colNo, new QTableWidgetItem(query.value(colNo).toString()));
-//            }
-//            rowNo++;
-//        }
-//    }
-//    else
-//    {
-//        qDebug() << "updateVacancyView() failed";
-//    }
-//    ui->vacancy_tableWidget->show();
-//}
-
-//void MainWindow::updateLunchView(QDate date)
-//{
-//    QSqlQuery query;
-//    ui->lunch_tableWidget->setRowCount(0);
-//    if (dbManager->getLunchQuery(&query, date))
-//    {
-//        int rowNo = 0;
-//        while(query.next())
-//        {
-//            ui->lunch_tableWidget->insertRow(rowNo);
-//            for (int colNo = 0; colNo < NUM_LUNCH_TBL_COLS; ++colNo)
-//            {
-//                ui->lunch_tableWidget->setItem(rowNo,
-//                    colNo, new QTableWidgetItem(query.value(colNo).toString()));
-//            }
-//            rowNo++;
-//        }
-//    }
-//    else
-//    {
-//        qDebug() << "updateLunchView() failed";
-//    }
-//    ui->lunch_tableWidget->show();
-//}
-
-//void MainWindow::updateWakeupView(QDate date)
-//{
-//    QSqlQuery query;
-//    ui->wakeup_tableWidget->setRowCount(0);
-//    if (dbManager->getWakeupQuery(&query, date))
-//    {
-//        int rowNo = 0;
-//        while(query.next())
-//        {
-//            ui->wakeup_tableWidget->insertRow(rowNo);
-//            for (int colNo = 0; colNo < NUM_WAKEUP_TBL_COLS; ++colNo)
-//            {
-//                ui->wakeup_tableWidget->setItem(rowNo,
-//                    colNo, new QTableWidgetItem(query.value(colNo).toString()));
-//            }
-//            rowNo++;
-//        }
-//    }
-//    else
-//    {
-//        qDebug() << "updateWakeupView() failed";
-//    }
-//    ui->wakeup_tableWidget->show();
-//}
-/*==============================================================================
-REPORT FUNCTIONS (END)
 ==============================================================================*/
 
 //COLIN STUFF /////////////////////////////////////////////////////////////////
@@ -1342,14 +1186,9 @@ void MainWindow::on_button_cancel_client_register_clicked()
 
 void MainWindow::on_reportsButton_clicked()
 {
-//    MainWindow::updateCheckoutView();
-//    MainWindow::updateVacancyView();
-//    MainWindow::updateLunchView();
-//    MainWindow::updateWakeupView();
-    ui->stackedWidget->setCurrentIndex(11);
+    ui->stackedWidget->setCurrentIndex(REPORTS);
     addHistory(MAINMENU);
     qDebug() << "pushed page " << MAINMENU;
-//    dialog.exec();
 }
 
 /*===================================================================

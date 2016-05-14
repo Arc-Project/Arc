@@ -7194,7 +7194,7 @@ QHeaderView {
            <item row="0" column="1">
             <widget class="QStackedWidget" name="swdg_reports">
              <property name="currentIndex">
-              <number>1</number>
+              <number>0</number>
              </property>
              <widget class="QWidget" name="page_3">
               <layout class="QGridLayout" name="gridLayout_34">
@@ -7789,7 +7789,7 @@ QHeaderView {
                <item row="1" column="0">
                 <widget class="QTabWidget" name="shiftReport_tabWidget">
                  <property name="currentIndex">
-                  <number>1</number>
+                  <number>0</number>
                  </property>
                  <widget class="QWidget" name="tab_6">
                   <attribute name="title">

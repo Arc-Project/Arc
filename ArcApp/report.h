@@ -24,11 +24,10 @@ public:
     Report(QObject *parent, QTableView* tableView, int type);
     void updateModel(QDate date);
     void updateModel(QDate date, int shiftNo);
-    
+    void updateModelThread(QDate date);
 private:
     MyModel model;
     int reportType;
-    void updateModelThread(QDate date);
     void updateModelThread(QDate date, int shiftNo);
     bool processTransactionQuery(QStringList* data, QSqlQuery* query);
     void setData(QSqlQuery* query);
