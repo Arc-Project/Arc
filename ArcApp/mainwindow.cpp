@@ -7,7 +7,8 @@
 #include "payment.h"
 
 //MyModel* checkoutModel;
-Report *checkoutReport, *vacancyReport, *lunchReport, *wakeupReport;
+Report *checkoutReport, *vacancyReport, *lunchReport, *wakeupReport,
+    *bookingReport, *transactionReport;
 bool firstTime = true;
 QStack<int> backStack;
 QStack<int> forwardStack;
@@ -40,10 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
     curClient = 0;
     curBook = 0;
     trans = 0;
-    checkoutReport = new Report(this, ui->checkout_tableView, CHECKOUT_REPORT);
-    vacancyReport = new Report(this, ui->vacancy_tableView, VACANCY_REPORT);
-    lunchReport = new Report(this, ui->lunch_tableView, LUNCH_REPORT);
-    wakeupReport = new Report(this, ui->wakeup_tableView, WAKEUP_REPORT);
+    currentshiftid = 1; // should change this. Set to 1 for testing;
 
     MainWindow::setupReportsScreen();
 
@@ -119,8 +117,11 @@ void MainWindow::initCurrentWidget(int idx){
                 read_curClient_Information(curClientID);
             break;
         case 11:    //WIDGET 11
-            MainWindow::updateReportTables();
-            MainWindow::getDailyReportStats();
+            ui->dailyReport_tabWidget->setCurrentIndex(DEFAULTTAB);
+            ui->shiftReport_tabWidget->setCurrentIndex(DEFAULTTAB);
+            MainWindow::updateDailyReportTables(QDate::currentDate());
+            MainWindow::getDailyReportStats(QDate::currentDate());
+            MainWindow::updateShiftReportTables(QDate::currentDate(), 1);
             break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
@@ -2975,34 +2976,56 @@ REPORTS
 ==============================================================================*/
 void MainWindow::setupReportsScreen()
 {
-    ui->lbl_shiftReportDateVal_2->setText(QDate::currentDate().toString("yyyy-MM-dd"));
-    ui->reports_dateEdit->setDate(QDate::currentDate());
+    ui->lbl_dailyReportDateVal->setText(QDate::currentDate().toString("yyyy-MM-dd"));
+    ui->dailyReport_dateEdit->setDate(QDate::currentDate());
     checkoutReport = new Report(this, ui->checkout_tableView, CHECKOUT_REPORT);
     vacancyReport = new Report(this, ui->vacancy_tableView, VACANCY_REPORT);
     lunchReport = new Report(this, ui->lunch_tableView, LUNCH_REPORT);
     wakeupReport = new Report(this, ui->wakeup_tableView, WAKEUP_REPORT);
+    bookingReport = new Report(this, ui->booking_tableView, BOOKING_REPORT);
+    transactionReport = new Report(this, ui->transaction_tableView, TRANSACTION_REPORT);
 }
 
-void MainWindow::updateReportTables(QDate date)
+void MainWindow::updateDailyReportTables(QDate date)
 {
     checkoutReport->updateModel(date);
     vacancyReport->updateModel(date);
     lunchReport->updateModel(date);
     wakeupReport->updateModel(date);
-    ui->lbl_shiftReportDateVal_2->setText(date.toString("yyyy-MM-dd"));
-    ui->reports_dateEdit->setDate(date);
+    ui->lbl_dailyReportDateVal->setText(date.toString("yyyy-MM-dd"));
+    ui->dailyReport_dateEdit->setDate(date);
+
+    
 }
 
-void MainWindow::on_reportsDateSelectorGo_btn_clicked()
+void MainWindow::updateShiftReportTables(QDate date, int shiftNo)
 {
-    QDate date = ui->reports_dateEdit->date();
-    MainWindow::updateReportTables(date);
+    qDebug() << "ShiftNO in updateshiftreport tables " << shiftNo;
+    bookingReport->updateModel(date, shiftNo);
+    transactionReport->updateModel(date, shiftNo);
+}
+
+void MainWindow::on_dailyReportGo_btn_clicked()
+{
+    QDate date = ui->dailyReport_dateEdit->date();
+    MainWindow::updateDailyReportTables(date);
     MainWindow::getDailyReportStats(date);
 }
 
-void MainWindow::on_reportsSetCurrentDate_btn_clicked()
+
+void MainWindow::on_dailyReportCurrent_btn_clicked()
 {
-    ui->reports_dateEdit->setDate(QDate::currentDate());
+    ui->dailyReport_dateEdit->setDate(QDate::currentDate());
+}
+
+void MainWindow::on_shiftReportGo_btn_clicked()
+{
+
+}
+
+void MainWindow::on_shiftReportCurrent_btn_clicked()
+{
+
 }
 
 void MainWindow::getDailyReportStats(QDate date)
@@ -3038,7 +3061,6 @@ void MainWindow::on_actionForward_triggered()
         int page = forwardStack.pop();
         backStack.push(ui->stackedWidget->currentIndex());
         ui->stackedWidget->setCurrentIndex(page);
-
     }
 }
 
@@ -3479,3 +3501,7 @@ void MainWindow::on_cbox_roomType_currentIndexChanged(int index)
 {
 
 }
+
+
+
+
