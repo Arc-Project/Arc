@@ -177,7 +177,7 @@ private slots:
 
     void on_pushButton_search_client_clicked();
 
-    void selected_client_info(int nRow);
+    void selected_client_info(int nRow, int nCol);
 
     void on_button_register_client_clicked();
 
