@@ -1532,16 +1532,19 @@ void MainWindow::on_pushButton_search_client_clicked()
     QString searchQuery = "SELECT ClientId, FirstName, LastName, Dob, Balance FROM Client WHERE LastName LIKE '%"+clientName
                         + "%' OR MiddleName Like '%"+ clientName
                         + "%' OR FirstName Like '%"+clientName+"%'";
-    QSqlQuery results = dbManager->execQuery(searchQuery);
-    setup_searchClientTable(results);
+    //QSqlQuery results = dbManager->execQuery(searchQuery);
+    //setup_searchClientTable(results);
 
-    QSqlQuery resultQ;
-
-    if(!(dbManager->searchClientList(&resultQ, curClientID)))
+    QSqlQuery resultQ = dbManager->searchClientList(clientName);
+    /*
+    if(!(dbManager->searchClientList(&resultQ, clientName)))
     {
         qDebug()<<"Select Fail";
         return;
     }
+    */
+    //dbManager->printAll(resultQ);
+    setup_searchClientTable(resultQ);
 
     connect(ui->tableWidget_search_client, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(selected_client_info(int,int)),Qt::UniqueConnection);
     // dbManager->printAll(results);
@@ -1557,7 +1560,7 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
     ui->tableWidget_search_client->setColumnCount(colCnt);
     ui->tableWidget_search_client->clear();
 
-    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"FirstName"<<"LastName"<<"DateOfBirth"<<"Balance");
+    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"FirstName"<<"Middle Initial"<<"LastName"<<"DateOfBirth"<<"Balance");
     int row =0;
     while(results.next()){
         ui->tableWidget_search_client->insertRow(row);
@@ -1763,11 +1766,14 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
 
 void MainWindow::searchTransaction(QString clientId){
     qDebug()<<"search transaction STaRt";
-    QString transStr = QString("SELECT TOP 5 t.Date, t.Amount, t.Type, e.Username, t.ChequeNo, t.ChequeDate, t.TransType, t.Deleted ")
+/*    QString transStr = QString("SELECT TOP 5 t.Date, t.Amount, t.Type, e.Username, t.ChequeNo, t.ChequeDate, t.TransType, t.Deleted ")
                      + QString("FROM Transac t INNER JOIN Employee e ON t.EmpId = e.EmpId ")
                      + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC");
     qDebug()<<transStr;
     QSqlQuery transQuery = dbManager->execQuery(transStr);
+    */
+    QSqlQuery transQuery = dbManager->searchClientTransList(5, clientId);
+    displayTransaction(transQuery);
     dbManager->printAll(transQuery);
     /*
             while(transQuery.next()){
@@ -1776,7 +1782,25 @@ void MainWindow::searchTransaction(QString clientId){
             */
 }
 
+void MainWindow::displayTransaction(QSqlQuery results){
+    ui->tableWidget_transaction->setRowCount(0);
 
+    int colCnt = results.record().count() -1;
+    ui->tableWidget_transaction->setColumnCount(colCnt);
+    ui->tableWidget_transaction->clear();
+
+    ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Amount"<<"Type"<<"Employee"<<"ChequeNo"<<"ChequeDate");
+    int row =0;
+    while(results.next()){
+        ui->tableWidget_transaction->insertRow(row);
+        for(int i =0; i<colCnt; i++){
+            ui->tableWidget_transaction->setItem(row, i, new QTableWidgetItem(results.value(i).toString()));
+            //qDebug() <<"row : "<<row << ", col: " << i << "item" << results.value(i).toString();
+        }
+        row++;
+    }
+    ui->tableWidget_search_client->show();
+}
 
 
 /////////////////////////////////////////////////////////////////////////////////
