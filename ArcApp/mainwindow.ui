@@ -7332,7 +7332,7 @@ QHeaderView {
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLabel" name="lbl_shiftReportDateVal_2">
+                    <widget class="QLabel" name="lbl_dailyReportDateVal">
                      <property name="font">
                       <font>
                        <pointsize>10</pointsize>
@@ -7381,7 +7381,7 @@ QHeaderView {
                   </widget>
                  </item>
                  <item>
-                  <widget class="QDateEdit" name="reports_dateEdit">
+                  <widget class="QDateEdit" name="dailyReport_dateEdit">
                    <property name="minimumSize">
                     <size>
                      <width>100</width>
@@ -7399,7 +7399,7 @@ QHeaderView {
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="reportsDateSelectorGo_btn">
+                  <widget class="QPushButton" name="dailyReportGo_btn">
                    <property name="minimumSize">
                     <size>
                      <width>28</width>
@@ -7423,7 +7423,7 @@ QHeaderView {
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="reportsSetCurrentDate_btn">
+                  <widget class="QPushButton" name="dailyReportCurrent_btn">
                    <property name="minimumSize">
                     <size>
                      <width>110</width>
@@ -7449,7 +7449,7 @@ QHeaderView {
                 </layout>
                </item>
                <item row="1" column="0" colspan="2">
-                <widget class="QTabWidget" name="tabWidget">
+                <widget class="QTabWidget" name="dailyReport_tabWidget">
                  <property name="font">
                   <font>
                    <pointsize>10</pointsize>
@@ -7758,7 +7758,7 @@ QHeaderView {
                      </widget>
                     </item>
                     <item>
-                     <widget class="QDateEdit" name="dateEdit">
+                     <widget class="QDateEdit" name="shiftReport_dateEdit">
                       <property name="minimumSize">
                        <size>
                         <width>100</width>
@@ -7776,7 +7776,7 @@ QHeaderView {
                      </widget>
                     </item>
                     <item>
-                     <widget class="QSpinBox" name="spinBox">
+                     <widget class="QSpinBox" name="shiftReport_spinBox">
                       <property name="minimumSize">
                        <size>
                         <width>35</width>
@@ -7806,7 +7806,7 @@ QHeaderView {
                      </widget>
                     </item>
                     <item>
-                     <widget class="QPushButton" name="pushButton">
+                     <widget class="QPushButton" name="shiftReportGo_btn">
                       <property name="minimumSize">
                        <size>
                         <width>28</width>
@@ -7830,7 +7830,7 @@ QHeaderView {
                      </widget>
                     </item>
                     <item>
-                     <widget class="QPushButton" name="pushButton_2">
+                     <widget class="QPushButton" name="shiftReportCurrent_btn">
                       <property name="minimumSize">
                        <size>
                         <width>110</width>
@@ -7902,27 +7902,27 @@ QHeaderView {
                 </widget>
                </item>
                <item row="1" column="0">
-                <widget class="QTabWidget" name="tabWidget_3">
+                <widget class="QTabWidget" name="shiftReport_tabWidget">
                  <property name="currentIndex">
-                  <number>1</number>
+                  <number>0</number>
                  </property>
                  <widget class="QWidget" name="tab_6">
                   <attribute name="title">
-                   <string>Tab 1</string>
+                   <string>Bookings</string>
                   </attribute>
                   <layout class="QGridLayout" name="gridLayout_31">
                    <item row="0" column="0">
-                    <widget class="QTableView" name="tableView_2"/>
+                    <widget class="QTableView" name="booking_tableView"/>
                    </item>
                   </layout>
                  </widget>
                  <widget class="QWidget" name="tab_9">
                   <attribute name="title">
-                   <string>Tab 2</string>
+                   <string>Transactions</string>
                   </attribute>
                   <layout class="QGridLayout" name="gridLayout_53">
                    <item row="0" column="0">
-                    <widget class="QTableView" name="tableView"/>
+                    <widget class="QTableView" name="transaction_tableView"/>
                    </item>
                   </layout>
                  </widget>

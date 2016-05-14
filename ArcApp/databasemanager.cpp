@@ -723,7 +723,7 @@ PROFILE PICTURE UPLOAD AND DOWNLOAD RELATED FUNCTIONS (END)
 /*==============================================================================
 REPORT QUERYS (START)
 ==============================================================================*/
-bool DatabaseManager::getCheckoutQuery(QSqlQuery* queryResults, QDate date)
+bool DatabaseManager::getDailyReportCheckoutQuery(QSqlQuery* queryResults, QDate date)
 {
     QString queryString =
         QString("SELECT b.ClientName, b.SpaceId, b.StartDate, ")
@@ -736,7 +736,7 @@ bool DatabaseManager::getCheckoutQuery(QSqlQuery* queryResults, QDate date)
     return queryResults->exec(queryString);
 }
 
-bool DatabaseManager::getVacancyQuery(QSqlQuery* queryResults, QDate date)
+bool DatabaseManager::getDailyReportVacancyQuery(QSqlQuery* queryResults, QDate date)
 {
     QString queryString =
         QString("SELECT s.SpaceId, s.ProgramCodes ")
@@ -749,7 +749,7 @@ bool DatabaseManager::getVacancyQuery(QSqlQuery* queryResults, QDate date)
     return queryResults->exec(queryString);
 }
 
-bool DatabaseManager::getLunchQuery(QSqlQuery* queryResults, QDate date)
+bool DatabaseManager::getDailyReportLunchQuery(QSqlQuery* queryResults, QDate date)
 {
     QString queryString =
         QString("SELECT ClientName, SpaceId, Lunch ")
@@ -761,7 +761,7 @@ bool DatabaseManager::getLunchQuery(QSqlQuery* queryResults, QDate date)
     return queryResults->exec(queryString);
 }
 
-bool DatabaseManager::getWakeupQuery(QSqlQuery* queryResults, QDate date)
+bool DatabaseManager::getDailyReportWakeupQuery(QSqlQuery* queryResults, QDate date)
 {
     QString queryString =
         QString("SELECT ClientName, SpaceId, Wakeup ")
@@ -773,7 +773,35 @@ bool DatabaseManager::getWakeupQuery(QSqlQuery* queryResults, QDate date)
     return queryResults->exec(queryString);
 }
 
-int DatabaseManager::getEspCheckouts(QDate date)
+bool DatabaseManager::getShiftReportBookingQuery(QSqlQuery* queryResults,
+    QDate date, int shiftNo)
+{
+    QString queryString =
+        QString("SELECT ClientName, SpaceCode, ProgramCode, StartDate, ")
+        + QString("EndDate, Action, Status, EmpName, Time ")
+        + QString("FROM BookingHistory ")
+        + QString("WHERE Date = '" + date.toString(Qt::ISODate) + "' AND ")
+        + QString("ShiftNo = " + QString::number(shiftNo));
+    qDebug() << queryString;
+    return queryResults->exec(queryString);
+}
+
+bool DatabaseManager::getShiftReportTransactionQuery(QSqlQuery* queryResults,
+    QDate date, int shiftNo)
+{
+    QString queryString =
+        QString("SELECT c.FirstName, c.MiddleName, c.LastName, t.TransType, ")
+        + QString("t.Type, t.MSQ, t.ChequeNo, t.ChequeDate, ")
+        + QString("CAST(t.Outstanding AS INT), CAST(t.Deleted AS INT), ")
+        + QString("t.EmpName, t.Time, t.Notes " )
+        + QString("FROM Client c INNER JOIN Transac t ON c.ClientId = t.ClientId ")
+        + QString("WHERE Date = '" + date.toString(Qt::ISODate) + "' AND ")
+        + QString("ShiftNo = " + QString::number(shiftNo));
+    qDebug() << queryString;
+    return queryResults->exec(queryString);
+}
+
+int DatabaseManager::getDailyReportEspCheckouts(QDate date)
 {
     QString queryString =
             QString("SELECT COUNT(ClientId) ")
@@ -784,7 +812,7 @@ int DatabaseManager::getEspCheckouts(QDate date)
     return DatabaseManager::getIntFromQuery(queryString);
 }
 
-int DatabaseManager::getTotalCheckouts(QDate date)
+int DatabaseManager::getDailyReportTotalCheckouts(QDate date)
 {
     QString queryString =
             QString("SELECT COUNT(ClientId) ")
@@ -796,7 +824,7 @@ int DatabaseManager::getTotalCheckouts(QDate date)
 }
 
 
-int DatabaseManager::getEspVacancies(QDate date)
+int DatabaseManager::getDailyReportEspVacancies(QDate date)
 {
     QString queryString =
             QString("SELECT COUNT(s.SpaceId) ")
@@ -809,7 +837,7 @@ int DatabaseManager::getEspVacancies(QDate date)
     return DatabaseManager::getIntFromQuery(queryString);
 }
 
-int DatabaseManager::getTotalVacancies(QDate date)
+int DatabaseManager::getDailyReportTotalVacancies(QDate date)
 {
     QString queryString =
             QString("SELECT COUNT(s.SpaceId) ")
@@ -826,12 +854,14 @@ void DatabaseManager::getDailyReportStatsThread(QDate date)
 {
     qDebug() << "getDailyReportStatsThread  should emit signal";
     QList<int> list;
-    list << DatabaseManager::getEspCheckouts(date)
-         << DatabaseManager::getTotalCheckouts(date)
-         << DatabaseManager::getEspVacancies(date)
-         << DatabaseManager::getTotalVacancies(date);
+    list << DatabaseManager::getDailyReportEspCheckouts(date)
+         << DatabaseManager::getDailyReportTotalCheckouts(date)
+         << DatabaseManager::getDailyReportEspVacancies(date)
+         << DatabaseManager::getDailyReportTotalVacancies(date);
     emit DatabaseManager::dailyReportStatsChanged(list);
 }
+
+
 
 int DatabaseManager::getIntFromQuery(QString queryString)
 {
@@ -855,6 +885,7 @@ int DatabaseManager::getIntFromQuery(QString queryString)
     QSqlDatabase::removeDatabase(connName);
     return result;
 }
+
 
 
 /*==============================================================================
