@@ -124,7 +124,7 @@ QHeaderView {
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>11</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -7380,7 +7380,7 @@ QHeaderView {
              <item row="0" column="1">
               <widget class="QStackedWidget" name="swdg_reports">
                <property name="currentIndex">
-                <number>2</number>
+                <number>1</number>
                </property>
                <widget class="QWidget" name="page_3">
                 <layout class="QGridLayout" name="gridLayout_34">
@@ -7989,7 +7989,7 @@ QHeaderView {
                     </font>
                    </property>
                    <property name="currentIndex">
-                    <number>0</number>
+                    <number>2</number>
                    </property>
                    <widget class="QWidget" name="tab_6">
                     <attribute name="title">
@@ -8025,7 +8025,7 @@ QHeaderView {
                     </attribute>
                     <layout class="QGridLayout" name="gridLayout_66">
                      <item row="0" column="0">
-                      <widget class="QTableView" name="tv_clientLogs">
+                      <widget class="QTableView" name="clientLog_tableView">
                        <property name="selectionBehavior">
                         <enum>QAbstractItemView::SelectRows</enum>
                        </property>
@@ -8039,7 +8039,7 @@ QHeaderView {
                     </attribute>
                     <layout class="QGridLayout" name="gridLayout_67">
                      <item row="0" column="0">
-                      <widget class="QTableView" name="tv_otherLogs">
+                      <widget class="QTableView" name="other_tableView">
                        <property name="selectionBehavior">
                         <enum>QAbstractItemView::SelectRows</enum>
                        </property>
@@ -8066,7 +8066,7 @@ QHeaderView {
                         </widget>
                        </item>
                        <item>
-                        <widget class="QLineEdit" name="le_otherLogs">
+                        <widget class="QLineEdit" name="other_lineEdit">
                          <property name="minimumSize">
                           <size>
                            <width>0</width>
@@ -8076,7 +8076,7 @@ QHeaderView {
                         </widget>
                        </item>
                        <item>
-                        <widget class="QPushButton" name="btn_saveOther">
+                        <widget class="QPushButton" name="saveOther_btn">
                          <property name="minimumSize">
                           <size>
                            <width>60</width>

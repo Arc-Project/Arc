@@ -46,6 +46,9 @@ void Report::setTitle()
       *title << "Client" << "Transaction" << "Type" << "MSDD" << "Cheque #" 
              << "Cheque Date" << "Status" << "Deleted" << "Employee" << "Time"
              << "Notes";
+      break;
+    case CLIENT_REPORT:
+      *title << "Time" << "Employee" << "Action" << "Client"; 
   }
   model.setTitle(title);
 }
@@ -106,6 +109,9 @@ void Report::updateModelThread(QDate date, int shiftNo)
           {
             Report::setTransactionData(&query);
           }
+          break;
+        case CLIENT_REPORT:
+          ret = dbManager->getShiftReportClientLogQuery(&query, date, shiftNo);
       }
       if (ret)
       {

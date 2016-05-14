@@ -10,7 +10,7 @@
 
 //MyModel* checkoutModel;
 Report *checkoutReport, *vacancyReport, *lunchReport, *wakeupReport,
-    *bookingReport, *transactionReport;
+    *bookingReport, *transactionReport, *clientLogReport;
 bool firstTime = true;
 QStack<int> backStack;
 QStack<int> forwardStack;
@@ -2944,6 +2944,7 @@ void MainWindow::setupReportsScreen()
 
     bookingReport = new Report(this, ui->booking_tableView, BOOKING_REPORT);
     transactionReport = new Report(this, ui->transaction_tableView, TRANSACTION_REPORT);
+    clientLogReport = new Report(this, ui->clientLog_tableView, CLIENT_REPORT);
 }
 
 void MainWindow::updateDailyReportTables(QDate date)
@@ -2961,6 +2962,7 @@ void MainWindow::updateShiftReportTables(QDate date, int shiftNo)
 {
     bookingReport->updateModel(date, shiftNo);
     transactionReport->updateModel(date, shiftNo);
+    clientLogReport->updateModel(date, shiftNo);
 
     ui->lbl_shiftReportDateVal->setText(date.toString("yyyy-MM-dd"));
     ui->lbl_shiftReportShiftVal->setText(QString::number(shiftNo));
@@ -2989,6 +2991,10 @@ void MainWindow::on_shiftReportGo_btn_clicked()
     MainWindow::getShiftReportStats(date, shiftNo);
 }
 
+void MainWindow::on_saveOther_btn_clicked()
+{
+
+}
 
 void MainWindow::on_shiftReportCurrent_btn_clicked()
 {
@@ -3608,3 +3614,5 @@ void MainWindow::useProgressDialog(QString msg, QFuture<void> future){
 
 
 //}
+
+
