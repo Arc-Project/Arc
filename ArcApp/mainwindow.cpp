@@ -25,6 +25,8 @@ QString idDisplayed;
 
 int transacNum;
 
+QProgressDialog* dialog;
+
 //QSqlQuery resultssss;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -55,6 +57,15 @@ MainWindow::MainWindow(QWidget *parent) :
     QLabel *lbl_curShift = new QLabel("Shift Number: ");
     statusBar()->addPermanentWidget(lbl_curUser);
     statusBar()->addPermanentWidget(lbl_curShift);
+
+    dialog = new QProgressDialog();
+    dialog->close();
+
+    // Connect signals and slots for futureWatcher.
+    connect(&futureWatcher, SIGNAL(finished()), dialog, SLOT(reset()));
+    connect(dialog, SIGNAL(canceled()), &futureWatcher, SLOT(cancel()));
+    connect(&futureWatcher, SIGNAL(progressRangeChanged(int,int)), dialog, SLOT(setRange(int,int)));
+    connect(&futureWatcher, SIGNAL(progressValueChanged(int)), dialog, SLOT(setValue(int)));
 
 }
 
@@ -3079,21 +3090,7 @@ void MainWindow::setupReportsScreen()
 
 void MainWindow::updateReportTables(QDate date)
 {
-    //create progress dialog
-    QProgressDialog dialog;
-    dialog.setLabelText(QString("Processing reports..."));
-
-    // Connect signals and slots for futureWatcher.
-    connect(&futureWatcher, SIGNAL(finished()), &dialog, SLOT(reset()));
-    connect(&dialog, SIGNAL(canceled()), &futureWatcher, SLOT(cancel()));
-    connect(&futureWatcher, SIGNAL(progressRangeChanged(int,int)), &dialog, SLOT(setRange(int,int)));
-    connect(&futureWatcher, SIGNAL(progressValueChanged(int)), &dialog, SLOT(setValue(int)));
-
-    futureWatcher.setFuture(QtConcurrent::run(checkoutReport, &checkoutReport->updateModelThread, date));
-    dialog.setCancelButton(0);
-    dialog.exec();
-    futureWatcher.waitForFinished();
-    // end of progress dialog stuff
+    useProgressDialog("Processing reports", QtConcurrent::run(checkoutReport, &checkoutReport->updateModelThread, date));
 
 //    checkoutReport->updateModel(date);
     vacancyReport->updateModel(date);
@@ -3697,4 +3694,12 @@ void MainWindow::on_editWakeup_clicked()
 void MainWindow::on_actionQuit_triggered()
 {
     QApplication::quit();
+}
+
+void MainWindow::useProgressDialog(QString msg, QFuture<void> future){
+    dialog->setLabelText(msg);
+    futureWatcher.setFuture(future);
+    dialog->setCancelButton(0);
+    dialog->exec();
+    futureWatcher.waitForFinished();
 }
