@@ -307,14 +307,55 @@ FILE DOWLOAD AND UPLOAD RELATED FUNCTIONS (END)
 /*==============================================================================
 SEARCH CLIENT LIST FUNCTION(START)
 ==============================================================================*/
-bool DatabaseManager::searchClientList(QSqlQuery* query, QString ClientId){
-    query =  new QSqlQuery(db);
-    query->prepare("SELECT FirstName, MiddleName, LastName, Dob FROM Client WHERE ClientId = :id");
-    query->bindValue("id", ClientId);
 
-    if(query->exec())
+
+
+
+
+//bool DatabaseManager::searchClientList(QSqlQuery* query, QString ClientName){
+QSqlQuery DatabaseManager::searchClientList(QString ClientName){
+    QSqlQuery query(db);
+    //query->prepare("SELECT FirstName, MiddleName, LastName, Dob FROM Client WHERE ClientId = :id");
+    //query->bindValue("id", ClientId);
+    QString searchQuery;
+    QStringList clientNames;
+    if(ClientName != ""){
+        clientNames = ClientName.split(" ");
+    }
+    else{
+        qDebug()<<"NO NAME";
+        searchQuery = QString("SELECT ClientId, FirstName, MiddleName, LastName, Dob, Balance ")
+                + QString("FROM Client ");
+    }
+
+    if(clientNames.count() == 1){
+        qDebug()<<"Name 1 words";
+        searchQuery = QString("SELECT ClientId, FirstName, MiddleName, LastName, Dob, Balance ")
+                    + QString("FROM Client ")
+                    + QString("WHERE (FirstName LIKE '"+clientNames.at(0) + "%' ")
+                    + QString("OR LastName Like '"+clientNames.at(0)+"%') ")
+                    + QString("AND NOT FirstName = 'anonymous' ")
+                    + QString("ORDER BY FirstName ASC, LastName ASC");
+    }
+    else if(clientNames.count() == 2){
+        qDebug() << "Name 2 words";
+        searchQuery = QString("SELECT ClientId, FirstName, MiddleName, LastName, Dob, Balance ")
+                    + QString("FROM Client ")
+                    + QString("WHERE (LastName LIKE '"+clientNames.at(0) + "%' AND FirstName LIKE '" + clientNames.at(1) + "%') ")
+                    + QString("OR (FirstName Like '"+clientNames.at(0)+"%' AND LastName LIKE '" + clientNames.at(1) + "%') ")
+                    + QString("AND NOT FirstName = 'anonymous' ")
+                    + QString("ORDER BY FirstName ASC, LastName ASC");
+    }
+    query.prepare(searchQuery);
+    query.exec();
+    return query;
+/*
+    if(query->exec()){
+       // printAll(*query);
         return true;
+    }
     return false;
+*/
 }
 
 QSqlQuery DatabaseManager::searchClientInfo(QString ClientId){

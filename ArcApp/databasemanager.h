@@ -45,7 +45,9 @@ public:
     void printDbConnections();
 
 
-    bool searchClientList(QSqlQuery* query, QString ClientId);
+    //bool searchClientList(QSqlQuery* query, QString ClientId);
+    //bool searchClientList(QSqlQuery* query, QString ClientName);
+    QSqlQuery searchClientList(QString ClientName);
 
     QSqlQuery searchClientInfo(QString ClientId);
     bool searchClientInfoPic(QImage * img, QString ClientId);

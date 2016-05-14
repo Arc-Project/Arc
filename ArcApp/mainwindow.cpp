@@ -1532,16 +1532,19 @@ void MainWindow::on_pushButton_search_client_clicked()
     QString searchQuery = "SELECT ClientId, FirstName, LastName, Dob, Balance FROM Client WHERE LastName LIKE '%"+clientName
                         + "%' OR MiddleName Like '%"+ clientName
                         + "%' OR FirstName Like '%"+clientName+"%'";
-    QSqlQuery results = dbManager->execQuery(searchQuery);
-    setup_searchClientTable(results);
+    //QSqlQuery results = dbManager->execQuery(searchQuery);
+    //setup_searchClientTable(results);
 
-    QSqlQuery resultQ;
-
-    if(!(dbManager->searchClientList(&resultQ, curClientID)))
+    QSqlQuery resultQ = dbManager->searchClientList(clientName);
+    /*
+    if(!(dbManager->searchClientList(&resultQ, clientName)))
     {
         qDebug()<<"Select Fail";
         return;
     }
+    */
+    //dbManager->printAll(resultQ);
+    setup_searchClientTable(resultQ);
 
     connect(ui->tableWidget_search_client, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(selected_client_info(int,int)),Qt::UniqueConnection);
     // dbManager->printAll(results);
@@ -1557,7 +1560,7 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
     ui->tableWidget_search_client->setColumnCount(colCnt);
     ui->tableWidget_search_client->clear();
 
-    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"FirstName"<<"LastName"<<"DateOfBirth"<<"Balance");
+    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"FirstName"<<"Middle Initial"<<"LastName"<<"DateOfBirth"<<"Balance");
     int row =0;
     while(results.next()){
         ui->tableWidget_search_client->insertRow(row);
