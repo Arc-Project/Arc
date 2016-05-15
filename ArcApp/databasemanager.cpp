@@ -448,6 +448,19 @@ QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId){
     return clientTransQuery;
 }
 
+QSqlQuery DatabaseManager::searchTransBookList(int maxNum, QString clientId){
+    QSqlQuery clientTransQuery;
+    clientTransQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) )
+                             + QString(" DateCreated, ProgramCode, StartDate, EndDate, Cost, ")
+                             + QString("SpaceId, Lunch, Wakeup, FirstBook ")
+                         + QString("FROM Booking ")
+                         + QString("WHERE ClientId = " + clientId + " ORDER BY EndDate DESC, DateCreated DESC"));
+    clientTransQuery.exec();
+    return clientTransQuery;
+}
+
+
+
 /*==============================================================================
 PROFILE PICTURE UPLOAD AND DOWNLOAD RELATED FUNCTIONS (START)
 ==============================================================================*/
@@ -513,6 +526,34 @@ bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage
     return false;
 }
 
+
+bool DatabaseManager::insertClientLog(QStringList* registerFieldList)
+{
+    QSqlQuery query(db);
+
+    query.prepare(QString("INSERT INTO ClientLog ")
+        + QString("(ClientName, Action, Date, ShiftNo, Time, EmpName) ")
+        + QString("VALUES(?, ?, ?, ?, ?, ?)"));
+
+    for (int i = 0; i < registerFieldList->size(); ++i)
+    {
+        if (registerFieldList->at(i) != NULL)
+        {
+            qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
+            query.addBindValue(registerFieldList->at(i));
+        }
+        else
+        {
+            query.addBindValue(QVariant(QVariant::String));
+        }
+    }
+    if (query.exec())
+    {
+        return true;
+    }
+    return false;
+}
+
 bool DatabaseManager::updateClientWithPic(QStringList* registerFieldList, QString clientId, QImage* profilePic)//QObject sth, QImage profilePic)
 {
     QByteArray ba;
@@ -550,6 +591,8 @@ bool DatabaseManager::updateClientWithPic(QStringList* registerFieldList, QStrin
     }
     return false;
 }
+
+
 
 QSqlQuery DatabaseManager::getTransactions(QDate start, QDate end){
     QSqlQuery query(db);
@@ -732,7 +775,7 @@ bool DatabaseManager::getDailyReportCheckoutQuery(QSqlQuery* queryResults, QDate
         + QString("WHERE EndDate = '" + date.toString(Qt::ISODate))
         + QString("' AND FirstBook = 'YES'");
 
-        qDebug() << queryString;
+        // qDebug() << queryString;
     return queryResults->exec(queryString);
 }
 
@@ -745,7 +788,7 @@ bool DatabaseManager::getDailyReportVacancyQuery(QSqlQuery* queryResults, QDate 
         + QString("') as b ON s.SpaceId = b.SpaceId ")
         + QString("WHERE b.date IS NULL");
 
-        qDebug() << queryString;
+        // qDebug() << queryString;
     return queryResults->exec(queryString);
 }
 
@@ -757,7 +800,7 @@ bool DatabaseManager::getDailyReportLunchQuery(QSqlQuery* queryResults, QDate da
         + QString("WHERE Date = '" + date.toString(Qt::ISODate)) + "' AND "
         + QString("Lunch = 'YES'");
 
-        qDebug() << queryString;
+        // qDebug() << queryString;
     return queryResults->exec(queryString);
 }
 
@@ -769,7 +812,7 @@ bool DatabaseManager::getDailyReportWakeupQuery(QSqlQuery* queryResults, QDate d
         + QString("WHERE Date = '" + date.toString(Qt::ISODate)) + "' AND "
         + QString("Wakeup <> 'NO' AND Wakeup IS NOT NULL");
 
-        qDebug() << queryString;
+        // qDebug() << queryString;
     return queryResults->exec(queryString);
 }
 
@@ -782,7 +825,7 @@ bool DatabaseManager::getShiftReportBookingQuery(QSqlQuery* queryResults,
         + QString("FROM BookingHistory ")
         + QString("WHERE Date = '" + date.toString(Qt::ISODate) + "' AND ")
         + QString("ShiftNo = " + QString::number(shiftNo));
-    qDebug() << queryString;
+    // qDebug() << queryString;
     return queryResults->exec(queryString);
 }
 QSqlQuery DatabaseManager::getSwapBookings(QDate start, QDate end, QString program, QString maxSwap, QString curBook){
@@ -809,7 +852,7 @@ bool DatabaseManager::getShiftReportTransactionQuery(QSqlQuery* queryResults,
         + QString("FROM Client c INNER JOIN Transac t ON c.ClientId = t.ClientId ")
         + QString("WHERE Date = '" + date.toString(Qt::ISODate) + "' AND ")
         + QString("ShiftNo = " + QString::number(shiftNo));
-    qDebug() << queryString;
+    // qDebug() << queryString;
     return queryResults->exec(queryString);
 }
 
@@ -820,7 +863,7 @@ int DatabaseManager::getDailyReportEspCheckouts(QDate date)
             + QString("FROM Booking ")
             + QString("WHERE EndDate = '" + date.toString(Qt::ISODate))
             + QString("' AND FirstBook = 'YES' AND ProgramCode = 'ESP'");
-    qDebug() << queryString;
+    // qDebug() << queryString;
     return DatabaseManager::getIntFromQuery(queryString);
 }
 
@@ -831,7 +874,7 @@ int DatabaseManager::getDailyReportTotalCheckouts(QDate date)
             + QString("FROM Booking ")
             + QString("WHERE EndDate = '" + date.toString(Qt::ISODate))
             + QString("' AND FirstBook = 'YES'");
-    qDebug() << queryString;
+    // qDebug() << queryString;
     return DatabaseManager::getIntFromQuery(queryString);
 }
 
@@ -845,7 +888,7 @@ int DatabaseManager::getDailyReportEspVacancies(QDate date)
             + QString(date.toString(Qt::ISODate) + "') as b ")
             + QString("ON s.SpaceId = b.SpaceId ")
             + QString("WHERE b.Date IS NULL AND s.ProgramCodes LIKE 'ESP'");
-    qDebug() << queryString;
+    // qDebug() << queryString;
     return DatabaseManager::getIntFromQuery(queryString);
 }
 
@@ -858,13 +901,12 @@ int DatabaseManager::getDailyReportTotalVacancies(QDate date)
             + QString(date.toString(Qt::ISODate) + "') as b ")
             + QString("ON s.SpaceId = b.SpaceId ")
             + QString("WHERE b.Date IS NULL");
-    qDebug() << queryString;
+    // qDebug() << queryString;
     return DatabaseManager::getIntFromQuery(queryString);
 }
 
 void DatabaseManager::getDailyReportStatsThread(QDate date)
 {
-    qDebug() << "getDailyReportStatsThread  should emit signal";
     QList<int> list;
     list << DatabaseManager::getDailyReportEspCheckouts(date)
          << DatabaseManager::getDailyReportTotalCheckouts(date)
@@ -873,7 +915,55 @@ void DatabaseManager::getDailyReportStatsThread(QDate date)
     emit DatabaseManager::dailyReportStatsChanged(list);
 }
 
+int DatabaseManager::getShiftReportTotal(QDate date, int shiftNo, QString payType)
+{
+    QString queryString = 
+        QString("SELECT ISNULL(p.total, 0) - ISNULL(r.total, 0) ")
+        + QString("FROM ")
+        + QString("(SELECT SUM(Amount) as total ")
+        + QString("FROM Transac ")
+        + QString("WHERE (Date = '" + date.toString(Qt::ISODate) + "' AND ")
+        + QString("ShiftNo = " + QString::number(shiftNo) + " AND ")
+        + QString("Type = '" + payType + "')")
+        + QString("AND ((TransType = 'Payment' AND Deleted = 0 AND Outstanding = 0) ")
+        + QString("OR (TransType = 'Refund' AND Deleted = 1 AND Outstanding = 0))) as p ")
+        + QString("CROSS JOIN ")
+        + QString("(SELECT SUM(Amount) as total ")
+        + QString("FROM Transac ")
+        + QString("WHERE (Date = '" + date.toString(Qt::ISODate) + "' AND ")
+        + QString("ShiftNo = " + QString::number(shiftNo) + " AND ")
+        + QString("Type = '" + payType + "')")
+        + QString("AND ((TransType = 'Refund' AND Deleted = 0 AND Outstanding = 0) ")
+        + QString("OR (TransType = 'Payment' AND Deleted = 1 AND Outstanding = 0))) as r");
+    // qDebug() << queryString;
+    return DatabaseManager::getIntFromQuery(queryString);
+}
 
+void DatabaseManager::getShiftReportStatsThread(QDate date, int shiftNo)
+{
+    int cashTotal = DatabaseManager::getShiftReportTotal(date, shiftNo, PAY_CASH);
+    int electronicTotal = DatabaseManager::getShiftReportTotal(date, shiftNo, PAY_ELECTRONIC);
+    int chequeTotal = DatabaseManager::getShiftReportTotal(date, shiftNo, PAY_CHEQUE);
+
+    QList<int> list = QList<int>() << cashTotal << electronicTotal << chequeTotal
+                                   << cashTotal + chequeTotal
+                                   << cashTotal + electronicTotal + chequeTotal;
+    emit shiftReportStatsChanged(list);
+}
+
+bool DatabaseManager::getShiftReportClientLogQuery(QSqlQuery* queryResults,
+    QDate date, int shiftNo)
+{
+    qDebug() << "getShiftReportClientLogQuery called";
+    QString queryString =
+        QString("SELECT CONVERT(VARCHAR(15), Time, 100), EmpName, Action, ClientName ")
+        + QString("FROM ClientLog ")
+        + QString("WHERE Date = '" + date.toString(Qt::ISODate) + "' AND ")
+        + QString("ShiftNo = " + QString::number(shiftNo))
+        + QString("ORDER BY Time Desc");
+    qDebug() << queryString;
+    return queryResults->exec(queryString);
+}
 
 int DatabaseManager::getIntFromQuery(QString queryString)
 {

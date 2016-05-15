@@ -10,7 +10,7 @@
 
 //MyModel* checkoutModel;
 Report *checkoutReport, *vacancyReport, *lunchReport, *wakeupReport,
-    *bookingReport, *transactionReport;
+    *bookingReport, *transactionReport, *clientLogReport;
 bool firstTime = true;
 QStack<int> backStack;
 QStack<int> forwardStack;
@@ -18,6 +18,7 @@ QStack<int> forwardStack;
 QFuture<void> displayFuture ;
 QFuture<void> displayPicFuture;
 QFuture<void> transacFuture;
+QFuture<void> bookHistoryFuture;
 //CaseFiles stuff
 QVector<QTableWidget*> pcp_tables;
 QVector<QString> pcpTypes;
@@ -25,6 +26,7 @@ bool loaded = false;
 QString idDisplayed;
 
 int transacNum;
+int bookingNum;
 
 QProgressDialog* dialog;
 
@@ -43,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //detect if the widget is changed
     connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(initCurrentWidget(int)));
     connect(dbManager, SIGNAL(dailyReportStatsChanged(QList<int>)), this, SLOT(updateDailyReportStats(QList<int>)));
+    connect(dbManager, SIGNAL(shiftReportStatsChanged(QList<int>)), this, SLOT(updateShiftReportStats(QList<int>)));
     curClient = 0;
     curBook = 0;
     trans = 0;
@@ -145,7 +148,8 @@ void MainWindow::initCurrentWidget(int idx){
             ui->shiftReport_tabWidget->setCurrentIndex(DEFAULTTAB);
             MainWindow::updateDailyReportTables(QDate::currentDate());
             MainWindow::getDailyReportStats(QDate::currentDate());
-            MainWindow::updateShiftReportTables(QDate::currentDate(), 1);
+            MainWindow::updateShiftReportTables(QDate::currentDate(), currentshiftid);
+            MainWindow::getShiftReportStats(QDate::currentDate(), currentshiftid);
             break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
@@ -217,6 +221,7 @@ void MainWindow::on_actionDB_Connection_triggered()
 
 void MainWindow::on_actionTest_Query_triggered()
 {
+    qDebug() << dbManager->getShiftReportTotal(QDate::currentDate(), 1, PAY_CASH);
 }
 
 void MainWindow::on_actionFile_Upload_triggered()
@@ -1204,6 +1209,7 @@ void MainWindow::on_button_cl_takePic_clicked()
     connect(camDialog, SIGNAL(showPic(QImage)), this, SLOT(addPic(QImage)));
     camDialog->show();
 }
+
 /*------------------------------------------------------------------
   add picture into graphicview (after taking picture in pic dialog
   ------------------------------------------------------------------*/
@@ -1260,6 +1266,24 @@ void MainWindow::getListRegisterFields(QStringList* fieldList)
                << ui->lineEdit_cl_supporter2_ContactNo->text()
                << ui->comboBox_cl_status->currentText() //grab value from status dropdown
                << ui->plainTextEdit_cl_comments->toPlainText();
+
+}
+
+void MainWindow::getRegisterLogFields(QStringList* fieldList)
+{
+    QString fullName = ui->lineEdit_cl_fName->text() + " " + ui->lineEdit_cl_lName->text();
+    QString action;
+    if(ui->button_register_client->text() == "Register")
+        action = "Registered";
+    else
+        action = "Updated";
+
+    *fieldList << fullName
+               << action
+               << QDate::currentDate().toString("yyyy-MM-dd")
+               << QString::number(currentshiftid) // get shift number
+               << QTime::currentTime().toString("hh:mm:ss")
+               << userLoggedIn; //employee name
 
 }
 
@@ -1345,19 +1369,26 @@ void MainWindow::on_button_register_client_clicked()
 
     if (MainWindow::check_client_register_form())
     {
-        QStringList registerFieldList;
+        QStringList registerFieldList, logFieldList;
         MainWindow::getListRegisterFields(&registerFieldList);
+        MainWindow::getRegisterLogFields(&logFieldList);
+        if(!dbManager->insertClientLog(&logFieldList))
+            return;
+
         if(ui->label_cl_infoedit_title->text() == "Register Client")
         {
 
             if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
             {
+                statusBar()->showMessage("Client Registered Sucessfully.");
                 qDebug() << "Client registered successfully";
+
                 clear_client_register_form();
                 ui->stackedWidget->setCurrentIndex(1);
             }
             else
             {
+                statusBar()->showMessage("Register Failed. Check information.");
                 qDebug() << "Could not register client";
             }
         }
@@ -1365,12 +1396,14 @@ void MainWindow::on_button_register_client_clicked()
         {
             if (dbManager->updateClientWithPic(&registerFieldList, curClientID, &profilePic))
             {
+                statusBar()->showMessage("Client Registered Sucessfully.");
                 qDebug() << "Client info edit successfully";
                 clear_client_register_form();
                 ui->stackedWidget->setCurrentIndex(1);
             }
             else
             {
+                statusBar()->showMessage("Register Failed. Check information.");
                 qDebug() << "Could not edit client info";
             }
         }
@@ -1378,6 +1411,7 @@ void MainWindow::on_button_register_client_clicked()
     }
     else
     {
+        statusBar()->showMessage("Register Failed. Check information.");
         qDebug() << "Register form check was false";
     }
 }
@@ -1440,18 +1474,10 @@ void MainWindow::on_pushButton_search_client_clicked()
     //setup_searchClientTable(results);
 
     QSqlQuery resultQ = dbManager->searchClientList(clientName);
-    /*
-    if(!(dbManager->searchClientList(&resultQ, clientName)))
-    {
-        qDebug()<<"Select Fail";
-        return;
-    }
-    */
-    //dbManager->printAll(resultQ);
     setup_searchClientTable(resultQ);
 
     connect(ui->tableWidget_search_client, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(selected_client_info(int,int)),Qt::UniqueConnection);
-    // dbManager->printAll(results);
+
 
 }
 
@@ -1474,6 +1500,8 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
         }
         row++;
     }
+
+    statusBar()->showMessage(QString("Search " + QString::number(row) + " people"));
     ui->tableWidget_search_client->show();
 
 }
@@ -1502,6 +1530,7 @@ void MainWindow::selected_client_info(int nRow, int nCol)
     ui->tabWidget_cl_info->setCurrentIndex(0);
     curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
     transacNum = 5;
+    bookingNum = 5;
     ui->pushButton_cl_trans_more->setEnabled(true);
 
     table_available = false;
@@ -1656,7 +1685,7 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
 
         case 1:
             if(transacFuture.isRunning()|| !transacFuture.isFinished()){
-                qDebug()<<"ProfilePic Is RUNNING";
+                qDebug()<<"TransactionHistory Is RUNNING";
                 return;
                 //displayFuture.cancel();
             }
@@ -1666,6 +1695,16 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
             qDebug()<<"client Transaction list";
 
             break;
+       case 2:
+             if(bookHistoryFuture.isRunning()|| !bookHistoryFuture.isFinished()){
+                 qDebug()<<"BookingHistory Is RUNNING";
+                 return;
+                 //displayFuture.cancel();
+             }
+             ui->pushButton_cl_book_more->setEnabled(true);
+             bookHistoryFuture = QtConcurrent::run(this, &searchBookHistory, curClientID);
+             bookHistoryFuture.waitForFinished();
+             qDebug()<<"client Transaction list";
 
     }
 }
@@ -1683,13 +1722,10 @@ void MainWindow::searchTransaction(QString clientId){
 
     QSqlQuery transQuery = dbManager->searchClientTransList(transacNum, clientId);
     displayTransaction(transQuery);
-    dbManager->printAll(transQuery);
-    /*
-            while(transQuery.next()){
 
-    }
-            */
 }
+
+
 
 void MainWindow::displayTransaction(QSqlQuery results){
     ui->tableWidget_transaction->setRowCount(0);
@@ -1711,9 +1747,8 @@ void MainWindow::displayTransaction(QSqlQuery results){
     if(row !=transacNum || row%5 != 0){
         ui->pushButton_cl_trans_more->setEnabled(false);
     }
-    ui->tableWidget_transaction->setMinimumHeight(33*row-5);
+    ui->tableWidget_transaction->setMinimumHeight(37*row-5);
 
-    ui->tableWidget_search_client->show();
 }
 
 void MainWindow::on_pushButton_cl_trans_more_clicked()
@@ -1723,7 +1758,44 @@ void MainWindow::on_pushButton_cl_trans_more_clicked()
     searchTransaction(curClientID);
 }
 
+void MainWindow::searchBookHistory(QString clientId){
+    qDebug()<<"search booking";
 
+    QSqlQuery bookingQuery = dbManager->searchTransBookList(bookingNum, clientId);
+    displayBookHistory(bookingQuery);
+    dbManager->printAll(bookingQuery);
+
+}
+
+void MainWindow::displayBookHistory(QSqlQuery results){
+    ui->tableWidget_booking->setRowCount(0);
+
+    int colCnt = results.record().count() -1;
+    ui->tableWidget_booking->setColumnCount(colCnt);
+    ui->tableWidget_booking->clear();
+
+    ui->tableWidget_booking->setHorizontalHeaderLabels(QStringList()<<"Reserved Date"<<"Program Code"<<"Start Date"<< "End Date"<<"Cost"<<"Bed Number"<<"LunchService"<<"WakeUpService"<<"FirstBook ");
+    int row =ui->tableWidget_booking->rowCount();
+    while(results.next()){
+        ui->tableWidget_booking->insertRow(row);
+        for(int i =0; i<colCnt; i++){
+            ui->tableWidget_booking->setItem(row, i, new QTableWidgetItem(results.value(i).toString()));
+            //qDebug() <<"row : "<<row << ", col: " << i << "item" << results.value(i).toString();
+        }
+        row++;
+    }
+    if(row !=bookingNum || row%5 != 0){
+        ui->pushButton_cl_book_more->setEnabled(false);
+    }
+    ui->tableWidget_booking->setMinimumHeight(37*row-5);
+
+}
+
+void MainWindow::on_pushButton_cl_book_more_clicked()
+{
+    bookingNum +=5;
+    searchBookHistory(curClientID);
+}
 
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -1915,13 +1987,7 @@ void MainWindow::initClientLookupInfo(){
 
     profilePic = (QImage)NULL;
 
-    //init client info table
-    if(ui->tableWidget_clientInfo->columnCount()>0){
-        ui->tableWidget_clientInfo->setColumnCount(0);
-        ui->tableWidget_clientInfo->clear();
-        ui->tableWidget_clientInfo2->setColumnCount(0);
-        ui->tableWidget_clientInfo2->clear();
-    }
+
 
 
 }
@@ -2264,12 +2330,23 @@ void MainWindow::on_btn_listAllUsers_3_clicked()
         QString floornum = QString::fromStdString(brokenupspacecode[1]);
         QString roomnum = QString::fromStdString(brokenupspacecode[2]);
         std::string bednumtype = brokenupspacecode[3];
+
+        qDebug() << "Spacecode type:" << QString::fromStdString(brokenupspacecode[3]);
+
         // strip the last character
         QString bednumber = QString::fromStdString(bednumtype.substr(0, bednumtype.size()-1));
 
+        qDebug() << bednumber;
+
+
         // get the last character to figure out the type
-        char typechar = bednumtype[bednumtype.size()-1];
+        char typechar = bednumtype[bednumtype.size() - 1];
+
+        qDebug() << typechar;
+
         QString thetype = "" + typechar;
+
+        qDebug() << thetype;
 
         ui->tableWidget_5->insertRow(x);
         QStringList row;
@@ -2278,7 +2355,7 @@ void MainWindow::on_btn_listAllUsers_3_clicked()
             << floornum
             << roomnum
             << bednumber
-            << thetype
+            << QChar::fromLatin1(typechar)
             << result.value(1).toString()
             << result.value(2).toString();
         for (int i = 0; i < 8; ++i)
@@ -2927,44 +3004,53 @@ REPORTS
 ==============================================================================*/
 void MainWindow::setupReportsScreen()
 {
+    // Daily Report Screen
     ui->lbl_dailyReportDateVal->setText(QDate::currentDate().toString("yyyy-MM-dd"));
     ui->dailyReport_dateEdit->setDate(QDate::currentDate());
     checkoutReport = new Report(this, ui->checkout_tableView, CHECKOUT_REPORT);
     vacancyReport = new Report(this, ui->vacancy_tableView, VACANCY_REPORT);
     lunchReport = new Report(this, ui->lunch_tableView, LUNCH_REPORT);
     wakeupReport = new Report(this, ui->wakeup_tableView, WAKEUP_REPORT);
+
+    // Shift Report Screen
+    ui->lbl_shiftReportDateVal->setText(QDate::currentDate().toString("yyyy-MM-dd"));
+    ui->lbl_shiftReportShiftVal->setText(QString::number(currentshiftid));
+    ui->shiftReport_dateEdit->setDate(QDate::currentDate());
+
     bookingReport = new Report(this, ui->booking_tableView, BOOKING_REPORT);
     transactionReport = new Report(this, ui->transaction_tableView, TRANSACTION_REPORT);
+    clientLogReport = new Report(this, ui->clientLog_tableView, CLIENT_REPORT);
 }
 
 void MainWindow::updateDailyReportTables(QDate date)
 {
     useProgressDialog("Processing reports...", QtConcurrent::run(checkoutReport, &checkoutReport->updateModelThread, date));
-
-//    checkoutReport->updateModel(date);
     vacancyReport->updateModel(date);
     lunchReport->updateModel(date);
     wakeupReport->updateModel(date);
+
     ui->lbl_dailyReportDateVal->setText(date.toString("yyyy-MM-dd"));
     ui->dailyReport_dateEdit->setDate(date);
-
-    
 }
 
 void MainWindow::updateShiftReportTables(QDate date, int shiftNo)
 {
-    qDebug() << "ShiftNO in updateshiftreport tables " << shiftNo;
     bookingReport->updateModel(date, shiftNo);
     transactionReport->updateModel(date, shiftNo);
+    clientLogReport->updateModel(date, shiftNo);
+
+    ui->lbl_shiftReportDateVal->setText(date.toString("yyyy-MM-dd"));
+    ui->lbl_shiftReportShiftVal->setText(QString::number(shiftNo));
+    ui->shiftReport_dateEdit->setDate(date);
 }
 
 void MainWindow::on_dailyReportGo_btn_clicked()
 {
     QDate date = ui->dailyReport_dateEdit->date();
+
     MainWindow::updateDailyReportTables(date);
     MainWindow::getDailyReportStats(date);
 }
-
 
 void MainWindow::on_dailyReportCurrent_btn_clicked()
 {
@@ -2973,18 +3059,32 @@ void MainWindow::on_dailyReportCurrent_btn_clicked()
 
 void MainWindow::on_shiftReportGo_btn_clicked()
 {
+    QDate date = ui->shiftReport_dateEdit->date();
+    int shiftNo = ui->shiftReport_spinBox->value();
+
+    MainWindow::updateShiftReportTables(date, shiftNo);
+    MainWindow::getShiftReportStats(date, shiftNo);
+}
+
+void MainWindow::on_saveOther_btn_clicked()
+{
 
 }
 
 void MainWindow::on_shiftReportCurrent_btn_clicked()
 {
-
+    ui->shiftReport_dateEdit->setDate(QDate::currentDate());
+    ui->shiftReport_spinBox->setValue(currentshiftid);
 }
 
 void MainWindow::getDailyReportStats(QDate date)
 {
-    qDebug() << "getDailyReportStats  called";
     QtConcurrent::run(dbManager, &DatabaseManager::getDailyReportStatsThread, date);
+}
+
+void MainWindow::getShiftReportStats(QDate date, int shiftNo)
+{
+    QtConcurrent::run(dbManager, &DatabaseManager::getShiftReportStatsThread, date, shiftNo);   
 }
 
 void MainWindow::updateDailyReportStats(QList<int> list)
@@ -2994,6 +3094,16 @@ void MainWindow::updateDailyReportStats(QList<int> list)
     ui->lbl_espVacancies->setText(QString::number(list.at(2)));
     ui->lbl_totalVacancies->setText(QString::number(list.at(3)));
 }
+
+void MainWindow::updateShiftReportStats(QList<int> list)
+{
+    ui->lbl_cashAmt->setText(QString::number(list.at(0)));
+    ui->lbl_debitAmt->setText(QString::number(list.at(1)));
+    ui->lbl_chequeAmt->setText(QString::number(list.at(2)));
+    ui->lbl_depoAmt->setText(QString::number(list.at(3)));
+    ui->lbl_shiftAmt->setText(QString::number(list.at(4)));
+}
+
 /*==============================================================================
 REPORTS (END)
 ==============================================================================*/
@@ -3117,7 +3227,7 @@ void MainWindow::on_btn_pcpKeySave_clicked()
 
 void MainWindow::on_actionPcptables_triggered()
 {
-
+    ui->pushButton_bookRoom->setVisible(false);
 }
 
 void MainWindow::on_btn_pcpRelaUndo_clicked()
@@ -3218,7 +3328,6 @@ void MainWindow::on_btn_notesUndo_clicked()
     }
 }
 
-// UNTESTED
 void MainWindow::on_btn_searchUsers_3_clicked()
 {
     QString ename = ui->le_users_3->text();
@@ -3226,7 +3335,7 @@ void MainWindow::on_btn_searchUsers_3_clicked()
     ui->tableWidget_5->clear();
     ui->tableWidget_5->horizontalHeader()->setStretchLastSection(true);
 
-    QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, cost, Montly FROM Space WHERE SpaceCode LIKE '%"+ ename +"%'");
+    QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, cost, Monthly FROM Space WHERE SpaceCode LIKE '%"+ ename +"%'");
 
 //    int numCols = result.record().count();
     ui->tableWidget_5->setColumnCount(8);
@@ -3265,7 +3374,7 @@ void MainWindow::on_btn_searchUsers_3_clicked()
             << floornum
             << roomnum
             << bednumber
-            << thetype
+            << QChar::fromLatin1(typechar)
             << result.value(1).toString()
             << result.value(2).toString();
         for (int i = 0; i < 8; ++i)
@@ -3575,8 +3684,21 @@ void MainWindow::useProgressDialog(QString msg, QFuture<void> future){
 // room clicked
 /*void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
 {
+    // "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly"
+    QString idcode = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 0)).toString();
+    QString building = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 1)).toString();
+    QString floor = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 2)).toString();
+    QString room = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 3)).toString();
+    QString bednumber = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 4)).toString();
+    QString type = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 5)).toString();
+    QString cost = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 6)).toString();
+    QString monthly = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 7)).toString();
+
     // fill in stuff on the right
+}
 
 
+<<<<<<< HEAD
 }
 */
+

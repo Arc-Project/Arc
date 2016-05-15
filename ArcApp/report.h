@@ -9,14 +9,17 @@
 #include <qDebug>
 
 // Do not use shiftNo
-#define CHECKOUT_REPORT     0
-#define VACANCY_REPORT      1
-#define LUNCH_REPORT        2
-#define WAKEUP_REPORT       3
+#define CHECKOUT_REPORT       0
+#define VACANCY_REPORT        1
+#define LUNCH_REPORT          2
+#define WAKEUP_REPORT         3
 
 // Use shiftNo
-#define BOOKING_REPORT      4
-#define TRANSACTION_REPORT  5
+#define BOOKING_REPORT        4
+#define TRANSACTION_REPORT    5
+#define CLIENT_REPORT         6
+
+#define NUMCOLS_TRANSACTION   11
             
 class Report
 {
@@ -29,9 +32,8 @@ private:
     MyModel model;
     int reportType;
     void updateModelThread(QDate date, int shiftNo);
-    bool processTransactionQuery(QStringList* data, QSqlQuery* query);
+    void setTransactionData(QSqlQuery* query);
     void setData(QSqlQuery* query);
-    void setData(QStringList *data);
     void setTitle();
 };
     

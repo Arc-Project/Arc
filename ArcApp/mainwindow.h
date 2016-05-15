@@ -65,6 +65,8 @@ public:
     void clientSearchedInfo();
     void initClientLookupInfo();
     void setSelectedClientInfo();
+
+    void getRegisterLogFields(QStringList* fieldList);
     QImage profilePic;
 
     //COLIN STUFF////
@@ -135,7 +137,7 @@ private slots:
     void on_actionUpload_Display_Picture_triggered();
     void on_actionDownload_Profile_Picture_triggered();
     void displayPicThread();
-    void updateDailyReportStats(QList<int> list);
+
 
     /*==========================================================================
     DETECT WIDGET CHANGING SIGNAL
@@ -158,8 +160,12 @@ private slots:
     ==========================================================================*/
     void on_dailyReportGo_btn_clicked();
     void on_dailyReportCurrent_btn_clicked();
+    void updateDailyReportStats(QList<int> list);
     void on_shiftReportGo_btn_clicked();
     void on_shiftReportCurrent_btn_clicked();
+    void updateShiftReportStats(QList<int> list);
+    void on_saveOther_btn_clicked();
+
 
     
     
@@ -210,6 +216,9 @@ private slots:
     void searchTransaction(QString clientId);
 
     void displayTransaction(QSqlQuery results);
+
+    void displayBookHistory(QSqlQuery results);
+    void searchBookHistory(QString clientId);
 
     /*========================================================================*/
 
@@ -442,6 +451,10 @@ private slots:
 
     void useProgressDialog(QString msg, QFuture<void> future);
 
+   // void on_tableWidget_5_clicked(const QModelIndex &index);
+
+    void on_pushButton_cl_book_more_clicked();
+
 private:
 
     Ui::MainWindow *ui;
@@ -467,6 +480,7 @@ private:
     void updateDailyReportTables(QDate date);
     void getDailyReportStats(QDate date);
     void updateShiftReportTables(QDate date, int shiftNo);
+    void getShiftReportStats(QDate date, int shiftNo);
 
 
 
