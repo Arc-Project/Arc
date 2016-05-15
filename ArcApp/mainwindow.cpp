@@ -3574,7 +3574,16 @@ void MainWindow::useProgressDialog(QString msg, QFuture<void> future){
 // room clicked
 void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
 {
-    // fill in stuff on the right
+    // "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly"
+    QString idcode = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 0)).toString();
+    QString building = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 1)).toString();
+    QString floor = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 2)).toString();
+    QString room = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 3)).toString();
+    QString bednumber = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 4)).toString();
+    QString type = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 5)).toString();
+    QString cost = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 6)).toString();
+    QString monthly = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 7)).toString();
 
+    // fill in stuff on the right
 
 }
