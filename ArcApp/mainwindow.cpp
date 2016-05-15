@@ -1268,8 +1268,14 @@ void MainWindow::getListRegisterFields(QStringList* fieldList)
 void MainWindow::getRegisterLogFields(QStringList* fieldList)
 {
     QString fullName = ui->lineEdit_cl_fName->text() + " " + ui->lineEdit_cl_lName->text();
+    QString action;
+    if(ui->button_register_client->text() == "Register")
+        action = "Registered";
+    else
+        action = "Updated";
+
     *fieldList << fullName
-               << ui->button_register_client->text()
+               << action
                << QDate::currentDate().toString("yyyy-MM-dd")
                << QString::number(currentshiftid) // get shift number
                << QTime::currentTime().toString("hh:mm:ss")
@@ -1385,7 +1391,6 @@ void MainWindow::on_button_register_client_clicked()
             if (dbManager->updateClientWithPic(&registerFieldList, curClientID, &profilePic))
             {
                 qDebug() << "Client info edit successfully";
-                dbManager->insertClientLog(&logFieldList);
                 clear_client_register_form();
                 ui->stackedWidget->setCurrentIndex(1);
             }
@@ -1723,7 +1728,7 @@ void MainWindow::displayTransaction(QSqlQuery results){
     if(row !=transacNum || row%5 != 0){
         ui->pushButton_cl_trans_more->setEnabled(false);
     }
-    ui->tableWidget_transaction->setMinimumHeight(33*row-5);
+    ui->tableWidget_transaction->setMinimumHeight(35*row-5);
 
     ui->tableWidget_search_client->show();
 }
