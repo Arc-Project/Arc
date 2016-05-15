@@ -62,6 +62,32 @@
     <string>Program</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="editSwap">
+   <property name="geometry">
+    <rect>
+     <x>700</x>
+     <y>30</y>
+     <width>93</width>
+     <height>28</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Swap</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="editMoveType">
+   <property name="geometry">
+    <rect>
+     <x>220</x>
+     <y>10</y>
+     <width>431</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>TextLabel</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections>

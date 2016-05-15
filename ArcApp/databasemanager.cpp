@@ -346,15 +346,15 @@ SEARCH CLIENT LIST FUNCTION(START)
 //bool DatabaseManager::searchClientList(QSqlQuery* query, QString ClientName){
 QSqlQuery DatabaseManager::searchClientList(QString ClientName){
     QSqlQuery query(db);
-    //query->prepare("SELECT FirstName, MiddleName, LastName, Dob FROM Client WHERE ClientId = :id");
-    //query->bindValue("id", ClientId);
+
+    //default select query
     QString searchQuery = QString("SELECT ClientId, FirstName, MiddleName, LastName, Dob, Balance ")
             + QString("FROM Client ");
     QStringList clientNames;
     if(ClientName != ""){
         clientNames = ClientName.split(" ");
     }
-
+    //if 1 word name, match first name or last name
     if(clientNames.count() == 1){
         qDebug()<<"Name 1 words";
         searchQuery += QString("WHERE (FirstName LIKE '"+clientNames.at(0) + "%' ")
@@ -362,6 +362,7 @@ QSqlQuery DatabaseManager::searchClientList(QString ClientName){
                      + QString("AND NOT FirstName = 'anonymous' ")
                      + QString("ORDER BY FirstName ASC, LastName ASC");
     }
+    //if 2 word name, match first name and last name
     else if(clientNames.count() == 2){
         qDebug() << "Name 2 words";
         searchQuery += QString("WHERE (LastName LIKE '"+clientNames.at(0) + "%' AND FirstName LIKE '" + clientNames.at(1) + "%') ")
@@ -387,33 +388,16 @@ QSqlQuery DatabaseManager::searchClientInfo(QString ClientId){
                       + QString("PhysContactNo, SuppWorker1Name, SuppWorker1ContactNo, SuppWorker2Name, SuppWorker2ContactNo, ")
                       + QString("Comments ")//, ProfilePic ")
                       + QString("FROM Client WHERE ClientId =" + ClientId));
-//    selectquery.prepare("SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId = :id");
-//    selectquery.bindValue("id", ClientId);
+
 
     selectquery.exec();
 
   //  printAll(selectquery);
     return selectquery;
-    /*
-    if(!selectquery->exec())
-        return false;
-*/
-
-    /*
-    printAll(*query);
-    QSqlQuery test(db);
-    qDebug()<<"TEST: Query";
-    test.exec("SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId = "+ClientId);
-    printAll(test);
-    */
-    //return true;
 }
 
 
 bool DatabaseManager::searchClientInfoPic(QImage * img, QString ClientId){
-
-
-
     QString connName = QString::number(DatabaseManager::getDbCounter());
     {
         QSqlDatabase tempDb = QSqlDatabase::database();
@@ -435,15 +419,15 @@ bool DatabaseManager::searchClientInfoPic(QImage * img, QString ClientId){
         tempDb.close();
     } // Necessary braces: tempDb and query are destroyed because out of scope
     QSqlDatabase::removeDatabase(connName);
-
     return true;
 }
 
 QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId){
     QSqlQuery clientTransQuery;
-    clientTransQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) +" t.Date, t.Amount, t.Type, e.Username, t.ChequeNo, t.ChequeDate, t.Deleted ")
-                         + QString("FROM Transac t INNER JOIN Employee e ON t.EmpId = e.EmpId ")
-                         + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC"));
+    clientTransQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) )
+                           + QString(" t.Date, t.Amount, t.Type, e.Username, t.ChequeNo, t.ChequeDate, t.Deleted ")
+                           + QString("FROM Transac t INNER JOIN Employee e ON t.EmpId = e.EmpId ")
+                           + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC"));
     clientTransQuery.exec();
     return clientTransQuery;
 }
@@ -451,15 +435,25 @@ QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId){
 QSqlQuery DatabaseManager::searchTransBookList(int maxNum, QString clientId){
     QSqlQuery clientTransQuery;
     clientTransQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) )
-                             + QString(" DateCreated, ProgramCode, StartDate, EndDate, Cost, ")
-                             + QString("SpaceId, Lunch, Wakeup, FirstBook ")
-                         + QString("FROM Booking ")
-                         + QString("WHERE ClientId = " + clientId + " ORDER BY EndDate DESC, DateCreated DESC"));
+                           + QString(" DateCreated, ProgramCode, StartDate, EndDate, Cost, ")
+                           + QString("SpaceId, FirstBook ")
+                           + QString("FROM Booking ")
+                           + QString("WHERE ClientId = " + clientId + " ORDER BY EndDate DESC, DateCreated DESC"));
     clientTransQuery.exec();
     return clientTransQuery;
 }
 
-
+int DatabaseManager::countInformationPerClient(QString tableName, QString ClientId){
+    QSqlQuery countQuery;
+    QString test = "SELECT COUNT(*) FROM " + tableName + " WHERE ClientId = " + ClientId;
+    qDebug() << test;
+    countQuery.prepare(QString("SELECT COUNT(*) FROM " + tableName )
+                     + QString(" WHERE ClientId = " + ClientId));
+    countQuery.exec();
+    countQuery.next();
+    qDebug()<<"QUERY Count " + countQuery.value(0).toString();
+    return countQuery.value(0).toInt();
+}
 
 /*==============================================================================
 PROFILE PICTURE UPLOAD AND DOWNLOAD RELATED FUNCTIONS (START)
@@ -486,6 +480,34 @@ bool DatabaseManager::uploadProfilePic(QSqlDatabase* tempDbPtr, QString connName
         return true;
     }
     return false;
+}
+bool DatabaseManager::insertIntoBookingHistory(QString clientName, QString spaceId, QString program, QString start, QString end, QString action, QString emp, QString shift){
+    QSqlQuery query(db);
+    QString q = "INSERT INTO BookingHistory VALUES ('" +clientName + "','" +
+            spaceId + "','" + program + "','" + QDate::currentDate().toString(Qt::ISODate)
+            + "','" + start + "','" + end + "','" + action + "','" + "UNKNOWN"
+            + "','" + emp + "','" + shift + "','" + QTime::currentTime().toString() + "')";
+    qDebug() << q;
+    return query.exec(q);
+
+
+}
+bool DatabaseManager::addHistoryFromId(QString bookId, QString empId, QString shift, QString action){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Booking WHERE BookingId = '" + bookId + "'";
+    if(!query.exec(q)){
+        return false;
+    }
+    while(query.next()){
+        QString clientName =query.value("ClientName").toString();
+        QString spaceId = query.value("SpaceId").toString();
+        QString program = query.value("ProgramCode").toString();
+        QString start = query.value("StartDate").toString();
+        QString end = query.value("EndDate").toString();
+        return insertIntoBookingHistory(clientName, spaceId, program, start, end, action, empId, shift );
+
+    }
+
 }
 
 bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage* profilePic)//QObject sth, QImage profilePic)
@@ -827,6 +849,18 @@ bool DatabaseManager::getShiftReportBookingQuery(QSqlQuery* queryResults,
         + QString("ShiftNo = " + QString::number(shiftNo));
     // qDebug() << queryString;
     return queryResults->exec(queryString);
+}
+QSqlQuery DatabaseManager::getSwapBookings(QDate start, QDate end, QString program, QString maxSwap, QString curBook){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM (SELECT COUNT(SpaceID) C, SpaceId FROM Booking"
+                " WHERE EndDate > '" + start.toString(Qt::ISODate) + "' AND StartDate <= '" + end.toString(Qt::ISODate)
+            +"' AND EndDate <= '" + maxSwap +"' GROUP BY SpaceId ) AS T LEFT JOIN (SELECT * FROM Space) AS S on S.SpaceId = T.SpaceId" +
+            " JOIN ( SELECT * FROM Booking WHERE EndDate > '" + start.toString(Qt::ISODate) + "' AND StartDate <= '" + end.toString(Qt::ISODate)
+            +"' AND EndDate <= '" + maxSwap +"') V on T.SpaceId = V.SpaceId WHERE C = 1 AND ProgramCodes ='" + program + "' AND BookingId != '" + curBook + "'";
+
+    query.exec(q);
+    qDebug() << q;
+    return query;
 }
 
 bool DatabaseManager::getShiftReportTransactionQuery(QSqlQuery* queryResults,
@@ -1242,11 +1276,18 @@ bool DatabaseManager::updateBalance(double d, QString id){
         return true;
     return false;
 }
+QSqlQuery DatabaseManager::getNextBooking(QDate endDate, QString roomId){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Booking WHERE StartDate >= '" + endDate.toString(Qt::ISODate) + "' AND SpaceId = '" + roomId + "'";
+    query.exec(q);
+    qDebug() << q;
+    return query;
+}
 
 QSqlQuery DatabaseManager::getCurrentBooking(QDate start, QDate end, QString program){
     QSqlQuery query(db);
     QString q = "SELECT Space.SpaceId, Space.SpaceCode, Space.ProgramCodes, Space.type, Space.cost, Space.Monthly FROM Space"
-                " LEFT JOIN (SELECT * from Booking WHERE StartDate <= '" + start.toString(Qt::ISODate) + "' AND EndDate >= '"
+                " LEFT JOIN (SELECT * from Booking WHERE StartDate <= '" + start.toString(Qt::ISODate) + "' AND EndDate > '"
                 + start.toString(Qt::ISODate) + "') AS a on Space.SpaceId = a.SpaceId WHERE BookingID IS NULL AND Space.ProgramCodes = '" + program + "'";
 
     qDebug() << q;
@@ -1315,10 +1356,10 @@ QSqlQuery DatabaseManager::getActiveBooking(QString user, bool userLook){
     QString date = QDate::currentDate().toString(Qt::ISODate);
     QString q;
     if(!userLook){
-         q = "SELECT * FROM BOOKING WHERE FirstBook = 'YES' AND EndDate >= '" + date + "'";
+         q = "SELECT * FROM BOOKING JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '" + date + "'";
     }
     else{
-         q = "SELECT * FROM BOOKING WHERE FirstBook = 'YES' AND EndDate >= '" + date + "' AND ClientName LIKE '%" + user + "%'";
+         q = "SELECT * FROM BOOKING JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '" + date + "' AND ClientName LIKE '%" + user + "%'";
 
     }
     qDebug() << q;

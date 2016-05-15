@@ -46,14 +46,7 @@ public:
     void printDbConnections();
 
 
-    //bool searchClientList(QSqlQuery* query, QString ClientId);
-    //bool searchClientList(QSqlQuery* query, QString ClientName);
-    QSqlQuery searchClientList(QString ClientName);
 
-    QSqlQuery searchClientInfo(QString ClientId);
-    bool searchClientInfoPic(QImage * img, QString ClientId);
-    QSqlQuery searchClientTransList(int maxNum, QString ClientId);
-    QSqlQuery searchTransBookList(int maxNum, QString clientId);
     /*==========================================================================
     PROFILE PICTURE UPLOAD AND DOWNLOAD RELATED FUNCTIONS
     ==========================================================================*/
@@ -65,6 +58,15 @@ public:
     bool insertClientWithPic(QStringList* registerFieldList, QImage* profilePic);
     bool insertClientLog(QStringList* registerFieldList);
     bool updateClientWithPic(QStringList* registerFieldList, QString clientId, QImage* profilePic);
+
+
+    QSqlQuery searchClientList(QString ClientName);
+    QSqlQuery searchClientInfo(QString ClientId);
+    bool searchClientInfoPic(QImage * img, QString ClientId);
+    QSqlQuery searchClientTransList(int maxNum, QString ClientId);
+    QSqlQuery searchTransBookList(int maxNum, QString clientId);
+    int countInformationPerClient(QString tableName, QString ClientId);
+
     /*==========================================================================
     REPORT QUERYS
     ==========================================================================*/
@@ -115,6 +117,10 @@ public:
     bool setWakeup(QDate date, QString time, QString id);
     bool updateWakeups(QDate date, QString time, QString id);
     bool deleteWakeups(QDate date, QString id);
+    QSqlQuery getNextBooking(QDate endDate, QString roomId);
+    QSqlQuery getSwapBookings(QDate start, QDate end, QString program, QString maxSwap, QString curBook);
+    bool insertIntoBookingHistory(QString clientName, QString spaceId, QString program, QString start, QString end, QString action, QString emp, QString shift);
+    bool addHistoryFromId(QString bookId, QString empId, QString shift, QString action);
 
 
 
