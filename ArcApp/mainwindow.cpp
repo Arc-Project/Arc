@@ -1405,6 +1405,18 @@ void MainWindow::getListRegisterFields(QStringList* fieldList)
 
 }
 
+void MainWindow::getRegisterLogFields(QStringList* fieldList)
+{
+    QString fullName = ui->lineEdit_cl_fName->text() + " " + ui->lineEdit_cl_lName->text();
+    *fieldList << fullName
+               << ui->button_register_client->text()
+               << QDate::currentDate().toString("yyyy-MM-dd")
+               << QString::number(currentshiftid) // get shift number
+               << QTime::currentTime().toString("hh:mm:ss")
+               << userLoggedIn; //employee name
+
+}
+
 void MainWindow::clear_client_register_form(){
     ui->lineEdit_cl_fName->clear();
     ui->lineEdit_cl_mName->clear();
@@ -1487,14 +1499,19 @@ void MainWindow::on_button_register_client_clicked()
 
     if (MainWindow::check_client_register_form())
     {
-        QStringList registerFieldList;
+        QStringList registerFieldList, logFieldList;
         MainWindow::getListRegisterFields(&registerFieldList);
+        MainWindow::getRegisterLogFields(&logFieldList);
+        if(!dbManager->insertClientLog(&logFieldList))
+            return;
+
         if(ui->label_cl_infoedit_title->text() == "Register Client")
         {
 
             if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
             {
                 qDebug() << "Client registered successfully";
+
                 clear_client_register_form();
                 ui->stackedWidget->setCurrentIndex(1);
             }
@@ -1508,6 +1525,7 @@ void MainWindow::on_button_register_client_clicked()
             if (dbManager->updateClientWithPic(&registerFieldList, curClientID, &profilePic))
             {
                 qDebug() << "Client info edit successfully";
+                dbManager->insertClientLog(&logFieldList);
                 clear_client_register_form();
                 ui->stackedWidget->setCurrentIndex(1);
             }
@@ -1582,18 +1600,10 @@ void MainWindow::on_pushButton_search_client_clicked()
     //setup_searchClientTable(results);
 
     QSqlQuery resultQ = dbManager->searchClientList(clientName);
-    /*
-    if(!(dbManager->searchClientList(&resultQ, clientName)))
-    {
-        qDebug()<<"Select Fail";
-        return;
-    }
-    */
-    //dbManager->printAll(resultQ);
     setup_searchClientTable(resultQ);
 
     connect(ui->tableWidget_search_client, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(selected_client_info(int,int)),Qt::UniqueConnection);
-    // dbManager->printAll(results);
+
 
 }
 
