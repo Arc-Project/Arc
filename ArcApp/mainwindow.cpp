@@ -3601,10 +3601,10 @@ void MainWindow::useProgressDialog(QString msg, QFuture<void> future){
     futureWatcher.waitForFinished();
 }
 
-// room clicked
-void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
-{
-    // fill in stuff on the right
+//// room clicked
+//void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
+//{
+//    // fill in stuff on the right
 
 
-}
+//}
