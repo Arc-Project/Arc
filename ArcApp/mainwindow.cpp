@@ -3146,7 +3146,7 @@ void MainWindow::on_btn_pcpKeySave_clicked()
 
 void MainWindow::on_actionPcptables_triggered()
 {
-
+    ui->pushButton_bookRoom->setVisible(false);
 }
 
 void MainWindow::on_btn_pcpRelaUndo_clicked()
