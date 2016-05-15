@@ -43,9 +43,9 @@ void Report::setTitle()
              << "End Date" << "Action" << "Status" << "Employee" << "Time";
       break;
     case TRANSACTION_REPORT:
-      *title << "Client" << "Transaction Type" << "Type" << "MSDD" << "Cheque #" 
+      *title << "Client" << "Transaction" << "Type" << "MSDD" << "Cheque #" 
              << "Cheque Date" << "Status" << "Deleted" << "Employee" << "Time"
-             << "Notes" << "12" << "13";
+             << "Notes";
   }
   model.setTitle(title);
 }
@@ -104,7 +104,7 @@ void Report::updateModelThread(QDate date, int shiftNo)
         case TRANSACTION_REPORT:
           if (dbManager->getShiftReportTransactionQuery(&query, date, shiftNo))
           {
-            ret = true;
+            Report::setTransactionData(&query);
           }
       }
       if (ret)
@@ -117,9 +117,49 @@ void Report::updateModelThread(QDate date, int shiftNo)
   QSqlDatabase::removeDatabase(connName);
 }
 
-bool Report::processTransactionQuery(QStringList* data, QSqlQuery* query)
+void Report::setTransactionData(QSqlQuery* query)
 {
-  return true;
+  int numQueryCols = query->record().count();
+  int numRows = 0;
+
+  QStringList* data = new QStringList();
+  while (query->next())
+  {
+    numRows++;
+    QString fullName = QString();
+    for (int i = 0; i < 3; i++)
+    {
+        if (!query->value(i).toString().isEmpty())
+        {
+            fullName.append(query->value(i).toString() + " ");
+        }
+    }
+    *data << fullName;
+
+    for (int i = 3; i < numQueryCols; i++)
+    {
+      if (i == 8 || i == 9)
+      {
+        if (query->value(i).toString() == "0")
+        {
+          if (i == 8)
+            *data << "Completed";
+          else
+            *data << "";
+        }
+        else
+        {
+          if (i == 8)
+            *data << "Pending";  
+          else
+            *data << "YES";
+        }
+      }
+      else
+        *data << query->value(i).toString();
+    }
+  }
+  model.setData(data, numRows, NUMCOLS_TRANSACTION);
 }
 
 void Report::setData(QSqlQuery* query)
@@ -129,18 +169,13 @@ void Report::setData(QSqlQuery* query)
     int numRows = 0;
 
     QStringList *data = new QStringList();
-    while (query->next()) {
-        numRows++;
-        for (int i = 0; i < numCols; ++i)
-        {
-          *data << query->value(i).toString();
-        }
+    while (query->next()) 
+    {
+      numRows++;
+      for (int i = 0; i < numCols; ++i)
+      {
+        *data << query->value(i).toString();
+      }
     }
     model.setData(data, numRows, numCols);
-}
-
-void Report::setData(QStringList *data)
-{
-  int numRows = 0, numCols = 0;
-  model.setData(data, numRows, numCols);
 }
