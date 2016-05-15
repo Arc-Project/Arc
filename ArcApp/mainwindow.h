@@ -164,6 +164,7 @@ private slots:
     void on_shiftReportGo_btn_clicked();
     void on_shiftReportCurrent_btn_clicked();
     void updateShiftReportStats(QList<int> list);
+    void on_saveOther_btn_clicked();
 
 
     
