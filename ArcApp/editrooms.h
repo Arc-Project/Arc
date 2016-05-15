@@ -5,7 +5,7 @@
 #include "booking.h"
 #include "databasemanager.h"
 #include <QTableWidgetItem>
-
+#include "swapper.h"
 namespace Ui {
 class EditRooms;
 }
@@ -27,7 +27,10 @@ private slots:
 
     void on_buttonBox_accepted();
 
+    void on_editSwap_clicked();
+
 private:
+    bool swapping;
     Booking * curBook;
     Ui::EditRooms *ui;
 };

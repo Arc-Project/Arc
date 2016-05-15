@@ -130,7 +130,7 @@ QHeaderView {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>12</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="mainMenu">
      <layout class="QGridLayout" name="gridLayout_5">
@@ -4326,8 +4326,8 @@ QHeaderView {
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>1071</width>
-               <height>1294</height>
+               <width>655</width>
+               <height>1381</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_47">
@@ -11415,7 +11415,7 @@ QHeaderView {
      <x>0</x>
      <y>0</y>
      <width>1466</width>
-     <height>23</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="font">
