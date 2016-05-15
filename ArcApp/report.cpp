@@ -15,24 +15,37 @@ void Report::updateModel(QDate date)
   QtConcurrent::run(this, &updateModelThread, date);
 }
 
+void Report::updateModel(QDate date, const int shiftNo)
+{
+  QtConcurrent::run(this, &updateModelThread, date, shiftNo);
+}
+
 void Report::setTitle()
 {
   QStringList* title = new QStringList();
   switch(reportType)
   {
     case CHECKOUT_REPORT:
-        *title << "Client" << "Space #" << "Start Date" << "End Date" 
-               << "Program" << "Reason" << "ESP Days" << "Balance";
-        break;
+      *title << "Client" << "Space #" << "Start Date" << "End Date" 
+             << "Program" << "Reason" << "ESP Days" << "Balance";
+      break;
     case VACANCY_REPORT:
-        *title << "Space #" << "Program Codes";
-        break;
+      *title << "Space #" << "Program Codes";
+      break;
     case LUNCH_REPORT:
-        *title << "Client" << "Space #" << "Lunch";
-        break;
+      *title << "Client" << "Space #" << "Lunch";
+      break;
     case WAKEUP_REPORT:
-        *title << "Client" << "Space #" << "Time";
-        break;
+      *title << "Client" << "Space #" << "Time";
+      break;
+    case BOOKING_REPORT:
+      *title << "Client" << "Space #" << "Program" << "Start Date" 
+             << "End Date" << "Action" << "Status" << "Employee" << "Time";
+      break;
+    case TRANSACTION_REPORT:
+      *title << "Client" << "Transaction" << "Type" << "MSDD" << "Cheque #" 
+             << "Cheque Date" << "Status" << "Deleted" << "Employee" << "Time"
+             << "Notes";
   }
   model.setTitle(title);
 }
@@ -50,16 +63,18 @@ void Report::updateModelThread(QDate date)
       switch(reportType)
       {
         case CHECKOUT_REPORT:
-          ret = dbManager->getCheckoutQuery(&query, date);
+          ret = dbManager->getDailyReportCheckoutQuery(&query, date);
           break;
         case VACANCY_REPORT:
-          ret = dbManager->getVacancyQuery(&query, date);
+          ret = dbManager->getDailyReportVacancyQuery(&query, date);
           break;
         case LUNCH_REPORT:
-          ret = dbManager->getLunchQuery(&query, date);
+          ret = dbManager->getDailyReportLunchQuery(&query, date);
           break;
         case WAKEUP_REPORT:
-          ret = dbManager->getWakeupQuery(&query, date);
+          ret = dbManager->getDailyReportWakeupQuery(&query, date);
+          break;
+        
       }
       if (ret)
       {
@@ -71,6 +86,82 @@ void Report::updateModelThread(QDate date)
   QSqlDatabase::removeDatabase(connName);
 }
 
+void Report::updateModelThread(QDate date, int shiftNo)
+{
+  QString connName = QString::number(dbManager->getDbCounter());
+  {
+    QSqlDatabase tempDb = QSqlDatabase::database();
+
+    if (dbManager->createDatabase(&tempDb, connName))
+    {
+      QSqlQuery query(tempDb);
+      bool ret = false;
+      switch(reportType)
+      {
+        case BOOKING_REPORT:
+          ret = dbManager->getShiftReportBookingQuery(&query, date, shiftNo);
+          break;
+        case TRANSACTION_REPORT:
+          if (dbManager->getShiftReportTransactionQuery(&query, date, shiftNo))
+          {
+            Report::setTransactionData(&query);
+          }
+      }
+      if (ret)
+      {
+        Report::setData(&query);
+      }
+      tempDb.close();
+    }   
+  } // Necessary braces: tempDb and query are destroyed because out of scope
+  QSqlDatabase::removeDatabase(connName);
+}
+
+void Report::setTransactionData(QSqlQuery* query)
+{
+  int numQueryCols = query->record().count();
+  int numRows = 0;
+
+  QStringList* data = new QStringList();
+  while (query->next())
+  {
+    numRows++;
+    QString fullName = QString();
+    for (int i = 0; i < 3; i++)
+    {
+        if (!query->value(i).toString().isEmpty())
+        {
+            fullName.append(query->value(i).toString() + " ");
+        }
+    }
+    *data << fullName;
+
+    for (int i = 3; i < numQueryCols; i++)
+    {
+      if (i == 8 || i == 9)
+      {
+        if (query->value(i).toString() == "0")
+        {
+          if (i == 8)
+            *data << "Completed";
+          else
+            *data << "";
+        }
+        else
+        {
+          if (i == 8)
+            *data << "Pending";  
+          else
+            *data << "YES";
+        }
+      }
+      else
+        *data << query->value(i).toString();
+    }
+  }
+  model.setData(data, numRows, NUMCOLS_TRANSACTION);
+}
+
 void Report::setData(QSqlQuery* query)
 {
     qDebug() << reportType;
@@ -78,12 +169,13 @@ void Report::setData(QSqlQuery* query)
     int numRows = 0;
 
     QStringList *data = new QStringList();
-    while (query->next()) {
-        numRows++;
-        for (int i = 0; i < numCols; ++i)
-        {
-          *data << query->value(i).toString();
-        }
+    while (query->next()) 
+    {
+      numRows++;
+      for (int i = 0; i < numCols; ++i)
+      {
+        *data << query->value(i).toString();
+      }
     }
     model.setData(data, numRows, numCols);
 }

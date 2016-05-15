@@ -13,6 +13,7 @@
 #include <QDesktopServices>
 #include <QStringList>
 #include <QMutex>
+
 typedef QList<int> IntList;
 
 class DatabaseManager : public QObject
@@ -66,17 +67,21 @@ public:
     /*==========================================================================
     REPORT QUERYS
     ==========================================================================*/
-    bool getCheckoutQuery(QSqlQuery* queryResults, QDate date);
-    bool getVacancyQuery(QSqlQuery* queryResults, QDate date);
-    bool getLunchQuery(QSqlQuery* queryResults, QDate date);
-    bool getWakeupQuery(QSqlQuery* queryResults, QDate date);
-    int getEspCheckouts(QDate date);
-    int getTotalCheckouts(QDate date);
-    int getEspVacancies(QDate date);
-    int getTotalVacancies(QDate date);
+    bool getDailyReportCheckoutQuery(QSqlQuery* queryResults, QDate date);
+    bool getDailyReportVacancyQuery(QSqlQuery* queryResults, QDate date);
+    bool getDailyReportLunchQuery(QSqlQuery* queryResults, QDate date);
+    bool getDailyReportWakeupQuery(QSqlQuery* queryResults, QDate date);
+    int getDailyReportEspCheckouts(QDate date);
+    int getDailyReportTotalCheckouts(QDate date);
+    int getDailyReportEspVacancies(QDate date);
+    int getDailyReportTotalVacancies(QDate date);
     void getDailyReportStatsThread(QDate date);
     int getIntFromQuery(QString queryString);
-
+    bool getShiftReportBookingQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
+    bool getShiftReportTransactionQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
+    int getShiftReportTotal(QDate date, int shiftNo, QString payType);
+    void getShiftReportStatsThread(QDate date, int shiftNo);
+    
     //COLIN STUFF/////////////////////////////////////////////////////////////
     QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);
     QSqlQuery getPrograms();
@@ -128,6 +133,7 @@ public:
 
 signals:
     void dailyReportStatsChanged(QList<int> list);
+    void shiftReportStatsChanged(QList<int> list);
 
 private:
     QSqlDatabase db = QSqlDatabase::database();

@@ -23,6 +23,8 @@
 #define FLOATCOUNT          3
 #define MONTHLYREPORT       4
 #define RESTRICTIONS        5
+#define DEFAULTTAB          0
+
 #include <QMainWindow>
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
@@ -100,20 +102,20 @@ signals:
 private slots:
     //COLIN SLOTS ////////////////////////////////////////
     void on_editManagePayment_clicked();
-    void on_editCost_textChanged(const QString &arg1);
-    void on_editCancel_textChanged(const QString &arg1);
+    void on_editCost_textChanged();
+    void on_editCancel_textChanged();
     void on_pushButton_bookRoom_clicked();
 
     void on_btn_payDelete_clicked();
     void on_bookingSearchButton_clicked();
     void on_makeBookingButton_clicked();
     void on_makeBookingButton_2_clicked();
-    void on_monthCheck_stateChanged(int arg1);
+//    void on_monthCheck_stateChanged(int arg1);
     void on_pushButton_processPaymeent_clicked();
     void on_lunchCheck_clicked();
-    void on_startDateEdit_dateChanged(const QDate &date);
+    void on_startDateEdit_dateChanged();
     void on_wakeupCheck_clicked();
-    void on_endDateEdit_dateChanged(const QDate &date);
+    void on_endDateEdit_dateChanged();
     void on_monthCheck_clicked(bool checked);
     void on_paymentButton_2_clicked();
     void on_cbox_payDateRange_activated(int index);
@@ -135,7 +137,7 @@ private slots:
     void on_actionUpload_Display_Picture_triggered();
     void on_actionDownload_Profile_Picture_triggered();
     void displayPicThread();
-    void updateDailyReportStats(QList<int> list);
+
 
     /*==========================================================================
     DETECT WIDGET CHANGING SIGNAL
@@ -156,8 +158,13 @@ private slots:
     /*==========================================================================
     REPORTS -slots
     ==========================================================================*/
-    void on_reportsDateSelectorGo_btn_clicked();
-    void on_reportsSetCurrentDate_btn_clicked();
+    void on_dailyReportGo_btn_clicked();
+    void on_dailyReportCurrent_btn_clicked();
+    void updateDailyReportStats(QList<int> list);
+    void on_shiftReportGo_btn_clicked();
+    void on_shiftReportCurrent_btn_clicked();
+    void updateShiftReportStats(QList<int> list);
+
 
     
     
@@ -424,7 +431,7 @@ private slots:
 
     void on_tableWidget_search_client_itemClicked();
 
-    void on_programDropdown_currentIndexChanged(int index);
+    void on_programDropdown_currentIndexChanged();
 
     void on_confirmAddLunch_clicked();
 
@@ -434,7 +441,11 @@ private slots:
 
     void on_editWakeup_clicked();
 
+    void on_actionQuit_triggered();
+
     void on_pushButton_cl_trans_more_clicked();
+
+    void useProgressDialog(QString msg, QFuture<void> future);
 
 private:
 
@@ -454,9 +465,16 @@ private:
 
     QDir dir;
     
-    void setupReportsScreen();
-    void updateReportTables(QDate date = QDate::currentDate());
-    void getDailyReportStats(QDate date = QDate::currentDate());
+    /*==========================================================================
+    REPORTS - private
+    ==========================================================================*/
+    void setupReportsScreen(); 
+    void updateDailyReportTables(QDate date);
+    void getDailyReportStats(QDate date);
+    void updateShiftReportTables(QDate date, int shiftNo);
+    void getShiftReportStats(QDate date, int shiftNo);
+
+
 
     QModelIndex lastprogramclicked = QModelIndex();
     QModelIndex assignedBedIndex;
@@ -464,7 +482,7 @@ private:
 
     int curmodifyingspace = NOT_SET;
 
-
+    QFutureWatcher<void> futureWatcher;
 };
 
 #endif // MAINWINDOW_H
