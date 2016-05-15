@@ -65,6 +65,8 @@ public:
     void clientSearchedInfo();
     void initClientLookupInfo();
     void setSelectedClientInfo();
+
+    void getRegisterLogFields(QStringList* fieldList);
     QImage profilePic;
 
     //COLIN STUFF////

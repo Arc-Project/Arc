@@ -513,6 +513,34 @@ bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage
     return false;
 }
 
+
+bool DatabaseManager::insertClientLog(QStringList* registerFieldList)
+{
+    QSqlQuery query(db);
+
+    query.prepare(QString("INSERT INTO ClientLog ")
+        + QString("(ClientName, Action, Date, ShiftNo, Time, EmpName) ")
+        + QString("VALUES(?, ?, ?, ?, ?, ?)"));
+
+    for (int i = 0; i < registerFieldList->size(); ++i)
+    {
+        if (registerFieldList->at(i) != NULL)
+        {
+            qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
+            query.addBindValue(registerFieldList->at(i));
+        }
+        else
+        {
+            query.addBindValue(QVariant(QVariant::String));
+        }
+    }
+    if (query.exec())
+    {
+        return true;
+    }
+    return false;
+}
+
 bool DatabaseManager::updateClientWithPic(QStringList* registerFieldList, QString clientId, QImage* profilePic)//QObject sth, QImage profilePic)
 {
     QByteArray ba;
@@ -550,6 +578,8 @@ bool DatabaseManager::updateClientWithPic(QStringList* registerFieldList, QStrin
     }
     return false;
 }
+
+
 
 QSqlQuery DatabaseManager::getTransactions(QDate start, QDate end){
     QSqlQuery query(db);
