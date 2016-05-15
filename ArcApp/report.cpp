@@ -27,7 +27,7 @@ void Report::setTitle()
   {
     case CHECKOUT_REPORT:
       *title << "Client" << "Space #" << "Start Date" << "End Date" 
-             << "Program" << "Reason" << "ESP Days" << "Balance";
+             << "Program" << "Balance";//"Reason" << "ESP Days" << "Balance";
       break;
     case VACANCY_REPORT:
       *title << "Space #" << "Program Codes";

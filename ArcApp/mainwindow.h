@@ -164,9 +164,11 @@ private slots:
     void on_shiftReportCurrent_btn_clicked();
     void updateShiftReportStats(QList<int> list);
     void on_saveOther_btn_clicked();
-    void on_otherSave_btn_textEdited(const QString &text);
-
-
+    void on_other_lineEdit_textEdited(const QString &text);
+    void updateCashFloat(QDate date, int shiftNo, QStringList list);
+    void updateCashFloatLastEditedLabels(QString empName, 
+        QString currentDateStr, QString currentTimeStr);
+    
     
     
     void resizeEvent();
@@ -453,6 +455,14 @@ private slots:
 
     void on_pushButton_cl_book_more_clicked();
 
+    void on_saveFloat_btn_clicked();
+
+    void on_calculateTotal_btn_clicked();
+
+    void on_cashFloatGo_btn_clicked();
+
+    void on_cashFloatCurrent_btn_clicked();
+
 private:
 
     Ui::MainWindow *ui;
@@ -479,6 +489,7 @@ private:
     void getDailyReportStats(QDate date);
     void updateShiftReportTables(QDate date, int shiftNo);
     void getShiftReportStats(QDate date, int shiftNo);
+    void getCashFloat(QDate date, int shiftNo);
 
 
 

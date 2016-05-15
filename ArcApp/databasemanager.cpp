@@ -936,7 +936,7 @@ void DatabaseManager::getShiftReportStatsThread(QDate date, int shiftNo)
     QList<int> list = QList<int>() << cashTotal << electronicTotal << chequeTotal
                                    << cashTotal + chequeTotal
                                    << cashTotal + electronicTotal + chequeTotal;
-    emit shiftReportStatsChanged(list);
+    emit DatabaseManager::shiftReportStatsChanged(list);
 }
 
 bool DatabaseManager::getShiftReportClientLogQuery(QSqlQuery* queryResults,
@@ -971,7 +971,7 @@ bool DatabaseManager::insertOtherLog(QString empName, int shiftNo, QString logTe
 
     query.prepare("INSERT INTO OtherLog (Date, ShiftNo, Time, EmpName, Log) "
                   "VALUES (?, ?, ?, ?, ?)");
-    query.addBindValue(QDate::currentDate().toString("yyyy-MM-dd"));
+    query.addBindValue(QDate::currentDate().toString(Qt::ISODate));
     query.addBindValue(shiftNo);
     query.addBindValue(QTime::currentTime().toString("hh:mm:ss"));
     query.addBindValue(empName);
@@ -980,28 +980,159 @@ bool DatabaseManager::insertOtherLog(QString empName, int shiftNo, QString logTe
     return query.exec();
 }
 
-//bool DatabaseManager::insertCashFloat()
-//{
-//    int result = -1;
-//    QString connName = QString::number(DatabaseManager::getDbCounter());
-//    {
-//        QSqlDatabase tempDb = QSqlDatabase::database();
-//        if (DatabaseManager::createDatabase(&tempDb, connName))
-//        {
-//            QSqlQuery query(tempDb);
+bool DatabaseManager::getCashFloatReportQuery(QSqlQuery* queryResults, QDate date, int shiftNo)
+{
+    QString queryString = 
+        QString("SELECT EmpName, DateEdited, TimeEdited, Comments, Nickels, Dimes, ")
+        + QString("Quarters, Loonies, Toonies, Fives, Tens, Twenties, ")
+        + QString("Fifties, Hundreds ")
+        + QString("FROM CashFloat ")
+        + QString("WHERE Date = '" + date.toString(Qt::ISODate) + "' AND ")
+        + QString("ShiftNo = " + QString::number(shiftNo));
+    qDebug() << queryString;
+    return queryResults->exec(queryString);
+}
 
-//            qDebug() << queryString;
-//            if (query.exec(queryString))
-//            {
-//                query.next();
-//                result = query.value(0).toInt();
-//            }
-//        }
-//        tempDb.close();
-//    } // Necessary braces: tempDb and query are destroyed because out of scope
-//    QSqlDatabase::removeDatabase(connName);
-//    return result;
-//}
+void DatabaseManager::getCashFloatThread(QDate date, int shiftNo)
+{
+    QString connName = QString::number(dbManager->getDbCounter());
+    int nickels = 0, dimes = 0, quarters = 0, loonies = 0, toonies = 0,
+        fives = 0, tens = 0, twenties = 0, fifties = 0, hundreds = 0;
+    double total = 0;
+    QString lastEditedEmpName("N/A");
+    QString lastEditedDateTime("N/A");
+    QString comments = "";
+    QStringList list;
+    {
+        QSqlDatabase tempDb = QSqlDatabase::database();
+
+        if (dbManager->createDatabase(&tempDb, connName))
+        {
+            QSqlQuery query(tempDb);
+            if (DatabaseManager::getCashFloatReportQuery(&query, date, shiftNo))
+            {
+                if (query.next())
+                {
+                    lastEditedEmpName = query.value(0).toString();
+                    lastEditedDateTime = query.value(1).toString() + " at ";
+                    lastEditedDateTime += query.value(2).toString();
+                    comments = query.value(3).toString();
+                    nickels = query.value(4).toInt();
+                    dimes = query.value(5).toInt();
+                    quarters = query.value(6).toInt();
+                    loonies = query.value(7).toInt();
+                    toonies = query.value(8).toInt();
+                    fives = query.value(9).toInt();
+                    tens = query.value(10).toInt();
+                    twenties = query.value(11).toInt();
+                    fifties = query.value(12).toInt();
+                    hundreds = query.value(13).toInt();
+                    total = nickels * VAL_NICKEL +
+                            dimes * VAL_DIME +
+                            quarters * VAL_QUARTER +
+                            loonies * VAL_LOONIE +
+                            toonies * VAL_TOONIE +
+                            fives * VAL_FIVE +
+                            tens * VAL_TEN +
+                            twenties * VAL_TWENTY +
+                            fifties * VAL_FIFTY +
+                            hundreds * VAL_HUNDRED;
+                }
+            }
+            tempDb.close();
+        }   
+    } // Necessary braces: tempDb and query are destroyed because out of scope
+    QSqlDatabase::removeDatabase(connName);
+  
+    list << lastEditedEmpName << lastEditedDateTime << comments
+         << QString::number(nickels) << QString::number(dimes)
+         << QString::number(quarters) << QString::number(loonies)
+         << QString::number(toonies) << QString::number(fives)
+         << QString::number(tens) << QString::number(twenties)
+         << QString::number(fifties) << QString::number(hundreds)
+         << QString("$ " + QString::number(total, 'f', 2));
+
+    emit DatabaseManager::cashFloatChanged(date, shiftNo, list);
+}
+
+bool DatabaseManager::insertCashFloat(QDate date, int shiftNo, QString empName,
+    QString comments, QList<int> coins)
+{
+    bool ret = false;
+    QString currentDateStr = QDate::currentDate().toString(Qt::ISODate);
+    QString currentTimeStr = QTime::currentTime().toString("hh:mm:ss");
+    QString connName = QString::number(DatabaseManager::getDbCounter());
+    {
+        QSqlDatabase tempDb = QSqlDatabase::database();
+
+        if (DatabaseManager::createDatabase(&tempDb, connName))
+        {
+            QSqlQuery query(tempDb);
+
+            query.prepare(QString("INSERT INTO CashFloat ")
+                + QString("(Date, ShiftNo, EmpName, DateEdited, TimeEdited, ")
+                + QString("Comments, Nickels, Dimes, Quarters, Loonies, Toonies, ")
+                + QString("Fives, Tens, Twenties, Fifties, Hundreds) ")
+                + QString("VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+
+            query.addBindValue(date.toString(Qt::ISODate));
+            query.addBindValue(shiftNo);
+            query.addBindValue(empName);
+            query.addBindValue(currentDateStr);
+            query.addBindValue(currentTimeStr);
+            query.addBindValue(comments);
+
+            for (int i = 0; i < coins.size(); ++i)
+            {
+                query.addBindValue(coins.at(i));
+            }
+
+            if (query.exec())
+            {
+                qDebug() << "new cashfloat entry";
+                ret = true;
+            }
+            else
+            {
+                query.prepare(QString("UPDATE CashFloat ")
+                    + QString("SET EmpName = ? , DateEdited = ?, TimeEdited = ?, ")
+                    + QString("Comments = ?, ")
+                    + QString("Nickels = ?, Dimes = ?, Quarters = ?, ")
+                    + QString("Loonies = ?, Toonies = ?, Fives = ?, Tens = ?, ")
+                    + QString("Twenties = ?, Fifties = ?, Hundreds = ? ")
+                    + QString("WHERE Date = '" + date.toString(Qt::ISODate))
+                    + QString("' AND ShiftNo = " + QString::number(shiftNo)));
+
+                query.addBindValue(empName);
+                query.addBindValue(currentDateStr);
+                query.addBindValue(currentTimeStr);
+                query.addBindValue(comments);
+                
+                for (int i = 0; i < coins.size(); ++i)
+                {
+                    query.addBindValue(coins.at(i));
+                }
+
+                if (query.exec())
+                {
+                    qDebug() << "existing cashfloat updated";
+                    ret = true;
+                }
+                else
+                {
+                    qDebug() << "inserting and updating cashfloat failed";
+                } 
+            }
+        }
+        tempDb.close();
+    } // Necessary braces: tempDb and query are destroyed because out of scope
+    QSqlDatabase::removeDatabase(connName);
+    if (ret)
+    {
+        emit DatabaseManager::cashFloatInserted(empName, currentDateStr, currentTimeStr);
+    }
+    return ret;
+}
 
 int DatabaseManager::getIntFromQuery(QString queryString)
 {
