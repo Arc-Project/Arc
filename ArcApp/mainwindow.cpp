@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //detect if the widget is changed
     connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(initCurrentWidget(int)));
     connect(dbManager, SIGNAL(dailyReportStatsChanged(QList<int>)), this, SLOT(updateDailyReportStats(QList<int>)));
+    connect(dbManager, SIGNAL(shiftReportStatsChanged(QList<int>)), this, SLOT(updateShiftReportStats(QList<int>)));
     curClient = 0;
     curBook = 0;
     trans = 0;
@@ -145,7 +146,8 @@ void MainWindow::initCurrentWidget(int idx){
             ui->shiftReport_tabWidget->setCurrentIndex(DEFAULTTAB);
             MainWindow::updateDailyReportTables(QDate::currentDate());
             MainWindow::getDailyReportStats(QDate::currentDate());
-            MainWindow::updateShiftReportTables(QDate::currentDate(), 1);
+            MainWindow::updateShiftReportTables(QDate::currentDate(), currentshiftid);
+            MainWindow::getShiftReportStats(QDate::currentDate(), currentshiftid);
             break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
@@ -217,6 +219,7 @@ void MainWindow::on_actionDB_Connection_triggered()
 
 void MainWindow::on_actionTest_Query_triggered()
 {
+    qDebug() << dbManager->getShiftReportTotal(QDate::currentDate(), 1, PAY_CASH);
 }
 
 void MainWindow::on_actionFile_Upload_triggered()
@@ -2926,12 +2929,19 @@ REPORTS
 ==============================================================================*/
 void MainWindow::setupReportsScreen()
 {
+    // Daily Report Screen
     ui->lbl_dailyReportDateVal->setText(QDate::currentDate().toString("yyyy-MM-dd"));
     ui->dailyReport_dateEdit->setDate(QDate::currentDate());
     checkoutReport = new Report(this, ui->checkout_tableView, CHECKOUT_REPORT);
     vacancyReport = new Report(this, ui->vacancy_tableView, VACANCY_REPORT);
     lunchReport = new Report(this, ui->lunch_tableView, LUNCH_REPORT);
     wakeupReport = new Report(this, ui->wakeup_tableView, WAKEUP_REPORT);
+
+    // Shift Report Screen
+    ui->lbl_shiftReportDateVal->setText(QDate::currentDate().toString("yyyy-MM-dd"));
+    ui->lbl_shiftReportShiftVal->setText(QString::number(currentshiftid));
+    ui->shiftReport_dateEdit->setDate(QDate::currentDate());
+
     bookingReport = new Report(this, ui->booking_tableView, BOOKING_REPORT);
     transactionReport = new Report(this, ui->transaction_tableView, TRANSACTION_REPORT);
 }
@@ -2939,31 +2949,31 @@ void MainWindow::setupReportsScreen()
 void MainWindow::updateDailyReportTables(QDate date)
 {
     useProgressDialog("Processing reports...", QtConcurrent::run(checkoutReport, &checkoutReport->updateModelThread, date));
-
-//    checkoutReport->updateModel(date);
     vacancyReport->updateModel(date);
     lunchReport->updateModel(date);
     wakeupReport->updateModel(date);
+
     ui->lbl_dailyReportDateVal->setText(date.toString("yyyy-MM-dd"));
     ui->dailyReport_dateEdit->setDate(date);
-
-    
 }
 
 void MainWindow::updateShiftReportTables(QDate date, int shiftNo)
 {
-    qDebug() << "ShiftNO in updateshiftreport tables " << shiftNo;
     bookingReport->updateModel(date, shiftNo);
     transactionReport->updateModel(date, shiftNo);
+
+    ui->lbl_shiftReportDateVal->setText(date.toString("yyyy-MM-dd"));
+    ui->lbl_shiftReportShiftVal->setText(QString::number(shiftNo));
+    ui->shiftReport_dateEdit->setDate(date);
 }
 
 void MainWindow::on_dailyReportGo_btn_clicked()
 {
     QDate date = ui->dailyReport_dateEdit->date();
+
     MainWindow::updateDailyReportTables(date);
     MainWindow::getDailyReportStats(date);
 }
-
 
 void MainWindow::on_dailyReportCurrent_btn_clicked()
 {
@@ -2972,18 +2982,28 @@ void MainWindow::on_dailyReportCurrent_btn_clicked()
 
 void MainWindow::on_shiftReportGo_btn_clicked()
 {
+    QDate date = ui->shiftReport_dateEdit->date();
+    int shiftNo = ui->shiftReport_spinBox->value();
 
+    MainWindow::updateShiftReportTables(date, shiftNo);
+    MainWindow::getShiftReportStats(date, shiftNo);
 }
+
 
 void MainWindow::on_shiftReportCurrent_btn_clicked()
 {
-
+    ui->shiftReport_dateEdit->setDate(QDate::currentDate());
+    ui->shiftReport_spinBox->setValue(currentshiftid);
 }
 
 void MainWindow::getDailyReportStats(QDate date)
 {
-    qDebug() << "getDailyReportStats  called";
     QtConcurrent::run(dbManager, &DatabaseManager::getDailyReportStatsThread, date);
+}
+
+void MainWindow::getShiftReportStats(QDate date, int shiftNo)
+{
+    QtConcurrent::run(dbManager, &DatabaseManager::getShiftReportStatsThread, date, shiftNo);   
 }
 
 void MainWindow::updateDailyReportStats(QList<int> list)
@@ -2993,6 +3013,16 @@ void MainWindow::updateDailyReportStats(QList<int> list)
     ui->lbl_espVacancies->setText(QString::number(list.at(2)));
     ui->lbl_totalVacancies->setText(QString::number(list.at(3)));
 }
+
+void MainWindow::updateShiftReportStats(QList<int> list)
+{
+    ui->lbl_cashAmt->setText(QString::number(list.at(0)));
+    ui->lbl_debitAmt->setText(QString::number(list.at(1)));
+    ui->lbl_chequeAmt->setText(QString::number(list.at(2)));
+    ui->lbl_depoAmt->setText(QString::number(list.at(3)));
+    ui->lbl_shiftAmt->setText(QString::number(list.at(4)));
+}
+
 /*==============================================================================
 REPORTS (END)
 ==============================================================================*/
