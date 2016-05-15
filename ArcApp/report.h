@@ -18,6 +18,7 @@
 #define BOOKING_REPORT        4
 #define TRANSACTION_REPORT    5
 #define CLIENT_REPORT         6
+#define OTHER_REPORT          7
 
 #define NUMCOLS_TRANSACTION   11
             
