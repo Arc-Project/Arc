@@ -5,6 +5,13 @@
 int DatabaseManager::dbCounter = 0;
 QMutex DatabaseManager::mutex;
 
+//ini file stuff
+//QSettings settings;
+//QString SERVER_NAME;
+//QString DB_NAME;
+//QString DB_USERNAME;
+//QString DB_PW;
+
 /*==============================================================================
 DATABASE MANAGER SETUP (START)
 ==============================================================================*/
@@ -16,6 +23,33 @@ DatabaseManager::DatabaseManager(QObject *parent) :
     QObject(parent)
 {
    qRegisterMetaType< IntList >( "IntList" );
+
+   //ini file stuff
+//   QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+//                      "The Salvation Army", "ARCWay");
+//   qDebug() << "ini path" << settings.fileName();
+//   settings.beginGroup("database");
+//   qDebug() << "server name: " << settings.value("SERVER_NAME").toString();
+//   //hack to make this work with this particular server name that has backslashes and commas
+//   QVariant value = settings.value("SERVER_NAME2");
+//   QString server_name2;
+//   if (value.type() == QVariant::StringList) {
+//     server_name2 = value.toStringList().join(",");
+//   } else {
+//     server_name2 = value.toString();
+//   }
+//   qDebug() << "server name part 2: " << server_name2;
+//   qDebug() << "db name: " << settings.value("DB_NAME").toString();
+//   qDebug() << "db username: " << settings.value("DB_USERNAME").toString();
+//   qDebug() << "db pw: " << settings.value("DB_PW").toString();
+
+//   //set constants
+
+//   SERVER_NAME = settings.value("SERVER_NAME").toString() + "\\" + server_name2;
+//   DB_NAME = settings.value("DB_NAME").toString();
+//   DB_USERNAME = settings.value("DB_USERNAME").toString();
+//   DB_PW = settings.value("DB_PW").toString();
+
    if (DatabaseManager::createDatabase(&db, DEFAULT_SQL_CONN_NAME))
    {
        qDebug() << "connected";
@@ -568,7 +602,12 @@ bool DatabaseManager::deleteWakeups(QDate date, QString id){
     qDebug() << q;
     return query.exec(q);
 }
-
+bool DatabaseManager::deleteWakeupsMulti(QDate date, QString id){
+    QSqlQuery query(db);
+    QString q = "DELETE FROM Wakeup WHERE ClientId ='" + id + "' AND WakeDate >= '" + date.toString(Qt::ISODate) + "'";
+    qDebug() << q;
+    return query.exec(q);
+}
 bool DatabaseManager::updateWakeups(QDate date, QString time, QString id){
     QSqlQuery query(db);
     QString q = "UPDATE Wakeup SET WakeTime ='" + time + "' WHERE WakeDate = '"
@@ -584,7 +623,13 @@ bool DatabaseManager::setWakeup(QDate date, QString time, QString id){
     return query.exec(q);
 
 }
-
+bool DatabaseManager::removeLunchesMulti(QDate date, QString id){
+    QSqlQuery query(db);
+    QString q = "DELETE FROM Lunches WHERE LunchDate >= '" + date.toString(Qt::ISODate) + "' AND ClientID ='"+
+            id + "'";
+    qDebug() << q;
+    return query.exec(q);
+}
 bool DatabaseManager::removeLunches(QDate date, QString id){
     QSqlQuery query(db);
     QString q = "DELETE FROM Lunches WHERE LunchDate = '" + date.toString(Qt::ISODate) + "' AND ClientID ='"+
@@ -678,7 +723,7 @@ PROFILE PICTURE UPLOAD AND DOWNLOAD RELATED FUNCTIONS (END)
 /*==============================================================================
 REPORT QUERYS (START)
 ==============================================================================*/
-bool DatabaseManager::getCheckoutQuery(QSqlQuery* queryResults, QDate date)
+bool DatabaseManager::getDailyReportCheckoutQuery(QSqlQuery* queryResults, QDate date)
 {
     QString queryString =
         QString("SELECT b.ClientName, b.SpaceId, b.StartDate, ")
@@ -691,7 +736,7 @@ bool DatabaseManager::getCheckoutQuery(QSqlQuery* queryResults, QDate date)
     return queryResults->exec(queryString);
 }
 
-bool DatabaseManager::getVacancyQuery(QSqlQuery* queryResults, QDate date)
+bool DatabaseManager::getDailyReportVacancyQuery(QSqlQuery* queryResults, QDate date)
 {
     QString queryString =
         QString("SELECT s.SpaceId, s.ProgramCodes ")
@@ -704,7 +749,7 @@ bool DatabaseManager::getVacancyQuery(QSqlQuery* queryResults, QDate date)
     return queryResults->exec(queryString);
 }
 
-bool DatabaseManager::getLunchQuery(QSqlQuery* queryResults, QDate date)
+bool DatabaseManager::getDailyReportLunchQuery(QSqlQuery* queryResults, QDate date)
 {
     QString queryString =
         QString("SELECT ClientName, SpaceId, Lunch ")
@@ -716,7 +761,7 @@ bool DatabaseManager::getLunchQuery(QSqlQuery* queryResults, QDate date)
     return queryResults->exec(queryString);
 }
 
-bool DatabaseManager::getWakeupQuery(QSqlQuery* queryResults, QDate date)
+bool DatabaseManager::getDailyReportWakeupQuery(QSqlQuery* queryResults, QDate date)
 {
     QString queryString =
         QString("SELECT ClientName, SpaceId, Wakeup ")
@@ -728,7 +773,35 @@ bool DatabaseManager::getWakeupQuery(QSqlQuery* queryResults, QDate date)
     return queryResults->exec(queryString);
 }
 
-int DatabaseManager::getEspCheckouts(QDate date)
+bool DatabaseManager::getShiftReportBookingQuery(QSqlQuery* queryResults,
+    QDate date, int shiftNo)
+{
+    QString queryString =
+        QString("SELECT ClientName, SpaceCode, ProgramCode, StartDate, ")
+        + QString("EndDate, Action, Status, EmpName, Time ")
+        + QString("FROM BookingHistory ")
+        + QString("WHERE Date = '" + date.toString(Qt::ISODate) + "' AND ")
+        + QString("ShiftNo = " + QString::number(shiftNo));
+    qDebug() << queryString;
+    return queryResults->exec(queryString);
+}
+
+bool DatabaseManager::getShiftReportTransactionQuery(QSqlQuery* queryResults,
+    QDate date, int shiftNo)
+{
+    QString queryString =
+        QString("SELECT c.FirstName, c.MiddleName, c.LastName, t.TransType, ")
+        + QString("t.Type, t.MSQ, t.ChequeNo, t.ChequeDate, ")
+        + QString("CAST(t.Outstanding AS INT), CAST(t.Deleted AS INT), ")
+        + QString("t.EmpName, t.Time, t.Notes " )
+        + QString("FROM Client c INNER JOIN Transac t ON c.ClientId = t.ClientId ")
+        + QString("WHERE Date = '" + date.toString(Qt::ISODate) + "' AND ")
+        + QString("ShiftNo = " + QString::number(shiftNo));
+    qDebug() << queryString;
+    return queryResults->exec(queryString);
+}
+
+int DatabaseManager::getDailyReportEspCheckouts(QDate date)
 {
     QString queryString =
             QString("SELECT COUNT(ClientId) ")
@@ -739,7 +812,7 @@ int DatabaseManager::getEspCheckouts(QDate date)
     return DatabaseManager::getIntFromQuery(queryString);
 }
 
-int DatabaseManager::getTotalCheckouts(QDate date)
+int DatabaseManager::getDailyReportTotalCheckouts(QDate date)
 {
     QString queryString =
             QString("SELECT COUNT(ClientId) ")
@@ -751,7 +824,7 @@ int DatabaseManager::getTotalCheckouts(QDate date)
 }
 
 
-int DatabaseManager::getEspVacancies(QDate date)
+int DatabaseManager::getDailyReportEspVacancies(QDate date)
 {
     QString queryString =
             QString("SELECT COUNT(s.SpaceId) ")
@@ -764,7 +837,7 @@ int DatabaseManager::getEspVacancies(QDate date)
     return DatabaseManager::getIntFromQuery(queryString);
 }
 
-int DatabaseManager::getTotalVacancies(QDate date)
+int DatabaseManager::getDailyReportTotalVacancies(QDate date)
 {
     QString queryString =
             QString("SELECT COUNT(s.SpaceId) ")
@@ -781,12 +854,14 @@ void DatabaseManager::getDailyReportStatsThread(QDate date)
 {
     qDebug() << "getDailyReportStatsThread  should emit signal";
     QList<int> list;
-    list << DatabaseManager::getEspCheckouts(date)
-         << DatabaseManager::getTotalCheckouts(date)
-         << DatabaseManager::getEspVacancies(date)
-         << DatabaseManager::getTotalVacancies(date);
+    list << DatabaseManager::getDailyReportEspCheckouts(date)
+         << DatabaseManager::getDailyReportTotalCheckouts(date)
+         << DatabaseManager::getDailyReportEspVacancies(date)
+         << DatabaseManager::getDailyReportTotalVacancies(date);
     emit DatabaseManager::dailyReportStatsChanged(list);
 }
+
+
 
 int DatabaseManager::getIntFromQuery(QString queryString)
 {
@@ -812,13 +887,14 @@ int DatabaseManager::getIntFromQuery(QString queryString)
 }
 
 
+
 /*==============================================================================
 REPORT QUERYS (END)
 ==============================================================================*/
 
 QSqlQuery DatabaseManager::getPrograms(){
     QSqlQuery query(db);
-    QString q = "SELECT DISTINCT ProgramCodes from Space";
+    QString q = "SELECT ProgramCode from Program";
     query.exec(q);
     return query;
 }

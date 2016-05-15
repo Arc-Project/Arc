@@ -66,16 +66,18 @@ public:
     /*==========================================================================
     REPORT QUERYS
     ==========================================================================*/
-    bool getCheckoutQuery(QSqlQuery* queryResults, QDate date);
-    bool getVacancyQuery(QSqlQuery* queryResults, QDate date);
-    bool getLunchQuery(QSqlQuery* queryResults, QDate date);
-    bool getWakeupQuery(QSqlQuery* queryResults, QDate date);
-    int getEspCheckouts(QDate date);
-    int getTotalCheckouts(QDate date);
-    int getEspVacancies(QDate date);
-    int getTotalVacancies(QDate date);
+    bool getDailyReportCheckoutQuery(QSqlQuery* queryResults, QDate date);
+    bool getDailyReportVacancyQuery(QSqlQuery* queryResults, QDate date);
+    bool getDailyReportLunchQuery(QSqlQuery* queryResults, QDate date);
+    bool getDailyReportWakeupQuery(QSqlQuery* queryResults, QDate date);
+    int getDailyReportEspCheckouts(QDate date);
+    int getDailyReportTotalCheckouts(QDate date);
+    int getDailyReportEspVacancies(QDate date);
+    int getDailyReportTotalVacancies(QDate date);
     void getDailyReportStatsThread(QDate date);
     int getIntFromQuery(QString queryString);
+    bool getShiftReportBookingQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
+    bool getShiftReportTransactionQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
 
     //COLIN STUFF/////////////////////////////////////////////////////////////
     QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);
@@ -97,6 +99,8 @@ public:
     bool updateLunches(QDate date, int num, QString id);
     bool removeLunches(QDate date, QString id);
     QSqlQuery getWakeups(QDate start, QDate end, QString id);
+    bool removeLunchesMulti(QDate date, QString id);
+    bool deleteWakeupsMulti(QDate date, QString id);
     bool setWakeup(QDate date, QString time, QString id);
     bool updateWakeups(QDate date, QString time, QString id);
     bool deleteWakeups(QDate date, QString id);
