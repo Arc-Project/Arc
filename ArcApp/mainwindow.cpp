@@ -18,6 +18,7 @@ QStack<int> forwardStack;
 QFuture<void> displayFuture ;
 QFuture<void> displayPicFuture;
 QFuture<void> transacFuture;
+QFuture<void> bookHistoryFuture;
 //CaseFiles stuff
 QVector<QTableWidget*> pcp_tables;
 QVector<QString> pcpTypes;
@@ -25,6 +26,7 @@ bool loaded = false;
 QString idDisplayed;
 
 int transacNum;
+int bookingNum;
 
 QProgressDialog* dialog;
 
@@ -1206,6 +1208,7 @@ void MainWindow::on_button_cl_takePic_clicked()
     connect(camDialog, SIGNAL(showPic(QImage)), this, SLOT(addPic(QImage)));
     camDialog->show();
 }
+
 /*------------------------------------------------------------------
   add picture into graphicview (after taking picture in pic dialog
   ------------------------------------------------------------------*/
@@ -1519,6 +1522,7 @@ void MainWindow::selected_client_info(int nRow, int nCol)
     ui->tabWidget_cl_info->setCurrentIndex(0);
     curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
     transacNum = 5;
+    bookingNum = 5;
     ui->pushButton_cl_trans_more->setEnabled(true);
 
     table_available = false;
@@ -1673,7 +1677,7 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
 
         case 1:
             if(transacFuture.isRunning()|| !transacFuture.isFinished()){
-                qDebug()<<"ProfilePic Is RUNNING";
+                qDebug()<<"TransactionHistory Is RUNNING";
                 return;
                 //displayFuture.cancel();
             }
@@ -1683,6 +1687,16 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
             qDebug()<<"client Transaction list";
 
             break;
+       case 2:
+             if(bookHistoryFuture.isRunning()|| !bookHistoryFuture.isFinished()){
+                 qDebug()<<"BookingHistory Is RUNNING";
+                 return;
+                 //displayFuture.cancel();
+             }
+             ui->pushButton_cl_book_more->setEnabled(true);
+             bookHistoryFuture = QtConcurrent::run(this, &searchBookHistory, curClientID);
+             bookHistoryFuture.waitForFinished();
+             qDebug()<<"client Transaction list";
 
     }
 }
@@ -1700,13 +1714,10 @@ void MainWindow::searchTransaction(QString clientId){
 
     QSqlQuery transQuery = dbManager->searchClientTransList(transacNum, clientId);
     displayTransaction(transQuery);
-    dbManager->printAll(transQuery);
-    /*
-            while(transQuery.next()){
 
-    }
-            */
 }
+
+
 
 void MainWindow::displayTransaction(QSqlQuery results){
     ui->tableWidget_transaction->setRowCount(0);
@@ -1728,9 +1739,8 @@ void MainWindow::displayTransaction(QSqlQuery results){
     if(row !=transacNum || row%5 != 0){
         ui->pushButton_cl_trans_more->setEnabled(false);
     }
-    ui->tableWidget_transaction->setMinimumHeight(35*row-5);
+    ui->tableWidget_transaction->setMinimumHeight(37*row-5);
 
-    ui->tableWidget_search_client->show();
 }
 
 void MainWindow::on_pushButton_cl_trans_more_clicked()
@@ -1740,7 +1750,44 @@ void MainWindow::on_pushButton_cl_trans_more_clicked()
     searchTransaction(curClientID);
 }
 
+void MainWindow::searchBookHistory(QString clientId){
+    qDebug()<<"search booking";
 
+    QSqlQuery bookingQuery = dbManager->searchTransBookList(bookingNum, clientId);
+    displayBookHistory(bookingQuery);
+    dbManager->printAll(bookingQuery);
+
+}
+
+void MainWindow::displayBookHistory(QSqlQuery results){
+    ui->tableWidget_booking->setRowCount(0);
+
+    int colCnt = results.record().count() -1;
+    ui->tableWidget_booking->setColumnCount(colCnt);
+    ui->tableWidget_booking->clear();
+
+    ui->tableWidget_booking->setHorizontalHeaderLabels(QStringList()<<"Reserved Date"<<"Program Code"<<"Start Date"<< "End Date"<<"Cost"<<"Bed Number"<<"LunchService"<<"WakeUpService"<<"FirstBook ");
+    int row =ui->tableWidget_booking->rowCount();
+    while(results.next()){
+        ui->tableWidget_booking->insertRow(row);
+        for(int i =0; i<colCnt; i++){
+            ui->tableWidget_booking->setItem(row, i, new QTableWidgetItem(results.value(i).toString()));
+            //qDebug() <<"row : "<<row << ", col: " << i << "item" << results.value(i).toString();
+        }
+        row++;
+    }
+    if(row !=bookingNum || row%5 != 0){
+        ui->pushButton_cl_book_more->setEnabled(false);
+    }
+    ui->tableWidget_booking->setMinimumHeight(37*row-5);
+
+}
+
+void MainWindow::on_pushButton_cl_book_more_clicked()
+{
+    bookingNum +=5;
+    searchBookHistory(curClientID);
+}
 
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -1932,13 +1979,7 @@ void MainWindow::initClientLookupInfo(){
 
     profilePic = (QImage)NULL;
 
-    //init client info table
-    if(ui->tableWidget_clientInfo->columnCount()>0){
-        ui->tableWidget_clientInfo->setColumnCount(0);
-        ui->tableWidget_clientInfo->clear();
-        ui->tableWidget_clientInfo2->setColumnCount(0);
-        ui->tableWidget_clientInfo2->clear();
-    }
+
 
 
 }
@@ -3647,3 +3688,5 @@ void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
 
     // fill in stuff on the right
 }
+
+
