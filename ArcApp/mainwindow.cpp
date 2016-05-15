@@ -3682,7 +3682,7 @@ void MainWindow::useProgressDialog(QString msg, QFuture<void> future){
 }
 
 // room clicked
-/*void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
+void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
 {
     // "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly"
     QString idcode = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 0)).toString();
@@ -3698,7 +3698,6 @@ void MainWindow::useProgressDialog(QString msg, QFuture<void> future){
 }
 
 
-<<<<<<< HEAD
-}
-*/
+
+
 

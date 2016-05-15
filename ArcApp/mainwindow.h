@@ -451,7 +451,7 @@ private slots:
 
     void useProgressDialog(QString msg, QFuture<void> future);
 
-   // void on_tableWidget_5_clicked(const QModelIndex &index);
+    void on_tableWidget_5_clicked(const QModelIndex &index);
 
     void on_pushButton_cl_book_more_clicked();
 
