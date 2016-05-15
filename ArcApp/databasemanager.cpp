@@ -828,6 +828,18 @@ bool DatabaseManager::getShiftReportBookingQuery(QSqlQuery* queryResults,
     // qDebug() << queryString;
     return queryResults->exec(queryString);
 }
+QSqlQuery DatabaseManager::getSwapBookings(QDate start, QDate end, QString program, QString maxSwap, QString curBook){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM (SELECT COUNT(SpaceID) C, SpaceId FROM Booking"
+                " WHERE EndDate > '" + start.toString(Qt::ISODate) + "' AND StartDate <= '" + end.toString(Qt::ISODate)
+            +"' AND EndDate <= '" + maxSwap +"' GROUP BY SpaceId ) AS T LEFT JOIN (SELECT * FROM Space) AS S on S.SpaceId = T.SpaceId" +
+            " JOIN ( SELECT * FROM Booking WHERE EndDate > '" + start.toString(Qt::ISODate) + "' AND StartDate <= '" + end.toString(Qt::ISODate)
+            +"' AND EndDate <= '" + maxSwap +"') V on T.SpaceId = V.SpaceId WHERE C = 1 AND ProgramCodes ='" + program + "' AND BookingId != '" + curBook + "'";
+
+    query.exec(q);
+    qDebug() << q;
+    return query;
+}
 
 bool DatabaseManager::getShiftReportTransactionQuery(QSqlQuery* queryResults,
     QDate date, int shiftNo)
@@ -1111,11 +1123,18 @@ bool DatabaseManager::updateBalance(double d, QString id){
         return true;
     return false;
 }
+QSqlQuery DatabaseManager::getNextBooking(QDate endDate, QString roomId){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Booking WHERE StartDate >= '" + endDate.toString(Qt::ISODate) + "' AND SpaceId = '" + roomId + "'";
+    query.exec(q);
+    qDebug() << q;
+    return query;
+}
 
 QSqlQuery DatabaseManager::getCurrentBooking(QDate start, QDate end, QString program){
     QSqlQuery query(db);
     QString q = "SELECT Space.SpaceId, Space.SpaceCode, Space.ProgramCodes, Space.type, Space.cost, Space.Monthly FROM Space"
-                " LEFT JOIN (SELECT * from Booking WHERE StartDate <= '" + start.toString(Qt::ISODate) + "' AND EndDate >= '"
+                " LEFT JOIN (SELECT * from Booking WHERE StartDate <= '" + start.toString(Qt::ISODate) + "' AND EndDate > '"
                 + start.toString(Qt::ISODate) + "') AS a on Space.SpaceId = a.SpaceId WHERE BookingID IS NULL AND Space.ProgramCodes = '" + program + "'";
 
     qDebug() << q;

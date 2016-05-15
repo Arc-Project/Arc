@@ -24,6 +24,7 @@ EditRooms::~EditRooms()
     delete ui;
 }
 void EditRooms::searchAvailable(QString program){
+    swapping = false;
     QSqlQuery result;
     result = dbManager->getCurrentBooking(curBook->startDate, curBook->endDate, program);
     QStringList headers;
@@ -90,11 +91,11 @@ void EditRooms::on_buttonBox_accepted()
 {
     if(ui->editRoom->selectionModel()->currentIndex().row() == -1)
         return;
-    else{
-        int row;
-        row = ui->editRoom->selectionModel()->currentIndex().row();
 
-        if(curBook->monthly){
+    int row;
+    row = ui->editRoom->selectionModel()->currentIndex().row();
+    if(!swapping){
+       if(curBook->monthly){
             curBook->cost = ui->editRoom->item(row,4)->text().toDouble();
         }
         else{
@@ -103,7 +104,53 @@ void EditRooms::on_buttonBox_accepted()
         }
         curBook->room = ui->editRoom->item(row,0)->text();
         curBook->program = ui->editRoom->item(row,1)->text();
+    }
+    else{
+        QString swapBook = ui->editRoom->item(row, 6)->text();
 
+        QString swapRoom = ui->editRoom->item(row, 0)->text();
+
+        QString updateSwap = "UPDATE Booking SET SpaceId = '" + curBook->room +"' WHERE BookingId = '" + swapBook +"'";
+        if(dbManager->updateBooking(updateSwap)){
+            QString updateOrig = "UPDATE Booking SET SpaceId = '" + swapRoom +"' WHERE BookingId = '" + curBook->bookID + "'";
+            if(dbManager->updateBooking(updateOrig)){
+                curBook->room = swapRoom;
+            }
+            else{
+                qDebug() << "ERROR INSERTING SECOND SWAP";
+            }
+        }
+        else{
+            qDebug() << "ERROR INSERTING SWAP";
+        }
 
     }
+
+
+}
+
+void EditRooms::on_editSwap_clicked()
+{
+    swapping = true;
+    QSqlQuery result;
+    result = dbManager->getNextBooking(curBook->endDate, curBook->room);
+    int x = 0;
+    QDate nextStart;
+    while(result.next()){
+        if(x == 0){
+            nextStart = QDate::fromString(result.value("StartDate").toString(), "yyyy-MM-dd");
+        }
+        x++;
+    }
+    if(!x){
+        nextStart = QDate::fromString("2500-05-05", "yyyy-MM-dd");
+    }
+
+    result = dbManager->getSwapBookings(curBook->startDate, curBook->endDate, curBook->program, nextStart.toString(Qt::ISODate), curBook->bookID);
+    QStringList headers;
+    QStringList col;
+    headers << "Room#" <<  "Program" << "Type" << "Cost" << "Monthly" << "Current Occupant" << "";
+    col << "SpaceId" << "ProgramCodes" << "type" << "cost" << "Monthly" << "ClientName" << "BookingId" ;
+    ui->editRoom->setColumnHidden(6, true);
+    populateATable(ui->editRoom,headers, col, result, false);
 }

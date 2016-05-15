@@ -1037,6 +1037,7 @@ void MainWindow::on_editCancel_textChanged()
 void MainWindow::on_editRoom_clicked()
 {
     ui->editDate->setEnabled(false);
+   // swapper * swap = new Swapper();
     EditRooms * edit = new EditRooms(this, curBook);
     edit->exec();
     setBookSummary();
@@ -3718,5 +3719,8 @@ void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
 
     // fill in stuff on the right
 }
+
+
+
 
 

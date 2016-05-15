@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     mymodel.cpp \
     report.cpp \
     mycalendar.cpp \
-    editrooms.cpp
+    editrooms.cpp \
+    swapper.cpp
 
 HEADERS  += mainwindow.h \
     databasemanager.h \
@@ -47,7 +48,8 @@ HEADERS  += mainwindow.h \
     casefile.h \
     report.h \
     mycalendar.h \
-    editrooms.h
+    editrooms.h \
+    swapper.h
 
 FORMS    += mainwindow.ui \
     loginprompt.ui \

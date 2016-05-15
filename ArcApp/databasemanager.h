@@ -111,6 +111,8 @@ public:
     bool setWakeup(QDate date, QString time, QString id);
     bool updateWakeups(QDate date, QString time, QString id);
     bool deleteWakeups(QDate date, QString id);
+    QSqlQuery getNextBooking(QDate endDate, QString roomId);
+    QSqlQuery getSwapBookings(QDate start, QDate end, QString program, QString maxSwap, QString curBook);
 
 
 
