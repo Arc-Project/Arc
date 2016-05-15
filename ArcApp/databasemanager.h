@@ -13,6 +13,7 @@
 #include <QDesktopServices>
 #include <QStringList>
 #include <QMutex>
+
 typedef QList<int> IntList;
 
 class DatabaseManager : public QObject
@@ -78,7 +79,9 @@ public:
     int getIntFromQuery(QString queryString);
     bool getShiftReportBookingQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
     bool getShiftReportTransactionQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
-
+    int getShiftReportTotal(QDate date, int shiftNo, QString payType);
+    void getShiftReportStatsThread(QDate date, int shiftNo);
+    
     //COLIN STUFF/////////////////////////////////////////////////////////////
     QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);
     QSqlQuery getPrograms();
@@ -130,6 +133,7 @@ public:
 
 signals:
     void dailyReportStatsChanged(QList<int> list);
+    void shiftReportStatsChanged(QList<int> list);
 
 private:
     QSqlDatabase db = QSqlDatabase::database();
