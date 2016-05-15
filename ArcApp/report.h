@@ -17,6 +17,7 @@
 // Use shiftNo
 #define BOOKING_REPORT        4
 #define TRANSACTION_REPORT    5
+#define CLIENT_REPORT         6
 
 #define NUMCOLS_TRANSACTION   11
             

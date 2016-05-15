@@ -62,8 +62,8 @@ public:
     bool downloadProfilePic2(QImage* img,QString idNum);
     void testuploadProfilePicThread(QString strFilePath);
     bool insertClientWithPic(QStringList* registerFieldList, QImage* profilePic);
+    bool insertClientLog(QStringList* registerFieldList);
     bool updateClientWithPic(QStringList* registerFieldList, QString clientId, QImage* profilePic);
-
     /*==========================================================================
     REPORT QUERYS
     ==========================================================================*/
@@ -81,6 +81,7 @@ public:
     bool getShiftReportTransactionQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
     int getShiftReportTotal(QDate date, int shiftNo, QString payType);
     void getShiftReportStatsThread(QDate date, int shiftNo);
+    bool getShiftReportClientLogQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
     
     //COLIN STUFF/////////////////////////////////////////////////////////////
     QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);

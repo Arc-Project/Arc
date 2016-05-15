@@ -65,6 +65,8 @@ public:
     void clientSearchedInfo();
     void initClientLookupInfo();
     void setSelectedClientInfo();
+
+    void getRegisterLogFields(QStringList* fieldList);
     QImage profilePic;
 
     //COLIN STUFF////
@@ -162,6 +164,7 @@ private slots:
     void on_shiftReportGo_btn_clicked();
     void on_shiftReportCurrent_btn_clicked();
     void updateShiftReportStats(QList<int> list);
+    void on_saveOther_btn_clicked();
 
 
     
@@ -444,6 +447,8 @@ private slots:
     void on_pushButton_cl_trans_more_clicked();
 
     void useProgressDialog(QString msg, QFuture<void> future);
+
+    void on_tableWidget_5_clicked(const QModelIndex &index);
 
 private:
 
