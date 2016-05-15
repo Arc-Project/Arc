@@ -2281,12 +2281,23 @@ void MainWindow::on_btn_listAllUsers_3_clicked()
         QString floornum = QString::fromStdString(brokenupspacecode[1]);
         QString roomnum = QString::fromStdString(brokenupspacecode[2]);
         std::string bednumtype = brokenupspacecode[3];
+
+        qDebug() << "Spacecode type:" << QString::fromStdString(brokenupspacecode[3]);
+
         // strip the last character
         QString bednumber = QString::fromStdString(bednumtype.substr(0, bednumtype.size()-1));
 
+        qDebug() << bednumber;
+
+
         // get the last character to figure out the type
-        char typechar = bednumtype[bednumtype.size()-1];
+        char typechar = bednumtype[bednumtype.size() - 1];
+
+        qDebug() << typechar;
+
         QString thetype = "" + typechar;
+
+        qDebug() << thetype;
 
         ui->tableWidget_5->insertRow(x);
         QStringList row;
@@ -2295,7 +2306,7 @@ void MainWindow::on_btn_listAllUsers_3_clicked()
             << floornum
             << roomnum
             << bednumber
-            << thetype
+            << QChar::fromLatin1(typechar)
             << result.value(1).toString()
             << result.value(2).toString();
         for (int i = 0; i < 8; ++i)
@@ -3262,7 +3273,6 @@ void MainWindow::on_btn_notesUndo_clicked()
     }
 }
 
-// UNTESTED
 void MainWindow::on_btn_searchUsers_3_clicked()
 {
     QString ename = ui->le_users_3->text();
@@ -3270,7 +3280,7 @@ void MainWindow::on_btn_searchUsers_3_clicked()
     ui->tableWidget_5->clear();
     ui->tableWidget_5->horizontalHeader()->setStretchLastSection(true);
 
-    QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, cost, Montly FROM Space WHERE SpaceCode LIKE '%"+ ename +"%'");
+    QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, cost, Monthly FROM Space WHERE SpaceCode LIKE '%"+ ename +"%'");
 
 //    int numCols = result.record().count();
     ui->tableWidget_5->setColumnCount(8);
@@ -3309,7 +3319,7 @@ void MainWindow::on_btn_searchUsers_3_clicked()
             << floornum
             << roomnum
             << bednumber
-            << thetype
+            << QChar::fromLatin1(typechar)
             << result.value(1).toString()
             << result.value(2).toString();
         for (int i = 0; i < 8; ++i)
@@ -3616,10 +3626,19 @@ void MainWindow::useProgressDialog(QString msg, QFuture<void> future){
     futureWatcher.waitForFinished();
 }
 
-//// room clicked
-//void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
-//{
-//    // fill in stuff on the right
+// room clicked
+void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
+{
+    // "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly"
+    QString idcode = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 0)).toString();
+    QString building = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 1)).toString();
+    QString floor = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 2)).toString();
+    QString room = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 3)).toString();
+    QString bednumber = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 4)).toString();
+    QString type = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 5)).toString();
+    QString cost = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 6)).toString();
+    QString monthly = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 7)).toString();
 
+    // fill in stuff on the right
 
-//}
+}

@@ -4390,8 +4390,8 @@ QHeaderView {
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>983</width>
-                 <height>1381</height>
+                 <width>1056</width>
+                 <height>1294</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -9488,6 +9488,15 @@ QHeaderView {
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::SingleSelection</enum>
+             </property>
+             <property name="selectionBehavior">
+              <enum>QAbstractItemView::SelectRows</enum>
+             </property>
             </widget>
            </item>
           </layout>
@@ -11621,7 +11630,7 @@ QHeaderView {
      <x>0</x>
      <y>0</y>
      <width>1414</width>
-     <height>29</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="font">
