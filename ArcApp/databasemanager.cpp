@@ -513,6 +513,34 @@ bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage
     return false;
 }
 
+
+bool DatabaseManager::insertClientLog(QStringList* registerFieldList)
+{
+    QSqlQuery query(db);
+
+    query.prepare(QString("INSERT INTO ClientLog ")
+        + QString("(ClientName, Action, Date, ShiftNo, Time, EmpName) ")
+        + QString("VALUES(?, ?, ?, ?, ?, ?)"));
+
+    for (int i = 0; i < registerFieldList->size(); ++i)
+    {
+        if (registerFieldList->at(i) != NULL)
+        {
+            qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
+            query.addBindValue(registerFieldList->at(i));
+        }
+        else
+        {
+            query.addBindValue(QVariant(QVariant::String));
+        }
+    }
+    if (query.exec())
+    {
+        return true;
+    }
+    return false;
+}
+
 bool DatabaseManager::updateClientWithPic(QStringList* registerFieldList, QString clientId, QImage* profilePic)//QObject sth, QImage profilePic)
 {
     QByteArray ba;
@@ -550,6 +578,8 @@ bool DatabaseManager::updateClientWithPic(QStringList* registerFieldList, QStrin
     }
     return false;
 }
+
+
 
 QSqlQuery DatabaseManager::getTransactions(QDate start, QDate end){
     QSqlQuery query(db);
@@ -852,7 +882,6 @@ int DatabaseManager::getDailyReportTotalVacancies(QDate date)
 
 void DatabaseManager::getDailyReportStatsThread(QDate date)
 {
-    qDebug() << "getDailyReportStatsThread  should emit signal";
     QList<int> list;
     list << DatabaseManager::getDailyReportEspCheckouts(date)
          << DatabaseManager::getDailyReportTotalCheckouts(date)
@@ -861,7 +890,41 @@ void DatabaseManager::getDailyReportStatsThread(QDate date)
     emit DatabaseManager::dailyReportStatsChanged(list);
 }
 
+int DatabaseManager::getShiftReportTotal(QDate date, int shiftNo, QString payType)
+{
+    QString queryString = 
+        QString("SELECT ISNULL(p.total, 0) - ISNULL(r.total, 0) ")
+        + QString("FROM ")
+        + QString("(SELECT SUM(Amount) as total ")
+        + QString("FROM Transac ")
+        + QString("WHERE (Date = '" + date.toString(Qt::ISODate) + "' AND ")
+        + QString("ShiftNo = " + QString::number(shiftNo) + " AND ")
+        + QString("Type = '" + payType + "')")
+        + QString("AND ((TransType = 'Payment' AND Deleted = 0 AND Outstanding = 0) ")
+        + QString("OR (TransType = 'Refund' AND Deleted = 1 AND Outstanding = 0))) as p ")
+        + QString("CROSS JOIN ")
+        + QString("(SELECT SUM(Amount) as total ")
+        + QString("FROM Transac ")
+        + QString("WHERE (Date = '" + date.toString(Qt::ISODate) + "' AND ")
+        + QString("ShiftNo = " + QString::number(shiftNo) + " AND ")
+        + QString("Type = '" + payType + "')")
+        + QString("AND ((TransType = 'Refund' AND Deleted = 0 AND Outstanding = 0) ")
+        + QString("OR (TransType = 'Payment' AND Deleted = 1 AND Outstanding = 0))) as r");
+    qDebug() << queryString;
+    return DatabaseManager::getIntFromQuery(queryString);
+}
 
+void DatabaseManager::getShiftReportStatsThread(QDate date, int shiftNo)
+{
+    int cashTotal = DatabaseManager::getShiftReportTotal(date, shiftNo, PAY_CASH);
+    int electronicTotal = DatabaseManager::getShiftReportTotal(date, shiftNo, PAY_ELECTRONIC);
+    int chequeTotal = DatabaseManager::getShiftReportTotal(date, shiftNo, PAY_CHEQUE);
+
+    QList<int> list = QList<int>() << cashTotal << electronicTotal << chequeTotal
+                                   << cashTotal + chequeTotal
+                                   << cashTotal + electronicTotal + chequeTotal;
+    emit shiftReportStatsChanged(list);
+}
 
 int DatabaseManager::getIntFromQuery(QString queryString)
 {

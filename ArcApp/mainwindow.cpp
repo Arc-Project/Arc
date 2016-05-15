@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //detect if the widget is changed
     connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(initCurrentWidget(int)));
     connect(dbManager, SIGNAL(dailyReportStatsChanged(QList<int>)), this, SLOT(updateDailyReportStats(QList<int>)));
+    connect(dbManager, SIGNAL(shiftReportStatsChanged(QList<int>)), this, SLOT(updateShiftReportStats(QList<int>)));
     curClient = 0;
     curBook = 0;
     trans = 0;
@@ -145,7 +146,8 @@ void MainWindow::initCurrentWidget(int idx){
             ui->shiftReport_tabWidget->setCurrentIndex(DEFAULTTAB);
             MainWindow::updateDailyReportTables(QDate::currentDate());
             MainWindow::getDailyReportStats(QDate::currentDate());
-            MainWindow::updateShiftReportTables(QDate::currentDate(), 1);
+            MainWindow::updateShiftReportTables(QDate::currentDate(), currentshiftid);
+            MainWindow::getShiftReportStats(QDate::currentDate(), currentshiftid);
             break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
@@ -217,6 +219,7 @@ void MainWindow::on_actionDB_Connection_triggered()
 
 void MainWindow::on_actionTest_Query_triggered()
 {
+    qDebug() << dbManager->getShiftReportTotal(QDate::currentDate(), 1, PAY_CASH);
 }
 
 void MainWindow::on_actionFile_Upload_triggered()
@@ -1262,6 +1265,24 @@ void MainWindow::getListRegisterFields(QStringList* fieldList)
 
 }
 
+void MainWindow::getRegisterLogFields(QStringList* fieldList)
+{
+    QString fullName = ui->lineEdit_cl_fName->text() + " " + ui->lineEdit_cl_lName->text();
+    QString action;
+    if(ui->button_register_client->text() == "Register")
+        action = "Registered";
+    else
+        action = "Updated";
+
+    *fieldList << fullName
+               << action
+               << QDate::currentDate().toString("yyyy-MM-dd")
+               << QString::number(currentshiftid) // get shift number
+               << QTime::currentTime().toString("hh:mm:ss")
+               << userLoggedIn; //employee name
+
+}
+
 void MainWindow::clear_client_register_form(){
     ui->lineEdit_cl_fName->clear();
     ui->lineEdit_cl_mName->clear();
@@ -1344,14 +1365,19 @@ void MainWindow::on_button_register_client_clicked()
 
     if (MainWindow::check_client_register_form())
     {
-        QStringList registerFieldList;
+        QStringList registerFieldList, logFieldList;
         MainWindow::getListRegisterFields(&registerFieldList);
+        MainWindow::getRegisterLogFields(&logFieldList);
+        if(!dbManager->insertClientLog(&logFieldList))
+            return;
+
         if(ui->label_cl_infoedit_title->text() == "Register Client")
         {
 
             if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
             {
                 qDebug() << "Client registered successfully";
+
                 clear_client_register_form();
                 ui->stackedWidget->setCurrentIndex(1);
             }
@@ -1439,18 +1465,10 @@ void MainWindow::on_pushButton_search_client_clicked()
     //setup_searchClientTable(results);
 
     QSqlQuery resultQ = dbManager->searchClientList(clientName);
-    /*
-    if(!(dbManager->searchClientList(&resultQ, clientName)))
-    {
-        qDebug()<<"Select Fail";
-        return;
-    }
-    */
-    //dbManager->printAll(resultQ);
     setup_searchClientTable(resultQ);
 
     connect(ui->tableWidget_search_client, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(selected_client_info(int,int)),Qt::UniqueConnection);
-    // dbManager->printAll(results);
+
 
 }
 
@@ -1710,7 +1728,7 @@ void MainWindow::displayTransaction(QSqlQuery results){
     if(row !=transacNum || row%5 != 0){
         ui->pushButton_cl_trans_more->setEnabled(false);
     }
-    ui->tableWidget_transaction->setMinimumHeight(33*row-5);
+    ui->tableWidget_transaction->setMinimumHeight(35*row-5);
 
     ui->tableWidget_search_client->show();
 }
@@ -2937,12 +2955,19 @@ REPORTS
 ==============================================================================*/
 void MainWindow::setupReportsScreen()
 {
+    // Daily Report Screen
     ui->lbl_dailyReportDateVal->setText(QDate::currentDate().toString("yyyy-MM-dd"));
     ui->dailyReport_dateEdit->setDate(QDate::currentDate());
     checkoutReport = new Report(this, ui->checkout_tableView, CHECKOUT_REPORT);
     vacancyReport = new Report(this, ui->vacancy_tableView, VACANCY_REPORT);
     lunchReport = new Report(this, ui->lunch_tableView, LUNCH_REPORT);
     wakeupReport = new Report(this, ui->wakeup_tableView, WAKEUP_REPORT);
+
+    // Shift Report Screen
+    ui->lbl_shiftReportDateVal->setText(QDate::currentDate().toString("yyyy-MM-dd"));
+    ui->lbl_shiftReportShiftVal->setText(QString::number(currentshiftid));
+    ui->shiftReport_dateEdit->setDate(QDate::currentDate());
+
     bookingReport = new Report(this, ui->booking_tableView, BOOKING_REPORT);
     transactionReport = new Report(this, ui->transaction_tableView, TRANSACTION_REPORT);
 }
@@ -2950,31 +2975,31 @@ void MainWindow::setupReportsScreen()
 void MainWindow::updateDailyReportTables(QDate date)
 {
     useProgressDialog("Processing reports...", QtConcurrent::run(checkoutReport, &checkoutReport->updateModelThread, date));
-
-//    checkoutReport->updateModel(date);
     vacancyReport->updateModel(date);
     lunchReport->updateModel(date);
     wakeupReport->updateModel(date);
+
     ui->lbl_dailyReportDateVal->setText(date.toString("yyyy-MM-dd"));
     ui->dailyReport_dateEdit->setDate(date);
-
-    
 }
 
 void MainWindow::updateShiftReportTables(QDate date, int shiftNo)
 {
-    qDebug() << "ShiftNO in updateshiftreport tables " << shiftNo;
     bookingReport->updateModel(date, shiftNo);
     transactionReport->updateModel(date, shiftNo);
+
+    ui->lbl_shiftReportDateVal->setText(date.toString("yyyy-MM-dd"));
+    ui->lbl_shiftReportShiftVal->setText(QString::number(shiftNo));
+    ui->shiftReport_dateEdit->setDate(date);
 }
 
 void MainWindow::on_dailyReportGo_btn_clicked()
 {
     QDate date = ui->dailyReport_dateEdit->date();
+
     MainWindow::updateDailyReportTables(date);
     MainWindow::getDailyReportStats(date);
 }
-
 
 void MainWindow::on_dailyReportCurrent_btn_clicked()
 {
@@ -2983,18 +3008,28 @@ void MainWindow::on_dailyReportCurrent_btn_clicked()
 
 void MainWindow::on_shiftReportGo_btn_clicked()
 {
+    QDate date = ui->shiftReport_dateEdit->date();
+    int shiftNo = ui->shiftReport_spinBox->value();
 
+    MainWindow::updateShiftReportTables(date, shiftNo);
+    MainWindow::getShiftReportStats(date, shiftNo);
 }
+
 
 void MainWindow::on_shiftReportCurrent_btn_clicked()
 {
-
+    ui->shiftReport_dateEdit->setDate(QDate::currentDate());
+    ui->shiftReport_spinBox->setValue(currentshiftid);
 }
 
 void MainWindow::getDailyReportStats(QDate date)
 {
-    qDebug() << "getDailyReportStats  called";
     QtConcurrent::run(dbManager, &DatabaseManager::getDailyReportStatsThread, date);
+}
+
+void MainWindow::getShiftReportStats(QDate date, int shiftNo)
+{
+    QtConcurrent::run(dbManager, &DatabaseManager::getShiftReportStatsThread, date, shiftNo);   
 }
 
 void MainWindow::updateDailyReportStats(QList<int> list)
@@ -3004,6 +3039,16 @@ void MainWindow::updateDailyReportStats(QList<int> list)
     ui->lbl_espVacancies->setText(QString::number(list.at(2)));
     ui->lbl_totalVacancies->setText(QString::number(list.at(3)));
 }
+
+void MainWindow::updateShiftReportStats(QList<int> list)
+{
+    ui->lbl_cashAmt->setText(QString::number(list.at(0)));
+    ui->lbl_debitAmt->setText(QString::number(list.at(1)));
+    ui->lbl_chequeAmt->setText(QString::number(list.at(2)));
+    ui->lbl_depoAmt->setText(QString::number(list.at(3)));
+    ui->lbl_shiftAmt->setText(QString::number(list.at(4)));
+}
+
 /*==============================================================================
 REPORTS (END)
 ==============================================================================*/
@@ -3581,6 +3626,7 @@ void MainWindow::useProgressDialog(QString msg, QFuture<void> future){
     futureWatcher.waitForFinished();
 }
 
+<<<<<<< HEAD
 // room clicked
 void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
 {
@@ -3595,6 +3641,12 @@ void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
     QString monthly = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 7)).toString();
 
     // fill in stuff on the right
+=======
+//// room clicked
+//void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
+//{
+//    // fill in stuff on the right
+>>>>>>> 185386c8417db178d7e722181a7d42f23970015c
 
 
-}
+//}
