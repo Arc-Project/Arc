@@ -1485,7 +1485,7 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
 
 //get client information after searching
 
-void MainWindow::selected_client_info(int nRow)
+void MainWindow::selected_client_info(int nRow, int nCol)
 {
 
 
@@ -3599,4 +3599,12 @@ void MainWindow::useProgressDialog(QString msg, QFuture<void> future){
     dialog->setCancelButton(0);
     dialog->exec();
     futureWatcher.waitForFinished();
+}
+
+// room clicked
+void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
+{
+    // fill in stuff on the right
+
+
 }
