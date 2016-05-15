@@ -1379,6 +1379,7 @@ void MainWindow::on_button_register_client_clicked()
 
             if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
             {
+                statusBar()->showMessage("Client Registered Sucessfully.");
                 qDebug() << "Client registered successfully";
 
                 clear_client_register_form();
@@ -1386,6 +1387,7 @@ void MainWindow::on_button_register_client_clicked()
             }
             else
             {
+                statusBar()->showMessage("Register Failed. Check information.");
                 qDebug() << "Could not register client";
             }
         }
@@ -1393,12 +1395,14 @@ void MainWindow::on_button_register_client_clicked()
         {
             if (dbManager->updateClientWithPic(&registerFieldList, curClientID, &profilePic))
             {
+                statusBar()->showMessage("Client Registered Sucessfully.");
                 qDebug() << "Client info edit successfully";
                 clear_client_register_form();
                 ui->stackedWidget->setCurrentIndex(1);
             }
             else
             {
+                statusBar()->showMessage("Register Failed. Check information.");
                 qDebug() << "Could not edit client info";
             }
         }
@@ -1406,6 +1410,7 @@ void MainWindow::on_button_register_client_clicked()
     }
     else
     {
+        statusBar()->showMessage("Register Failed. Check information.");
         qDebug() << "Register form check was false";
     }
 }
@@ -1494,6 +1499,8 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
         }
         row++;
     }
+
+    statusBar()->showMessage(QString("Search " + QString::number(row) + " people"));
     ui->tableWidget_search_client->show();
 
 }
