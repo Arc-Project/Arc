@@ -3626,7 +3626,6 @@ void MainWindow::useProgressDialog(QString msg, QFuture<void> future){
     futureWatcher.waitForFinished();
 }
 
-<<<<<<< HEAD
 // room clicked
 void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
 {
@@ -3641,12 +3640,5 @@ void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
     QString monthly = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 7)).toString();
 
     // fill in stuff on the right
-=======
-//// room clicked
-//void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
-//{
-//    // fill in stuff on the right
->>>>>>> 185386c8417db178d7e722181a7d42f23970015c
 
-
-//}
+}
