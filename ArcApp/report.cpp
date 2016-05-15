@@ -48,7 +48,9 @@ void Report::setTitle()
              << "Notes";
       break;
     case CLIENT_REPORT:
-      *title << "Time" << "Employee" << "Action" << "Client"; 
+      *title << "Time" << "Employee" << "Action" << "Client";
+    case OTHER_REPORT:
+      *title << "Time" << "Employee" << "Log"; 
   }
   model.setTitle(title);
 }
@@ -112,6 +114,9 @@ void Report::updateModelThread(QDate date, int shiftNo)
           break;
         case CLIENT_REPORT:
           ret = dbManager->getShiftReportClientLogQuery(&query, date, shiftNo);
+          break;
+        case OTHER_REPORT:
+          ret = dbManager->getShiftReportOtherQuery(&query, date, shiftNo); 
       }
       if (ret)
       {
