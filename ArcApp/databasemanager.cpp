@@ -448,7 +448,7 @@ int DatabaseManager::countInformationPerClient(QString tableName, QString Client
                      + QString(" WHERE ClientId = " + ClientId));
     countQuery.exec();
     countQuery.next();
-    qDebug()<<"QUERY Count " + countQuery.value(0).toString();
+//    qDebug()<<"QUERY Count " + countQuery.value(0).toString();
     return countQuery.value(0).toInt();
 }
 
@@ -527,7 +527,7 @@ bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage
     {
         if (registerFieldList->at(i) != NULL)
         {
-            qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
+           // qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
             query.addBindValue(registerFieldList->at(i));
         }
         else
@@ -558,7 +558,7 @@ bool DatabaseManager::insertClientLog(QStringList* registerFieldList)
     {
         if (registerFieldList->at(i) != NULL)
         {
-            qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
+           // qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
             query.addBindValue(registerFieldList->at(i));
         }
         else
@@ -593,7 +593,7 @@ bool DatabaseManager::updateClientWithPic(QStringList* registerFieldList, QStrin
     {
         if (registerFieldList->at(i) != NULL)
         {
-            qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
+           // qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
             query.addBindValue(registerFieldList->at(i));
         }
         else
