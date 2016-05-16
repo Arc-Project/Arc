@@ -64,7 +64,7 @@ public:
     QSqlQuery searchClientInfo(QString ClientId);
     bool searchClientInfoPic(QImage * img, QString ClientId);
     QSqlQuery searchClientTransList(int maxNum, QString ClientId);
-    QSqlQuery searchTransBookList(int maxNum, QString clientId);
+    QSqlQuery searchBookList(int maxNum, QString clientId);
     int countInformationPerClient(QString tableName, QString ClientId);
 
     /*==========================================================================
@@ -119,7 +119,7 @@ public:
     bool deleteWakeups(QDate date, QString id);
     QSqlQuery getNextBooking(QDate endDate, QString roomId);
     QSqlQuery getSwapBookings(QDate start, QDate end, QString program, QString maxSwap, QString curBook);
-    bool insertIntoBookingHistory(QString clientName, QString spaceId, QString program, QString start, QString end, QString action, QString emp, QString shift);
+    bool insertIntoBookingHistory(QString clientName, QString spaceId, QString program, QString start, QString end, QString action, QString emp, QString shift, QString clientId);
     bool addHistoryFromId(QString bookId, QString empId, QString shift, QString action);
 
 
@@ -138,6 +138,9 @@ public:
     QSqlQuery getAvailableBeds(QString pcode);
     QSqlQuery getAssignedBeds(QString pcode);
     QSqlQuery searchSingleBed(QString buildingno, QString floorno, QString roomno, QString spaceno);
+    QSqlQuery searchIDInformation(QString buildingno, QString floorno, QString roomno);
+    QSqlQuery updateAllSpacecodes();
+    QSqlQuery deleteSpace(QString buildingno, QString floorno, QString roomno, QString spaceno);
     QSqlQuery updateSpaceProgram(QString spaceid, QString program);
     QSqlQuery addPcp(int rowid, QString clientId, QString type, QString goal, QString strategy, QString date);
     QSqlQuery deletePcpRow(int rowId, QString type);

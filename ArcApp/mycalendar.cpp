@@ -26,7 +26,8 @@ MyCalendar::MyCalendar(QWidget *parent,  QDate start, QDate end, Client *client,
         ui->calendarTime->setHidden(true);
     }
     if(mode == 2){
-
+        ui->calOne->setHidden(true);
+        ui->calTwo->setHidden(true);
     }
     for(int i = 0; i < 70; i++){
         lunchDays[i] = 0;
