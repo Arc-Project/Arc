@@ -3745,15 +3745,18 @@ void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
     populate_modRoom_cboxes();
 
     // set the building
-//    int currindex = ui->cbox_roomLoc->currentIndex();
-//    while (true) {
-//        if (ui->cbox_roomLoc->currentText() == building) {
-//            break;
-//        } else {
-//            currindex++;
-//            ui->cbox_roomLoc->setCurrentIndex(currindex);
-//        }
-//    }
+    ui->cbox_roomLoc->setCurrentIndex(0);
+    int currindex = 0;
+    while (true) {
+        qDebug() << ui->cbox_roomLoc->currentText();
+        qDebug() << building;
+        if (ui->cbox_roomLoc->currentText() == building) {
+            break;
+        } else {
+            currindex++;
+            ui->cbox_roomLoc->setCurrentIndex(currindex);
+        }
+    }
 
 //    // set the floor
 //    int currindex2 = ui->cbox_roomLoc->currentIndex();
