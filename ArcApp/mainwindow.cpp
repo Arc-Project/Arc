@@ -303,7 +303,7 @@ void MainWindow::on_paymentButton_2_clicked()
     //owed = curBook->cost;
     owed = ui->costInput->text().toDouble();
     QString note = "Booking: " + curBook->stringStart + " to " + curBook->stringEnd + " Cost: " + QString::number(curBook->cost, 'f', 2);
-    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, true);
+    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, true, userLoggedIn, QString::number(currentshiftid));
     pay->exec();
     ui->stayLabel->setText(QString::number(curClient->balance, 'f', 2));
     qDebug() << "Done";
@@ -446,6 +446,7 @@ void MainWindow::popBookFromRow(){
     curBook->program = ui->editLookupTable->item(row,4)->text();
     curBook->room = ui->editLookupTable->item(row,1)->text();
     curBook->bookID = ui->editLookupTable->item(row, 7)->text();
+    curBook->roomId = ui->editLookupTable->item(row, 9)->text();
 
 }
 void MainWindow::popManagePayment(){
@@ -562,11 +563,12 @@ void MainWindow::on_editSearch_clicked()
 
     QStringList headers;
     QStringList cols;
-    headers << "Client" << "Room" << "Start" << "End" << "Program" << "Cost" << "Monthly" << "" << "";
-    cols << "ClientName" << "SpaceCode" << "StartDate" << "EndDate" << "ProgramCode" << "Cost" << "Monthly" << "BookingId" << "ClientId";
+    headers << "Client" << "Room" << "Start" << "End" << "Program" << "Cost" << "Monthly" << "" << "" << "";
+    cols << "ClientName" << "SpaceCode" << "StartDate" << "EndDate" << "ProgramCode" << "Cost" << "Monthly" << "BookingId" << "ClientId" << "SpaceId";
     populateATable(ui->editLookupTable, headers, cols, result, false);
     ui->editLookupTable->hideColumn(7);
     ui->editLookupTable->hideColumn(8);
+    ui->editLookupTable->hideColumn(9);
     //dbManager->printAll(result);
 
 
@@ -597,11 +599,13 @@ void MainWindow::on_bookingSearchButton_clicked()
         //Pop up error or something
         return;
     }
-    ui->bookingTable->setRowCount(0);
+    QString program = ui->programDropdown->currentText();
+
+    QSqlQuery result = dbManager->getCurrentBooking(ui->startDateEdit->date(), ui->endDateEdit->date(), program);
+
+   /* ui->bookingTable->setRowCount(0);
     ui->bookingTable->clear();
     ui->bookingTable->setHorizontalHeaderLabels(QStringList() << "Room #" << "Location" << "Program" << "Description" << "Cost" << "Monthly");
-    QString program = ui->programDropdown->currentText();
-    QSqlQuery result = dbManager->getCurrentBooking(ui->startDateEdit->date(), ui->endDateEdit->date(), program);
     int numCols = result.record().count();
 
     int x = 0;
@@ -621,7 +625,12 @@ void MainWindow::on_bookingSearchButton_clicked()
         x++;
 
     }
-
+*/
+    QStringList headers, cols;
+    headers << "Room#" << "Program" << " Type" << "Daily Cost" << "Monthly" << "";
+    cols << "SpaceCode" << "ProgramCodes" << "type" << "cost" << "Monthly" << "SpaceId";
+    populateATable(ui->bookingTable, headers, cols, result,false);
+    ui->bookingTable->setColumnHidden(5, true);
     ui->makeBookingButton->show();
 }
 //PARAMS - The table, list of headers, list of table column names, the sqlquery result, STRETCH - stretch mode true/false
@@ -665,16 +674,17 @@ void MainWindow::setBooking(int row){
     curBook->stringEnd = ui->endDateEdit->date().toString(Qt::ISODate);
     curBook->monthly = ui->monthCheck->isChecked();
     curBook->program = ui->programDropdown->currentText();
-    curBook->room = ui->bookingTable->item(row,1)->text();
+    curBook->room = ui->bookingTable->item(row,0)->text();
     curBook->stayLength = ui->endDateEdit->date().toJulianDay() - ui->startDateEdit->date().toJulianDay();
     double potentialCost = 999999;
     double dailyCost = 0;
-    QString dayCost = QString::number(ui->bookingTable->item(row, 4)->text().toDouble(), 'f', 2);
+    curBook->roomId = ui->bookingTable->item(row, 5)->text();
+    QString dayCost = QString::number(ui->bookingTable->item(row, 3)->text().toDouble(), 'f', 2);
     dailyCost = dayCost.toDouble();
     dailyCost = curBook->stayLength * dailyCost;
     if(ui->monthCheck->isChecked()){
 
-        potentialCost = ui->bookingTable->item(row, 5)->text().toInt();
+        potentialCost = ui->bookingTable->item(row, 4)->text().toInt();
         if(dailyCost < potentialCost){
             curBook->cost = dailyCost;
         }
@@ -810,7 +820,7 @@ double MainWindow::calcRefund(QDate old, QDate n){
         updatedCost = cpd * (curBook->stayLength + updatedDays);
 
         if(curBook->monthly){
-            double normalRate = dbManager->getRoomCost(curBook->room);
+            double normalRate = dbManager->getRoomCost(curBook->roomId);
             updatedCost = normalRate * (curBook->stayLength + updatedDays);
             if(updatedCost > curBook->cost)
                 return 0;
@@ -843,7 +853,7 @@ bool MainWindow::updateBooking(Booking b){
     QString monthly;
     curBook->monthly == true ? monthly = "YES" : monthly = "NO";
     query = "UPDATE BOOKING SET " +
-            QString("SpaceID = '") + b.room + "', " +
+            QString("SpaceID = '") + b.roomId + "', " +
             QString("ProgramCode = '") + b.program + "', " +
             QString("Cost = '") + QString::number(b.cost) + + "', " +
             QString("EndDate = '") + b.stringEnd + "', " +
@@ -884,7 +894,7 @@ void MainWindow::handleNewPayment(int row){
     curClient->balance = balance;
     QString note = "Paying Outstanding Balance";
 
-    payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true);
+    payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true, userLoggedIn, QString::number(currentshiftid));
     pay->exec();
     ui->mpTable->removeRow(row);
 }
@@ -948,6 +958,9 @@ void MainWindow::on_btn_payOutstanding_clicked()
 
 void MainWindow::on_editDate_dateChanged(const QDate &date)
 {
+    QSqlQuery result;
+    result = dbManager->getNextBooking(curBook->endDate, curBook->roomId);
+
     ui->editRoom->setEnabled(false);
     if(date > curBook->endDate){
         ui->editDate->setDate(curBook->endDate);
@@ -990,7 +1003,7 @@ void MainWindow::on_editManagePayment_clicked()
         owed *= -1;
     }
     QString note = "";
-    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, type);
+    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, type, userLoggedIn, QString::number(currentshiftid));
     pay->exec();
 }
 
@@ -1088,7 +1101,7 @@ void MainWindow::on_makeBookingButton_2_clicked()
     QDate today = QDate::currentDate();
     QString values;
     QString todayDate = today.toString(Qt::ISODate);
-    values = "'" + today.toString(Qt::ISODate) + "','" + curBook->stringStart + "','" + curBook->room + "','" +
+    values = "'" + today.toString(Qt::ISODate) + "','" + curBook->stringStart + "','" + curBook->roomId + "','" +
              curClient->clientId + "','" + curBook->program + "','" + QString::number(cost) + "','" + curBook->stringStart
              + "','" + curBook->stringEnd + "','" + "YES'" + ",'" + month + "','" + curClient->fullName +"'";
 //    QDate next = curBook->startDate;
@@ -1130,6 +1143,7 @@ void MainWindow::populateConfirm(){
     }else{
         ui->confirmMonthly->setText("NO");
     }
+    ui->confirmRoom->setText(curBook->room);
     ui->confirmPaid->setText(QString::number(curClient->balance));
     ui->confirmProgram->setText(curBook->program);
 

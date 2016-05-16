@@ -9,7 +9,7 @@ payment::payment(QWidget *parent) :
     ui->setupUi(this);
 
 }
-payment::payment(QWidget *parent, transaction * trans, double balance, double cost, Client * client, QString note, bool paymentType ) :
+payment::payment(QWidget *parent, transaction * trans, double balance, double cost, Client * client, QString note, bool paymentType, QString emp, QString shift ) :
     QDialog(parent),
     ui(new Ui::payment)
 {
@@ -22,6 +22,8 @@ payment::payment(QWidget *parent, transaction * trans, double balance, double co
     ui->transactionLabel->setText(QString::number(cost));
     ui->owedLabel->setText(QString::number(cost - balance));
     ui->plainTextEdit->insertPlainText(note);
+    shiftNo = shift;
+    empId = emp;
     if(paymentType){
         doPayment();
         ui->paymentRadio->setChecked(true);
@@ -44,18 +46,18 @@ bool payment::makePayment(){
             values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
                     + "','" + QString::number(transact->amount) + "','" + "2" + "','" + transact->type + "','" + transact->notes
                     + "','" + transact->chequeNo + "','" + transact->MSQ + "','" + transact->issuedString + "','" + transact->transType
-                    + "', 0" + ",'" + transact->outstanding + "'";
+                    + "', 0" + ",'" + transact->outstanding + "', '" + empId + "','" + shiftNo + "','" + QTime::currentTime().toString() + "'";
         }
         else{
         values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
                 + "','" + QString::number(transact->amount) + "','" + "2" + "','" + transact->type + "','" + transact->notes
-                + "', NULL, NULL, NULL" + ",'" + transact->transType + "', 0" + ",'" + transact->outstanding + "'";
+                + "', NULL, NULL, NULL" + ",'" + transact->transType + "', 0" + ",'" + transact->outstanding + "', '" + empId + "','" + shiftNo + "','" + QTime::currentTime().toString() + "'";
         }
     }
     else{
         values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
                 + "','" + QString::number(transact->amount) + "','" + "2" + "','" + transact->type + "','" + transact->notes
-                + "', NULL, NULL, NULL" + ",'" + transact->transType + "', 0" + ",'" + transact->outstanding + "'";
+                + "', NULL, NULL, NULL" + ",'" + transact->transType + "', 0" + ",'" + transact->outstanding + "', '" + empId + "','" + shiftNo + "','" + QTime::currentTime().toString() + "'";
 
     }
     if(dbManager->addPayment(values)){

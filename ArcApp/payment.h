@@ -15,7 +15,7 @@ class payment : public QDialog
 
 public:
     explicit payment(QWidget *parent = 0);
-    payment(QWidget *parent, transaction * trans, double balance, double cost, Client * client, QString note, bool paymentType);
+    payment(QWidget *parent, transaction * trans, double balance, double cost, Client * client, QString note, bool paymentType, QString emp, QString shift);
     ~payment();
     bool makePayment();
     bool checkNumber(QString num);
@@ -37,6 +37,8 @@ private:
     transaction * transact;
     Client * client;
     Booking * curBook;
+    QString empId;
+    QString shiftNo;
 };
 
 #endif // PAYMENT_H

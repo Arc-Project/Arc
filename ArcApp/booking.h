@@ -20,6 +20,7 @@ public:
     QString wakeTime;
     double paidTotal;
     QString bookID;
+    QString roomId;
 };
 
 #endif // BOOKING_H
