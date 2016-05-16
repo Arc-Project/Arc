@@ -1557,8 +1557,8 @@ void MainWindow::selected_client_info(int nRow, int nCol)
 {
 
 
-    if(!pic_available || !table_available)
-        return;
+//    if(!pic_available || !table_available)
+//        return;
     if(displayFuture.isRunning()|| !displayFuture.isFinished()){
         qDebug()<<"ProfilePic Is RUNNING";
         return;
@@ -1577,20 +1577,38 @@ void MainWindow::selected_client_info(int nRow, int nCol)
     bookingTotal = dbManager->countInformationPerClient("booking", curClientID);
     ui->pushButton_cl_trans_more->setEnabled(true);
 
-    table_available = false;
+
     displayFuture = QtConcurrent::run(this, &displayClientInfoThread, curClientID);
     displayFuture.waitForFinished();
     displayPicFuture = QtConcurrent::run(this, &displayPicThread);
     displayPicFuture.waitForFinished();
+    statusColor();
 
 }
-
+void MainWindow::statusColor(){
+    QPalette pal(ui->label_cl_info_status->palette());
+    QString clStatus = ui->label_cl_info_status->text().toLower();
+    if(clStatus == "green")
+        pal.setColor(QPalette::Normal, QPalette::Background, Qt::green);
+    else if(clStatus == "yellow")
+        pal.setColor(QPalette::Normal, QPalette::Background, Qt::yellow);
+    else if(clStatus == "red")
+        pal.setColor(QPalette::Normal, QPalette::Background, Qt::red);
+    else{
+        ui->label_cl_info_status->setAutoFillBackground(false);
+        return;
+    }
+    ui->label_cl_info_status->setPalette(pal);
+    ui->label_cl_info_status->setAutoFillBackground(true);
+}
 
 void MainWindow::clientSearchedInfo(){
 
     QGraphicsScene *scene = new QGraphicsScene();
     scene->clear();
     ui->graphicsView_getInfo->setScene(scene);
+
+
 }
 
 void MainWindow::displayClientInfoThread(QString val){
@@ -1627,32 +1645,6 @@ void MainWindow::displayClientInfoThread(QString val){
    ui->label_cl_info_Supporter2_name_val->setText(clientInfo.value(18).toString());
    ui->label_cl_info_Supporter2_contact_val->setText(clientInfo.value(19).toString());
    ui->label_cl_info_comment->setText(clientInfo.value(20).toString());
-
-
-// WITHOUT PICTURE
-   /*
-   QByteArray a = clientInfo.value(21).toByteArray();
-   qDebug()<< "asdfa" <<a;
-   profilePic =  QImage::fromData(a, "PNG");
-*/
-/*
-   ui->label_cl_info_status->setText(clientInfo.value(8).toString());
-   if(clientInfo.value(8).toString() == "green"){
-       ui->label_cl_info_status->setStyleSheet("color: rgb(0, 204, 102);");
-   }else if(clientInfo.value(8).toString() == "Yellow"){
-       ui->label_cl_info_status->setStyleSheet("color: rgb(255, 255, 0);");
-   }else if(clientInfo.value(8).toString() == "Red"){
-       ui->label_cl_info_status->setStyleSheet("color: rgb(255, 0, 0);");
-
-   }
-*/
-
-
-
-   table_available = true;
-
-
-
 }
 
 void MainWindow::displayPicThread()
@@ -1677,7 +1669,6 @@ void MainWindow::addInfoPic(QImage img){
     scene2->addPixmap(QPixmap(scaled));
     ui->graphicsView_getInfo->setScene(scene2);
     ui->graphicsView_getInfo->show();
-    pic_available=true;
 }
 
 
@@ -2013,6 +2004,7 @@ void MainWindow::initClientLookupInfo(){
     ui->pushButton_editClientInfo->setEnabled(false);
     ui->pushButton_CaseFiles->setEnabled(false);
 
+    ui->label_cl_info_status->setAutoFillBackground(false);
 
 
 
