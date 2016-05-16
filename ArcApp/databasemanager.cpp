@@ -1415,8 +1415,61 @@ QSqlQuery DatabaseManager::searchSingleBed(QString buildingno, QString floorno, 
                "AND r.RoomNo =" + roomno + " "
                "AND s.SpaceNo =" + spaceno);
 
+    qDebug() << "SELECT b.BuildingNo, f.FloorNo, r.RoomNo, s.SpaceId, s.SpaceNo, s.type, s.cost, s.Monthly, s.ProgramCodes "
+               "FROM Space s INNER JOIN Room r ON s.RoomId = r.RoomId INNER JOIN Floor f ON r.FloorId = f.FloorId "
+               "INNER JOIN Building b ON f.BuildingId = b.BuildingId "
+               "WHERE b.BuildingNo =" + buildingno + " "
+               "AND f.FloorNo =" + floorno + " "
+               "AND r.RoomNo =" + roomno + " "
+               "AND s.SpaceNo =" + spaceno;
+
     return query;
 }
+
+QSqlQuery DatabaseManager::searchIDInformation(QString buildingno, QString floorno, QString roomno) {
+    QSqlQuery query(db);
+
+    query.exec("SELECT r.RoomId "
+               "FROM Space s INNER JOIN Room r ON s.RoomId = r.RoomId INNER JOIN Floor f ON r.FloorId = f.FloorId "
+               "INNER JOIN Building b ON f.BuildingId = b.BuildingId "
+               "WHERE b.BuildingNo =" + buildingno + " "
+               "AND f.FloorNo =" + floorno + " "
+               "AND r.RoomNo =" + roomno + " ");
+
+    return query;
+}
+
+QSqlQuery DatabaseManager::deleteSpace(QString buildingno, QString floorno, QString roomno, QString spaceno) {
+    QSqlQuery query(db);
+
+    query.exec("DELETE FROM s "
+               "FROM Space s INNER JOIN Room r ON s.RoomId = r.RoomId INNER JOIN Floor f ON r.FloorId = f.FloorId "
+               "INNER JOIN Building b ON f.BuildingId = b.BuildingId "
+               "WHERE b.BuildingNo =" + buildingno + " "
+               "AND f.FloorNo =" + floorno + " "
+               "AND r.RoomNo =" + roomno + " "
+               "AND s.SpaceNo =" + spaceno + " ");
+
+    return query;
+}
+
+QSqlQuery DatabaseManager::updateAllSpacecodes() {
+    QSqlQuery query(db);
+
+    query.exec("UPDATE s "
+               "SET s.SpaceCode =  "
+               "CAST(b.BuildingNo AS VARCHAR(8)) + '-' +  "
+               "CAST(f.FloorNo AS VARCHAR(8)) + '-' +  "
+               "CAST(r.RoomNo AS VARCHAR(8)) + '-' +  "
+               "CAST(s.SpaceNo AS VARCHAR(8)) +  "
+               "LEFT(s.type, 1) "
+               "FROM Space s INNER JOIN Room r ON s.RoomId = r.RoomId "
+                   "INNER JOIN Floor f ON r.FloorId = f.FloorId "
+                   "INNER JOIN Building b ON f.BuildingId = b.BuildingId ");
+
+    return query;
+}
+
 
 QSqlQuery DatabaseManager::updateProgram(QString pcode, QString pdesc) {
     QSqlQuery query(db);

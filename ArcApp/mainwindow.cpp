@@ -3991,46 +3991,87 @@ void MainWindow::on_actionExport_to_PDF_triggered()
 //    printer.newPage();
 }
 
- void MainWindow::on_btn_createNewUser_3_clicked()
- {
-     // add new vacancy
-     QString building = ui->cbox_roomLoc->currentText();
-     QString floor = ui->cbox_roomFloor->currentText();
-     QString room = ui->cbox_roomRoom->currentText();
-     QString bednumber = ui->le_roomNo->text();
-     QString type = ui->cbox_roomType->currentText();
-     QString cost = QString::number(ui->doubleSpinBox->value());
-     QString monthly = QString::number(ui->doubleSpinBox_2->value());
+void MainWindow::on_btn_createNewUser_3_clicked()
+{
+    ui->lbl_editUserWarning_3->setText("");
+    // add new vacancy
+    QString building = ui->cbox_roomLoc->currentText();
+    QString floor = ui->cbox_roomFloor->currentText();
+    QString room = ui->cbox_roomRoom->currentText();
+    QString bednumber = ui->le_roomNo->text();
+    QString type = ui->cbox_roomType->currentText();
+    QString cost = QString::number(ui->doubleSpinBox->value());
+    QString monthly = QString::number(ui->doubleSpinBox_2->value());
 
-     // check if it already exists
+    // check if it already exists
+    QSqlQuery result = dbManager->searchSingleBed(building, floor, room, bednumber);
 
+    if (!result.next()) {
+        // doesn't exist so make one
+        // INSERT INTO Space
+        // VALUES (7, 25, '', 'Mat', 0, 0, NULL);
 
- }
+        // get room id
+        QSqlQuery idinfo = dbManager->searchIDInformation(building, floor, room);
 
- void MainWindow::on_pushButton_14_clicked()
- {
-     // update vacancy
-     QString building = ui->cbox_roomLoc->currentText();
-     QString floor = ui->cbox_roomFloor->currentText();
-     QString room = ui->cbox_roomRoom->currentText();
-     QString bednumber = ui->le_roomNo->text();
-     QString type = ui->cbox_roomType->currentText();
-     QString cost = QString::number(ui->doubleSpinBox->value());
-     QString monthly = QString::number(ui->doubleSpinBox_2->value());
+        idinfo.next();
 
-     // check to make sure it exists
- }
+        QString roomid = idinfo.value(0).toString();
 
- void MainWindow::on_pushButton_15_clicked()
- {
-     // delete space
-     QString building = ui->cbox_roomLoc->currentText();
-     QString floor = ui->cbox_roomFloor->currentText();
-     QString room = ui->cbox_roomRoom->currentText();
-     QString bednumber = ui->le_roomNo->text();
-     QString type = ui->cbox_roomType->currentText();
-     QString cost = QString::number(ui->doubleSpinBox->value());
-     QString monthly = QString::number(ui->doubleSpinBox_2->value());
+        QSqlQuery insertres = dbManager->execQuery("INSERT INTO Space "
+                                                   "VALUES (" + bednumber +
+                                                   ", " + roomid +
+                                                   ", '', " + "'" + type +
+                                                   "', " + cost +
+                                                   ", " + monthly +
+                                                   ", NULL)");
+        // update spacecodes
+        dbManager->updateAllSpacecodes();
 
-     // check to make sure it exists
- }
+        ui->lbl_editUserWarning_3->setText("Vacancy created");
+    } else {
+        ui->lbl_editUserWarning_3->setText("This vacancy already exists. Please change the bed number.");
+    }
+}
+
+void MainWindow::on_pushButton_14_clicked()
+{
+    ui->lbl_editUserWarning_3->setText("");
+
+    // update vacancy
+    QString building = ui->cbox_roomLoc->currentText();
+    QString floor = ui->cbox_roomFloor->currentText();
+    QString room = ui->cbox_roomRoom->currentText();
+    QString bednumber = ui->le_roomNo->text();
+    QString type = ui->cbox_roomType->currentText();
+    QString cost = QString::number(ui->doubleSpinBox->value());
+    QString monthly = QString::number(ui->doubleSpinBox_2->value());
+
+    // check to make sure it exists
+}
+
+void MainWindow::on_pushButton_15_clicked()
+{
+    ui->lbl_editUserWarning_3->setText("");
+    // delete space
+    QString building = ui->cbox_roomLoc->currentText();
+    QString floor = ui->cbox_roomFloor->currentText();
+    QString room = ui->cbox_roomRoom->currentText();
+    QString bednumber = ui->le_roomNo->text();
+    QString type = ui->cbox_roomType->currentText();
+    QString cost = QString::number(ui->doubleSpinBox->value());
+    QString monthly = QString::number(ui->doubleSpinBox_2->value());
+
+    // check to make sure it exists
+    // check if it already exists
+    QSqlQuery result = dbManager->searchSingleBed(building, floor, room, bednumber);
+
+    if (result.next()) {
+        // doesn't exist so make one
+        QSqlQuery deleteres = dbManager->deleteSpace(building, floor, room, bednumber);
+
+        ui->lbl_editUserWarning_3->setText("Vacancy Deleted");
+    } else {
+        ui->lbl_editUserWarning_3->setText("This vacancy doesn't exist. Please select a valid vacancy.");
+    }
+}
