@@ -27,7 +27,7 @@ void TakePhoto::processImage(int i, QImage img)
 }
 
 
-//BLOCK TO STORE IMAGE
+//BLOCK TO STORE IMAGE(delete right after taking a picture)
 void TakePhoto::deleteImage(int id, QString fileName){
 
     qDebug()<<"\nsavedimage : "<<fileName;
