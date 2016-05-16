@@ -3721,26 +3721,26 @@ void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
     populate_modRoom_cboxes();
 
     // set the building
-    int currindex = ui->cbox_roomLoc->currentIndex();
-    while (true) {
-        if (ui->cbox_roomLoc->currentText() == building) {
-            break;
-        } else {
-            currindex++;
-            ui->cbox_roomLoc->setCurrentIndex(currindex);
-        }
-    }
+//    int currindex = ui->cbox_roomLoc->currentIndex();
+//    while (true) {
+//        if (ui->cbox_roomLoc->currentText() == building) {
+//            break;
+//        } else {
+//            currindex++;
+//            ui->cbox_roomLoc->setCurrentIndex(currindex);
+//        }
+//    }
 
-    // set the floor
-    int currindex2 = ui->cbox_roomLoc->currentIndex();
-    while (true) {
-        if (ui->cbox_roomFloor->currentText() == floor) {
-            break;
-        } else {
-            currindex2++;
-            ui->cbox_roomFloor->setCurrentIndex(currindex2);
-        }
-    }
+//    // set the floor
+//    int currindex2 = ui->cbox_roomLoc->currentIndex();
+//    while (true) {
+//        if (ui->cbox_roomFloor->currentText() == floor) {
+//            break;
+//        } else {
+//            currindex2++;
+//            ui->cbox_roomFloor->setCurrentIndex(currindex2);
+//        }
+//    }
 }
 
 
