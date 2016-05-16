@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1457</width>
-    <height>1020</height>
+    <width>1542</width>
+    <height>1032</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -90,7 +90,7 @@ QWidget#wdg_cashTotal QLabel, QWidget#wdg_debitTotal QLabel, QWidget#wdg_cheqTot
         color: white;
 }
 
-QLabel#lbl_editUserWarning, QLabel#lbl_floatWarning, QLabel#lbl_editProgWarning{
+QLabel#lbl_editUserWarning, QLabel#lbl_floatWarning, QLabel#lbl_editProgWarning, QLabel#lbl_editUserWarning_3{
         color: red;
 }
 
@@ -124,7 +124,7 @@ QHeaderView {
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -4488,8 +4488,8 @@ QHeaderView {
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>620</width>
-                 <height>1294</height>
+                 <width>718</width>
+                 <height>1381</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -12793,8 +12793,8 @@ QHeaderView {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1457</width>
-     <height>23</height>
+     <width>1542</width>
+     <height>29</height>
     </rect>
    </property>
    <property name="font">
