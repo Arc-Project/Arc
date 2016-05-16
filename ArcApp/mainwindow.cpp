@@ -5,8 +5,7 @@
 #include <QItemDelegate>
 #include <QStandardItemModel>
 #include "payment.h"
-#include <QtPrintSupport/QPrinter>
-
+#include <QPrinter>
 #include <QProgressDialog>
 
 //MyModel* checkoutModel;
@@ -3972,12 +3971,13 @@ void MainWindow::on_actionExport_to_PDF_triggered()
                     "C://"
                 );
     QTextDocument doc;
-    doc.setHtml("<h1>hello, I'm an head</h1>");
-//    QPrinter printer;
-//    printer.setOutputFileName(tempDir+"\\file.pdf");
-//    printer.setOutputFormat(QPrinter::PdfFormat);
-//    doc.print(&printer);
-//    printer.newPage();
+    doc.setHtml("<h1>generated from Qt!</h1> regular text");
+    QPrinter printer;
+    printer.setOutputFileName(tempDir+"\\file.pdf");
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    doc.print(&printer);
+    printer.newPage();
+
 }
 
 void MainWindow::on_btn_createNewUser_3_clicked()

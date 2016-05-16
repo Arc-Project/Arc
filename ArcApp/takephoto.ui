@@ -31,7 +31,7 @@
     </font>
    </property>
    <property name="text">
-    <string>CAPTURE</string>
+    <string>Capture</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButtons_camstart">
