@@ -4097,3 +4097,17 @@ void MainWindow::on_pushButton_15_clicked()
         ui->lbl_editUserWarning_3->setText("This vacancy doesn't exist. Please select a valid vacancy.");
     }
 }
+
+void MainWindow::on_chk_filter_clicked()
+{
+    if (!ui->chk_filter->isChecked()){
+        QStringList filter;
+        populate_tw_caseFiles(filter);
+    } else {
+        int nRow = ui->tableWidget_search_client->currentRow();
+
+        QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 3)->text() + ", " +
+                              ui->tableWidget_search_client->item(nRow, 1)->text() + "*");
+        populate_tw_caseFiles(filter);
+    }
+}

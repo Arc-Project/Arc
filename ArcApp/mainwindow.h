@@ -476,6 +476,8 @@ private slots:
 
     void on_actionExport_to_PDF_triggered();
 
+    void on_chk_filter_clicked();
+
 private:
 
     Ui::MainWindow *ui;
