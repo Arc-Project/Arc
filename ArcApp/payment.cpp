@@ -220,3 +220,8 @@ void payment::on_refundRadio_clicked()
     }
     doRefund();
 }
+
+void payment::on_btn_ok_clicked()
+{
+    payment::on_addPaymentButton_clicked();
+}

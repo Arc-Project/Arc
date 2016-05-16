@@ -32,6 +32,8 @@ private slots:
 
     void on_refundRadio_clicked();
 
+    void on_btn_ok_clicked();
+
 private:
     Ui::payment *ui;
     transaction * transact;
