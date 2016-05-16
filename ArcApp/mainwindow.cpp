@@ -108,7 +108,12 @@ void MainWindow::initCurrentWidget(int idx){
             //initimageview
             break;
         case BOOKINGLOOKUP: //WIDGET 2
-
+            qDebug()<<"Client INFO";
+            if(curClient != NULL){
+                qDebug()<<"ID: " << curClientID << curClient->clientId;
+                qDebug()<<"NAME: " << curClient->fullName;
+                qDebug()<<"Balance: " << curClient->balance;
+            }
             ui->startDateEdit->setDate(QDate::currentDate());
             ui->endDateEdit->setDate(QDate::currentDate().addDays(1));
             getProgramCodes();
@@ -119,6 +124,7 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case BOOKINGPAGE: //WIDGET 3
             //initcode
+
             break;
         case PAYMENTPAGE: //WIDGET 4
             popManagePayment();
@@ -134,6 +140,13 @@ void MainWindow::initCurrentWidget(int idx){
             //initcode
             break;
         case CASEFILE: //WIDGET 8
+
+            qDebug()<<"Client INFO";
+            if(curClient != NULL){
+                qDebug()<<"ID: " << curClientID << curClient->clientId;
+                qDebug()<<"NAME: " << curClient->fullName;
+                qDebug()<<"Balance: " << curClient->balance;
+            }
             initPcp();
             break;
         case EDITBOOKING: //WIDGET 9
@@ -1406,6 +1419,7 @@ void MainWindow::clear_client_register_form(){
     QDate defaultDob= QDate::fromString("1990-01-01","yyyy-MM-dd");
     ui->dateEdit_cl_dob->setDate(defaultDob);
     ui->dateEdit_cl_rulesign->setDate(QDate::currentDate());
+
     on_button_cl_delPic_clicked();
 }
 
@@ -1772,6 +1786,7 @@ void MainWindow::addInfoPic(QImage img){
 
 //create new client for booking
 void MainWindow::setSelectedClientInfo(){
+    /*
     curClient = new Client();
     int nRow = ui->tableWidget_search_client->currentRow();
     if (nRow <0)
@@ -1784,6 +1799,45 @@ void MainWindow::setSelectedClientInfo(){
     curClient->balance =  ui->tableWidget_search_client->item(nRow, 4)->text().toFloat();
 
     curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
+
+
+    */
+    //
+    curClient = new Client();
+    int nRow = ui->tableWidget_search_client->currentRow();
+    if (nRow <0){
+        if(curClientID == NULL)
+            return;
+        else{
+            curClient->clientId = curClientID;
+            curClient->fName = ui->label_cl_info_fName_val->text();
+            curClient->mName = ui->label_cl_info_mName_val->text();
+            curClient->lName =  ui->label_cl_info_lName_val->text();
+            curClient->balance =  ui->label_cl_info_balance_amt->text().toFloat();
+
+            curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
+        }
+    }
+    else{
+        curClientID = curClient->clientId = ui->tableWidget_search_client->item(nRow, 0)->text();
+        curClient->fName =  ui->tableWidget_search_client->item(nRow, 1)->text();
+        curClient->mName =  ui->tableWidget_search_client->item(nRow, 2)->text();
+        curClient->lName =  ui->tableWidget_search_client->item(nRow, 3)->text();
+        curClient->balance =  ui->tableWidget_search_client->item(nRow, 5)->text().toFloat();
+
+        curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
+    }
+
+
+/*
+    qDebug()<<"ID: " << curClientID << curClient->clientId;
+    qDebug()<<"NAME: " << curClient->fullName;
+    qDebug()<<"Balance: " << curClient->balance;
+*/
+    ui->stackedWidget->setCurrentIndex(BOOKINGLOOKUP);
+
+
+
 
 }
 
