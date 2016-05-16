@@ -806,11 +806,12 @@ bool DatabaseManager::getDailyReportVacancyQuery(QSqlQuery* queryResults, QDate 
     QString queryString =
         QString("SELECT s.SpaceId, s.ProgramCodes ")
         + QString("FROM Space s LEFT JOIN (SELECT SpaceId, Date ")
-        + QString("FROM Booking WHERE Date = '" + date.toString(Qt::ISODate))
+        + QString("FROM Booking WHERE StartDate <= '" + date.toString(Qt::ISODate))
+        + QString("' AND EndDate > '" + date.toString(Qt::ISODate))
         + QString("') as b ON s.SpaceId = b.SpaceId ")
         + QString("WHERE b.date IS NULL");
 
-        // qDebug() << queryString;
+        qDebug() << queryString;
     return queryResults->exec(queryString);
 }
 
@@ -906,10 +907,11 @@ int DatabaseManager::getDailyReportEspVacancies(QDate date)
     QString queryString =
             QString("SELECT COUNT(s.SpaceId) ")
             + QString("FROM SPACE s LEFT JOIN ")
-            + QString("(SELECT SpaceId, Date FROM Booking WHERE Date = '")
+            + QString("(SELECT SpaceId, Date FROM Booking WHERE StartDate <= '")
+            + QString(date.toString(Qt::ISODate) + "' AND EndDate > '")
             + QString(date.toString(Qt::ISODate) + "') as b ")
             + QString("ON s.SpaceId = b.SpaceId ")
-            + QString("WHERE b.Date IS NULL AND s.ProgramCodes LIKE 'ESP'");
+            + QString("WHERE b.Date IS NULL AND s.ProgramCodes LIKE '%ESP%'");
     // qDebug() << queryString;
     return DatabaseManager::getIntFromQuery(queryString);
 }
@@ -919,11 +921,12 @@ int DatabaseManager::getDailyReportTotalVacancies(QDate date)
     QString queryString =
             QString("SELECT COUNT(s.SpaceId) ")
             + QString("FROM SPACE s LEFT JOIN ")
-            + QString("(SELECT SpaceId, Date FROM Booking WHERE Date = '")
+            + QString("(SELECT SpaceId, Date FROM Booking WHERE StartDate <= '")
+            + QString(date.toString(Qt::ISODate) + "' AND EndDate > '")
             + QString(date.toString(Qt::ISODate) + "') as b ")
             + QString("ON s.SpaceId = b.SpaceId ")
             + QString("WHERE b.Date IS NULL");
-    // qDebug() << queryString;
+    qDebug() << queryString;
     return DatabaseManager::getIntFromQuery(queryString);
 }
 
