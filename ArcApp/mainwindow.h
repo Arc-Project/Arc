@@ -476,6 +476,10 @@ private slots:
 
     void on_actionExport_to_PDF_triggered();
 
+    void on_btn_newTypeLoc_clicked();
+
+    void on_btn_delTypeLoc_clicked();
+
 private:
 
     Ui::MainWindow *ui;

@@ -4070,6 +4070,16 @@ void MainWindow::on_pushButton_14_clicked()
     }
 }
 
+void MainWindow::on_btn_newTypeLoc_clicked()
+{
+    // modify add new
+}
+
+void MainWindow::on_btn_delTypeLoc_clicked()
+{
+    // modify delete
+}
+
 void MainWindow::on_pushButton_15_clicked()
 {
     // implement checking if bookings are using this later?
