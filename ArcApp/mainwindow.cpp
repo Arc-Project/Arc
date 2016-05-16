@@ -5,6 +5,7 @@
 #include <QItemDelegate>
 #include <QStandardItemModel>
 #include "payment.h"
+#include <QtPrintSupport/QPrinter>
 
 #include <QProgressDialog>
 
@@ -14,6 +15,7 @@ Report *checkoutReport, *vacancyReport, *lunchReport, *wakeupReport,
 bool firstTime = true;
 QStack<int> backStack;
 QStack<int> forwardStack;
+int workFlow;
 
 QFuture<void> displayFuture ;
 QFuture<void> displayPicFuture;
@@ -153,6 +155,7 @@ void MainWindow::initCurrentWidget(int idx){
 
 void MainWindow::on_bookButton_clicked()
 {
+    workFlow = BOOKINGPAGE;
     ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
     addHistory(MAINMENU);
     qDebug() << "pushed page " << MAINMENU;
@@ -171,6 +174,7 @@ void MainWindow::on_bookButton_clicked()
 
 void MainWindow::on_clientButton_clicked()
 {
+     workFlow = CLIENTLOOKUP;
      ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
      addHistory(MAINMENU);
      qDebug() << "pushed page " << MAINMENU;
@@ -178,6 +182,7 @@ void MainWindow::on_clientButton_clicked()
 
 void MainWindow::on_paymentButton_clicked()
 {
+     workFlow = PAYMENTPAGE;
      ui->stackedWidget->setCurrentIndex(PAYMENTPAGE);
      addHistory(MAINMENU);
      qDebug() << "pushed page " << MAINMENU;
@@ -192,6 +197,7 @@ void MainWindow::on_editbookButton_clicked()
 
 void MainWindow::on_caseButton_clicked()
 {
+    workFlow = CASEFILE;
     ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
     addHistory(MAINMENU);
     qDebug() << "pushed page " << MAINMENU;
@@ -1153,6 +1159,12 @@ void MainWindow::on_actionMain_Menu_triggered()
 {
     addHistory(ui->stackedWidget->currentIndex());
     ui->stackedWidget->setCurrentIndex(MAINMENU);
+
+    //reset client lookup buttons
+    ui->pushButton_bookRoom->setEnabled(false);
+    ui->pushButton_processPaymeent->setEnabled(false);
+    ui->pushButton_editClientInfo->setEnabled(false);
+    ui->pushButton_CaseFiles->setEnabled(false);
 }
 
 
@@ -1164,6 +1176,7 @@ void MainWindow::on_pushButton_RegisterClient_clicked()
     ui->label_cl_infoedit_title->setText("Register Client");
     ui->button_register_client->setText("Register");
     ui->dateEdit_cl_rulesign->setDate(QDate::currentDate());
+
     defaultRegisterOptions();
 }
 
@@ -1984,8 +1997,42 @@ void MainWindow::initClientLookupInfo(){
     ui->pushButton_editClientInfo->setEnabled(false);
     ui->pushButton_CaseFiles->setEnabled(false);
 
-
-
+    //hide buttons for different workflows
+    switch (workFlow){
+    case BOOKINGPAGE:
+        ui->pushButton_CaseFiles->setVisible(false);
+        ui->pushButton_processPaymeent->setVisible(false);
+        ui->pushButton_bookRoom->setVisible(true);
+        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        break;
+    case PAYMENTPAGE:
+        ui->pushButton_CaseFiles->setVisible(false);
+        ui->pushButton_bookRoom->setVisible(false);
+        ui->pushButton_processPaymeent->setVisible(true);
+        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        break;
+    case CASEFILE:
+        ui->pushButton_CaseFiles->setVisible(true);
+        ui->pushButton_bookRoom->setVisible(false);
+        ui->pushButton_processPaymeent->setVisible(false);
+        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+        break;
+    case CLIENTLOOKUP:
+        ui->pushButton_CaseFiles->setVisible(true);
+        ui->pushButton_processPaymeent->setVisible(true);
+        ui->pushButton_bookRoom->setVisible(true);
+        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalLayout_15->update();
+        break;
+    }
 
 }
 
@@ -3258,7 +3305,23 @@ void MainWindow::on_btn_pcpKeySave_clicked()
 
 void MainWindow::on_actionPcptables_triggered()
 {
-    ui->pushButton_bookRoom->setVisible(false);
+    if (!ui->pushButton_bookRoom->isHidden()) {
+        ui->pushButton_CaseFiles->setVisible(true);
+        ui->pushButton_bookRoom->setVisible(false);
+        ui->pushButton_processPaymeent->setVisible(false);
+        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+
+    } else {
+        ui->pushButton_CaseFiles->setVisible(true);
+        ui->pushButton_bookRoom->setVisible(true);
+        ui->pushButton_processPaymeent->setVisible(true);
+        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalLayout_15->update();
+    }
 }
 
 void MainWindow::on_btn_pcpRelaUndo_clicked()
@@ -3731,4 +3794,20 @@ void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
 void MainWindow::on_lineEdit_search_clientName_returnPressed()
 {
     MainWindow::on_pushButton_search_client_clicked();
+}
+
+void MainWindow::on_actionExport_to_PDF_triggered()
+{
+    QString tempDir = QFileDialog::getExistingDirectory(
+                    this,
+                    tr("Select Directory"),
+                    "C://"
+                );
+    QTextDocument doc;
+    doc.setHtml("<h1>hello, I'm an head</h1>");
+//    QPrinter printer;
+//    printer.setOutputFileName(tempDir+"\\file.pdf");
+//    printer.setOutputFormat(QPrinter::PdfFormat);
+//    doc.print(&printer);
+//    printer.newPage();
 }

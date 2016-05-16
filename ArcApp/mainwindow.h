@@ -455,6 +455,8 @@ private slots:
 
     void on_lineEdit_search_clientName_returnPressed();
 
+    void on_actionExport_to_PDF_triggered();
+
 private:
 
     Ui::MainWindow *ui;
