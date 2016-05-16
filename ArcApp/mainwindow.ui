@@ -2518,14 +2518,33 @@ QHeaderView {
            <number>0</number>
           </property>
           <property name="columnCount">
-           <number>6</number>
+           <number>5</number>
           </property>
-          <column/>
-          <column/>
-          <column/>
-          <column/>
-          <column/>
-          <column/>
+          <column>
+           <property name="text">
+            <string>Room #</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Program</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Type</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Daily Cost</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Monthly Cost</string>
+           </property>
+          </column>
          </widget>
         </item>
        </layout>
@@ -2552,6 +2571,9 @@ QHeaderView {
         </item>
         <item row="1" column="1">
          <layout class="QFormLayout" name="formLayout_11">
+          <property name="verticalSpacing">
+           <number>17</number>
+          </property>
           <item row="0" column="0">
            <widget class="QLabel" name="label_3">
             <property name="minimumSize">
@@ -2688,7 +2710,7 @@ QHeaderView {
              </font>
             </property>
             <property name="text">
-             <string>Monthly:</string>
+             <string>Monthly Booking:</string>
             </property>
            </widget>
           </item>
@@ -2828,7 +2850,7 @@ QHeaderView {
              </font>
             </property>
             <property name="text">
-             <string>Balance:</string>
+             <string>Client's Current Balance:</string>
             </property>
            </widget>
           </item>
@@ -2866,7 +2888,7 @@ QHeaderView {
              </font>
             </property>
             <property name="text">
-             <string>Cost:</string>
+             <string>Total Cost:</string>
             </property>
            </widget>
           </item>
@@ -2913,7 +2935,7 @@ QHeaderView {
                </font>
               </property>
               <property name="text">
-               <string>Add Payment</string>
+               <string>Make Payment</string>
               </property>
              </widget>
             </item>
@@ -4464,7 +4486,7 @@ QHeaderView {
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>702</width>
+                 <width>1026</width>
                  <height>1381</height>
                 </rect>
                </property>
@@ -6189,7 +6211,7 @@ QHeaderView {
                         </font>
                        </property>
                        <property name="text">
-                        <string>Accomodations / Transition Planning</string>
+                        <string>Accommodations / Transition Planning</string>
                        </property>
                       </widget>
                      </item>

@@ -387,11 +387,11 @@ void MainWindow::bookingSetup(){
     ui->bookingTable->horizontalHeader()->setStretchLastSection(true);
     ui->bookingTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->bookingTable->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->bookingTable->setHorizontalHeaderLabels(QStringList() << "Room #" << "Location" << "Program" << "Description" << "Cost" << "Monthly");
+    ui->bookingTable->setHorizontalHeaderLabels(QStringList() << "Room #" << "Location" << "Program" << "Description" << "Daily Cost" << "Monthly Cost");
 
 }
 void MainWindow::clearTable(QTableWidget * table){
-    table->clear();
+    table->clearContents();
     table->setRowCount(0);
 }
 
@@ -647,7 +647,7 @@ void MainWindow::on_bookingSearchButton_clicked()
     }
 */
     QStringList headers, cols;
-    headers << "Room#" << "Program" << " Type" << "Daily Cost" << "Monthly" << "";
+    headers << "Room#" << "Program" << " Type" << "Daily Cost" << "Monthly Cost" << "";
     cols << "SpaceCode" << "ProgramCodes" << "type" << "cost" << "Monthly" << "SpaceId";
     populateATable(ui->bookingTable, headers, cols, result,false);
     ui->bookingTable->setColumnHidden(5, true);
