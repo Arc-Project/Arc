@@ -1620,6 +1620,7 @@ void MainWindow::displayClientInfoThread(QString val){
 */
 
 
+
    table_available = true;
 
 
@@ -1637,22 +1638,6 @@ void MainWindow::displayPicThread()
     qDebug()<<"Add picture";
 
     addInfoPic(profilePic);
-
-   // QSqlQuery testQuery = dbManager->execQuery("SELECT  ProfilePic FROM Client WHERE ClientId = "+ curClientID);
-   // testQuery.next();
-   // QByteArray test = testQuery.value(0).toByteArray();
-  //  profilePic = QImage::fromData(test, "PNG");
-    // QImage profile = QImage::fromData(a, "PNG");
-    /*
-    QPixmap item2 = QPixmap::fromImage(profilePic);
-    QPixmap scaled = QPixmap(item2.scaledToWidth((int)(ui->graphicsView_getInfo->width()*0.9), Qt::SmoothTransformation));
-    QGraphicsScene *scene2 = new QGraphicsScene();
-    scene2->addPixmap(QPixmap(scaled));
-    ui->graphicsView_getInfo->setScene(scene2);
-    ui->graphicsView_getInfo->show();
-    pic_available=true;
-
-*/
 }
 
 
