@@ -33,10 +33,11 @@ void EditRooms::searchAvailable(QString program){
     result = dbManager->getCurrentBooking(curBook->startDate, curBook->endDate, program);
     QStringList headers;
     QStringList col;
-    headers << "Room#" <<  "Program" << "Type" << "Cost" << "Monthly";
-    col << "SpaceId" << "ProgramCodes" << "type" << "cost" << "Monthly";
-    populateATable(ui->editRoom,headers, col, result, false);
+    headers << "Room#" <<  "Program" << "Type" << "Cost" << "Monthly" << "";
+    col << "SpaceCode" << "ProgramCodes" << "type" << "cost" << "Monthly" << "SpaceId";
 
+    populateATable(ui->editRoom,headers, col, result, false);
+    ui->editRoom->setColumnHidden(5, true);
 }
 
 void EditRooms::getProgramCodes(QString cur){
@@ -106,19 +107,20 @@ void EditRooms::on_buttonBox_accepted()
 
             curBook->cost = ui->editRoom->item(row,3 )->text().toDouble() * curBook->stayLength;
         }
-        curBook->room = ui->editRoom->item(row,0)->text();
+        curBook->room = ui->editRoom->item(row, 0)->text();
+        curBook->roomId = ui->editRoom->item(row,5)->text();
         curBook->program = ui->editRoom->item(row,1)->text();
     }
     else{
         QString swapBook = ui->editRoom->item(row, 6)->text();
 
-        QString swapRoom = ui->editRoom->item(row, 0)->text();
+        QString swapRoom = ui->editRoom->item(row, 7)->text();
 
-        QString updateSwap = "UPDATE Booking SET SpaceId = '" + curBook->room +"' WHERE BookingId = '" + swapBook +"'";
+        QString updateSwap = "UPDATE Booking SET SpaceId = '" + curBook->roomId +"' WHERE BookingId = '" + swapBook +"'";
         if(dbManager->updateBooking(updateSwap)){
             QString updateOrig = "UPDATE Booking SET SpaceId = '" + swapRoom +"' WHERE BookingId = '" + curBook->bookID + "'";
             if(dbManager->updateBooking(updateOrig)){
-                curBook->room = swapRoom;
+                curBook->roomId = swapRoom;
             }
             else{
                 qDebug() << "ERROR INSERTING SECOND SWAP";
@@ -140,7 +142,7 @@ void EditRooms::on_editSwap_clicked()
     swapping = true;
     ui->editMoveType->setText("Moving to Occupied Room");
     QSqlQuery result;
-    result = dbManager->getNextBooking(curBook->endDate, curBook->room);
+    result = dbManager->getNextBooking(curBook->endDate, curBook->roomId);
     int x = 0;
     QDate nextStart;
     while(result.next()){
@@ -156,8 +158,10 @@ void EditRooms::on_editSwap_clicked()
     result = dbManager->getSwapBookings(curBook->startDate, curBook->endDate, curBook->program, nextStart.toString(Qt::ISODate), curBook->bookID);
     QStringList headers;
     QStringList col;
-    headers << "Room#" <<  "Program" << "Type" << "Cost" << "Monthly" << "Current Occupant" << "";
-    col << "SpaceId" << "ProgramCodes" << "type" << "cost" << "Monthly" << "ClientName" << "BookingId" ;
+    headers << "Room#" <<  "Program" << "Type" << "Cost" << "Monthly" << "Current Occupant" << "" << "";
+    col << "SpaceCode" << "ProgramCodes" << "type" << "cost" << "Monthly" << "ClientName" << "BookingId" << "SpaceId" ;
     populateATable(ui->editRoom,headers, col, result, false);
     ui->editRoom->setColumnHidden(6, true);
+    ui->editRoom->setColumnHidden(7, true);
+
 }
