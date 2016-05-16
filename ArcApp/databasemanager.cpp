@@ -448,7 +448,7 @@ int DatabaseManager::countInformationPerClient(QString tableName, QString Client
                      + QString(" WHERE ClientId = " + ClientId));
     countQuery.exec();
     countQuery.next();
-    qDebug()<<"QUERY Count " + countQuery.value(0).toString();
+//    qDebug()<<"QUERY Count " + countQuery.value(0).toString();
     return countQuery.value(0).toInt();
 }
 
@@ -529,7 +529,7 @@ bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage
     {
         if (registerFieldList->at(i) != NULL)
         {
-            qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
+           // qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
             query.addBindValue(registerFieldList->at(i));
         }
         else
@@ -560,7 +560,7 @@ bool DatabaseManager::insertClientLog(QStringList* registerFieldList)
     {
         if (registerFieldList->at(i) != NULL)
         {
-            qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
+           // qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
             query.addBindValue(registerFieldList->at(i));
         }
         else
@@ -595,7 +595,7 @@ bool DatabaseManager::updateClientWithPic(QStringList* registerFieldList, QStrin
     {
         if (registerFieldList->at(i) != NULL)
         {
-            qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
+           // qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
             query.addBindValue(registerFieldList->at(i));
         }
         else
@@ -1428,7 +1428,7 @@ QSqlQuery DatabaseManager::searchSingleBed(QString buildingno, QString floorno, 
 QSqlQuery DatabaseManager::searchIDInformation(QString buildingno, QString floorno, QString roomno) {
     QSqlQuery query(db);
 
-    query.exec("SELECT r.RoomId "
+    query.exec("SELECT r.RoomId, b.BuildingId, f.FloorId"
                "FROM Space s INNER JOIN Room r ON s.RoomId = r.RoomId INNER JOIN Floor f ON r.FloorId = f.FloorId "
                "INNER JOIN Building b ON f.BuildingId = b.BuildingId "
                "WHERE b.BuildingNo =" + buildingno + " "
