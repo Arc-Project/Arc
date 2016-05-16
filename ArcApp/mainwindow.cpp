@@ -44,9 +44,16 @@ MainWindow::MainWindow(QWidget *parent) :
     //default signal of stackedWidget
     //detect if the widget is changed
     connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(initCurrentWidget(int)));
-    connect(dbManager, SIGNAL(dailyReportStatsChanged(QList<int>)), this, SLOT(updateDailyReportStats(QList<int>)));
-    connect(dbManager, SIGNAL(shiftReportStatsChanged(QList<int>)), this, SLOT(updateShiftReportStats(QList<int>)));
-    connect(ui->other_lineEdit, SIGNAL(textEdited(const QString &)), this, SLOT(on_otherSave_btn_textEdited(const QString &)));
+    connect(dbManager, SIGNAL(dailyReportStatsChanged(QList<int>)), this,
+            SLOT(updateDailyReportStats(QList<int>)));
+    connect(dbManager, SIGNAL(shiftReportStatsChanged(QList<int>)), this,
+            SLOT(updateShiftReportStats(QList<int>)));
+    connect(dbManager, SIGNAL(cashFloatChanged(QDate, int, QStringList)), this,
+            SLOT(updateCashFloat(QDate, int, QStringList)));
+    connect(dbManager, SIGNAL(cashFloatInserted(QString, QString, QString)), this,
+            SLOT(updateCashFloatLastEditedLabels(QString, QString, QString)));
+    connect(ui->other_lineEdit, SIGNAL(textEdited(const QString &)), this,
+            SLOT(on_other_lineEdit_textEdited(const QString &)));
     curClient = 0;
     curBook = 0;
     trans = 0;
@@ -146,6 +153,7 @@ void MainWindow::initCurrentWidget(int idx){
             MainWindow::getDailyReportStats(QDate::currentDate());
             MainWindow::updateShiftReportTables(QDate::currentDate(), currentshiftid);
             MainWindow::getShiftReportStats(QDate::currentDate(), currentshiftid);
+            MainWindow::getCashFloat(QDate::currentDate(), currentshiftid);
             break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
@@ -217,7 +225,13 @@ void MainWindow::on_actionDB_Connection_triggered()
 
 void MainWindow::on_actionTest_Query_triggered()
 {
-    qDebug() << dbManager->getShiftReportTotal(QDate::currentDate(), 1, PAY_CASH);
+    dbManager->getCashFloatThread(QDate::currentDate(), currentshiftid);
+    // QList<int> coins;
+    // for (int i = 0; i < 10; i++)
+    // {
+    //     coins << 1;
+    // }
+    // dbManager->insertCashFloat(QDate::currentDate(), 1, "Joseph", "comments", coins);
 }
 
 void MainWindow::on_actionFile_Upload_triggered()
@@ -303,7 +317,7 @@ void MainWindow::on_paymentButton_2_clicked()
     //owed = curBook->cost;
     owed = ui->costInput->text().toDouble();
     QString note = "Booking: " + curBook->stringStart + " to " + curBook->stringEnd + " Cost: " + QString::number(curBook->cost, 'f', 2);
-    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, true);
+    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, true, userLoggedIn, QString::number(currentshiftid));
     pay->exec();
     ui->stayLabel->setText(QString::number(curClient->balance, 'f', 2));
     qDebug() << "Done";
@@ -446,6 +460,7 @@ void MainWindow::popBookFromRow(){
     curBook->program = ui->editLookupTable->item(row,4)->text();
     curBook->room = ui->editLookupTable->item(row,1)->text();
     curBook->bookID = ui->editLookupTable->item(row, 7)->text();
+    curBook->roomId = ui->editLookupTable->item(row, 9)->text();
 
 }
 void MainWindow::popManagePayment(){
@@ -562,11 +577,12 @@ void MainWindow::on_editSearch_clicked()
 
     QStringList headers;
     QStringList cols;
-    headers << "Client" << "Room" << "Start" << "End" << "Program" << "Cost" << "Monthly" << "" << "";
-    cols << "ClientName" << "SpaceCode" << "StartDate" << "EndDate" << "ProgramCode" << "Cost" << "Monthly" << "BookingId" << "ClientId";
+    headers << "Client" << "Room" << "Start" << "End" << "Program" << "Cost" << "Monthly" << "" << "" << "";
+    cols << "ClientName" << "SpaceCode" << "StartDate" << "EndDate" << "ProgramCode" << "Cost" << "Monthly" << "BookingId" << "ClientId" << "SpaceId";
     populateATable(ui->editLookupTable, headers, cols, result, false);
     ui->editLookupTable->hideColumn(7);
     ui->editLookupTable->hideColumn(8);
+    ui->editLookupTable->hideColumn(9);
     //dbManager->printAll(result);
 
 
@@ -597,11 +613,13 @@ void MainWindow::on_bookingSearchButton_clicked()
         //Pop up error or something
         return;
     }
-    ui->bookingTable->setRowCount(0);
+    QString program = ui->programDropdown->currentText();
+
+    QSqlQuery result = dbManager->getCurrentBooking(ui->startDateEdit->date(), ui->endDateEdit->date(), program);
+
+   /* ui->bookingTable->setRowCount(0);
     ui->bookingTable->clear();
     ui->bookingTable->setHorizontalHeaderLabels(QStringList() << "Room #" << "Location" << "Program" << "Description" << "Cost" << "Monthly");
-    QString program = ui->programDropdown->currentText();
-    QSqlQuery result = dbManager->getCurrentBooking(ui->startDateEdit->date(), ui->endDateEdit->date(), program);
     int numCols = result.record().count();
 
     int x = 0;
@@ -621,7 +639,12 @@ void MainWindow::on_bookingSearchButton_clicked()
         x++;
 
     }
-
+*/
+    QStringList headers, cols;
+    headers << "Room#" << "Program" << " Type" << "Daily Cost" << "Monthly" << "";
+    cols << "SpaceCode" << "ProgramCodes" << "type" << "cost" << "Monthly" << "SpaceId";
+    populateATable(ui->bookingTable, headers, cols, result,false);
+    ui->bookingTable->setColumnHidden(5, true);
     ui->makeBookingButton->show();
 }
 //PARAMS - The table, list of headers, list of table column names, the sqlquery result, STRETCH - stretch mode true/false
@@ -665,16 +688,17 @@ void MainWindow::setBooking(int row){
     curBook->stringEnd = ui->endDateEdit->date().toString(Qt::ISODate);
     curBook->monthly = ui->monthCheck->isChecked();
     curBook->program = ui->programDropdown->currentText();
-    curBook->room = ui->bookingTable->item(row,1)->text();
+    curBook->room = ui->bookingTable->item(row,0)->text();
     curBook->stayLength = ui->endDateEdit->date().toJulianDay() - ui->startDateEdit->date().toJulianDay();
     double potentialCost = 999999;
     double dailyCost = 0;
-    QString dayCost = QString::number(ui->bookingTable->item(row, 4)->text().toDouble(), 'f', 2);
+    curBook->roomId = ui->bookingTable->item(row, 5)->text();
+    QString dayCost = QString::number(ui->bookingTable->item(row, 3)->text().toDouble(), 'f', 2);
     dailyCost = dayCost.toDouble();
     dailyCost = curBook->stayLength * dailyCost;
     if(ui->monthCheck->isChecked()){
 
-        potentialCost = ui->bookingTable->item(row, 5)->text().toInt();
+        potentialCost = ui->bookingTable->item(row, 4)->text().toInt();
         if(dailyCost < potentialCost){
             curBook->cost = dailyCost;
         }
@@ -810,7 +834,7 @@ double MainWindow::calcRefund(QDate old, QDate n){
         updatedCost = cpd * (curBook->stayLength + updatedDays);
 
         if(curBook->monthly){
-            double normalRate = dbManager->getRoomCost(curBook->room);
+            double normalRate = dbManager->getRoomCost(curBook->roomId);
             updatedCost = normalRate * (curBook->stayLength + updatedDays);
             if(updatedCost > curBook->cost)
                 return 0;
@@ -843,7 +867,7 @@ bool MainWindow::updateBooking(Booking b){
     QString monthly;
     curBook->monthly == true ? monthly = "YES" : monthly = "NO";
     query = "UPDATE BOOKING SET " +
-            QString("SpaceID = '") + b.room + "', " +
+            QString("SpaceID = '") + b.roomId + "', " +
             QString("ProgramCode = '") + b.program + "', " +
             QString("Cost = '") + QString::number(b.cost) + + "', " +
             QString("EndDate = '") + b.stringEnd + "', " +
@@ -884,7 +908,7 @@ void MainWindow::handleNewPayment(int row){
     curClient->balance = balance;
     QString note = "Paying Outstanding Balance";
 
-    payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true);
+    payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true, userLoggedIn, QString::number(currentshiftid));
     pay->exec();
     ui->mpTable->removeRow(row);
 }
@@ -948,6 +972,9 @@ void MainWindow::on_btn_payOutstanding_clicked()
 
 void MainWindow::on_editDate_dateChanged(const QDate &date)
 {
+    QSqlQuery result;
+    result = dbManager->getNextBooking(curBook->endDate, curBook->roomId);
+
     ui->editRoom->setEnabled(false);
     if(date > curBook->endDate){
         ui->editDate->setDate(curBook->endDate);
@@ -990,7 +1017,7 @@ void MainWindow::on_editManagePayment_clicked()
         owed *= -1;
     }
     QString note = "";
-    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, type);
+    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, type, userLoggedIn, QString::number(currentshiftid));
     pay->exec();
 }
 
@@ -1088,7 +1115,7 @@ void MainWindow::on_makeBookingButton_2_clicked()
     QDate today = QDate::currentDate();
     QString values;
     QString todayDate = today.toString(Qt::ISODate);
-    values = "'" + today.toString(Qt::ISODate) + "','" + curBook->stringStart + "','" + curBook->room + "','" +
+    values = "'" + today.toString(Qt::ISODate) + "','" + curBook->stringStart + "','" + curBook->roomId + "','" +
              curClient->clientId + "','" + curBook->program + "','" + QString::number(cost) + "','" + curBook->stringStart
              + "','" + curBook->stringEnd + "','" + "YES'" + ",'" + month + "','" + curClient->fullName +"'";
 //    QDate next = curBook->startDate;
@@ -1130,6 +1157,7 @@ void MainWindow::populateConfirm(){
     }else{
         ui->confirmMonthly->setText("NO");
     }
+    ui->confirmRoom->setText(curBook->room);
     ui->confirmPaid->setText(QString::number(curClient->balance));
     ui->confirmProgram->setText(curBook->program);
 
@@ -3010,7 +3038,7 @@ REPORTS
 void MainWindow::setupReportsScreen()
 {
     // Daily Report Screen
-    ui->lbl_dailyReportDateVal->setText(QDate::currentDate().toString("yyyy-MM-dd"));
+    ui->lbl_dailyReportDateVal->setText(QDate::currentDate().toString(Qt::ISODate));
     ui->dailyReport_dateEdit->setDate(QDate::currentDate());
     checkoutReport = new Report(this, ui->checkout_tableView, CHECKOUT_REPORT);
     vacancyReport = new Report(this, ui->vacancy_tableView, VACANCY_REPORT);
@@ -3018,9 +3046,10 @@ void MainWindow::setupReportsScreen()
     wakeupReport = new Report(this, ui->wakeup_tableView, WAKEUP_REPORT);
 
     // Shift Report Screen
-    ui->lbl_shiftReportDateVal->setText(QDate::currentDate().toString("yyyy-MM-dd"));
+    ui->lbl_shiftReportDateVal->setText(QDate::currentDate().toString(Qt::ISODate));
     ui->lbl_shiftReportShiftVal->setText(QString::number(currentshiftid));
     ui->shiftReport_dateEdit->setDate(QDate::currentDate());
+    ui->shiftReport_spinBox->setValue(currentshiftid);
 
     bookingReport = new Report(this, ui->booking_tableView, BOOKING_REPORT);
     transactionReport = new Report(this, ui->transaction_tableView, TRANSACTION_REPORT);
@@ -3028,6 +3057,13 @@ void MainWindow::setupReportsScreen()
     otherReport = new Report(this, ui->other_tableView, OTHER_REPORT);
 
     ui->saveOther_btn->setEnabled(false);
+
+    // Float Report Screen
+    ui->cashFloatDate_lbl->setText(QDate::currentDate().toString(Qt::ISODate));
+    ui->cashFloatShift_lbl->setText(QString::number(currentshiftid));
+    ui->cashFloat_dateEdit->setDate(QDate::currentDate());
+    ui->cashFloat_spinBox->setValue(currentshiftid);
+
 }
 
 void MainWindow::updateDailyReportTables(QDate date)
@@ -3037,7 +3073,7 @@ void MainWindow::updateDailyReportTables(QDate date)
     lunchReport->updateModel(date);
     wakeupReport->updateModel(date);
 
-    ui->lbl_dailyReportDateVal->setText(date.toString("yyyy-MM-dd"));
+    ui->lbl_dailyReportDateVal->setText(date.toString(Qt::ISODate));
     ui->dailyReport_dateEdit->setDate(date);
 }
 
@@ -3048,7 +3084,7 @@ void MainWindow::updateShiftReportTables(QDate date, int shiftNo)
     clientLogReport->updateModel(date, shiftNo);
     otherReport->updateModel(date, shiftNo);
 
-    ui->lbl_shiftReportDateVal->setText(date.toString("yyyy-MM-dd"));
+    ui->lbl_shiftReportDateVal->setText(date.toString(Qt::ISODate));
     ui->lbl_shiftReportShiftVal->setText(QString::number(shiftNo));
     ui->shiftReport_dateEdit->setDate(date);
 }
@@ -3075,6 +3111,24 @@ void MainWindow::on_shiftReportGo_btn_clicked()
     MainWindow::getShiftReportStats(date, shiftNo);
 }
 
+void MainWindow::on_shiftReportCurrent_btn_clicked()
+{
+    ui->shiftReport_dateEdit->setDate(QDate::currentDate());
+    ui->shiftReport_spinBox->setValue(currentshiftid);
+}
+
+void MainWindow::on_other_lineEdit_textEdited(const QString &text)
+{
+    if (text.trimmed().isEmpty())
+    {
+        ui->saveOther_btn->setEnabled(false);
+    }
+    else
+    {
+        ui->saveOther_btn->setEnabled(true);
+    }
+}
+
 void MainWindow::on_saveOther_btn_clicked()
 {
     QString logText = ui->other_lineEdit->text();
@@ -3089,12 +3143,6 @@ void MainWindow::on_saveOther_btn_clicked()
     }
 }
 
-void MainWindow::on_shiftReportCurrent_btn_clicked()
-{
-    ui->shiftReport_dateEdit->setDate(QDate::currentDate());
-    ui->shiftReport_spinBox->setValue(currentshiftid);
-}
-
 void MainWindow::getDailyReportStats(QDate date)
 {
     QtConcurrent::run(dbManager, &DatabaseManager::getDailyReportStatsThread, date);
@@ -3103,6 +3151,11 @@ void MainWindow::getDailyReportStats(QDate date)
 void MainWindow::getShiftReportStats(QDate date, int shiftNo)
 {
     QtConcurrent::run(dbManager, &DatabaseManager::getShiftReportStatsThread, date, shiftNo);   
+}
+
+void MainWindow::getCashFloat(QDate date, int shiftNo)
+{
+    QtConcurrent::run(dbManager, &DatabaseManager::getCashFloatThread, date, shiftNo);
 }
 
 void MainWindow::updateDailyReportStats(QList<int> list)
@@ -3122,18 +3175,80 @@ void MainWindow::updateShiftReportStats(QList<int> list)
     ui->lbl_shiftAmt->setText(QString::number(list.at(4)));
 }
 
-void MainWindow::on_otherSave_btn_textEdited(const QString &text)
+void MainWindow::updateCashFloat(QDate date, int shiftNo, QStringList list)
 {
-    QString logText = ui->other_lineEdit->text();
-    if (logText.trimmed().isEmpty())
-    {
-        ui->saveOther_btn->setEnabled(false);
-    }
-    else
-    {
-        ui->saveOther_btn->setEnabled(true);
-    }
+    ui->lastModifiedEmpName_lbl->setText(list.at(0));
+    ui->lastModifiedDateTime_lbl->setText(list.at(1));
+    ui->pte_floatMemo->document()->setPlainText(list.at(2));
+    ui->sbox_nickels->setValue(list.at(3).toInt());
+    ui->sbox_dimes->setValue(list.at(4).toInt());
+    ui->sbox_quarters->setValue(list.at(5).toInt());
+    ui->sbox_loonies->setValue(list.at(6).toInt());
+    ui->sbox_toonies->setValue(list.at(7).toInt());
+    ui->sbox_fives->setValue(list.at(8).toInt());
+    ui->sbox_tens->setValue(list.at(9).toInt());
+    ui->sbox_twenties->setValue(list.at(10).toInt());
+    ui->sbox_fifties->setValue(list.at(11).toInt());
+    ui->sbox_hundreds->setValue(list.at(12).toInt());
+    ui->lbl_floatAmt->setText(list.at(13));
 
+    ui->cashFloatDate_lbl->setText(date.toString(Qt::ISODate));
+    ui->cashFloatShift_lbl->setText(QString::number(shiftNo));
+}
+
+void MainWindow::on_saveFloat_btn_clicked()
+{
+    MainWindow::on_calculateTotal_btn_clicked();
+
+    QDate date = ui->cashFloat_dateEdit->date();
+    int shiftNo = ui->cashFloat_spinBox->value();
+    QString empName = userLoggedIn;
+    QString comments = ui->pte_floatMemo->toPlainText();
+    QList<int> coins;
+    coins << ui->sbox_nickels->value() << ui->sbox_dimes->value() << ui->sbox_quarters->value()
+          << ui->sbox_loonies->value() << ui->sbox_toonies->value() << ui->sbox_fives->value()
+          << ui->sbox_tens->value() << ui->sbox_twenties->value() << ui->sbox_fifties->value()
+          << ui->sbox_hundreds->value();
+
+    useProgressDialog("Saving Cash Float Changes ...", QtConcurrent::run(dbManager,
+        &DatabaseManager::insertCashFloat, date, shiftNo, empName, comments, coins));
+}
+
+void MainWindow::on_calculateTotal_btn_clicked()
+{
+    double total = ui->sbox_nickels->value() * VAL_NICKEL;
+    total += ui->sbox_dimes->value() * VAL_DIME;
+    total += ui->sbox_quarters->value() * VAL_QUARTER;
+    total += ui->sbox_loonies->value() * VAL_LOONIE;
+    total += ui->sbox_toonies->value() * VAL_TOONIE;
+    total += ui->sbox_fives->value() * VAL_FIVE;
+    total += ui->sbox_tens->value() * VAL_TEN;
+    total += ui->sbox_twenties->value() * VAL_TWENTY;
+    total += ui->sbox_fifties->value() * VAL_FIFTY;
+    total += ui->sbox_hundreds->value() * VAL_HUNDRED;
+
+    ui->lbl_floatAmt->setText(QString("$ " + QString::number(total, 'f', 2)));
+}
+
+void MainWindow::on_cashFloatGo_btn_clicked()
+{
+    QDate date = ui->cashFloat_dateEdit->date();
+    int shiftNo = ui->cashFloat_spinBox->value();
+
+    MainWindow::getCashFloat(date, shiftNo);
+}
+
+void MainWindow::on_cashFloatCurrent_btn_clicked()
+{
+    ui->cashFloat_dateEdit->setDate(QDate::currentDate());
+    ui->cashFloat_spinBox->setValue(currentshiftid);
+}
+
+void MainWindow::updateCashFloatLastEditedLabels(QString empName, 
+    QString currentDateStr, QString currentTimeStr)
+{
+    ui->lastModifiedEmpName_lbl->setText(empName);
+    ui->lastModifiedDateTime_lbl->setText(currentDateStr + " at " + currentTimeStr);
 }
 
 /*==============================================================================
@@ -3727,6 +3842,32 @@ void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
     QString monthly = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 7)).toString();
 
     // fill in stuff on the right
+    populate_modRoom_cboxes();
+
+    // set the building
+    ui->cbox_roomLoc->setCurrentIndex(0);
+    int currindex = 0;
+    while (true) {
+        qDebug() << ui->cbox_roomLoc->currentText();
+        qDebug() << building;
+        if (ui->cbox_roomLoc->currentText() == building) {
+            break;
+        } else {
+            currindex++;
+            ui->cbox_roomLoc->setCurrentIndex(currindex);
+        }
+    }
+
+//    // set the floor
+//    int currindex2 = ui->cbox_roomLoc->currentIndex();
+//    while (true) {
+//        if (ui->cbox_roomFloor->currentText() == floor) {
+//            break;
+//        } else {
+//            currindex2++;
+//            ui->cbox_roomFloor->setCurrentIndex(currindex2);
+//        }
+//    }
 }
 
 void MainWindow::on_lineEdit_search_clientName_returnPressed()
