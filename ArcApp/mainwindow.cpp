@@ -5,6 +5,7 @@
 #include <QItemDelegate>
 #include <QStandardItemModel>
 #include "payment.h"
+#include <QtPrintSupport/QPrinter>
 
 #include <QProgressDialog>
 
@@ -14,6 +15,7 @@ Report *checkoutReport, *vacancyReport, *lunchReport, *wakeupReport,
 bool firstTime = true;
 QStack<int> backStack;
 QStack<int> forwardStack;
+int workFlow;
 
 QFuture<void> displayFuture ;
 QFuture<void> displayPicFuture;
@@ -163,6 +165,7 @@ void MainWindow::initCurrentWidget(int idx){
 
 void MainWindow::on_bookButton_clicked()
 {
+    workFlow = BOOKINGPAGE;
     ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
     addHistory(MAINMENU);
     qDebug() << "pushed page " << MAINMENU;
@@ -181,6 +184,7 @@ void MainWindow::on_bookButton_clicked()
 
 void MainWindow::on_clientButton_clicked()
 {
+     workFlow = CLIENTLOOKUP;
      ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
      addHistory(MAINMENU);
      qDebug() << "pushed page " << MAINMENU;
@@ -188,6 +192,7 @@ void MainWindow::on_clientButton_clicked()
 
 void MainWindow::on_paymentButton_clicked()
 {
+     workFlow = PAYMENTPAGE;
      ui->stackedWidget->setCurrentIndex(PAYMENTPAGE);
      addHistory(MAINMENU);
      qDebug() << "pushed page " << MAINMENU;
@@ -202,6 +207,7 @@ void MainWindow::on_editbookButton_clicked()
 
 void MainWindow::on_caseButton_clicked()
 {
+    workFlow = CASEFILE;
     ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
     addHistory(MAINMENU);
     qDebug() << "pushed page " << MAINMENU;
@@ -381,11 +387,11 @@ void MainWindow::bookingSetup(){
     ui->bookingTable->horizontalHeader()->setStretchLastSection(true);
     ui->bookingTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->bookingTable->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->bookingTable->setHorizontalHeaderLabels(QStringList() << "Room #" << "Location" << "Program" << "Description" << "Cost" << "Monthly");
+    ui->bookingTable->setHorizontalHeaderLabels(QStringList() << "Room #" << "Location" << "Program" << "Description" << "Daily Cost" << "Monthly Cost");
 
 }
 void MainWindow::clearTable(QTableWidget * table){
-    table->clear();
+    table->clearContents();
     table->setRowCount(0);
 }
 
@@ -641,7 +647,7 @@ void MainWindow::on_bookingSearchButton_clicked()
     }
 */
     QStringList headers, cols;
-    headers << "Room#" << "Program" << " Type" << "Daily Cost" << "Monthly" << "";
+    headers << "Room#" << "Program" << " Type" << "Daily Cost" << "Monthly Cost" << "";
     cols << "SpaceCode" << "ProgramCodes" << "type" << "cost" << "Monthly" << "SpaceId";
     populateATable(ui->bookingTable, headers, cols, result,false);
     ui->bookingTable->setColumnHidden(5, true);
@@ -1194,6 +1200,12 @@ void MainWindow::on_actionMain_Menu_triggered()
 {
     addHistory(ui->stackedWidget->currentIndex());
     ui->stackedWidget->setCurrentIndex(MAINMENU);
+
+    //reset client lookup buttons
+    ui->pushButton_bookRoom->setEnabled(false);
+    ui->pushButton_processPaymeent->setEnabled(false);
+    ui->pushButton_editClientInfo->setEnabled(false);
+    ui->pushButton_CaseFiles->setEnabled(false);
 }
 
 
@@ -1205,6 +1217,7 @@ void MainWindow::on_pushButton_RegisterClient_clicked()
     ui->label_cl_infoedit_title->setText("Register Client");
     ui->button_register_client->setText("Register");
     ui->dateEdit_cl_rulesign->setDate(QDate::currentDate());
+
     defaultRegisterOptions();
 }
 
@@ -1997,6 +2010,7 @@ void MainWindow::initClientLookupInfo(){
 
     profilePic = (QImage)NULL;
 
+    ui->label_cl_info_status->setAutoFillBackground(false);
 
     //disable buttons that need a clientId
     ui->pushButton_bookRoom->setEnabled(false);
@@ -2004,10 +2018,42 @@ void MainWindow::initClientLookupInfo(){
     ui->pushButton_editClientInfo->setEnabled(false);
     ui->pushButton_CaseFiles->setEnabled(false);
 
-    ui->label_cl_info_status->setAutoFillBackground(false);
-
-
-
+    //hide buttons for different workflows
+    switch (workFlow){
+    case BOOKINGPAGE:
+        ui->pushButton_CaseFiles->setVisible(false);
+        ui->pushButton_processPaymeent->setVisible(false);
+        ui->pushButton_bookRoom->setVisible(true);
+        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        break;
+    case PAYMENTPAGE:
+        ui->pushButton_CaseFiles->setVisible(false);
+        ui->pushButton_bookRoom->setVisible(false);
+        ui->pushButton_processPaymeent->setVisible(true);
+        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        break;
+    case CASEFILE:
+        ui->pushButton_CaseFiles->setVisible(true);
+        ui->pushButton_bookRoom->setVisible(false);
+        ui->pushButton_processPaymeent->setVisible(false);
+        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+        break;
+    case CLIENTLOOKUP:
+        ui->pushButton_CaseFiles->setVisible(true);
+        ui->pushButton_processPaymeent->setVisible(true);
+        ui->pushButton_bookRoom->setVisible(true);
+        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalLayout_15->update();
+        break;
+    }
 }
 
 // double clicked employee
@@ -3366,7 +3412,23 @@ void MainWindow::on_btn_pcpKeySave_clicked()
 
 void MainWindow::on_actionPcptables_triggered()
 {
-    ui->pushButton_bookRoom->setVisible(false);
+    if (!ui->pushButton_bookRoom->isHidden()) {
+        ui->pushButton_CaseFiles->setVisible(true);
+        ui->pushButton_bookRoom->setVisible(false);
+        ui->pushButton_processPaymeent->setVisible(false);
+        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+
+    } else {
+        ui->pushButton_CaseFiles->setVisible(true);
+        ui->pushButton_bookRoom->setVisible(true);
+        ui->pushButton_processPaymeent->setVisible(true);
+        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalLayout_15->update();
+    }
 }
 
 void MainWindow::on_btn_pcpRelaUndo_clicked()
@@ -3913,46 +3975,62 @@ void MainWindow::on_lineEdit_search_clientName_returnPressed()
     MainWindow::on_pushButton_search_client_clicked();
 }
 
-void MainWindow::on_btn_createNewUser_3_clicked()
+void MainWindow::on_actionExport_to_PDF_triggered()
 {
-    // add new vacancy
-    QString building = ui->cbox_roomLoc->currentText();
-    QString floor = ui->cbox_roomFloor->currentText();
-    QString room = ui->cbox_roomRoom->currentText();
-    QString bednumber = ui->le_roomNo->text();
-    QString type = ui->cbox_roomType->text();
-    QString cost = QString::number(ui->doubleSpinBox->value());
-    QString monthly = QString::number(ui->doubleSpinBox_2->value());
-
-    // check if it already exists
-
-
+    QString tempDir = QFileDialog::getExistingDirectory(
+                    this,
+                    tr("Select Directory"),
+                    "C://"
+                );
+    QTextDocument doc;
+    doc.setHtml("<h1>hello, I'm an head</h1>");
+//    QPrinter printer;
+//    printer.setOutputFileName(tempDir+"\\file.pdf");
+//    printer.setOutputFormat(QPrinter::PdfFormat);
+//    doc.print(&printer);
+//    printer.newPage();
 }
 
-void MainWindow::on_pushButton_14_clicked()
-{
-    // update vacancy
-    QString building = ui->cbox_roomLoc->currentText();
-    QString floor = ui->cbox_roomFloor->currentText();
-    QString room = ui->cbox_roomRoom->currentText();
-    QString bednumber = ui->le_roomNo->text();
-    QString type = ui->cbox_roomType->text();
-    QString cost = QString::number(ui->doubleSpinBox->value());
-    QString monthly = QString::number(ui->doubleSpinBox_2->value());
+// void MainWindow::on_btn_createNewUser_3_clicked()
+// {
+//     // add new vacancy
+//     QString building = ui->cbox_roomLoc->currentText();
+//     QString floor = ui->cbox_roomFloor->currentText();
+//     QString room = ui->cbox_roomRoom->currentText();
+//     QString bednumber = ui->le_roomNo->text();
+//     QString type = ui->cbox_roomType->text();
+//     QString cost = QString::number(ui->doubleSpinBox->value());
+//     QString monthly = QString::number(ui->doubleSpinBox_2->value());
 
-    // check to make sure it exists
-}
+//     // check if it already exists
 
-void MainWindow::on_pushButton_15_clicked()
-{
-    // delete space
-    QString building = ui->cbox_roomLoc->currentText();
-    QString floor = ui->cbox_roomFloor->currentText();
-    QString room = ui->cbox_roomRoom->currentText();
-    QString bednumber = ui->le_roomNo->text();
-    QString type = ui->cbox_roomType->text();
-    QString cost = QString::number(ui->doubleSpinBox->value());
-    QString monthly = QString::number(ui->doubleSpinBox_2->value());
 
-    // check to make sure it exists
-}
+// }
+
+// void MainWindow::on_pushButton_14_clicked()
+// {
+//     // update vacancy
+//     QString building = ui->cbox_roomLoc->currentText();
+//     QString floor = ui->cbox_roomFloor->currentText();
+//     QString room = ui->cbox_roomRoom->currentText();
+//     QString bednumber = ui->le_roomNo->text();
+//     QString type = ui->cbox_roomType->text();
+//     QString cost = QString::number(ui->doubleSpinBox->value());
+//     QString monthly = QString::number(ui->doubleSpinBox_2->value());
+
+//     // check to make sure it exists
+// }
+
+// void MainWindow::on_pushButton_15_clicked()
+// {
+//     // delete space
+//     QString building = ui->cbox_roomLoc->currentText();
+//     QString floor = ui->cbox_roomFloor->currentText();
+//     QString room = ui->cbox_roomRoom->currentText();
+//     QString bednumber = ui->le_roomNo->text();
+//     QString type = ui->cbox_roomType->text();
+//     QString cost = QString::number(ui->doubleSpinBox->value());
+//     QString monthly = QString::number(ui->doubleSpinBox_2->value());
+
+//     // check to make sure it exists
+// }

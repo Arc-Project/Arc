@@ -472,6 +472,8 @@ private slots:
 
     void on_pushButton_15_clicked();
 
+    void on_actionExport_to_PDF_triggered();
+
 private:
 
     Ui::MainWindow *ui;
