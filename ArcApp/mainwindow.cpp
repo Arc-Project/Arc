@@ -25,8 +25,8 @@ QVector<QString> pcpTypes;
 bool loaded = false;
 QString idDisplayed;
 
-int transacNum;
-int bookingNum;
+int transacNum, transacTotal;
+int bookingNum, bookingTotal;
 
 QProgressDialog* dialog;
 
@@ -1197,13 +1197,12 @@ void MainWindow::on_pushButton_RegisterClient_clicked()
 void MainWindow::on_pushButton_editClientInfo_clicked()
 {
     addHistory(CLIENTLOOKUP);
+    getCurrentClientId();
+
     ui->stackedWidget->setCurrentIndex(CLIENTREGISTER);
     ui->label_cl_infoedit_title->setText("Edit Client Information");
     ui->button_register_client->setText("Edit");
-    int nRow = ui->tableWidget_search_client->currentRow();
-    if (nRow <0)
-        return;
-    curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
+    getCurrentClientId();
 }
 void MainWindow::on_button_cancel_client_register_clicked()
 {
@@ -1216,6 +1215,14 @@ void MainWindow::on_reportsButton_clicked()
     ui->stackedWidget->setCurrentIndex(REPORTS);
     addHistory(MAINMENU);
     qDebug() << "pushed page " << MAINMENU;
+}
+
+void MainWindow::getCurrentClientId(){
+    int nRow = ui->tableWidget_search_client->currentRow();
+    if (nRow <0)
+        return;
+    curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
+
 }
 
 /*===================================================================
@@ -1417,7 +1424,7 @@ void MainWindow::on_button_register_client_clicked()
         {
             if (dbManager->updateClientWithPic(&registerFieldList, curClientID, &profilePic))
             {
-                statusBar()->showMessage("Client Registered Sucessfully.");
+                statusBar()->showMessage("Client information updated Sucessfully.");
                 qDebug() << "Client info edit successfully";
                 clear_client_register_form();
                 ui->stackedWidget->setCurrentIndex(1);
@@ -1552,6 +1559,8 @@ void MainWindow::selected_client_info(int nRow, int nCol)
     curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
     transacNum = 5;
     bookingNum = 5;
+    transacTotal = dbManager->countInformationPerClient("Transac", curClientID);
+    bookingTotal = dbManager->countInformationPerClient("booking", curClientID);
     ui->pushButton_cl_trans_more->setEnabled(true);
 
     table_available = false;
@@ -1575,11 +1584,6 @@ void MainWindow::displayClientInfoThread(QString val){
     qDebug()<<"DISPLAY THREAD: " <<val;
 
     QSqlQuery clientInfo = dbManager->searchClientInfo(val);
-//    QString searchQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, DateRulesSigned, status FROM Client WHERE ClientId =" + val;
-
-    // QString searchQuery = "SELECT FirstName, MiddleName, LastName, Dob, Balance FROM Client WHERE ClientId =" + val;
-//    QSqlQuery clientInfoR = dbManager->execQuery(searchQuery);
-
 
    clientInfo.next();
 
@@ -1708,7 +1712,6 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
             if(transacFuture.isRunning()|| !transacFuture.isFinished()){
                 qDebug()<<"TransactionHistory Is RUNNING";
                 return;
-                //displayFuture.cancel();
             }
             ui->pushButton_cl_trans_more->setEnabled(true);
             transacFuture = QtConcurrent::run(this, &searchTransaction, curClientID);
@@ -1720,12 +1723,10 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
              if(bookHistoryFuture.isRunning()|| !bookHistoryFuture.isFinished()){
                  qDebug()<<"BookingHistory Is RUNNING";
                  return;
-                 //displayFuture.cancel();
              }
              ui->pushButton_cl_book_more->setEnabled(true);
              bookHistoryFuture = QtConcurrent::run(this, &searchBookHistory, curClientID);
              bookHistoryFuture.waitForFinished();
-             qDebug()<<"client Transaction list";
 
     }
 }
@@ -1744,6 +1745,8 @@ void MainWindow::searchTransaction(QString clientId){
     QSqlQuery transQuery = dbManager->searchClientTransList(transacNum, clientId);
     displayTransaction(transQuery);
 
+    QString totalNum= (transacTotal == 0)? "-" : QString::number(transacTotal);
+    ui->label_cl_trans_total_num->setText(totalNum + " Transaction");
 }
 
 
@@ -1765,16 +1768,15 @@ void MainWindow::displayTransaction(QSqlQuery results){
         }
         row++;
     }
-    if(row !=transacNum || row%5 != 0){
+    if(row > transacTotal || row == transacTotal){
         ui->pushButton_cl_trans_more->setEnabled(false);
     }
-    ui->tableWidget_transaction->setMinimumHeight(37*row-5);
+    ui->tableWidget_transaction->setMinimumHeight(35*row-5);
 
 }
 
 void MainWindow::on_pushButton_cl_trans_more_clicked()
 {
-
     transacNum +=5;
     searchTransaction(curClientID);
 }
@@ -1785,7 +1787,8 @@ void MainWindow::searchBookHistory(QString clientId){
     QSqlQuery bookingQuery = dbManager->searchTransBookList(bookingNum, clientId);
     displayBookHistory(bookingQuery);
     dbManager->printAll(bookingQuery);
-
+    QString totalNum = (bookingTotal == 0)? "-" : QString::number(bookingTotal);
+    ui->label_cl_booking_total_num->setText(totalNum + " Booking");
 }
 
 void MainWindow::displayBookHistory(QSqlQuery results){
@@ -1795,7 +1798,7 @@ void MainWindow::displayBookHistory(QSqlQuery results){
     ui->tableWidget_booking->setColumnCount(colCnt);
     ui->tableWidget_booking->clear();
 
-    ui->tableWidget_booking->setHorizontalHeaderLabels(QStringList()<<"Reserved Date"<<"Program Code"<<"Start Date"<< "End Date"<<"Cost"<<"Bed Number"<<"LunchService"<<"WakeUpService"<<"FirstBook ");
+    ui->tableWidget_booking->setHorizontalHeaderLabels(QStringList()<<"Reserved Date"<<"Program Code"<<"Start Date"<< "End Date"<<"Cost"<<"Bed Number"<<"FirstBook ");
     int row =ui->tableWidget_booking->rowCount();
     while(results.next()){
         ui->tableWidget_booking->insertRow(row);
@@ -1805,10 +1808,10 @@ void MainWindow::displayBookHistory(QSqlQuery results){
         }
         row++;
     }
-    if(row !=bookingNum || row%5 != 0){
+    if(row > bookingTotal || row == bookingTotal){
         ui->pushButton_cl_book_more->setEnabled(false);
     }
-    ui->tableWidget_booking->setMinimumHeight(37*row-5);
+    ui->tableWidget_booking->setMinimumHeight(35*row-5);
 
 }
 
