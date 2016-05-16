@@ -119,7 +119,7 @@ public:
     bool deleteWakeups(QDate date, QString id);
     QSqlQuery getNextBooking(QDate endDate, QString roomId);
     QSqlQuery getSwapBookings(QDate start, QDate end, QString program, QString maxSwap, QString curBook);
-    bool insertIntoBookingHistory(QString clientName, QString spaceId, QString program, QString start, QString end, QString action, QString emp, QString shift);
+    bool insertIntoBookingHistory(QString clientName, QString spaceId, QString program, QString start, QString end, QString action, QString emp, QString shift, QString clientId);
     bool addHistoryFromId(QString bookId, QString empId, QString shift, QString action);
 
 
