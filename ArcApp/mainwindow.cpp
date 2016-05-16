@@ -3991,46 +3991,46 @@ void MainWindow::on_actionExport_to_PDF_triggered()
 //    printer.newPage();
 }
 
-// void MainWindow::on_btn_createNewUser_3_clicked()
-// {
-//     // add new vacancy
-//     QString building = ui->cbox_roomLoc->currentText();
-//     QString floor = ui->cbox_roomFloor->currentText();
-//     QString room = ui->cbox_roomRoom->currentText();
-//     QString bednumber = ui->le_roomNo->text();
-//     QString type = ui->cbox_roomType->text();
-//     QString cost = QString::number(ui->doubleSpinBox->value());
-//     QString monthly = QString::number(ui->doubleSpinBox_2->value());
+ void MainWindow::on_btn_createNewUser_3_clicked()
+ {
+     // add new vacancy
+     QString building = ui->cbox_roomLoc->currentText();
+     QString floor = ui->cbox_roomFloor->currentText();
+     QString room = ui->cbox_roomRoom->currentText();
+     QString bednumber = ui->le_roomNo->text();
+     QString type = ui->cbox_roomType->currentText();
+     QString cost = QString::number(ui->doubleSpinBox->value());
+     QString monthly = QString::number(ui->doubleSpinBox_2->value());
 
-//     // check if it already exists
+     // check if it already exists
 
 
-// }
+ }
 
-// void MainWindow::on_pushButton_14_clicked()
-// {
-//     // update vacancy
-//     QString building = ui->cbox_roomLoc->currentText();
-//     QString floor = ui->cbox_roomFloor->currentText();
-//     QString room = ui->cbox_roomRoom->currentText();
-//     QString bednumber = ui->le_roomNo->text();
-//     QString type = ui->cbox_roomType->text();
-//     QString cost = QString::number(ui->doubleSpinBox->value());
-//     QString monthly = QString::number(ui->doubleSpinBox_2->value());
+ void MainWindow::on_pushButton_14_clicked()
+ {
+     // update vacancy
+     QString building = ui->cbox_roomLoc->currentText();
+     QString floor = ui->cbox_roomFloor->currentText();
+     QString room = ui->cbox_roomRoom->currentText();
+     QString bednumber = ui->le_roomNo->text();
+     QString type = ui->cbox_roomType->currentText();
+     QString cost = QString::number(ui->doubleSpinBox->value());
+     QString monthly = QString::number(ui->doubleSpinBox_2->value());
 
-//     // check to make sure it exists
-// }
+     // check to make sure it exists
+ }
 
-// void MainWindow::on_pushButton_15_clicked()
-// {
-//     // delete space
-//     QString building = ui->cbox_roomLoc->currentText();
-//     QString floor = ui->cbox_roomFloor->currentText();
-//     QString room = ui->cbox_roomRoom->currentText();
-//     QString bednumber = ui->le_roomNo->text();
-//     QString type = ui->cbox_roomType->text();
-//     QString cost = QString::number(ui->doubleSpinBox->value());
-//     QString monthly = QString::number(ui->doubleSpinBox_2->value());
+ void MainWindow::on_pushButton_15_clicked()
+ {
+     // delete space
+     QString building = ui->cbox_roomLoc->currentText();
+     QString floor = ui->cbox_roomFloor->currentText();
+     QString room = ui->cbox_roomRoom->currentText();
+     QString bednumber = ui->le_roomNo->text();
+     QString type = ui->cbox_roomType->currentText();
+     QString cost = QString::number(ui->doubleSpinBox->value());
+     QString monthly = QString::number(ui->doubleSpinBox_2->value());
 
-//     // check to make sure it exists
-// }
+     // check to make sure it exists
+ }

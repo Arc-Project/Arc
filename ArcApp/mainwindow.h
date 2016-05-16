@@ -468,6 +468,8 @@ private slots:
 
     void on_lineEdit_search_clientName_returnPressed();
 
+    void on_btn_createNewUser_3_clicked();
+
     void on_pushButton_14_clicked();
 
     void on_pushButton_15_clicked();
