@@ -3857,6 +3857,32 @@ void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
     QString monthly = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 7)).toString();
 
     // fill in stuff on the right
+    populate_modRoom_cboxes();
+
+    // set the building
+    ui->cbox_roomLoc->setCurrentIndex(0);
+    int currindex = 0;
+    while (true) {
+        qDebug() << ui->cbox_roomLoc->currentText();
+        qDebug() << building;
+        if (ui->cbox_roomLoc->currentText() == building) {
+            break;
+        } else {
+            currindex++;
+            ui->cbox_roomLoc->setCurrentIndex(currindex);
+        }
+    }
+
+//    // set the floor
+//    int currindex2 = ui->cbox_roomLoc->currentIndex();
+//    while (true) {
+//        if (ui->cbox_roomFloor->currentText() == floor) {
+//            break;
+//        } else {
+//            currindex2++;
+//            ui->cbox_roomFloor->setCurrentIndex(currindex2);
+//        }
+//    }
 }
 
 void MainWindow::on_lineEdit_search_clientName_returnPressed()

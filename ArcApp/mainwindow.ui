@@ -124,7 +124,7 @@ QHeaderView {
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>12</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -9856,24 +9856,6 @@ QHeaderView {
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="btn_clearEditVacancies">
-               <property name="minimumSize">
-                <size>
-                 <width>70</width>
-                 <height>28</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>Clear All</string>
-               </property>
-              </widget>
-             </item>
-             <item>
               <widget class="QPushButton" name="pushButton_15">
                <property name="minimumSize">
                 <size>
@@ -10526,7 +10508,7 @@ QHeaderView {
                 </font>
                </property>
                <property name="text">
-                <string>Create New</string>
+                <string>Create New Vacancy</string>
                </property>
               </widget>
              </item>
@@ -10544,7 +10526,7 @@ QHeaderView {
                 </font>
                </property>
                <property name="text">
-                <string>Update</string>
+                <string>Update Vacancy</string>
                </property>
               </widget>
              </item>
