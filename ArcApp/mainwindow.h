@@ -67,8 +67,9 @@ public:
 
     void getRegisterLogFields(QStringList* fieldList);
     void getCurrentClientId();   //get client id from client list table
+    void statusColor();
 
-    QImage profilePic;
+
 
     //COLIN STUFF////
     void getProgramCodes();
@@ -476,11 +477,11 @@ private:
     Client * curClient;
     QString curClientID;
     bool editOverLap;
-    bool pic_available = true;
-    bool table_available = true;
+//    bool pic_available = true;
+//    bool table_available = true;
 
     bool caseWorkerUpdated = true;
-
+   QImage profilePic;
     QMap <QString, int> caseWorkerList;    //caseworker list
 
     QDir dir;
