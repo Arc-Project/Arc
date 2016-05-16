@@ -80,6 +80,7 @@ void TakePhoto::on_pushButtons_camstart_clicked()
         ui->verticalLayout->removeWidget(vf);
         vf->close();
         cic->destroyed();
+        cam->stop();
         cam->destroyed();
         cameraon = false;
         ui->pushButtons_camstart->setText("Cam ON");
