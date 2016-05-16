@@ -478,12 +478,13 @@ bool DatabaseManager::uploadProfilePic(QSqlDatabase* tempDbPtr, QString connName
     }
     return false;
 }
-bool DatabaseManager::insertIntoBookingHistory(QString clientName, QString spaceId, QString program, QString start, QString end, QString action, QString emp, QString shift){
+bool DatabaseManager::insertIntoBookingHistory(QString clientName, QString spaceId, QString program, QString start, QString end, QString action, QString emp, QString shift, QString clientId){
     QSqlQuery query(db);
     QString q = "INSERT INTO BookingHistory VALUES ('" +clientName + "','" +
             spaceId + "','" + program + "','" + QDate::currentDate().toString(Qt::ISODate)
             + "','" + start + "','" + end + "','" + action + "','" + "UNKNOWN"
-            + "','" + emp + "','" + shift + "','" + QTime::currentTime().toString() + "')";
+            + "','" + emp + "','" + shift + "','" + QTime::currentTime().toString()
+            + "','" + clientId + "')";
     qDebug() << q;
     return query.exec(q);
 
@@ -501,7 +502,8 @@ bool DatabaseManager::addHistoryFromId(QString bookId, QString empId, QString sh
         QString program = query.value("ProgramCode").toString();
         QString start = query.value("StartDate").toString();
         QString end = query.value("EndDate").toString();
-        return insertIntoBookingHistory(clientName, spaceId, program, start, end, action, empId, shift );
+        QString clientId = query.value("ClientId").toString();
+        return insertIntoBookingHistory(clientName, spaceId, program, start, end, action, empId, shift, clientId );
 
     }
 
