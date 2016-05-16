@@ -487,6 +487,34 @@ bool DatabaseManager::uploadProfilePic(QSqlDatabase* tempDbPtr, QString connName
     }
     return false;
 }
+bool DatabaseManager::insertIntoBookingHistory(QString clientName, QString spaceId, QString program, QString start, QString end, QString action, QString emp, QString shift){
+    QSqlQuery query(db);
+    QString q = "INSERT INTO BookingHistory VALUES ('" +clientName + "','" +
+            spaceId + "','" + program + "','" + QDate::currentDate().toString(Qt::ISODate)
+            + "','" + start + "','" + end + "','" + action + "','" + "UNKNOWN"
+            + "','" + emp + "','" + shift + "','" + QTime::currentTime().toString() + "')";
+    qDebug() << q;
+    return query.exec(q);
+
+
+}
+bool DatabaseManager::addHistoryFromId(QString bookId, QString empId, QString shift, QString action){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Booking WHERE BookingId = '" + bookId + "'";
+    if(!query.exec(q)){
+        return false;
+    }
+    while(query.next()){
+        QString clientName =query.value("ClientName").toString();
+        QString spaceId = query.value("SpaceId").toString();
+        QString program = query.value("ProgramCode").toString();
+        QString start = query.value("StartDate").toString();
+        QString end = query.value("EndDate").toString();
+        return insertIntoBookingHistory(clientName, spaceId, program, start, end, action, empId, shift );
+
+    }
+
+}
 
 bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage* profilePic)//QObject sth, QImage profilePic)
 {
@@ -1203,10 +1231,10 @@ QSqlQuery DatabaseManager::getActiveBooking(QString user, bool userLook){
     QString date = QDate::currentDate().toString(Qt::ISODate);
     QString q;
     if(!userLook){
-         q = "SELECT * FROM BOOKING WHERE FirstBook = 'YES' AND EndDate >= '" + date + "'";
+         q = "SELECT * FROM BOOKING JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '" + date + "'";
     }
     else{
-         q = "SELECT * FROM BOOKING WHERE FirstBook = 'YES' AND EndDate >= '" + date + "' AND ClientName LIKE '%" + user + "%'";
+         q = "SELECT * FROM BOOKING JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '" + date + "' AND ClientName LIKE '%" + user + "%'";
 
     }
     qDebug() << q;

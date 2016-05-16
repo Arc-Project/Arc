@@ -453,6 +453,8 @@ private slots:
 
     void on_pushButton_cl_book_more_clicked();
 
+    void on_lineEdit_search_clientName_returnPressed();
+
 private:
 
     Ui::MainWindow *ui;

@@ -7,13 +7,15 @@ EditRooms::EditRooms(QWidget *parent) :
 {
     ui->setupUi(this);
 }
-EditRooms::EditRooms(QWidget *parent, Booking * curBook) :
+EditRooms::EditRooms(QWidget *parent, Booking * curBook, QString empId, QString shift) :
     QDialog(parent),
     ui(new Ui::EditRooms)
 {
     setup = true;
     this->curBook = curBook;
     ui->setupUi(this);
+    this->empId = empId;
+    this->shift = shift;
     getProgramCodes(curBook->program);
     searchAvailable(curBook->program);
     setup = false;
@@ -25,6 +27,8 @@ EditRooms::~EditRooms()
 }
 void EditRooms::searchAvailable(QString program){
     swapping = false;
+    ui->editMoveType->setText("Move to Free Room");
+
     QSqlQuery result;
     result = dbManager->getCurrentBooking(curBook->startDate, curBook->endDate, program);
     QStringList headers;
@@ -123,6 +127,8 @@ void EditRooms::on_buttonBox_accepted()
         else{
             qDebug() << "ERROR INSERTING SWAP";
         }
+        dbManager->addHistoryFromId(swapBook, empId, shift, "SWAP");
+        dbManager->addHistoryFromId(curBook->bookID, empId, shift, "SWAP");
 
     }
 
@@ -132,6 +138,7 @@ void EditRooms::on_buttonBox_accepted()
 void EditRooms::on_editSwap_clicked()
 {
     swapping = true;
+    ui->editMoveType->setText("Moving to Occupied Room");
     QSqlQuery result;
     result = dbManager->getNextBooking(curBook->endDate, curBook->room);
     int x = 0;
@@ -151,6 +158,6 @@ void EditRooms::on_editSwap_clicked()
     QStringList col;
     headers << "Room#" <<  "Program" << "Type" << "Cost" << "Monthly" << "Current Occupant" << "";
     col << "SpaceId" << "ProgramCodes" << "type" << "cost" << "Monthly" << "ClientName" << "BookingId" ;
-    ui->editRoom->setColumnHidden(6, true);
     populateATable(ui->editRoom,headers, col, result, false);
+    ui->editRoom->setColumnHidden(6, true);
 }
