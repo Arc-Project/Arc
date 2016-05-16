@@ -1775,7 +1775,7 @@ void MainWindow::displayBookHistory(QSqlQuery results){
     ui->tableWidget_booking->setColumnCount(colCnt);
     ui->tableWidget_booking->clear();
 
-    ui->tableWidget_booking->setHorizontalHeaderLabels(QStringList()<<"Reserved Date"<<"Program Code"<<"Start Date"<< "End Date"<<"Cost"<<"Bed Number"<<"LunchService"<<"WakeUpService"<<"FirstBook ");
+    ui->tableWidget_booking->setHorizontalHeaderLabels(QStringList()<<"Reserved Date"<<"Program Code"<<"Start Date"<< "End Date"<<"Cost"<<"Bed Number"<<"FirstBook ");
     int row =ui->tableWidget_booking->rowCount();
     while(results.next()){
         ui->tableWidget_booking->insertRow(row);

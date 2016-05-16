@@ -452,7 +452,7 @@ QSqlQuery DatabaseManager::searchTransBookList(int maxNum, QString clientId){
     QSqlQuery clientTransQuery;
     clientTransQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) )
                              + QString(" DateCreated, ProgramCode, StartDate, EndDate, Cost, ")
-                             + QString("SpaceId, Lunch, Wakeup, FirstBook ")
+                             + QString("SpaceId, FirstBook ")
                          + QString("FROM Booking ")
                          + QString("WHERE ClientId = " + clientId + " ORDER BY EndDate DESC, DateCreated DESC"));
     clientTransQuery.exec();
