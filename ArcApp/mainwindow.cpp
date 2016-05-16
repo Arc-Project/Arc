@@ -2360,7 +2360,7 @@ void MainWindow::on_btn_listAllUsers_3_clicked()
     ui->tableWidget_5->clear();
     ui->tableWidget_5->horizontalHeader()->setStretchLastSection(true);
 
-    QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, cost, Monthly FROM Space");
+    QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, cost, Monthly FROM Space ORDER BY SpaceCode");
 
 //    int numCols = result.record().count();
     ui->tableWidget_5->setColumnCount(8);
@@ -4037,10 +4037,43 @@ void MainWindow::on_pushButton_14_clicked()
     QString monthly = QString::number(ui->doubleSpinBox_2->value());
 
     // check to make sure it exists
+    QSqlQuery result = dbManager->searchSingleBed(building, floor, room, bednumber);
+
+    if (result.next()) {
+        // doesn't exist so make one
+        // INSERT INTO Space
+        // VALUES (7, 25, '', 'Mat', 0, 0, NULL);
+
+        // get room id
+        QSqlQuery idinfo = dbManager->searchIDInformation(building, floor, room);
+
+        idinfo.next();
+
+        QString roomid = idinfo.value(0).toString();
+
+        QSqlQuery updateres = dbManager->execQuery("UPDATE s "
+                                                   "SET s.cost = " + cost +
+                                                   ", s.Monthly = " + monthly + " "
+                                                   "FROM Space s INNER JOIN Room r ON s.RoomId = r.RoomId "
+                                                   "INNER JOIN Floor f ON r.FloorId = f.FloorId "
+                                                   "INNER JOIN Building b ON f.BuildingId = b.BuildingId "
+                                                   "WHERE b.BuildingNo = " + building + " "
+                                                   "AND f.FloorNo = " + floor + " "
+                                                   "AND r.RoomNo = " + room + " "
+                                                   "AND s.SpaceNo = " + bednumber);
+        // update spacecodes
+        dbManager->updateAllSpacecodes();
+
+        ui->lbl_editUserWarning_3->setText("Vacancy updated");
+    } else {
+        ui->lbl_editUserWarning_3->setText("This vacancy doesn't exist. Please select a valid vacancy.");
+    }
 }
 
 void MainWindow::on_pushButton_15_clicked()
 {
+    // implement checking if bookings are using this later?
+
     ui->lbl_editUserWarning_3->setText("");
     // delete space
     QString building = ui->cbox_roomLoc->currentText();
