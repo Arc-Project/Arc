@@ -44,9 +44,16 @@ MainWindow::MainWindow(QWidget *parent) :
     //default signal of stackedWidget
     //detect if the widget is changed
     connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(initCurrentWidget(int)));
-    connect(dbManager, SIGNAL(dailyReportStatsChanged(QList<int>)), this, SLOT(updateDailyReportStats(QList<int>)));
-    connect(dbManager, SIGNAL(shiftReportStatsChanged(QList<int>)), this, SLOT(updateShiftReportStats(QList<int>)));
-    connect(ui->other_lineEdit, SIGNAL(textEdited(const QString &)), this, SLOT(on_otherSave_btn_textEdited(const QString &)));
+    connect(dbManager, SIGNAL(dailyReportStatsChanged(QList<int>)), this,
+            SLOT(updateDailyReportStats(QList<int>)));
+    connect(dbManager, SIGNAL(shiftReportStatsChanged(QList<int>)), this,
+            SLOT(updateShiftReportStats(QList<int>)));
+    connect(dbManager, SIGNAL(cashFloatChanged(QDate, int, QStringList)), this,
+            SLOT(updateCashFloat(QDate, int, QStringList)));
+    connect(dbManager, SIGNAL(cashFloatInserted(QString, QString, QString)), this,
+            SLOT(updateCashFloatLastEditedLabels(QString, QString, QString)));
+    connect(ui->other_lineEdit, SIGNAL(textEdited(const QString &)), this,
+            SLOT(on_other_lineEdit_textEdited(const QString &)));
     curClient = 0;
     curBook = 0;
     trans = 0;
@@ -146,6 +153,7 @@ void MainWindow::initCurrentWidget(int idx){
             MainWindow::getDailyReportStats(QDate::currentDate());
             MainWindow::updateShiftReportTables(QDate::currentDate(), currentshiftid);
             MainWindow::getShiftReportStats(QDate::currentDate(), currentshiftid);
+            MainWindow::getCashFloat(QDate::currentDate(), currentshiftid);
             break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
@@ -217,7 +225,13 @@ void MainWindow::on_actionDB_Connection_triggered()
 
 void MainWindow::on_actionTest_Query_triggered()
 {
-    qDebug() << dbManager->getShiftReportTotal(QDate::currentDate(), 1, PAY_CASH);
+    dbManager->getCashFloatThread(QDate::currentDate(), currentshiftid);
+    // QList<int> coins;
+    // for (int i = 0; i < 10; i++)
+    // {
+    //     coins << 1;
+    // }
+    // dbManager->insertCashFloat(QDate::currentDate(), 1, "Joseph", "comments", coins);
 }
 
 void MainWindow::on_actionFile_Upload_triggered()
@@ -3039,7 +3053,7 @@ REPORTS
 void MainWindow::setupReportsScreen()
 {
     // Daily Report Screen
-    ui->lbl_dailyReportDateVal->setText(QDate::currentDate().toString("yyyy-MM-dd"));
+    ui->lbl_dailyReportDateVal->setText(QDate::currentDate().toString(Qt::ISODate));
     ui->dailyReport_dateEdit->setDate(QDate::currentDate());
     checkoutReport = new Report(this, ui->checkout_tableView, CHECKOUT_REPORT);
     vacancyReport = new Report(this, ui->vacancy_tableView, VACANCY_REPORT);
@@ -3047,9 +3061,10 @@ void MainWindow::setupReportsScreen()
     wakeupReport = new Report(this, ui->wakeup_tableView, WAKEUP_REPORT);
 
     // Shift Report Screen
-    ui->lbl_shiftReportDateVal->setText(QDate::currentDate().toString("yyyy-MM-dd"));
+    ui->lbl_shiftReportDateVal->setText(QDate::currentDate().toString(Qt::ISODate));
     ui->lbl_shiftReportShiftVal->setText(QString::number(currentshiftid));
     ui->shiftReport_dateEdit->setDate(QDate::currentDate());
+    ui->shiftReport_spinBox->setValue(currentshiftid);
 
     bookingReport = new Report(this, ui->booking_tableView, BOOKING_REPORT);
     transactionReport = new Report(this, ui->transaction_tableView, TRANSACTION_REPORT);
@@ -3057,6 +3072,13 @@ void MainWindow::setupReportsScreen()
     otherReport = new Report(this, ui->other_tableView, OTHER_REPORT);
 
     ui->saveOther_btn->setEnabled(false);
+
+    // Float Report Screen
+    ui->cashFloatDate_lbl->setText(QDate::currentDate().toString(Qt::ISODate));
+    ui->cashFloatShift_lbl->setText(QString::number(currentshiftid));
+    ui->cashFloat_dateEdit->setDate(QDate::currentDate());
+    ui->cashFloat_spinBox->setValue(currentshiftid);
+
 }
 
 void MainWindow::updateDailyReportTables(QDate date)
@@ -3066,7 +3088,7 @@ void MainWindow::updateDailyReportTables(QDate date)
     lunchReport->updateModel(date);
     wakeupReport->updateModel(date);
 
-    ui->lbl_dailyReportDateVal->setText(date.toString("yyyy-MM-dd"));
+    ui->lbl_dailyReportDateVal->setText(date.toString(Qt::ISODate));
     ui->dailyReport_dateEdit->setDate(date);
 }
 
@@ -3077,7 +3099,7 @@ void MainWindow::updateShiftReportTables(QDate date, int shiftNo)
     clientLogReport->updateModel(date, shiftNo);
     otherReport->updateModel(date, shiftNo);
 
-    ui->lbl_shiftReportDateVal->setText(date.toString("yyyy-MM-dd"));
+    ui->lbl_shiftReportDateVal->setText(date.toString(Qt::ISODate));
     ui->lbl_shiftReportShiftVal->setText(QString::number(shiftNo));
     ui->shiftReport_dateEdit->setDate(date);
 }
@@ -3104,6 +3126,24 @@ void MainWindow::on_shiftReportGo_btn_clicked()
     MainWindow::getShiftReportStats(date, shiftNo);
 }
 
+void MainWindow::on_shiftReportCurrent_btn_clicked()
+{
+    ui->shiftReport_dateEdit->setDate(QDate::currentDate());
+    ui->shiftReport_spinBox->setValue(currentshiftid);
+}
+
+void MainWindow::on_other_lineEdit_textEdited(const QString &text)
+{
+    if (text.trimmed().isEmpty())
+    {
+        ui->saveOther_btn->setEnabled(false);
+    }
+    else
+    {
+        ui->saveOther_btn->setEnabled(true);
+    }
+}
+
 void MainWindow::on_saveOther_btn_clicked()
 {
     QString logText = ui->other_lineEdit->text();
@@ -3118,12 +3158,6 @@ void MainWindow::on_saveOther_btn_clicked()
     }
 }
 
-void MainWindow::on_shiftReportCurrent_btn_clicked()
-{
-    ui->shiftReport_dateEdit->setDate(QDate::currentDate());
-    ui->shiftReport_spinBox->setValue(currentshiftid);
-}
-
 void MainWindow::getDailyReportStats(QDate date)
 {
     QtConcurrent::run(dbManager, &DatabaseManager::getDailyReportStatsThread, date);
@@ -3132,6 +3166,11 @@ void MainWindow::getDailyReportStats(QDate date)
 void MainWindow::getShiftReportStats(QDate date, int shiftNo)
 {
     QtConcurrent::run(dbManager, &DatabaseManager::getShiftReportStatsThread, date, shiftNo);   
+}
+
+void MainWindow::getCashFloat(QDate date, int shiftNo)
+{
+    QtConcurrent::run(dbManager, &DatabaseManager::getCashFloatThread, date, shiftNo);
 }
 
 void MainWindow::updateDailyReportStats(QList<int> list)
@@ -3151,18 +3190,80 @@ void MainWindow::updateShiftReportStats(QList<int> list)
     ui->lbl_shiftAmt->setText(QString::number(list.at(4)));
 }
 
-void MainWindow::on_otherSave_btn_textEdited(const QString &text)
+void MainWindow::updateCashFloat(QDate date, int shiftNo, QStringList list)
 {
-    QString logText = ui->other_lineEdit->text();
-    if (logText.trimmed().isEmpty())
-    {
-        ui->saveOther_btn->setEnabled(false);
-    }
-    else
-    {
-        ui->saveOther_btn->setEnabled(true);
-    }
+    ui->lastModifiedEmpName_lbl->setText(list.at(0));
+    ui->lastModifiedDateTime_lbl->setText(list.at(1));
+    ui->pte_floatMemo->document()->setPlainText(list.at(2));
+    ui->sbox_nickels->setValue(list.at(3).toInt());
+    ui->sbox_dimes->setValue(list.at(4).toInt());
+    ui->sbox_quarters->setValue(list.at(5).toInt());
+    ui->sbox_loonies->setValue(list.at(6).toInt());
+    ui->sbox_toonies->setValue(list.at(7).toInt());
+    ui->sbox_fives->setValue(list.at(8).toInt());
+    ui->sbox_tens->setValue(list.at(9).toInt());
+    ui->sbox_twenties->setValue(list.at(10).toInt());
+    ui->sbox_fifties->setValue(list.at(11).toInt());
+    ui->sbox_hundreds->setValue(list.at(12).toInt());
+    ui->lbl_floatAmt->setText(list.at(13));
 
+    ui->cashFloatDate_lbl->setText(date.toString(Qt::ISODate));
+    ui->cashFloatShift_lbl->setText(QString::number(shiftNo));
+}
+
+void MainWindow::on_saveFloat_btn_clicked()
+{
+    MainWindow::on_calculateTotal_btn_clicked();
+
+    QDate date = ui->cashFloat_dateEdit->date();
+    int shiftNo = ui->cashFloat_spinBox->value();
+    QString empName = userLoggedIn;
+    QString comments = ui->pte_floatMemo->toPlainText();
+    QList<int> coins;
+    coins << ui->sbox_nickels->value() << ui->sbox_dimes->value() << ui->sbox_quarters->value()
+          << ui->sbox_loonies->value() << ui->sbox_toonies->value() << ui->sbox_fives->value()
+          << ui->sbox_tens->value() << ui->sbox_twenties->value() << ui->sbox_fifties->value()
+          << ui->sbox_hundreds->value();
+
+    useProgressDialog("Saving Cash Float Changes ...", QtConcurrent::run(dbManager,
+        &DatabaseManager::insertCashFloat, date, shiftNo, empName, comments, coins));
+}
+
+void MainWindow::on_calculateTotal_btn_clicked()
+{
+    double total = ui->sbox_nickels->value() * VAL_NICKEL;
+    total += ui->sbox_dimes->value() * VAL_DIME;
+    total += ui->sbox_quarters->value() * VAL_QUARTER;
+    total += ui->sbox_loonies->value() * VAL_LOONIE;
+    total += ui->sbox_toonies->value() * VAL_TOONIE;
+    total += ui->sbox_fives->value() * VAL_FIVE;
+    total += ui->sbox_tens->value() * VAL_TEN;
+    total += ui->sbox_twenties->value() * VAL_TWENTY;
+    total += ui->sbox_fifties->value() * VAL_FIFTY;
+    total += ui->sbox_hundreds->value() * VAL_HUNDRED;
+
+    ui->lbl_floatAmt->setText(QString("$ " + QString::number(total, 'f', 2)));
+}
+
+void MainWindow::on_cashFloatGo_btn_clicked()
+{
+    QDate date = ui->cashFloat_dateEdit->date();
+    int shiftNo = ui->cashFloat_spinBox->value();
+
+    MainWindow::getCashFloat(date, shiftNo);
+}
+
+void MainWindow::on_cashFloatCurrent_btn_clicked()
+{
+    ui->cashFloat_dateEdit->setDate(QDate::currentDate());
+    ui->cashFloat_spinBox->setValue(currentshiftid);
+}
+
+void MainWindow::updateCashFloatLastEditedLabels(QString empName, 
+    QString currentDateStr, QString currentTimeStr)
+{
+    ui->lastModifiedEmpName_lbl->setText(empName);
+    ui->lastModifiedDateTime_lbl->setText(currentDateStr + " at " + currentTimeStr);
 }
 
 /*==============================================================================

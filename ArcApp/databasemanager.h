@@ -87,6 +87,10 @@ public:
     bool getShiftReportClientLogQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
     bool getShiftReportOtherQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
     bool insertOtherLog(QString empName, int shiftNo, QString logText);
+    bool insertCashFloat(QDate date, int shiftNo, QString empName,
+        QString comments, QList<int> coins);
+    bool getCashFloatReportQuery(QSqlQuery* queryResults, QDate Date, int shiftNo);
+    void getCashFloatThread(QDate date, int shiftNo);
 
     //COLIN STUFF/////////////////////////////////////////////////////////////
     QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);
@@ -144,6 +148,9 @@ public:
 signals:
     void dailyReportStatsChanged(QList<int> list);
     void shiftReportStatsChanged(QList<int> list);
+    void cashFloatChanged(QDate date, int shiftNo, QStringList list);
+    void cashFloatInserted(QString empName, QString currentDateStr, 
+        QString currentTimeStr);
 
 private:
     QSqlDatabase db = QSqlDatabase::database();
