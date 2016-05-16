@@ -138,6 +138,9 @@ public:
     QSqlQuery getAvailableBeds(QString pcode);
     QSqlQuery getAssignedBeds(QString pcode);
     QSqlQuery searchSingleBed(QString buildingno, QString floorno, QString roomno, QString spaceno);
+    QSqlQuery searchIDInformation(QString buildingno, QString floorno, QString roomno);
+    QSqlQuery updateAllSpacecodes();
+    QSqlQuery deleteSpace(QString buildingno, QString floorno, QString roomno, QString spaceno);
     QSqlQuery updateSpaceProgram(QString spaceid, QString program);
     QSqlQuery addPcp(int rowid, QString clientId, QString type, QString goal, QString strategy, QString date);
     QSqlQuery deletePcpRow(int rowId, QString type);
