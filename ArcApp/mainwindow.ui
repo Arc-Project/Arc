@@ -2827,24 +2827,6 @@ QHeaderView {
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton_10">
-              <property name="minimumSize">
-               <size>
-                <width>140</width>
-                <height>28</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>Update Balance</string>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="QPushButton" name="paymentButton_2">
               <property name="minimumSize">
                <size>
@@ -4409,6 +4391,8 @@ QHeaderView {
                 <rect>
                  <x>0</x>
                  <y>0</y>
+                 <width>702</width>
+                 <height>1381</height>
                  <width>609</width>
                  <height>1294</height>
                 </rect>
@@ -8877,7 +8861,7 @@ QHeaderView {
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLabel" name="lbl_shiftReportDateVal_2">
+                    <widget class="QLabel" name="cashFloatDate_lbl">
                      <property name="font">
                       <font>
                        <pointsize>10</pointsize>
@@ -8907,7 +8891,7 @@ QHeaderView {
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLabel" name="lbl_shiftReportShiftVal_2">
+                    <widget class="QLabel" name="cashFloatShift_lbl">
                      <property name="font">
                       <font>
                        <pointsize>10</pointsize>
@@ -8933,6 +8917,19 @@ QHeaderView {
                    </property>
                   </spacer>
                  </item>
+                 <item row="1" column="5">
+                  <spacer name="verticalSpacer_9">
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>20</width>
+                     <height>40</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
                  <item row="0" column="4" colspan="2">
                   <layout class="QHBoxLayout" name="horizontalLayout_33">
                    <item>
@@ -8950,7 +8947,7 @@ QHeaderView {
                     </widget>
                    </item>
                    <item>
-                    <widget class="QDateEdit" name="shiftReport_dateEdit_2">
+                    <widget class="QDateEdit" name="cashFloat_dateEdit">
                      <property name="minimumSize">
                       <size>
                        <width>100</width>
@@ -8968,7 +8965,7 @@ QHeaderView {
                     </widget>
                    </item>
                    <item>
-                    <widget class="QSpinBox" name="shiftReport_spinBox_2">
+                    <widget class="QSpinBox" name="cashFloat_spinBox">
                      <property name="minimumSize">
                       <size>
                        <width>35</width>
@@ -8998,7 +8995,7 @@ QHeaderView {
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="shiftReportGo_btn_2">
+                    <widget class="QPushButton" name="cashFloatGo_btn">
                      <property name="minimumSize">
                       <size>
                        <width>28</width>
@@ -9022,7 +9019,7 @@ QHeaderView {
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="shiftReportCurrent_btn_2">
+                    <widget class="QPushButton" name="cashFloatCurrent_btn">
                      <property name="minimumSize">
                       <size>
                        <width>110</width>
@@ -9047,8 +9044,8 @@ QHeaderView {
                    </item>
                   </layout>
                  </item>
-                 <item row="1" column="5">
-                  <spacer name="verticalSpacer_9">
+                 <item row="3" column="4">
+                  <spacer name="verticalSpacer_8">
                    <property name="orientation">
                     <enum>Qt::Vertical</enum>
                    </property>
@@ -9060,23 +9057,28 @@ QHeaderView {
                    </property>
                   </spacer>
                  </item>
+                 <item row="4" column="2">
+                  <widget class="QLabel" name="lbl_floatWarning">
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>28</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>10</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
                  <item row="2" column="0" colspan="6">
                   <widget class="QWidget" name="widget" native="true">
                    <layout class="QGridLayout" name="gridLayout_35">
-                    <item row="0" column="5">
-                     <spacer name="horizontalSpacer_38">
-                      <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>40</width>
-                        <height>20</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                    <item row="0" column="1">
+                    <item row="0" column="0">
                      <spacer name="horizontalSpacer_37">
                       <property name="orientation">
                        <enum>Qt::Horizontal</enum>
@@ -9089,7 +9091,7 @@ QHeaderView {
                       </property>
                      </spacer>
                     </item>
-                    <item row="0" column="2">
+                    <item row="0" column="1">
                      <layout class="QFormLayout" name="formLayout_9">
                       <property name="horizontalSpacing">
                        <number>17</number>
@@ -9264,7 +9266,7 @@ QHeaderView {
                       </item>
                      </layout>
                     </item>
-                    <item row="0" column="3">
+                    <item row="0" column="2">
                      <spacer name="horizontalSpacer_39">
                       <property name="orientation">
                        <enum>Qt::Horizontal</enum>
@@ -9277,20 +9279,7 @@ QHeaderView {
                       </property>
                      </spacer>
                     </item>
-                    <item row="1" column="4">
-                     <spacer name="verticalSpacer_47">
-                      <property name="orientation">
-                       <enum>Qt::Vertical</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>20</width>
-                        <height>40</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                    <item row="0" column="4">
+                    <item row="0" column="3">
                      <layout class="QFormLayout" name="formLayout_10">
                       <property name="horizontalSpacing">
                        <number>17</number>
@@ -9465,7 +9454,68 @@ QHeaderView {
                       </item>
                      </layout>
                     </item>
-                    <item row="2" column="4">
+                    <item row="0" column="4">
+                     <spacer name="horizontalSpacer_38">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item row="1" column="3">
+                     <spacer name="verticalSpacer_47">
+                      <property name="orientation">
+                       <enum>Qt::Vertical</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>20</width>
+                        <height>40</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item row="2" column="1" colspan="2">
+                     <layout class="QHBoxLayout" name="horizontalLayout_97">
+                      <item>
+                       <spacer name="horizontalSpacer_79">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="calculateTotal_btn">
+                        <property name="minimumSize">
+                         <size>
+                          <width>100</width>
+                          <height>28</height>
+                         </size>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <pointsize>10</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>Calculate</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item row="2" column="3">
                      <layout class="QHBoxLayout" name="horizontalLayout_5">
                       <item>
                        <widget class="QLabel" name="lbl_floatTotal">
@@ -9509,7 +9559,7 @@ QHeaderView {
                       </item>
                      </layout>
                     </item>
-                    <item row="3" column="2" colspan="3">
+                    <item row="3" column="1" colspan="3">
                      <layout class="QVBoxLayout" name="verticalLayout_4">
                       <item>
                        <widget class="QLabel" name="label_89">
@@ -9551,7 +9601,7 @@ QHeaderView {
                              </widget>
                             </item>
                             <item>
-                             <widget class="QLabel" name="label_71">
+                             <widget class="QLabel" name="lastModifiedEmpName_lbl">
                               <property name="font">
                                <font>
                                 <pointsize>9</pointsize>
@@ -9577,12 +9627,12 @@ QHeaderView {
                                </font>
                               </property>
                               <property name="text">
-                               <string>Last Modified At:</string>
+                               <string>Last Modified On:</string>
                               </property>
                              </widget>
                             </item>
                             <item>
-                             <widget class="QLabel" name="label_73">
+                             <widget class="QLabel" name="lastModifiedDateTime_lbl">
                               <property name="font">
                                <font>
                                 <pointsize>9</pointsize>
@@ -9614,7 +9664,7 @@ QHeaderView {
                          </spacer>
                         </item>
                         <item>
-                         <widget class="QPushButton" name="pushButton_23">
+                         <widget class="QPushButton" name="saveFloat_btn">
                           <property name="minimumSize">
                            <size>
                             <width>55</width>
@@ -9636,37 +9686,6 @@ QHeaderView {
                      </layout>
                     </item>
                    </layout>
-                  </widget>
-                 </item>
-                 <item row="3" column="4">
-                  <spacer name="verticalSpacer_8">
-                   <property name="orientation">
-                    <enum>Qt::Vertical</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>20</width>
-                     <height>40</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item row="4" column="2">
-                  <widget class="QLabel" name="lbl_floatWarning">
-                   <property name="minimumSize">
-                    <size>
-                     <width>0</width>
-                     <height>28</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <pointsize>10</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
                   </widget>
                  </item>
                 </layout>
@@ -10987,6 +11006,13 @@ QHeaderView {
            <widget class="QPushButton" name="confirmAddLunch">
             <property name="text">
              <string>Edit Lunches</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QLabel" name="confirmRoom">
+            <property name="text">
+             <string>TextLabel</string>
             </property>
            </widget>
           </item>
