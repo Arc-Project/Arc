@@ -6494,14 +6494,17 @@ QHeaderView {
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBox">
+           <widget class="QCheckBox" name="chk_filter">
             <property name="font">
              <font>
               <pointsize>10</pointsize>
              </font>
             </property>
             <property name="text">
-             <string>auto filter results</string>
+             <string>filter by client name</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
