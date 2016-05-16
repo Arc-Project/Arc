@@ -44,6 +44,7 @@ void LoginPrompt::on_btn_login_clicked()
     if (validLogin) {
         MainWindow* w = new MainWindow();
         w->show();
+        userLoggedIn = username;
         close();
     }
 }
