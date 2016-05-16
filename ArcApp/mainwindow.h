@@ -24,6 +24,9 @@
 #define RESTRICTIONS        4
 #define DEFAULTTAB          0
 
+#define NOREGISTER          0
+#define NEWCLIENT           1
+#define EDITCLIENT          2
 #include <QMainWindow>
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
@@ -64,9 +67,13 @@ public:
     void clientSearchedInfo();
     void initClientLookupInfo();
     void setSelectedClientInfo();
+    void initClBookHistoryTable();
+    void initClTransactionTable();
+
 
     void getRegisterLogFields(QStringList* fieldList);
     void getCurrentClientId();   //get client id from client list table
+    void getClientInfo();
     void statusColor();
 
 
@@ -89,6 +96,7 @@ public:
     void popBookFromRow();
     void clearTable(QTableWidget * table);
     void setBookSummary();
+    bool doMessageBox(QString message);
 
     //COLIN END//////
 
@@ -481,6 +489,11 @@ private slots:
     void on_btn_delTypeLoc_clicked();
 
     void on_editroommodifybox_clicked(const QModelIndex &index);
+
+    void on_chk_filter_clicked();
+
+    void on_btn_payNew_clicked();
+
 
 private:
 

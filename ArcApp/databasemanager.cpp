@@ -343,7 +343,6 @@ SEARCH CLIENT LIST FUNCTION(START)
 ==============================================================================*/
 
 
-//bool DatabaseManager::searchClientList(QSqlQuery* query, QString ClientName){
 QSqlQuery DatabaseManager::searchClientList(QString ClientName){
     QSqlQuery query(db);
 
@@ -371,7 +370,7 @@ QSqlQuery DatabaseManager::searchClientList(QString ClientName){
                      + QString("ORDER BY FirstName ASC, LastName ASC");
     }
     else{
-        qDebug()<<"Sth wrong";
+        qDebug()<<"no name or more than 1 ";
     }
     query.prepare(searchQuery);
     query.exec();
@@ -445,13 +444,11 @@ QSqlQuery DatabaseManager::searchBookList(int maxNum, QString clientId){
 
 int DatabaseManager::countInformationPerClient(QString tableName, QString ClientId){
     QSqlQuery countQuery;
-    QString test = "SELECT COUNT(*) FROM " + tableName + " WHERE ClientId = " + ClientId;
-    qDebug() << test;
     countQuery.prepare(QString("SELECT COUNT(*) FROM " + tableName )
                      + QString(" WHERE ClientId = " + ClientId));
     countQuery.exec();
     countQuery.next();
-    qDebug()<<"QUERY Count " + countQuery.value(0).toString();
+//    qDebug()<<"QUERY Count " + countQuery.value(0).toString();
     return countQuery.value(0).toInt();
 }
 
@@ -530,7 +527,7 @@ bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage
     {
         if (registerFieldList->at(i) != NULL)
         {
-            qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
+           // qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
             query.addBindValue(registerFieldList->at(i));
         }
         else
@@ -561,7 +558,7 @@ bool DatabaseManager::insertClientLog(QStringList* registerFieldList)
     {
         if (registerFieldList->at(i) != NULL)
         {
-            qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
+           // qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
             query.addBindValue(registerFieldList->at(i));
         }
         else
@@ -596,7 +593,7 @@ bool DatabaseManager::updateClientWithPic(QStringList* registerFieldList, QStrin
     {
         if (registerFieldList->at(i) != NULL)
         {
-            qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
+           // qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
             query.addBindValue(registerFieldList->at(i));
         }
         else
