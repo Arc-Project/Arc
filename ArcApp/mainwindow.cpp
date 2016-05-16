@@ -17,18 +17,20 @@ QStack<int> backStack;
 QStack<int> forwardStack;
 int workFlow;
 
+//client search info
+int transacNum, transacTotal;
+int bookingNum, bookingTotal;
 QFuture<void> displayFuture ;
 QFuture<void> displayPicFuture;
 QFuture<void> transacFuture;
 QFuture<void> bookHistoryFuture;
+
 //CaseFiles stuff
 QVector<QTableWidget*> pcp_tables;
 QVector<QString> pcpTypes;
 bool loaded = false;
 QString idDisplayed;
 
-int transacNum, transacTotal;
-int bookingNum, bookingTotal;
 
 QProgressDialog* dialog;
 
@@ -1522,11 +1524,6 @@ void MainWindow::on_pushButton_search_client_clicked()
     qDebug() <<"START SEARCH CLIENT";
     ui->tabWidget_cl_info->setCurrentIndex(0);
     QString clientName = ui->lineEdit_search_clientName->text();
-    QString searchQuery = "SELECT ClientId, FirstName, LastName, Dob, Balance FROM Client WHERE LastName LIKE '%"+clientName
-                        + "%' OR MiddleName Like '%"+ clientName
-                        + "%' OR FirstName Like '%"+clientName+"%'";
-    //QSqlQuery results = dbManager->execQuery(searchQuery);
-    //setup_searchClientTable(results);
 
     QSqlQuery resultQ = dbManager->searchClientList(clientName);
     setup_searchClientTable(resultQ);
@@ -1563,15 +1560,41 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
 
 
 
+//client information tab
+void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
+{
+    switch(index){
+        case 0:
+            qDebug()<<"Client information tab";
+            break;
+
+        case 1:
+            if(transacFuture.isRunning()|| !transacFuture.isFinished()){
+                qDebug()<<"TransactionHistory Is RUNNING";
+                return;
+            }
+            ui->pushButton_cl_trans_more->setEnabled(true);
+            transacFuture = QtConcurrent::run(this, &searchTransaction, curClientID);
+            transacFuture.waitForFinished();
+            qDebug()<<"client Transaction list";
+
+            break;
+       case 2:
+             if(bookHistoryFuture.isRunning()|| !bookHistoryFuture.isFinished()){
+                 qDebug()<<"BookingHistory Is RUNNING";
+                 return;
+             }
+             ui->pushButton_cl_book_more->setEnabled(true);
+             bookHistoryFuture = QtConcurrent::run(this, &searchBookHistory, curClientID);
+             bookHistoryFuture.waitForFinished();
+
+    }
+}
+
 
 //get client information after searching
-
 void MainWindow::selected_client_info(int nRow, int nCol)
 {
-
-
-//    if(!pic_available || !table_available)
-//        return;
     if(displayFuture.isRunning()|| !displayFuture.isFinished()){
         qDebug()<<"ProfilePic Is RUNNING";
         return;
@@ -1593,11 +1616,14 @@ void MainWindow::selected_client_info(int nRow, int nCol)
 
     displayFuture = QtConcurrent::run(this, &displayClientInfoThread, curClientID);
     displayFuture.waitForFinished();
+    statusColor();
     displayPicFuture = QtConcurrent::run(this, &displayPicThread);
     displayPicFuture.waitForFinished();
-    statusColor();
+    //useProgressDialog("Read Client Profile Picture...", displayPicFuture);
 
 }
+
+//change status background color after reading client information
 void MainWindow::statusColor(){
     QPalette pal(ui->label_cl_info_status->palette());
     QString clStatus = ui->label_cl_info_status->text().toLower();
@@ -1615,15 +1641,15 @@ void MainWindow::statusColor(){
     ui->label_cl_info_status->setAutoFillBackground(true);
 }
 
+//delete client info picture  (not use currently)
 void MainWindow::clientSearchedInfo(){
-
     QGraphicsScene *scene = new QGraphicsScene();
     scene->clear();
     ui->graphicsView_getInfo->setScene(scene);
 
-
 }
 
+//thread function to add client information to the form
 void MainWindow::displayClientInfoThread(QString val){
 
     qDebug()<<"DISPLAY THREAD: " <<val;
@@ -1673,7 +1699,7 @@ void MainWindow::displayPicThread()
     addInfoPic(profilePic);
 }
 
-
+//add image to client info picture graphicview
 void MainWindow::addInfoPic(QImage img){
     qDebug()<<"Add Info Picture??";
     QPixmap item2 = QPixmap::fromImage(img);
@@ -1684,9 +1710,8 @@ void MainWindow::addInfoPic(QImage img){
     ui->graphicsView_getInfo->show();
 }
 
-
+//create new client for booking
 void MainWindow::setSelectedClientInfo(){
-
     curClient = new Client();
     int nRow = ui->tableWidget_search_client->currentRow();
     if (nRow <0)
@@ -1702,48 +1727,9 @@ void MainWindow::setSelectedClientInfo(){
 
 }
 
-
-
-void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
-{
-    switch(index){
-        case 0:
-            qDebug()<<"Client information tab";
-            break;
-
-        case 1:
-            if(transacFuture.isRunning()|| !transacFuture.isFinished()){
-                qDebug()<<"TransactionHistory Is RUNNING";
-                return;
-            }
-            ui->pushButton_cl_trans_more->setEnabled(true);
-            transacFuture = QtConcurrent::run(this, &searchTransaction, curClientID);
-            transacFuture.waitForFinished();
-            qDebug()<<"client Transaction list";
-
-            break;
-       case 2:
-             if(bookHistoryFuture.isRunning()|| !bookHistoryFuture.isFinished()){
-                 qDebug()<<"BookingHistory Is RUNNING";
-                 return;
-             }
-             ui->pushButton_cl_book_more->setEnabled(true);
-             bookHistoryFuture = QtConcurrent::run(this, &searchBookHistory, curClientID);
-             bookHistoryFuture.waitForFinished();
-
-    }
-}
-
-
-
+//search transaction list when click transaction list
 void MainWindow::searchTransaction(QString clientId){
     qDebug()<<"search transaction STaRt";
-/*    QString transStr = QString("SELECT TOP 5 t.Date, t.Amount, t.Type, e.Username, t.ChequeNo, t.ChequeDate, t.TransType, t.Deleted ")
-                     + QString("FROM Transac t INNER JOIN Employee e ON t.EmpId = e.EmpId ")
-                     + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC");
-    qDebug()<<transStr;
-    QSqlQuery transQuery = dbManager->execQuery(transStr);
-    */
 
     QSqlQuery transQuery = dbManager->searchClientTransList(transacNum, clientId);
     displayTransaction(transQuery);
@@ -1753,7 +1739,7 @@ void MainWindow::searchTransaction(QString clientId){
 }
 
 
-
+//search transaction list when click transaction list
 void MainWindow::displayTransaction(QSqlQuery results){
     ui->tableWidget_transaction->setRowCount(0);
 
@@ -1778,22 +1764,25 @@ void MainWindow::displayTransaction(QSqlQuery results){
 
 }
 
+//get more transaction list
 void MainWindow::on_pushButton_cl_trans_more_clicked()
 {
     transacNum +=5;
     searchTransaction(curClientID);
 }
 
+//search booking history when click booking history tab
 void MainWindow::searchBookHistory(QString clientId){
     qDebug()<<"search booking";
 
-    QSqlQuery bookingQuery = dbManager->searchTransBookList(bookingNum, clientId);
+    QSqlQuery bookingQuery = dbManager->searchBookList(bookingNum, clientId);
     displayBookHistory(bookingQuery);
     dbManager->printAll(bookingQuery);
     QString totalNum = (bookingTotal == 0)? "-" : QString::number(bookingTotal);
     ui->label_cl_booking_total_num->setText(totalNum + " Booking");
 }
 
+//display booking history in the table view
 void MainWindow::displayBookHistory(QSqlQuery results){
     ui->tableWidget_booking->setRowCount(0);
 
@@ -1815,9 +1804,9 @@ void MainWindow::displayBookHistory(QSqlQuery results){
         ui->pushButton_cl_book_more->setEnabled(false);
     }
     ui->tableWidget_booking->setMinimumHeight(35*row-5);
-
 }
 
+//click more client button
 void MainWindow::on_pushButton_cl_book_more_clicked()
 {
     bookingNum +=5;
@@ -2371,7 +2360,7 @@ void MainWindow::on_btn_listAllUsers_3_clicked()
     ui->tableWidget_5->clear();
     ui->tableWidget_5->horizontalHeader()->setStretchLastSection(true);
 
-    QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, cost, Monthly FROM Space");
+    QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, cost, Monthly FROM Space ORDER BY SpaceCode");
 
 //    int numCols = result.record().count();
     ui->tableWidget_5->setColumnCount(8);
@@ -3991,49 +3980,123 @@ void MainWindow::on_actionExport_to_PDF_triggered()
 //    printer.newPage();
 }
 
-// void MainWindow::on_btn_createNewUser_3_clicked()
-// {
-//     // add new vacancy
-//     QString building = ui->cbox_roomLoc->currentText();
-//     QString floor = ui->cbox_roomFloor->currentText();
-//     QString room = ui->cbox_roomRoom->currentText();
-//     QString bednumber = ui->le_roomNo->text();
-//     QString type = ui->cbox_roomType->text();
-//     QString cost = QString::number(ui->doubleSpinBox->value());
-//     QString monthly = QString::number(ui->doubleSpinBox_2->value());
+void MainWindow::on_btn_createNewUser_3_clicked()
+{
+    ui->lbl_editUserWarning_3->setText("");
+    // add new vacancy
+    QString building = ui->cbox_roomLoc->currentText();
+    QString floor = ui->cbox_roomFloor->currentText();
+    QString room = ui->cbox_roomRoom->currentText();
+    QString bednumber = ui->le_roomNo->text();
+    QString type = ui->cbox_roomType->currentText();
+    QString cost = QString::number(ui->doubleSpinBox->value());
+    QString monthly = QString::number(ui->doubleSpinBox_2->value());
 
-//     // check if it already exists
+    // check if it already exists
+    QSqlQuery result = dbManager->searchSingleBed(building, floor, room, bednumber);
 
+    if (!result.next()) {
+        // doesn't exist so make one
+        // INSERT INTO Space
+        // VALUES (7, 25, '', 'Mat', 0, 0, NULL);
 
-// }
+        // get room id
+        QSqlQuery idinfo = dbManager->searchIDInformation(building, floor, room);
 
-// void MainWindow::on_pushButton_14_clicked()
-// {
-//     // update vacancy
-//     QString building = ui->cbox_roomLoc->currentText();
-//     QString floor = ui->cbox_roomFloor->currentText();
-//     QString room = ui->cbox_roomRoom->currentText();
-//     QString bednumber = ui->le_roomNo->text();
-//     QString type = ui->cbox_roomType->text();
-//     QString cost = QString::number(ui->doubleSpinBox->value());
-//     QString monthly = QString::number(ui->doubleSpinBox_2->value());
+        idinfo.next();
 
-//     // check to make sure it exists
-// }
+        QString roomid = idinfo.value(0).toString();
 
-// void MainWindow::on_pushButton_15_clicked()
-// {
-//     // delete space
-//     QString building = ui->cbox_roomLoc->currentText();
-//     QString floor = ui->cbox_roomFloor->currentText();
-//     QString room = ui->cbox_roomRoom->currentText();
-//     QString bednumber = ui->le_roomNo->text();
-//     QString type = ui->cbox_roomType->text();
-//     QString cost = QString::number(ui->doubleSpinBox->value());
-//     QString monthly = QString::number(ui->doubleSpinBox_2->value());
+        QSqlQuery insertres = dbManager->execQuery("INSERT INTO Space "
+                                                   "VALUES (" + bednumber +
+                                                   ", " + roomid +
+                                                   ", '', " + "'" + type +
+                                                   "', " + cost +
+                                                   ", " + monthly +
+                                                   ", NULL)");
+        // update spacecodes
+        dbManager->updateAllSpacecodes();
 
-//     // check to make sure it exists
-// }
+        ui->lbl_editUserWarning_3->setText("Vacancy created");
+    } else {
+        ui->lbl_editUserWarning_3->setText("This vacancy already exists. Please change the bed number.");
+    }
+}
+
+void MainWindow::on_pushButton_14_clicked()
+{
+    ui->lbl_editUserWarning_3->setText("");
+
+    // update vacancy
+    QString building = ui->cbox_roomLoc->currentText();
+    QString floor = ui->cbox_roomFloor->currentText();
+    QString room = ui->cbox_roomRoom->currentText();
+    QString bednumber = ui->le_roomNo->text();
+    QString type = ui->cbox_roomType->currentText();
+    QString cost = QString::number(ui->doubleSpinBox->value());
+    QString monthly = QString::number(ui->doubleSpinBox_2->value());
+
+    // check to make sure it exists
+    QSqlQuery result = dbManager->searchSingleBed(building, floor, room, bednumber);
+
+    if (result.next()) {
+        // doesn't exist so make one
+        // INSERT INTO Space
+        // VALUES (7, 25, '', 'Mat', 0, 0, NULL);
+
+        // get room id
+        QSqlQuery idinfo = dbManager->searchIDInformation(building, floor, room);
+
+        idinfo.next();
+
+        QString roomid = idinfo.value(0).toString();
+
+        QSqlQuery updateres = dbManager->execQuery("UPDATE s "
+                                                   "SET s.cost = " + cost +
+                                                   ", s.Monthly = " + monthly + " "
+                                                   "FROM Space s INNER JOIN Room r ON s.RoomId = r.RoomId "
+                                                   "INNER JOIN Floor f ON r.FloorId = f.FloorId "
+                                                   "INNER JOIN Building b ON f.BuildingId = b.BuildingId "
+                                                   "WHERE b.BuildingNo = " + building + " "
+                                                   "AND f.FloorNo = " + floor + " "
+                                                   "AND r.RoomNo = " + room + " "
+                                                   "AND s.SpaceNo = " + bednumber);
+        // update spacecodes
+        dbManager->updateAllSpacecodes();
+
+        ui->lbl_editUserWarning_3->setText("Vacancy updated");
+    } else {
+        ui->lbl_editUserWarning_3->setText("This vacancy doesn't exist. Please select a valid vacancy.");
+    }
+}
+
+void MainWindow::on_pushButton_15_clicked()
+{
+    // implement checking if bookings are using this later?
+
+    ui->lbl_editUserWarning_3->setText("");
+    // delete space
+    QString building = ui->cbox_roomLoc->currentText();
+    QString floor = ui->cbox_roomFloor->currentText();
+    QString room = ui->cbox_roomRoom->currentText();
+    QString bednumber = ui->le_roomNo->text();
+    QString type = ui->cbox_roomType->currentText();
+    QString cost = QString::number(ui->doubleSpinBox->value());
+    QString monthly = QString::number(ui->doubleSpinBox_2->value());
+
+    // check to make sure it exists
+    // check if it already exists
+    QSqlQuery result = dbManager->searchSingleBed(building, floor, room, bednumber);
+
+    if (result.next()) {
+        // doesn't exist so make one
+        QSqlQuery deleteres = dbManager->deleteSpace(building, floor, room, bednumber);
+
+        ui->lbl_editUserWarning_3->setText("Vacancy Deleted");
+    } else {
+        ui->lbl_editUserWarning_3->setText("This vacancy doesn't exist. Please select a valid vacancy.");
+    }
+}
 
 void MainWindow::on_chk_filter_clicked()
 {
