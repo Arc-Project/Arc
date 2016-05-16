@@ -5,8 +5,7 @@
 #include <QItemDelegate>
 #include <QStandardItemModel>
 #include "payment.h"
-#include <QtPrintSupport/QPrinter>
-
+#include <QPrinter>
 #include <QProgressDialog>
 
 //MyModel* checkoutModel;
@@ -350,7 +349,7 @@ void MainWindow::on_wakeupCheck_clicked()
 void MainWindow::on_endDateEdit_dateChanged()
 {
     if(editOverLap){
-
+        editOverLap = false;
     }
     else{
         editOverLap = false;
@@ -366,7 +365,7 @@ void MainWindow::on_monthCheck_clicked(bool checked)
     ui->makeBookingButton->hide();
     if(checked)
     {
-        editOverLap = false;
+        editOverLap = true;
         QDate month = ui->startDateEdit->date();
         //month = month.addMonths(1);
         int days = month.daysInMonth();
@@ -376,7 +375,7 @@ void MainWindow::on_monthCheck_clicked(bool checked)
         ui->monthCheck->setChecked(true);
     }
     else{
-        ui->monthCheck->setChecked(true);
+        ui->monthCheck->setChecked(false);
         editOverLap = true;
     }
 }
@@ -784,6 +783,8 @@ void MainWindow::on_editUpdate_clicked()
 
     ui->editRoom->setEnabled(true);
     ui->editDate->setEnabled(true);
+    ui->editLunches->setEnabled(true);
+    ui->editWakeup->setEnabled(true);
     if(ui->editRefundLabel->text() == "Refund"){
         curBook->monthly = false;
         updateBalance = curClient->balance + ui->editRefundAmt->text().toDouble();
@@ -810,6 +811,15 @@ void MainWindow::on_editUpdate_clicked()
     dbManager->deleteWakeupsMulti(curBook->endDate, curClient->clientId);
     curBook->stayLength = curBook->endDate.toJulianDay() - curBook->startDate.toJulianDay();
     dbManager->addHistoryFromId(curBook->bookID, userLoggedIn, QString::number(currentshiftid), "EDIT");
+}
+bool MainWindow::doMessageBox(QString message){
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Confirm", message, QMessageBox::Yes | QMessageBox::No);
+    if(reply == QMessageBox::Yes){
+        return true;
+    }
+    return false;
+
 }
 
 double MainWindow::calcRefund(QDate old, QDate n){
@@ -978,13 +988,26 @@ void MainWindow::on_btn_payOutstanding_clicked()
 
 void MainWindow::on_editDate_dateChanged(const QDate &date)
 {
-    QSqlQuery result;
-    result = dbManager->getNextBooking(curBook->endDate, curBook->roomId);
+    ui->editLunches->setEnabled(false);
+    ui->editWakeup->setEnabled(false);
 
     ui->editRoom->setEnabled(false);
+    QDate nextStart = date;
+
     if(date > curBook->endDate){
-        ui->editDate->setDate(curBook->endDate);
-        return;
+        QSqlQuery result;
+        result = dbManager->getNextBooking(curBook->endDate, curBook->roomId);
+        int x = 0 ;
+        while(result.next()){
+            if(x == 0){
+                nextStart = QDate::fromString(result.value("StartDate").toString(), "yyyy-MM-dd");
+            }
+            x++;
+        }
+        if(!x){
+            nextStart = date;
+        }
+        ui->editDate->setDate(nextStart);
     }
     if(date < curBook->startDate){
         ui->editDate->setDate(curBook->startDate);
@@ -1000,7 +1023,7 @@ void MainWindow::on_editDate_dateChanged(const QDate &date)
     }
     //curBook->cost = QString::number(curBook->cost, 'f', 2).toDouble();
 
-    refund = calcRefund(curBook->endDate, date);
+    refund = calcRefund(curBook->endDate, nextStart);
     qDebug() << "REFUNDING" << refund;
 
 
@@ -1117,7 +1140,11 @@ void MainWindow::on_pushButton_bookRoom_clicked()
 
 void MainWindow::on_makeBookingButton_2_clicked()
 {
+
     backStack.clear();
+    if(!doMessageBox("Finalize booking and add to database?")){
+        return;
+    }
     ui->actionBack->setEnabled(false);
     ui->makeBookingButton_2->setEnabled(false);
 
@@ -3373,6 +3400,23 @@ void MainWindow::addHistory(int n){
 void MainWindow::on_pushButton_processPaymeent_clicked()
 {
     addHistory(CLIENTLOOKUP);
+    int nRow = ui->tableWidget_search_client->currentRow();
+    if (nRow <0)
+        return;
+
+    curClient = new Client();
+    curClientID = curClient->clientId = ui->tableWidget_search_client->item(nRow, 0)->text();
+    curClient->fName =  ui->tableWidget_search_client->item(nRow, 1)->text();
+    curClient->mName =  ui->tableWidget_search_client->item(nRow, 2)->text();
+    curClient->lName =  ui->tableWidget_search_client->item(nRow, 3)->text();
+    curClient->balance =  ui->tableWidget_search_client->item(nRow, 5)->text().toFloat();
+    curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
+
+    trans = new transaction();
+    QString note = "";
+    payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true, userLoggedIn, QString::number(currentshiftid));
+    pay->exec();
+
 }
 
 void MainWindow::insertPcp(QTableWidget *tw, QString type){
@@ -4034,12 +4078,13 @@ void MainWindow::on_actionExport_to_PDF_triggered()
                     "C://"
                 );
     QTextDocument doc;
-    doc.setHtml("<h1>hello, I'm an head</h1>");
-//    QPrinter printer;
-//    printer.setOutputFileName(tempDir+"\\file.pdf");
-//    printer.setOutputFormat(QPrinter::PdfFormat);
-//    doc.print(&printer);
-//    printer.newPage();
+    doc.setHtml("<h1>generated from Qt!</h1> regular text");
+    QPrinter printer;
+    printer.setOutputFileName(tempDir+"\\file.pdf");
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    doc.print(&printer);
+    printer.newPage();
+
 }
 
 void MainWindow::on_btn_createNewUser_3_clicked()
@@ -4172,4 +4217,10 @@ void MainWindow::on_chk_filter_clicked()
                               ui->tableWidget_search_client->item(nRow, 1)->text() + "*");
         populate_tw_caseFiles(filter);
     }
+}
+
+void MainWindow::on_btn_payNew_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
+    ui->pushButton_processPaymeent->setHidden(false);
 }

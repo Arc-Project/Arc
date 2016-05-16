@@ -96,6 +96,7 @@ public:
     void popBookFromRow();
     void clearTable(QTableWidget * table);
     void setBookSummary();
+    bool doMessageBox(QString message);
 
     //COLIN END//////
 
@@ -484,6 +485,8 @@ private slots:
     void on_actionExport_to_PDF_triggered();
 
     void on_chk_filter_clicked();
+
+    void on_btn_payNew_clicked();
 
 private:
 
