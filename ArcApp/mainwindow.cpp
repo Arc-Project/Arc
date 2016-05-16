@@ -1775,7 +1775,7 @@ void MainWindow::on_pushButton_cl_trans_more_clicked()
 void MainWindow::searchBookHistory(QString clientId){
     qDebug()<<"search booking";
 
-    QSqlQuery bookingQuery = dbManager->searchTransBookList(bookingNum, clientId);
+    QSqlQuery bookingQuery = dbManager->searchBookList(bookingNum, clientId);
     displayBookHistory(bookingQuery);
     dbManager->printAll(bookingQuery);
     QString totalNum = (bookingTotal == 0)? "-" : QString::number(bookingTotal);
