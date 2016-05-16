@@ -432,15 +432,15 @@ QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId){
     return clientTransQuery;
 }
 
-QSqlQuery DatabaseManager::searchTransBookList(int maxNum, QString clientId){
-    QSqlQuery clientTransQuery;
-    clientTransQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) )
+QSqlQuery DatabaseManager::searchBookList(int maxNum, QString clientId){
+    QSqlQuery clientBookingQuery;
+    clientBookingQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) )
                            + QString(" DateCreated, ProgramCode, StartDate, EndDate, Cost, ")
                            + QString("SpaceId, FirstBook ")
                            + QString("FROM Booking ")
                            + QString("WHERE ClientId = " + clientId + " ORDER BY EndDate DESC, DateCreated DESC"));
-    clientTransQuery.exec();
-    return clientTransQuery;
+    clientBookingQuery.exec();
+    return clientBookingQuery;
 }
 
 int DatabaseManager::countInformationPerClient(QString tableName, QString ClientId){
