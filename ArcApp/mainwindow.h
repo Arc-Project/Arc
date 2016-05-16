@@ -480,6 +480,8 @@ private slots:
 
     void on_btn_delTypeLoc_clicked();
 
+    void on_editroommodifybox_clicked(const QModelIndex &index);
+
 private:
 
     Ui::MainWindow *ui;
