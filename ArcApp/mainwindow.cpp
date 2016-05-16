@@ -90,13 +90,6 @@ void MainWindow::initCurrentWidget(int idx){
             initClientLookupInfo();
             ui->tabWidget_cl_info->setCurrentIndex(0);
             //initimageview
-
-            //disable buttons that need a clientId
-            ui->pushButton_bookRoom->setEnabled(false);
-            ui->pushButton_processPaymeent->setEnabled(false);
-            ui->pushButton_editClientInfo->setEnabled(false);
-            ui->pushButton_CaseFiles->setEnabled(false);
-
             break;
         case BOOKINGLOOKUP: //WIDGET 2
 
@@ -1502,7 +1495,7 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
         row++;
     }
 
-    statusBar()->showMessage(QString("Search " + QString::number(row) + " people"));
+    statusBar()->showMessage(QString("Found " + QString::number(row) + " matches"), 5000);
     ui->tableWidget_search_client->show();
 
 }
@@ -1948,6 +1941,7 @@ void MainWindow::initClientLookupInfo(){
     if(ui->tableWidget_search_client->columnCount()>0){
         ui->tableWidget_search_client->setColumnCount(0);
         ui->tableWidget_search_client->clear();
+        ui->lineEdit_search_clientName->clear();
     }
 
     //init client Info Form Field
@@ -1982,6 +1976,13 @@ void MainWindow::initClientLookupInfo(){
     ui->graphicsView_getInfo->setScene(scene);
 
     profilePic = (QImage)NULL;
+
+
+    //disable buttons that need a clientId
+    ui->pushButton_bookRoom->setEnabled(false);
+    ui->pushButton_processPaymeent->setEnabled(false);
+    ui->pushButton_editClientInfo->setEnabled(false);
+    ui->pushButton_CaseFiles->setEnabled(false);
 
 
 
@@ -2583,11 +2584,17 @@ void MainWindow::on_pushButton_3_clicked()
                     tr("Select Directory"),
                     "C://"
                 );
-//    qDebug() << curClientID;
     if (!tempDir.isEmpty()) {
         dir = tempDir;
-        populate_tw_caseFiles();
+        int nRow = ui->tableWidget_search_client->currentRow();
+
+        QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 3)->text() + ", " +
+                              ui->tableWidget_search_client->item(nRow, 1)->text() + "*");
+
+        qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 3)->text() + ", " +
+                    ui->tableWidget_search_client->item(nRow, 1)->text() + "*";
         ui->le_caseDir->setText(dir.path());
+        populate_tw_caseFiles(filter);
     }
     connect(ui->tw_caseFiles, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(on_tw_caseFiles_cellDoubleClicked(int,int)), Qt::UniqueConnection);
 }
@@ -2614,7 +2621,8 @@ void MainWindow::populate_tw_caseFiles(QStringList filter){
         qDebug() << x;
         ui->tw_caseFiles->setRowCount(i+1);
         ui->tw_caseFiles->setItem(i++,0, new QTableWidgetItem(x));
-        ui->tw_caseFiles->resizeColumnsToContents();
+//        ui->tw_caseFiles->resizeColumnsToContents();
+        ui->tw_caseFiles->resizeRowsToContents();
     }
     if (i > 0) {
         ui->btn_caseFilter->setEnabled(true);
@@ -3720,7 +3728,7 @@ void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
     // fill in stuff on the right
 }
 
-
-
-
-
+void MainWindow::on_lineEdit_search_clientName_returnPressed()
+{
+    MainWindow::on_pushButton_search_client_clicked();
+}
