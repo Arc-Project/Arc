@@ -66,6 +66,8 @@ public:
     void setSelectedClientInfo();
 
     void getRegisterLogFields(QStringList* fieldList);
+    void getCurrentClientId();   //get client id from client list table
+
     QImage profilePic;
 
     //COLIN STUFF////
@@ -237,6 +239,8 @@ private slots:
 
     void on_editButton_clicked();
     void on_pushButton_editClientInfo_clicked();
+
+//-------------------------------------------------------------------
 
     void on_btn_listAllUsers_clicked();
 
@@ -452,6 +456,8 @@ private slots:
     void on_tableWidget_5_clicked(const QModelIndex &index);
 
     void on_pushButton_cl_book_more_clicked();
+
+    void on_lineEdit_search_clientName_returnPressed();
 
 private:
 
