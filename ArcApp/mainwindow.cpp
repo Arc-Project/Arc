@@ -3569,6 +3569,11 @@ void MainWindow::on_btn_modRoomBdlg_clicked()
 
 void MainWindow::on_btn_modRoomFloor_clicked()
 {
+    if (ui->cbox_roomLoc->currentText() == "") {
+        ui->lbl_editUserWarning_3->setText("Please select a valid Building");
+        return;
+    }
+
     curmodifyingspace = FLOORS;
     ui->editroommodifybox->clear();
     ui->editroommodifybox->setColumnCount(1);
@@ -3604,6 +3609,16 @@ void MainWindow::on_btn_modRoomFloor_clicked()
 
 void MainWindow::on_btn_modRoomRoom_clicked()
 {
+    if (ui->cbox_roomLoc->currentText() == "") {
+        ui->lbl_editUserWarning_3->setText("Please select a valid Building");
+        return;
+    }
+
+    if (ui->cbox_roomFloor->currentText() == "") {
+        ui->lbl_editUserWarning_3->setText("Please select a valid Floor");
+        return;
+    }
+
     curmodifyingspace = ROOMS;
     ui->editroommodifybox->clear();
     ui->editroommodifybox->setColumnCount(1);
@@ -3620,8 +3635,8 @@ void MainWindow::on_btn_modRoomRoom_clicked()
 
     // get Floor id
     QString floor = ui->cbox_roomFloor->currentText();
-    QSqlQuery qry2 = dbManager->execQuery("SELECT FloorId FROM Floor WHERE BuildingId=" + building + " AND FloorNo=" + floor);
-
+    QSqlQuery qry2 = dbManager->execQuery("SELECT FloorId FROM Floor WHERE BuildingId=" + buildingid + " AND FloorNo=" + floor);
+    qDebug() << "SELECT FloorId FROM Floor WHERE BuildingId=" + building + " AND FloorNo=" + floor;
     qry2.next();
 
     QString floorid = qry2.value(0).toString();
@@ -3823,6 +3838,7 @@ void MainWindow::useProgressDialog(QString msg, QFuture<void> future){
 // room clicked
 void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
 {
+    ui->lbl_editUserWarning_3->setText("");
     // "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly"
     QString idcode = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 0)).toString();
     QString building = ui->tableWidget_5->model()->data(ui->tableWidget_5->model()->index(index.row(), 1)).toString();
@@ -3840,8 +3856,6 @@ void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
     ui->cbox_roomLoc->setCurrentIndex(0);
     int currindex = 0;
     while (true) {
-        qDebug() << ui->cbox_roomLoc->currentText();
-        qDebug() << building;
         if (ui->cbox_roomLoc->currentText() == building) {
             break;
         } else {
@@ -3850,19 +3864,67 @@ void MainWindow::on_tableWidget_5_clicked(const QModelIndex &index)
         }
     }
 
-//    // set the floor
-//    int currindex2 = ui->cbox_roomLoc->currentIndex();
-//    while (true) {
-//        if (ui->cbox_roomFloor->currentText() == floor) {
-//            break;
-//        } else {
-//            currindex2++;
-//            ui->cbox_roomFloor->setCurrentIndex(currindex2);
-//        }
-//    }
+    // set the floor
+    int currindex2 = 0;
+    while (true) {
+        if (ui->cbox_roomFloor->currentText() == floor) {
+            break;
+        } else {
+            currindex2++;
+            ui->cbox_roomFloor->setCurrentIndex(currindex2);
+        }
+    }
+
+    // set the Room
+    int currindex3 = 0;
+    while (true) {
+        if (ui->cbox_roomRoom->currentText() == room) {
+            break;
+        } else {
+            currindex3++;
+            ui->cbox_roomRoom->setCurrentIndex(currindex3);
+        }
+    }
+
+    // set the Type
+    int currindex4 = 0;
+    while (true) {
+        if (ui->cbox_roomType->currentText().toStdString()[0] == type[0]) {
+            break;
+        } else {
+            currindex4++;
+            ui->cbox_roomType->setCurrentIndex(currindex4);
+        }
+    }
+
+    // set the Space Number
+    ui->le_roomNo->setText(bednumber);
+
+    // set the prices
+    // cost
+    ui->doubleSpinBox->setValue(cost.toDouble());
+
+    // monthly
+    ui->doubleSpinBox_2->setValue(monthly.toDouble());
 }
 
 void MainWindow::on_lineEdit_search_clientName_returnPressed()
 {
     MainWindow::on_pushButton_search_client_clicked();
+}
+
+void MainWindow::on_btn_createNewUser_3_clicked()
+{
+    // add new vacancy
+    QString building = ui->cbox_roomLoc->currentText();
+    QString floor = ui->cbox_roomFloor->currentText();
+    QString room = ui->cbox_roomRoom->currentText();
+    QString bednumber = ui->le_roomNo->text();
+    QString type = ui->cbox_roomType->text();
+    QString cost = QString::number(ui->doubleSpinBox->value());
+    QString monthly = QString::number(ui->doubleSpinBox_2->value());
+
+    // check if it already exists
+
+
 }
