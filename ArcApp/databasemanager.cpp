@@ -1426,7 +1426,7 @@ QSqlQuery DatabaseManager::searchSingleBed(QString buildingno, QString floorno, 
 QSqlQuery DatabaseManager::searchIDInformation(QString buildingno, QString floorno, QString roomno) {
     QSqlQuery query(db);
 
-    query.exec("SELECT r.RoomId "
+    query.exec("SELECT r.RoomId, b.BuildingId, f.FloorId"
                "FROM Space s INNER JOIN Room r ON s.RoomId = r.RoomId INNER JOIN Floor f ON r.FloorId = f.FloorId "
                "INNER JOIN Building b ON f.BuildingId = b.BuildingId "
                "WHERE b.BuildingNo =" + buildingno + " "
