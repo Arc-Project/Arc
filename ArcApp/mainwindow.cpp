@@ -1553,7 +1553,7 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
         row++;
     }
 
-    statusBar()->showMessage(QString("Found " + QString::number(row) + " matches"), 5000);
+    statusBar()->showMessage(QString("Found " + QString::number(row) + " Clients"), 5000);
     ui->tableWidget_search_client->show();
 
 }
@@ -1569,6 +1569,8 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
             break;
 
         case 1:
+            if(curClientID == NULL)
+                break;
             if(transacFuture.isRunning()|| !transacFuture.isFinished()){
                 qDebug()<<"TransactionHistory Is RUNNING";
                 return;
@@ -1580,6 +1582,8 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
 
             break;
        case 2:
+            if(curClientID == NULL)
+                break;
              if(bookHistoryFuture.isRunning()|| !bookHistoryFuture.isFinished()){
                  qDebug()<<"BookingHistory Is RUNNING";
                  return;
