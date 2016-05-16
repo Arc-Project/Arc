@@ -17,7 +17,7 @@ class EditRooms : public QDialog
 public:
     explicit EditRooms(QWidget *parent = 0);
     ~EditRooms();
-    EditRooms(QWidget *parent, Booking * curBook);
+    EditRooms(QWidget *parent, Booking * curBook, QString empId, QString shift);
     void searchAvailable(QString program);
     void populateATable(QTableWidget * table, QStringList headers, QStringList items, QSqlQuery result, bool stretch);
     void getProgramCodes(QString cur);
@@ -33,6 +33,8 @@ private:
     bool swapping;
     Booking * curBook;
     Ui::EditRooms *ui;
+    QString empId;
+    QString shift;
 };
 
 #endif // EDITROOMS_H
