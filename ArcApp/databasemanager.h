@@ -64,7 +64,7 @@ public:
     QSqlQuery searchClientInfo(QString ClientId);
     bool searchClientInfoPic(QImage * img, QString ClientId);
     QSqlQuery searchClientTransList(int maxNum, QString ClientId);
-    QSqlQuery searchTransBookList(int maxNum, QString clientId);
+    QSqlQuery searchBookList(int maxNum, QString clientId);
     int countInformationPerClient(QString tableName, QString ClientId);
 
     /*==========================================================================
