@@ -66,7 +66,10 @@ public:
     void setSelectedClientInfo();
 
     void getRegisterLogFields(QStringList* fieldList);
-    QImage profilePic;
+    void getCurrentClientId();   //get client id from client list table
+    void statusColor();
+
+
 
     //COLIN STUFF////
     void getProgramCodes();
@@ -164,9 +167,15 @@ private slots:
     void on_shiftReportCurrent_btn_clicked();
     void updateShiftReportStats(QList<int> list);
     void on_saveOther_btn_clicked();
-    void on_otherSave_btn_textEdited(const QString &text);
-
-
+    void on_other_lineEdit_textEdited(const QString &text);
+    void updateCashFloat(QDate date, int shiftNo, QStringList list);
+    void updateCashFloatLastEditedLabels(QString empName, 
+        QString currentDateStr, QString currentTimeStr);
+    void on_saveFloat_btn_clicked();
+    void on_calculateTotal_btn_clicked();
+    void on_cashFloatGo_btn_clicked();
+    void on_cashFloatCurrent_btn_clicked();
+    
     
     
     void resizeEvent();
@@ -237,6 +246,8 @@ private slots:
 
     void on_editButton_clicked();
     void on_pushButton_editClientInfo_clicked();
+
+//-------------------------------------------------------------------
 
     void on_btn_listAllUsers_clicked();
 
@@ -453,6 +464,8 @@ private slots:
 
     void on_pushButton_cl_book_more_clicked();
 
+    
+
     void on_lineEdit_search_clientName_returnPressed();
 
     void on_actionExport_to_PDF_triggered();
@@ -466,11 +479,11 @@ private:
     Client * curClient;
     QString curClientID;
     bool editOverLap;
-    bool pic_available = true;
-    bool table_available = true;
+//    bool pic_available = true;
+//    bool table_available = true;
 
     bool caseWorkerUpdated = true;
-
+   QImage profilePic;
     QMap <QString, int> caseWorkerList;    //caseworker list
 
     QDir dir;
@@ -483,6 +496,7 @@ private:
     void getDailyReportStats(QDate date);
     void updateShiftReportTables(QDate date, int shiftNo);
     void getShiftReportStats(QDate date, int shiftNo);
+    void getCashFloat(QDate date, int shiftNo);
 
 
 

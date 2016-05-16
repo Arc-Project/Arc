@@ -46,14 +46,7 @@ public:
     void printDbConnections();
 
 
-    //bool searchClientList(QSqlQuery* query, QString ClientId);
-    //bool searchClientList(QSqlQuery* query, QString ClientName);
-    QSqlQuery searchClientList(QString ClientName);
 
-    QSqlQuery searchClientInfo(QString ClientId);
-    bool searchClientInfoPic(QImage * img, QString ClientId);
-    QSqlQuery searchClientTransList(int maxNum, QString ClientId);
-    QSqlQuery searchTransBookList(int maxNum, QString clientId);
     /*==========================================================================
     PROFILE PICTURE UPLOAD AND DOWNLOAD RELATED FUNCTIONS
     ==========================================================================*/
@@ -65,6 +58,15 @@ public:
     bool insertClientWithPic(QStringList* registerFieldList, QImage* profilePic);
     bool insertClientLog(QStringList* registerFieldList);
     bool updateClientWithPic(QStringList* registerFieldList, QString clientId, QImage* profilePic);
+
+
+    QSqlQuery searchClientList(QString ClientName);
+    QSqlQuery searchClientInfo(QString ClientId);
+    bool searchClientInfoPic(QImage * img, QString ClientId);
+    QSqlQuery searchClientTransList(int maxNum, QString ClientId);
+    QSqlQuery searchTransBookList(int maxNum, QString clientId);
+    int countInformationPerClient(QString tableName, QString ClientId);
+
     /*==========================================================================
     REPORT QUERYS
     ==========================================================================*/
@@ -85,6 +87,10 @@ public:
     bool getShiftReportClientLogQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
     bool getShiftReportOtherQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
     bool insertOtherLog(QString empName, int shiftNo, QString logText);
+    bool insertCashFloat(QDate date, int shiftNo, QString empName,
+        QString comments, QList<int> coins);
+    bool getCashFloatReportQuery(QSqlQuery* queryResults, QDate Date, int shiftNo);
+    void getCashFloatThread(QDate date, int shiftNo);
 
     //COLIN STUFF/////////////////////////////////////////////////////////////
     QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);
@@ -113,6 +119,8 @@ public:
     bool deleteWakeups(QDate date, QString id);
     QSqlQuery getNextBooking(QDate endDate, QString roomId);
     QSqlQuery getSwapBookings(QDate start, QDate end, QString program, QString maxSwap, QString curBook);
+    bool insertIntoBookingHistory(QString clientName, QString spaceId, QString program, QString start, QString end, QString action, QString emp, QString shift);
+    bool addHistoryFromId(QString bookId, QString empId, QString shift, QString action);
 
 
 
@@ -140,6 +148,9 @@ public:
 signals:
     void dailyReportStatsChanged(QList<int> list);
     void shiftReportStatsChanged(QList<int> list);
+    void cashFloatChanged(QDate date, int shiftNo, QStringList list);
+    void cashFloatInserted(QString empName, QString currentDateStr, 
+        QString currentTimeStr);
 
 private:
     QSqlDatabase db = QSqlDatabase::database();

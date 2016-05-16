@@ -346,15 +346,15 @@ SEARCH CLIENT LIST FUNCTION(START)
 //bool DatabaseManager::searchClientList(QSqlQuery* query, QString ClientName){
 QSqlQuery DatabaseManager::searchClientList(QString ClientName){
     QSqlQuery query(db);
-    //query->prepare("SELECT FirstName, MiddleName, LastName, Dob FROM Client WHERE ClientId = :id");
-    //query->bindValue("id", ClientId);
+
+    //default select query
     QString searchQuery = QString("SELECT ClientId, FirstName, MiddleName, LastName, Dob, Balance ")
             + QString("FROM Client ");
     QStringList clientNames;
     if(ClientName != ""){
         clientNames = ClientName.split(" ");
     }
-
+    //if 1 word name, match first name or last name
     if(clientNames.count() == 1){
         qDebug()<<"Name 1 words";
         searchQuery += QString("WHERE (FirstName LIKE '"+clientNames.at(0) + "%' ")
@@ -362,6 +362,7 @@ QSqlQuery DatabaseManager::searchClientList(QString ClientName){
                      + QString("AND NOT FirstName = 'anonymous' ")
                      + QString("ORDER BY FirstName ASC, LastName ASC");
     }
+    //if 2 word name, match first name and last name
     else if(clientNames.count() == 2){
         qDebug() << "Name 2 words";
         searchQuery += QString("WHERE (LastName LIKE '"+clientNames.at(0) + "%' AND FirstName LIKE '" + clientNames.at(1) + "%') ")
@@ -387,33 +388,16 @@ QSqlQuery DatabaseManager::searchClientInfo(QString ClientId){
                       + QString("PhysContactNo, SuppWorker1Name, SuppWorker1ContactNo, SuppWorker2Name, SuppWorker2ContactNo, ")
                       + QString("Comments ")//, ProfilePic ")
                       + QString("FROM Client WHERE ClientId =" + ClientId));
-//    selectquery.prepare("SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId = :id");
-//    selectquery.bindValue("id", ClientId);
+
 
     selectquery.exec();
 
   //  printAll(selectquery);
     return selectquery;
-    /*
-    if(!selectquery->exec())
-        return false;
-*/
-
-    /*
-    printAll(*query);
-    QSqlQuery test(db);
-    qDebug()<<"TEST: Query";
-    test.exec("SELECT FirstName, MiddleName, LastName, Dob, Balance, SinNo, GaNo, IsParolee, AllowComm, DateRulesSigned FROM Client WHERE ClientId = "+ClientId);
-    printAll(test);
-    */
-    //return true;
 }
 
 
 bool DatabaseManager::searchClientInfoPic(QImage * img, QString ClientId){
-
-
-
     QString connName = QString::number(DatabaseManager::getDbCounter());
     {
         QSqlDatabase tempDb = QSqlDatabase::database();
@@ -435,15 +419,15 @@ bool DatabaseManager::searchClientInfoPic(QImage * img, QString ClientId){
         tempDb.close();
     } // Necessary braces: tempDb and query are destroyed because out of scope
     QSqlDatabase::removeDatabase(connName);
-
     return true;
 }
 
 QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId){
     QSqlQuery clientTransQuery;
-    clientTransQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) +" t.Date, t.Amount, t.Type, e.Username, t.ChequeNo, t.ChequeDate, t.Deleted ")
-                         + QString("FROM Transac t INNER JOIN Employee e ON t.EmpId = e.EmpId ")
-                         + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC"));
+    clientTransQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) )
+                           + QString(" t.Date, t.Amount, t.Type, e.Username, t.ChequeNo, t.ChequeDate, t.Deleted ")
+                           + QString("FROM Transac t INNER JOIN Employee e ON t.EmpId = e.EmpId ")
+                           + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC"));
     clientTransQuery.exec();
     return clientTransQuery;
 }
@@ -451,15 +435,25 @@ QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId){
 QSqlQuery DatabaseManager::searchTransBookList(int maxNum, QString clientId){
     QSqlQuery clientTransQuery;
     clientTransQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) )
-                             + QString(" DateCreated, ProgramCode, StartDate, EndDate, Cost, ")
-                             + QString("SpaceId, Lunch, Wakeup, FirstBook ")
-                         + QString("FROM Booking ")
-                         + QString("WHERE ClientId = " + clientId + " ORDER BY EndDate DESC, DateCreated DESC"));
+                           + QString(" DateCreated, ProgramCode, StartDate, EndDate, Cost, ")
+                           + QString("SpaceId, FirstBook ")
+                           + QString("FROM Booking ")
+                           + QString("WHERE ClientId = " + clientId + " ORDER BY EndDate DESC, DateCreated DESC"));
     clientTransQuery.exec();
     return clientTransQuery;
 }
 
-
+int DatabaseManager::countInformationPerClient(QString tableName, QString ClientId){
+    QSqlQuery countQuery;
+    QString test = "SELECT COUNT(*) FROM " + tableName + " WHERE ClientId = " + ClientId;
+    qDebug() << test;
+    countQuery.prepare(QString("SELECT COUNT(*) FROM " + tableName )
+                     + QString(" WHERE ClientId = " + ClientId));
+    countQuery.exec();
+    countQuery.next();
+    qDebug()<<"QUERY Count " + countQuery.value(0).toString();
+    return countQuery.value(0).toInt();
+}
 
 /*==============================================================================
 PROFILE PICTURE UPLOAD AND DOWNLOAD RELATED FUNCTIONS (START)
@@ -486,6 +480,34 @@ bool DatabaseManager::uploadProfilePic(QSqlDatabase* tempDbPtr, QString connName
         return true;
     }
     return false;
+}
+bool DatabaseManager::insertIntoBookingHistory(QString clientName, QString spaceId, QString program, QString start, QString end, QString action, QString emp, QString shift){
+    QSqlQuery query(db);
+    QString q = "INSERT INTO BookingHistory VALUES ('" +clientName + "','" +
+            spaceId + "','" + program + "','" + QDate::currentDate().toString(Qt::ISODate)
+            + "','" + start + "','" + end + "','" + action + "','" + "UNKNOWN"
+            + "','" + emp + "','" + shift + "','" + QTime::currentTime().toString() + "')";
+    qDebug() << q;
+    return query.exec(q);
+
+
+}
+bool DatabaseManager::addHistoryFromId(QString bookId, QString empId, QString shift, QString action){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Booking WHERE BookingId = '" + bookId + "'";
+    if(!query.exec(q)){
+        return false;
+    }
+    while(query.next()){
+        QString clientName =query.value("ClientName").toString();
+        QString spaceId = query.value("SpaceId").toString();
+        QString program = query.value("ProgramCode").toString();
+        QString start = query.value("StartDate").toString();
+        QString end = query.value("EndDate").toString();
+        return insertIntoBookingHistory(clientName, spaceId, program, start, end, action, empId, shift );
+
+    }
+
 }
 
 bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage* profilePic)//QObject sth, QImage profilePic)
@@ -948,7 +970,7 @@ void DatabaseManager::getShiftReportStatsThread(QDate date, int shiftNo)
     QList<int> list = QList<int>() << cashTotal << electronicTotal << chequeTotal
                                    << cashTotal + chequeTotal
                                    << cashTotal + electronicTotal + chequeTotal;
-    emit shiftReportStatsChanged(list);
+    emit DatabaseManager::shiftReportStatsChanged(list);
 }
 
 bool DatabaseManager::getShiftReportClientLogQuery(QSqlQuery* queryResults,
@@ -983,7 +1005,7 @@ bool DatabaseManager::insertOtherLog(QString empName, int shiftNo, QString logTe
 
     query.prepare("INSERT INTO OtherLog (Date, ShiftNo, Time, EmpName, Log) "
                   "VALUES (?, ?, ?, ?, ?)");
-    query.addBindValue(QDate::currentDate().toString("yyyy-MM-dd"));
+    query.addBindValue(QDate::currentDate().toString(Qt::ISODate));
     query.addBindValue(shiftNo);
     query.addBindValue(QTime::currentTime().toString("hh:mm:ss"));
     query.addBindValue(empName);
@@ -992,28 +1014,159 @@ bool DatabaseManager::insertOtherLog(QString empName, int shiftNo, QString logTe
     return query.exec();
 }
 
-//bool DatabaseManager::insertCashFloat()
-//{
-//    int result = -1;
-//    QString connName = QString::number(DatabaseManager::getDbCounter());
-//    {
-//        QSqlDatabase tempDb = QSqlDatabase::database();
-//        if (DatabaseManager::createDatabase(&tempDb, connName))
-//        {
-//            QSqlQuery query(tempDb);
+bool DatabaseManager::getCashFloatReportQuery(QSqlQuery* queryResults, QDate date, int shiftNo)
+{
+    QString queryString = 
+        QString("SELECT EmpName, DateEdited, TimeEdited, Comments, Nickels, Dimes, ")
+        + QString("Quarters, Loonies, Toonies, Fives, Tens, Twenties, ")
+        + QString("Fifties, Hundreds ")
+        + QString("FROM CashFloat ")
+        + QString("WHERE Date = '" + date.toString(Qt::ISODate) + "' AND ")
+        + QString("ShiftNo = " + QString::number(shiftNo));
+    qDebug() << queryString;
+    return queryResults->exec(queryString);
+}
 
-//            qDebug() << queryString;
-//            if (query.exec(queryString))
-//            {
-//                query.next();
-//                result = query.value(0).toInt();
-//            }
-//        }
-//        tempDb.close();
-//    } // Necessary braces: tempDb and query are destroyed because out of scope
-//    QSqlDatabase::removeDatabase(connName);
-//    return result;
-//}
+void DatabaseManager::getCashFloatThread(QDate date, int shiftNo)
+{
+    QString connName = QString::number(dbManager->getDbCounter());
+    int nickels = 0, dimes = 0, quarters = 0, loonies = 0, toonies = 0,
+        fives = 0, tens = 0, twenties = 0, fifties = 0, hundreds = 0;
+    double total = 0;
+    QString lastEditedEmpName("N/A");
+    QString lastEditedDateTime("N/A");
+    QString comments = "";
+    QStringList list;
+    {
+        QSqlDatabase tempDb = QSqlDatabase::database();
+
+        if (dbManager->createDatabase(&tempDb, connName))
+        {
+            QSqlQuery query(tempDb);
+            if (DatabaseManager::getCashFloatReportQuery(&query, date, shiftNo))
+            {
+                if (query.next())
+                {
+                    lastEditedEmpName = query.value(0).toString();
+                    lastEditedDateTime = query.value(1).toString() + " at ";
+                    lastEditedDateTime += query.value(2).toString();
+                    comments = query.value(3).toString();
+                    nickels = query.value(4).toInt();
+                    dimes = query.value(5).toInt();
+                    quarters = query.value(6).toInt();
+                    loonies = query.value(7).toInt();
+                    toonies = query.value(8).toInt();
+                    fives = query.value(9).toInt();
+                    tens = query.value(10).toInt();
+                    twenties = query.value(11).toInt();
+                    fifties = query.value(12).toInt();
+                    hundreds = query.value(13).toInt();
+                    total = nickels * VAL_NICKEL +
+                            dimes * VAL_DIME +
+                            quarters * VAL_QUARTER +
+                            loonies * VAL_LOONIE +
+                            toonies * VAL_TOONIE +
+                            fives * VAL_FIVE +
+                            tens * VAL_TEN +
+                            twenties * VAL_TWENTY +
+                            fifties * VAL_FIFTY +
+                            hundreds * VAL_HUNDRED;
+                }
+            }
+            tempDb.close();
+        }   
+    } // Necessary braces: tempDb and query are destroyed because out of scope
+    QSqlDatabase::removeDatabase(connName);
+  
+    list << lastEditedEmpName << lastEditedDateTime << comments
+         << QString::number(nickels) << QString::number(dimes)
+         << QString::number(quarters) << QString::number(loonies)
+         << QString::number(toonies) << QString::number(fives)
+         << QString::number(tens) << QString::number(twenties)
+         << QString::number(fifties) << QString::number(hundreds)
+         << QString("$ " + QString::number(total, 'f', 2));
+
+    emit DatabaseManager::cashFloatChanged(date, shiftNo, list);
+}
+
+bool DatabaseManager::insertCashFloat(QDate date, int shiftNo, QString empName,
+    QString comments, QList<int> coins)
+{
+    bool ret = false;
+    QString currentDateStr = QDate::currentDate().toString(Qt::ISODate);
+    QString currentTimeStr = QTime::currentTime().toString("hh:mm:ss");
+    QString connName = QString::number(DatabaseManager::getDbCounter());
+    {
+        QSqlDatabase tempDb = QSqlDatabase::database();
+
+        if (DatabaseManager::createDatabase(&tempDb, connName))
+        {
+            QSqlQuery query(tempDb);
+
+            query.prepare(QString("INSERT INTO CashFloat ")
+                + QString("(Date, ShiftNo, EmpName, DateEdited, TimeEdited, ")
+                + QString("Comments, Nickels, Dimes, Quarters, Loonies, Toonies, ")
+                + QString("Fives, Tens, Twenties, Fifties, Hundreds) ")
+                + QString("VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+
+            query.addBindValue(date.toString(Qt::ISODate));
+            query.addBindValue(shiftNo);
+            query.addBindValue(empName);
+            query.addBindValue(currentDateStr);
+            query.addBindValue(currentTimeStr);
+            query.addBindValue(comments);
+
+            for (int i = 0; i < coins.size(); ++i)
+            {
+                query.addBindValue(coins.at(i));
+            }
+
+            if (query.exec())
+            {
+                qDebug() << "new cashfloat entry";
+                ret = true;
+            }
+            else
+            {
+                query.prepare(QString("UPDATE CashFloat ")
+                    + QString("SET EmpName = ? , DateEdited = ?, TimeEdited = ?, ")
+                    + QString("Comments = ?, ")
+                    + QString("Nickels = ?, Dimes = ?, Quarters = ?, ")
+                    + QString("Loonies = ?, Toonies = ?, Fives = ?, Tens = ?, ")
+                    + QString("Twenties = ?, Fifties = ?, Hundreds = ? ")
+                    + QString("WHERE Date = '" + date.toString(Qt::ISODate))
+                    + QString("' AND ShiftNo = " + QString::number(shiftNo)));
+
+                query.addBindValue(empName);
+                query.addBindValue(currentDateStr);
+                query.addBindValue(currentTimeStr);
+                query.addBindValue(comments);
+                
+                for (int i = 0; i < coins.size(); ++i)
+                {
+                    query.addBindValue(coins.at(i));
+                }
+
+                if (query.exec())
+                {
+                    qDebug() << "existing cashfloat updated";
+                    ret = true;
+                }
+                else
+                {
+                    qDebug() << "inserting and updating cashfloat failed";
+                } 
+            }
+        }
+        tempDb.close();
+    } // Necessary braces: tempDb and query are destroyed because out of scope
+    QSqlDatabase::removeDatabase(connName);
+    if (ret)
+    {
+        emit DatabaseManager::cashFloatInserted(empName, currentDateStr, currentTimeStr);
+    }
+    return ret;
+}
 
 int DatabaseManager::getIntFromQuery(QString queryString)
 {
@@ -1203,10 +1356,10 @@ QSqlQuery DatabaseManager::getActiveBooking(QString user, bool userLook){
     QString date = QDate::currentDate().toString(Qt::ISODate);
     QString q;
     if(!userLook){
-         q = "SELECT * FROM BOOKING WHERE FirstBook = 'YES' AND EndDate >= '" + date + "'";
+         q = "SELECT * FROM BOOKING JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '" + date + "'";
     }
     else{
-         q = "SELECT * FROM BOOKING WHERE FirstBook = 'YES' AND EndDate >= '" + date + "' AND ClientName LIKE '%" + user + "%'";
+         q = "SELECT * FROM BOOKING JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '" + date + "' AND ClientName LIKE '%" + user + "%'";
 
     }
     qDebug() << q;
