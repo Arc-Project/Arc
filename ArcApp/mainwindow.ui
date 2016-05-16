@@ -124,7 +124,7 @@ QHeaderView {
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>10</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -667,7 +667,7 @@ QHeaderView {
            </font>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_cl_general">
            <attribute name="title">
@@ -754,9 +754,6 @@ QHeaderView {
                    <font>
                     <pointsize>18</pointsize>
                    </font>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color: rgb(0, 85, 255);</string>
                   </property>
                   <property name="text">
                    <string/>
@@ -903,6 +900,12 @@ QHeaderView {
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                  </property>
+                  <property name="margin">
+                   <number>1</number>
+                  </property>
+                  <property name="indent">
+                   <number>1</number>
                   </property>
                  </widget>
                 </item>
