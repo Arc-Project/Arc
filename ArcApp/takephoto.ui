@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Camera</string>
   </property>
   <widget class="QPushButton" name="pushButton_piccapture">
    <property name="enabled">
@@ -31,7 +31,7 @@
     </font>
    </property>
    <property name="text">
-    <string>TAKE</string>
+    <string>CAPTURE</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButtons_camstart">
