@@ -34,6 +34,7 @@
 #include "bookingmanager.h"
 #include <QTableWidgetItem>
 #include <QMap>
+#include "loginprompt.h"
 #include "booking.h"
 #include "transaction.h"
 #include "client.h"
@@ -496,8 +497,8 @@ private slots:
 
     void on_btn_payNew_clicked();
 
+    void on_actionLogout_triggered();
 
-    
 
 private:
 
