@@ -191,6 +191,7 @@ private slots:
     void resizeEvent();
 
 
+
     void on_EditUserButton_clicked();
 
     void on_EditProgramButton_clicked();
@@ -198,31 +199,45 @@ private slots:
     void on_actionMain_Menu_triggered();
 
 
+    /*==========================================================================
+    CLIENT LOOPUP WIDGET FUNCTIONS
+    ==========================================================================*/
+
     void on_pushButton_RegisterClient_clicked();
-
-    void on_button_cancel_client_register_clicked();
-
-    
 
     void on_pushButton_search_client_clicked();
 
+    void on_checkBox_search_anonymous_clicked(bool checked);    //SEARCH ANONYMOUS
+
     void selected_client_info(int nRow, int nCol);
 
-    void on_button_register_client_clicked();
+    void initClientLookupTable();                               //initialize anonymouse
+
+    void searchTransaction(QString clientId);
+
+    void displayTransaction(QSqlQuery results);
+
+    void displayBookHistory(QSqlQuery results);
+
+    void searchBookHistory(QString clientId);
 
     /*==========================================================================
     CLIENT REGISTRATION FUNCTION
     ==========================================================================*/
 
-    void getListRegisterFields(QStringList* fieldList);
-    
-    bool check_client_register_form();
+    void getListRegisterFields(QStringList* fieldList); //GET LIST TO UPDATE DB
+
+    void on_button_register_client_clicked();           //BUTTON REGISTER OR EDIT INFO
+
+    bool check_client_register_form();                  //CHECK IF IT IS EMPTY OR NOT
 
     void clear_client_register_form();
 
     void read_curClient_Information(QString ClientId);
 
     void on_button_clear_client_regForm_clicked();
+
+    void on_button_cancel_client_register_clicked();
 
     void on_button_cl_takePic_clicked();
 
@@ -232,12 +247,7 @@ private slots:
 
     void defaultRegisterOptions();
 
-    void searchTransaction(QString clientId);
 
-    void displayTransaction(QSqlQuery results);
-
-    void displayBookHistory(QSqlQuery results);
-    void searchBookHistory(QString clientId);
 
     /*========================================================================*/
 
@@ -497,7 +507,7 @@ private slots:
     void on_btn_payNew_clicked();
 
 
-    
+
 
 private:
 

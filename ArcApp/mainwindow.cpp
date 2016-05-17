@@ -1589,7 +1589,7 @@ void MainWindow::on_pushButton_search_client_clicked()
     qDebug() <<"START SEARCH CLIENT";
     ui->tabWidget_cl_info->setCurrentIndex(0);
     QString clientName = ui->lineEdit_search_clientName->text();
-
+    qDebug()<<"NAME: "<<clientName;
     QSqlQuery resultQ = dbManager->searchClientList(clientName);
     setup_searchClientTable(resultQ);
 
@@ -1597,17 +1597,41 @@ void MainWindow::on_pushButton_search_client_clicked()
 
 
 }
+void MainWindow::on_checkBox_search_anonymous_clicked(bool checked)
+{
+    if(checked){
+        QSqlQuery resultQ = dbManager->searchClientList("anonymous");
+        setup_searchClientTable(resultQ);
+     //  ui->lineEdit_search_clientName->
+    }
+    else
+    {
+        qDebug()<<"anonymous check not";
+        initClientLookupInfo();
+    }
+}
+
+void MainWindow::initClientLookupTable(){
+    ui->tableWidget_search_client->setRowCount(0);
+
+    ui->tableWidget_search_client->setColumnCount(6);
+    ui->tableWidget_search_client->clear();
+
+    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"FirstName"<<"Middle Initial"<<"LastName"<<"DateOfBirth"<<"Balance");
+}
 
 //set up table widget to add result of search client using name
 void MainWindow::setup_searchClientTable(QSqlQuery results){
+    //initClientLookupInfo();
 
     ui->tableWidget_search_client->setRowCount(0);
-
-    int colCnt = results.record().count();
+     int colCnt = results.record().count();
     ui->tableWidget_search_client->setColumnCount(colCnt);
     ui->tableWidget_search_client->clear();
 
     ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"FirstName"<<"Middle Initial"<<"LastName"<<"DateOfBirth"<<"Balance");
+
+
     int row =0;
     while(results.next()){
         ui->tableWidget_search_client->insertRow(row);
@@ -4561,5 +4585,7 @@ void MainWindow::on_btn_payNew_clicked()
     ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
     ui->pushButton_processPaymeent->setHidden(false);
 }
+
+
 
 
