@@ -484,9 +484,16 @@ private slots:
 
     void on_actionExport_to_PDF_triggered();
 
+    void on_btn_newTypeLoc_clicked();
+
+    void on_btn_delTypeLoc_clicked();
+
+    void on_editroommodifybox_clicked(const QModelIndex &index);
+
     void on_chk_filter_clicked();
 
     void on_btn_payNew_clicked();
+
 
 private:
 

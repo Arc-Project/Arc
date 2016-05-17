@@ -68,7 +68,7 @@ MainWindow::MainWindow(QWidget *parent) :
     MainWindow::setupReportsScreen();
 
     //display logged in user and current shift in status bar
-    QLabel *lbl_curUser = new QLabel("Logged in as:   ");
+    QLabel *lbl_curUser = new QLabel("Logged in as: " + userLoggedIn + "  ");
     QLabel *lbl_curShift = new QLabel("Shift Number: ");
     statusBar()->addPermanentWidget(lbl_curUser);
     statusBar()->addPermanentWidget(lbl_curShift);
@@ -1189,7 +1189,7 @@ void MainWindow::on_makeBookingButton_2_clicked()
     if(!dbManager->updateBalance(curClient->balance - curBook->cost, curClient->clientId)){
         qDebug() << "ERROR ADDING TO BALANCE UPDATE";
     }
-    if(!dbManager->insertIntoBookingHistory(curClient->fullName, curBook->room, curBook->program, curBook->stringStart, curBook->stringEnd, "NEW", userLoggedIn, QString::number(currentshiftid))){
+    if(!dbManager->insertIntoBookingHistory(curClient->fullName, curBook->room, curBook->program, curBook->stringStart, curBook->stringEnd, "NEW", userLoggedIn, QString::number(currentshiftid), curClient->clientId)){
         qDebug() << "ERROR INSERTING INTO BOOKING HISTORY";
     }
     /*for(int i = 1; i < curBook->stayLength; i++){
@@ -4226,16 +4226,171 @@ void MainWindow::on_pushButton_14_clicked()
         // update spacecodes
         dbManager->updateAllSpacecodes();
 
+        populate_modRoom_cboxes();
+
         ui->lbl_editUserWarning_3->setText("Vacancy updated");
     } else {
         ui->lbl_editUserWarning_3->setText("This vacancy doesn't exist. Please select a valid vacancy.");
     }
 }
 
+void MainWindow::on_editroommodifybox_clicked(const QModelIndex &index)
+{
+    // populate edittext on the bottom
+    QString txt = ui->editroommodifybox->item(index.row(), 0)->text();
+    ui->le_newTypeLoc->setText(txt);
+}
+
+void MainWindow::on_btn_newTypeLoc_clicked()
+{
+    QSqlQuery idinfo;
+
+    // modify add new
+    switch (curmodifyingspace) {
+    case BUILDINGS: {
+        QSqlQuery q1 = dbManager->execQuery("SELECT * FROM Building WHERE BuildingNo=" + ui->le_newTypeLoc->text());
+        if (q1.next()) {
+            ui->lbl_editUserWarning_3->setText("A building with this number already exists.");
+        } else {
+            QSqlQuery q2 = dbManager->execQuery("INSERT INTO Building VALUES(" + ui->le_newTypeLoc->text() + ", '')");
+            ui->lbl_editUserWarning_3->setText("Building Created");
+
+        }
+        break;
+    }
+    case FLOORS: {
+//        idinfo = dbManager->execQuery("SELECT r.RoomId, b.BuildingId, f.FloorId"
+//                                      "FROM Space s INNER JOIN Room r ON s.RoomId = r.RoomId INNER JOIN Floor f ON r.FloorId = f.FloorId "
+//                                      "INNER JOIN Building b ON f.BuildingId = b.BuildingId "
+//                                      "WHERE b.BuildingNo =" + ui->cbox_roomLoc->currentText() + " ");
+//                                      "AND f.FloorNo =" + floorno + " "
+//                                      "AND r.RoomNo =" + roomno + " ");
+        //idinfo = dbManager->searchIDInformation(ui->cbox_roomLoc->currentText(), "1", "0");
+
+        QSqlQuery buildingidq = dbManager->execQuery("SELECT BuildingId FROM Building WHERE BuildingNo=" + ui->cbox_roomLoc->currentText());
+        buildingidq.next();
+        QSqlQuery q3 = dbManager->execQuery("SELECT * FROM Floor WHERE FloorNo=" + ui->le_newTypeLoc->text() +
+                                            " AND BuildingId = " + buildingidq.value(0).toString()); // room building floor
+
+        if (q3.next()) {
+            ui->lbl_editUserWarning_3->setText("A floor with this number already exists.");
+        } else {
+            QSqlQuery q4 = dbManager->execQuery("INSERT INTO Floor VALUES (" + ui->le_newTypeLoc->text()
+                                                + ", " + buildingidq.value(0).toString() + ")");
+            ui->lbl_editUserWarning_3->setText("Floor Created");
+        }
+
+        break;
+    }
+    case ROOMS: {
+        QSqlQuery buildingidq = dbManager->execQuery("SELECT BuildingId FROM Building WHERE BuildingNo=" + ui->cbox_roomLoc->currentText());
+        buildingidq.next();
+//        idinfo = dbManager->searchIDInformation(ui->cbox_roomLoc->currentText(), ui->cbox_roomFloor->currentText(), "0");
+//        idinfo.next();
+        QSqlQuery q3 = dbManager->execQuery("SELECT * FROM Floor WHERE FloorNo=" + ui->cbox_roomFloor->currentText() +
+                                            " AND BuildingId = " + buildingidq.value(0).toString()); // room building floor
+        q3.next();
+
+        qDebug() << "Bid" + buildingidq.value(0).toString();
+
+        QString floorid = q3.value(0).toString();
+
+        qDebug() << "fid" + floorid;
+
+        QSqlQuery q4 = dbManager->execQuery("SELECT * FROM Room WHERE RoomNo=" + ui->le_newTypeLoc->text()
+                                            + " AND FloorId =" + floorid);
+
+        if (q4.next()) {
+            ui->lbl_editUserWarning_3->setText("A room with this number already exists.");
+        } else {
+            dbManager->execQuery("INSERT INTO Room VALUES (" + floorid + ", " + ui->le_newTypeLoc->text() + ")");
+            ui->lbl_editUserWarning_3->setText("Room created");
+        }
+
+        break;
+    }
+    case NOT_SET: {
+        ui->lbl_editUserWarning_3->setText("You haven't selected anything to modify yet");
+        break;
+    }
+    default: {
+        break;
+    }
+    }
+
+    ui->editroommodifybox->clear();
+}
+
+void MainWindow::on_btn_delTypeLoc_clicked()
+{
+    QSqlQuery idinfo;
+
+    // modify delete
+    switch (curmodifyingspace) {
+    case BUILDINGS: {
+        QSqlQuery q1 = dbManager->execQuery("SELECT * FROM Building WHERE BuildingNo=" + ui->le_newTypeLoc->text());
+        if (!q1.next()) {
+            ui->lbl_editUserWarning_3->setText("No building with this number exists.");
+        } else {
+            QSqlQuery q2 = dbManager->execQuery("DELETE FROM Building WHERE BuildingNo=" + ui->le_newTypeLoc->text());
+            ui->lbl_editUserWarning_3->setText("Building Deleted");
+        }
+        break;
+        break;
+    }
+    case FLOORS: {
+        QSqlQuery buildingidq = dbManager->execQuery("SELECT BuildingId FROM Building WHERE BuildingNo=" + ui->cbox_roomLoc->currentText());
+        buildingidq.next();
+        QSqlQuery q3 = dbManager->execQuery("SELECT * FROM Floor WHERE FloorNo=" + ui->le_newTypeLoc->text() +
+                                            " AND BuildingId = " + buildingidq.value(0).toString()); // room building floor
+
+        if (!q3.next()) {
+            ui->lbl_editUserWarning_3->setText("No floor with this number exists.");
+        } else {
+            QSqlQuery q4 = dbManager->execQuery("DELETE FROM Floor WHERE FloorNo=" + ui->le_newTypeLoc->text()
+                                                + " AND BuildingId=" + buildingidq.value(0).toString());
+            ui->lbl_editUserWarning_3->setText("Floor Deleted");
+        }
+
+        break;
+    }
+    case ROOMS: {
+        QSqlQuery buildingidq = dbManager->execQuery("SELECT BuildingId FROM Building WHERE BuildingNo=" + ui->cbox_roomLoc->currentText());
+        buildingidq.next();
+//        idinfo = dbManager->searchIDInformation(ui->cbox_roomLoc->currentText(), ui->cbox_roomFloor->currentText(), "0");
+//        idinfo.next();
+        QSqlQuery q3 = dbManager->execQuery("SELECT * FROM Floor WHERE FloorNo=" + ui->cbox_roomFloor->currentText() +
+                                            " AND BuildingId = " + buildingidq.value(0).toString()); // room building floor
+        q3.next();
+
+
+        QString floorid = q3.value(0).toString();
+
+        qDebug() << floorid;
+
+        QSqlQuery q4 = dbManager->execQuery("SELECT * FROM Room WHERE RoomNo=" + ui->le_newTypeLoc->text()
+                                            + " AND FloorId =" + floorid);
+
+        if (!q4.next()) {
+            ui->lbl_editUserWarning_3->setText("No room with this number exists.");
+        } else {
+            dbManager->execQuery("DELETE FROM Room WHERE FloorId=" + floorid + " AND RoomNo=" + ui->le_newTypeLoc->text());
+            ui->lbl_editUserWarning_3->setText("Room Deleted");
+        }
+        break;
+    }
+    case NOT_SET: {
+        break;
+    }
+    default: {
+        break;
+    }
+    }
+    ui->editroommodifybox->clear();
+}
+
 void MainWindow::on_pushButton_15_clicked()
 {
-    // implement checking if bookings are using this later?
-
     ui->lbl_editUserWarning_3->setText("");
     // delete space
     QString building = ui->cbox_roomLoc->currentText();
@@ -4253,6 +4408,8 @@ void MainWindow::on_pushButton_15_clicked()
     if (result.next()) {
         // doesn't exist so make one
         QSqlQuery deleteres = dbManager->deleteSpace(building, floor, room, bednumber);
+
+        populate_modRoom_cboxes();
 
         ui->lbl_editUserWarning_3->setText("Vacancy Deleted");
     } else {
