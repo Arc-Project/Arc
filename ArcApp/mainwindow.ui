@@ -12612,6 +12612,11 @@ QHeaderView {
         </row>
         <column>
          <property name="text">
+          <string>0</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
           <string>1</string>
          </property>
         </column>
@@ -12725,11 +12730,6 @@ QHeaderView {
           <string>23</string>
          </property>
         </column>
-        <item row="0" column="0">
-         <property name="text">
-          <string/>
-         </property>
-        </item>
         <item row="0" column="1">
          <property name="text">
           <string/>
@@ -12752,7 +12752,7 @@ QHeaderView {
         </item>
         <item row="0" column="5">
          <property name="text">
-          <string>1</string>
+          <string/>
          </property>
         </item>
         <item row="0" column="6">
@@ -12782,7 +12782,7 @@ QHeaderView {
         </item>
         <item row="0" column="11">
          <property name="text">
-          <string>2</string>
+          <string>1 2</string>
          </property>
         </item>
         <item row="0" column="12">
@@ -12812,7 +12812,7 @@ QHeaderView {
         </item>
         <item row="0" column="17">
          <property name="text">
-          <string>3</string>
+          <string>2</string>
          </property>
         </item>
         <item row="0" column="18">
@@ -12836,6 +12836,11 @@ QHeaderView {
          </property>
         </item>
         <item row="0" column="22">
+         <property name="text">
+          <string>3</string>
+         </property>
+        </item>
+        <item row="0" column="23">
          <property name="text">
           <string>3</string>
          </property>
@@ -12976,6 +12981,19 @@ QHeaderView {
           </widget>
          </item>
         </layout>
+       </widget>
+       <widget class="QPushButton" name="btn_saveShift">
+        <property name="geometry">
+         <rect>
+          <x>70</x>
+          <y>660</y>
+          <width>93</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Save</string>
+        </property>
        </widget>
       </widget>
      </widget>
