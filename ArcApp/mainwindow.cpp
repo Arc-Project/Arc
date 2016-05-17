@@ -10,7 +10,8 @@
 
 //MyModel* checkoutModel;
 Report *checkoutReport, *vacancyReport, *lunchReport, *wakeupReport,
-    *bookingReport, *transactionReport, *clientLogReport, *otherReport;
+    *bookingReport, *transactionReport, *clientLogReport, *otherReport,
+    *yellowReport, *redReport;
 bool firstTime = true;
 QStack<int> backStack;
 QStack<int> forwardStack;
@@ -51,15 +52,18 @@ MainWindow::MainWindow(QWidget *parent) :
     //detect if the widget is changed
     connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(initCurrentWidget(int)));
     connect(dbManager, SIGNAL(dailyReportStatsChanged(QList<int>)), this,
-            SLOT(updateDailyReportStats(QList<int>)));
+        SLOT(updateDailyReportStats(QList<int>)));
     connect(dbManager, SIGNAL(shiftReportStatsChanged(QList<int>)), this,
-            SLOT(updateShiftReportStats(QList<int>)));
+        SLOT(updateShiftReportStats(QList<int>)));
     connect(dbManager, SIGNAL(cashFloatChanged(QDate, int, QStringList)), this,
-            SLOT(updateCashFloat(QDate, int, QStringList)));
+        SLOT(updateCashFloat(QDate, int, QStringList)));
     connect(dbManager, SIGNAL(cashFloatInserted(QString, QString, QString)), this,
-            SLOT(updateCashFloatLastEditedLabels(QString, QString, QString)));
+        SLOT(updateCashFloatLastEditedLabels(QString, QString, QString)));
     connect(ui->other_lineEdit, SIGNAL(textEdited(const QString &)), this,
-            SLOT(on_other_lineEdit_textEdited(const QString &)));
+        SLOT(on_other_lineEdit_textEdited(const QString &)));
+    connect(dbManager, SIGNAL(monthlyReportChanged(QStringList)), this,
+        SLOT(updateMonthlyReportUi(QStringList)));
+
     curClient = 0;
     curBook = 0;
     trans = 0;
@@ -68,7 +72,7 @@ MainWindow::MainWindow(QWidget *parent) :
     MainWindow::setupReportsScreen();
 
     //display logged in user and current shift in status bar
-    QLabel *lbl_curUser = new QLabel("Logged in as:   ");
+    QLabel *lbl_curUser = new QLabel("Logged in as: " + userLoggedIn + "  ");
     QLabel *lbl_curShift = new QLabel("Shift Number: ");
     statusBar()->addPermanentWidget(lbl_curUser);
     statusBar()->addPermanentWidget(lbl_curShift);
@@ -98,13 +102,14 @@ void MainWindow::initCurrentWidget(int idx){
     switch(idx){
         case MAINMENU:  //WIDGET 0
             curClientID = "";
+            registerType = NOREGISTER;
             break;
         case CLIENTLOOKUP:  //WIDGET 1
             initClientLookupInfo();
             ui->tabWidget_cl_info->setCurrentIndex(0);
             if(registerType == EDITCLIENT)
                 getClientInfo();
-            registerType = 0;
+            registerType = NOREGISTER;
             //initimageview
             break;
         case BOOKINGLOOKUP: //WIDGET 2
@@ -168,6 +173,8 @@ void MainWindow::initCurrentWidget(int idx){
             MainWindow::updateShiftReportTables(QDate::currentDate(), currentshiftid);
             MainWindow::getShiftReportStats(QDate::currentDate(), currentshiftid);
             MainWindow::getCashFloat(QDate::currentDate(), currentshiftid);
+            MainWindow::getMonthlyReport(QDate::currentDate().month(), QDate::currentDate().year());
+            MainWindow::updateRestrictionTables();
             break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
@@ -243,13 +250,7 @@ void MainWindow::on_actionDB_Connection_triggered()
 
 void MainWindow::on_actionTest_Query_triggered()
 {
-    dbManager->getCashFloatThread(QDate::currentDate(), currentshiftid);
-    // QList<int> coins;
-    // for (int i = 0; i < 10; i++)
-    // {
-    //     coins << 1;
-    // }
-    // dbManager->insertCashFloat(QDate::currentDate(), 1, "Joseph", "comments", coins);
+
 }
 
 void MainWindow::on_actionFile_Upload_triggered()
@@ -3225,6 +3226,8 @@ void MainWindow::setupReportsScreen()
     transactionReport = new Report(this, ui->transaction_tableView, TRANSACTION_REPORT);
     clientLogReport = new Report(this, ui->clientLog_tableView, CLIENT_REPORT);
     otherReport = new Report(this, ui->other_tableView, OTHER_REPORT);
+    yellowReport = new Report(this, ui->yellowRestriction_tableView, YELLOW_REPORT);
+    redReport = new Report(this, ui->redRestriction_tableView, RED_REPORT);
 
     ui->saveOther_btn->setEnabled(false);
 
@@ -3234,6 +3237,20 @@ void MainWindow::setupReportsScreen()
     ui->cashFloat_dateEdit->setDate(QDate::currentDate());
     ui->cashFloat_spinBox->setValue(currentshiftid);
 
+    // Monthly Report Screen
+    QStringList monthList;
+    monthList << "Jan" << "Feb" << "Mar" << "Apr" << "May" << "Jun" << "Jul" << "Aug" << "Sep" << "Oct" << "Nov" << "Dec";
+    ui->month_comboBox->addItems(monthList);
+
+    QStringList yearList;
+    for (int i = 2016; i <= QDate::currentDate().year(); i++)
+    {
+        yearList << QString::number(i);
+    }
+    ui->year_comboBox->addItems(yearList);
+
+    ui->month_comboBox->setCurrentIndex(QDate::currentDate().month() - 1);
+    ui->year_comboBox->setCurrentIndex(yearList.size() - 1);
 }
 
 void MainWindow::updateDailyReportTables(QDate date)
@@ -3245,6 +3262,12 @@ void MainWindow::updateDailyReportTables(QDate date)
 
     ui->lbl_dailyReportDateVal->setText(date.toString(Qt::ISODate));
     ui->dailyReport_dateEdit->setDate(date);
+}
+
+void MainWindow::updateRestrictionTables()
+{
+    yellowReport->updateModel();
+    redReport->updateModel();
 }
 
 void MainWindow::updateShiftReportTables(QDate date, int shiftNo)
@@ -3326,6 +3349,11 @@ void MainWindow::getShiftReportStats(QDate date, int shiftNo)
 void MainWindow::getCashFloat(QDate date, int shiftNo)
 {
     QtConcurrent::run(dbManager, &DatabaseManager::getCashFloatThread, date, shiftNo);
+}
+
+void MainWindow::getMonthlyReport(int month, int year)
+{
+    QtConcurrent::run(dbManager, &DatabaseManager::getMonthlyReportThread, month, year);
 }
 
 void MainWindow::updateDailyReportStats(QList<int> list)
@@ -3421,6 +3449,22 @@ void MainWindow::updateCashFloatLastEditedLabels(QString empName,
     ui->lastModifiedDateTime_lbl->setText(currentDateStr + " at " + currentTimeStr);
 }
 
+void MainWindow::on_monthlyReportGo_btn_clicked()
+{
+    int month = ui->month_comboBox->currentIndex() + 1;
+    int year = ui->year_comboBox->currentText().toInt();
+    qDebug() << "Month: " << month << " Year: " << year;
+
+    MainWindow::getMonthlyReport(month, year);
+}
+
+void MainWindow::updateMonthlyReportUi(QStringList list)
+{
+    ui->numBedsUsed_lbl->setText(list.at(0) + "/" + list.at(2));
+    ui->numEmptyBeds_lbl->setText(list.at(1) + "/" + list.at(2));
+    ui->numNewClients_lbl->setText(list.at(3));
+    ui->numUniqueClients_lbl->setText(list.at(4));
+}
 /*==============================================================================
 REPORTS (END)
 ==============================================================================*/
@@ -4167,7 +4211,7 @@ void MainWindow::on_btn_createNewUser_3_clicked()
         idinfo.next();
 
         QString roomid = idinfo.value(0).toString();
-
+        qDebug() << roomid;
         QSqlQuery insertres = dbManager->execQuery("INSERT INTO Space "
                                                    "VALUES (" + bednumber +
                                                    ", " + roomid +
@@ -4177,7 +4221,22 @@ void MainWindow::on_btn_createNewUser_3_clicked()
                                                    ", NULL)");
         // update spacecodes
         dbManager->updateAllSpacecodes();
-
+        // clear everything
+        ui->cbox_roomLoc->clear();
+        ui->cbox_roomFloor->clear();
+        ui->cbox_roomRoom->clear();
+        ui->le_roomNo->clear();
+        ui->cbox_roomType->clear();
+        ui->le_roomNo->clear();
+        ui->doubleSpinBox->setValue(0.0);
+        ui->doubleSpinBox_2->setValue(0.0);
+        ui->tableWidget_5->clear();
+        ui->tableWidget_5->setRowCount(0);
+        ui->le_users_3->clear();
+        // set horizontal headers
+        ui->tableWidget_5->setColumnCount(8);
+        ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly");
+        populate_modRoom_cboxes();
         ui->lbl_editUserWarning_3->setText("Vacancy created");
     } else {
         ui->lbl_editUserWarning_3->setText("This vacancy already exists. Please change the bed number.");
@@ -4228,6 +4287,22 @@ void MainWindow::on_pushButton_14_clicked()
         populate_modRoom_cboxes();
 
         ui->lbl_editUserWarning_3->setText("Vacancy updated");
+        // clear everything
+        ui->cbox_roomLoc->clear();
+        ui->cbox_roomFloor->clear();
+        ui->cbox_roomRoom->clear();
+        ui->le_roomNo->clear();
+        ui->cbox_roomType->clear();
+        ui->le_roomNo->clear();
+        ui->doubleSpinBox->setValue(0.0);
+        ui->doubleSpinBox_2->setValue(0.0);
+        ui->tableWidget_5->clear();
+        ui->tableWidget_5->setRowCount(0);
+        ui->le_users_3->clear();
+        // set horizontal headers
+        ui->tableWidget_5->setColumnCount(8);
+        ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly");
+        populate_modRoom_cboxes();
     } else {
         ui->lbl_editUserWarning_3->setText("This vacancy doesn't exist. Please select a valid vacancy.");
     }
@@ -4316,8 +4391,24 @@ void MainWindow::on_btn_newTypeLoc_clicked()
         break;
     }
     }
-
+    // clear everything
+    ui->cbox_roomLoc->clear();
+    ui->cbox_roomFloor->clear();
+    ui->cbox_roomRoom->clear();
+    ui->le_roomNo->clear();
+    ui->cbox_roomType->clear();
+    ui->le_roomNo->clear();
+    ui->doubleSpinBox->setValue(0.0);
+    ui->doubleSpinBox_2->setValue(0.0);
+    ui->tableWidget_5->clear();
+    ui->tableWidget_5->setRowCount(0);
+    ui->le_users_3->clear();
+    // set horizontal headers
+    ui->tableWidget_5->setColumnCount(8);
+    ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly");
+    populate_modRoom_cboxes();
     ui->editroommodifybox->clear();
+    ui->editroommodifybox->setColumnCount(0);
 }
 
 void MainWindow::on_btn_delTypeLoc_clicked()
@@ -4385,7 +4476,24 @@ void MainWindow::on_btn_delTypeLoc_clicked()
         break;
     }
     }
+    // clear everything
+    ui->cbox_roomLoc->clear();
+    ui->cbox_roomFloor->clear();
+    ui->cbox_roomRoom->clear();
+    ui->le_roomNo->clear();
+    ui->cbox_roomType->clear();
+    ui->le_roomNo->clear();
+    ui->doubleSpinBox->setValue(0.0);
+    ui->doubleSpinBox_2->setValue(0.0);
+    ui->tableWidget_5->clear();
+    ui->tableWidget_5->setRowCount(0);
+    ui->le_users_3->clear();
+    // set horizontal headers
+    ui->tableWidget_5->setColumnCount(8);
+    ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly");
+    populate_modRoom_cboxes();
     ui->editroommodifybox->clear();
+    ui->editroommodifybox->setColumnCount(0);
 }
 
 void MainWindow::on_pushButton_15_clicked()
@@ -4411,6 +4519,24 @@ void MainWindow::on_pushButton_15_clicked()
         populate_modRoom_cboxes();
 
         ui->lbl_editUserWarning_3->setText("Vacancy Deleted");
+
+        // clear everything
+        ui->cbox_roomLoc->clear();
+        ui->cbox_roomFloor->clear();
+        ui->cbox_roomRoom->clear();
+        ui->le_roomNo->clear();
+        ui->cbox_roomType->clear();
+        ui->le_roomNo->clear();
+        ui->doubleSpinBox->setValue(0.0);
+        ui->doubleSpinBox_2->setValue(0.0);
+        ui->tableWidget_5->clear();
+        ui->tableWidget_5->setRowCount(0);
+        ui->le_users_3->clear();
+        // set horizontal headers
+        ui->tableWidget_5->setColumnCount(8);
+        ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly");
+        populate_modRoom_cboxes();
+
     } else {
         ui->lbl_editUserWarning_3->setText("This vacancy doesn't exist. Please select a valid vacancy.");
     }
@@ -4435,3 +4561,5 @@ void MainWindow::on_btn_payNew_clicked()
     ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
     ui->pushButton_processPaymeent->setHidden(false);
 }
+
+

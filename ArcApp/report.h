@@ -8,7 +8,7 @@
 #include <QtConcurrent/QtConcurrent>
 #include <qDebug>
 
-// Do not use shiftNo
+// Use date, shiftNo
 #define CHECKOUT_REPORT       0
 #define VACANCY_REPORT        1
 #define LUNCH_REPORT          2
@@ -20,15 +20,21 @@
 #define CLIENT_REPORT         6
 #define OTHER_REPORT          7
 
+// No params
+#define YELLOW_REPORT         8
+#define RED_REPORT            9
+
 #define NUMCOLS_TRANSACTION   11
             
 class Report
 {
 public:
-    Report(QObject *parent, QTableView* tableView, int type);
+    Report(QObject *parent, QWidget* tableView, int type);
+    void updateModel();
     void updateModel(QDate date);
     void updateModel(QDate date, int shiftNo);
     void updateModelThread(QDate date);
+    void updateModelThread();
 private:
     MyModel model;
     int reportType;
