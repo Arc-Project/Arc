@@ -1109,7 +1109,7 @@ void MainWindow::on_editRoom_clicked()
 {
     ui->editDate->setEnabled(false);
    // swapper * swap = new Swapper();
-    EditRooms * edit = new EditRooms(this, curBook, userLoggedIn, QString::number(currentshiftid));
+    EditRooms * edit = new EditRooms(this, curBook, userLoggedIn, QString::number(currentshiftid), curClient);
     edit->exec();
     setBookSummary();
 }
@@ -4562,4 +4562,11 @@ void MainWindow::on_btn_payNew_clicked()
     ui->pushButton_processPaymeent->setHidden(false);
 }
 
+void MainWindow::on_actionLogout_triggered()
+{
+    LoginPrompt* w = new LoginPrompt();
 
+    w->show();
+
+    close();
+}
