@@ -158,8 +158,8 @@ void EditRooms::on_editSwap_clicked()
     result = dbManager->getSwapBookings(curBook->startDate, curBook->endDate, curBook->program, nextStart.toString(Qt::ISODate), curBook->bookID);
     QStringList headers;
     QStringList col;
-    headers << "Room#" <<  "Program" << "Type" << "Cost" << "Monthly" << "Current Occupant" << "" << "";
-    col << "SpaceCode" << "ProgramCodes" << "type" << "cost" << "Monthly" << "ClientName" << "BookingId" << "SpaceId" ;
+    headers << "Room#" <<  "Program" << "Type" << "Cost" << "Monthly" << "Current Occupant" << "" << "" << "Client Name";
+    col << "SpaceCode" << "ProgramCodes" << "type" << "cost" << "Monthly" << "ClientName" << "BookingId" << "SpaceId" << "ClientName";
     populateATable(ui->editRoom,headers, col, result, false);
     ui->editRoom->setColumnHidden(6, true);
     ui->editRoom->setColumnHidden(7, true);
