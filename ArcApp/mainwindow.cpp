@@ -3950,6 +3950,9 @@ void MainWindow::on_EditShiftsButton_clicked()
 {
     addHistory(ADMINPAGE);
     ui->stackedWidget->setCurrentIndex(EDITSHIFT);
+    ui->comboBox_4->clear();
+    ui->comboBox_4->addItem("1");
+    ui->comboBox_3->setCurrentIndex(0);
 }
 
 void MainWindow::on_cbox_roomLoc_currentTextChanged(const QString &arg1)
@@ -4616,3 +4619,58 @@ void MainWindow::on_actionLogout_triggered()
     close();
 }
 
+void MainWindow::on_comboBox_3_currentTextChanged(const QString &arg1)
+{
+    if (arg1 == "1") {
+        ui->comboBox_4->clear();
+        ui->comboBox_4->addItem("1");
+    } else if (arg1 == "2") {
+        ui->comboBox_4->clear();
+        ui->comboBox_4->addItem("1");
+        ui->comboBox_4->addItem("2");
+    } else if (arg1 == "3") {
+        ui->comboBox_4->clear();
+        ui->comboBox_4->addItem("1");
+        ui->comboBox_4->addItem("2");
+        ui->comboBox_4->addItem("3");
+    } else if (arg1 == "4") {
+        ui->comboBox_4->clear();
+        ui->comboBox_4->addItem("1");
+        ui->comboBox_4->addItem("2");
+        ui->comboBox_4->addItem("3");
+        ui->comboBox_4->addItem("4");
+    } else if (arg1 == "5"){
+        ui->comboBox_4->clear();
+        ui->comboBox_4->addItem("1");
+        ui->comboBox_4->addItem("2");
+        ui->comboBox_4->addItem("3");
+        ui->comboBox_4->addItem("4");
+        ui->comboBox_4->addItem("5");
+    }
+}
+
+void MainWindow::on_btn_saveShift_clicked()
+{
+    QString day = ui->comboBox_2->currentText();
+    QString shiftno = ui->comboBox_4->currentText();
+
+    QString starttime = ui->timeEdit->text();
+    QString endtime = ui->timeEdit_2->text();
+
+    // if the shift does not exist, make one
+    QSqlQuery existcheck = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='" + day + "'");
+
+    if (!existcheck.next()) {
+        qDebug() << "Doesn't exist";
+        // insert
+        QSqlQuery insert = dbManager->execQuery("INSERT INTO Shift VALUES('" + day + "'"
+                                                ", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1)");
+    }
+
+    // update
+    QSqlQuery update = dbManager->execQuery("UPDATE Shift SET StartTimeShift" + shiftno +
+                                            "='" + starttime + "' WHERE DayOfWeek = '" + day + "'");
+    QSqlQuery update2 = dbManager->execQuery("UPDATE Shift SET EndTimeShift" + shiftno +
+                                            "='" + endtime + "' WHERE DayOfWeek = '" + day + "'");
+
+}

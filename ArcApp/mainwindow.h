@@ -510,6 +510,10 @@ private slots:
     void on_actionLogout_triggered();
 
 
+    void on_comboBox_3_currentTextChanged(const QString &arg1);
+
+    void on_btn_saveShift_clicked();
+
 private:
 
     Ui::MainWindow *ui;
