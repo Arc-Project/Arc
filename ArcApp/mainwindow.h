@@ -167,7 +167,7 @@ private slots:
     void on_caseButton_clicked();
     
     /*==========================================================================
-    REPORTS -slots
+    REPORTS - slots
     ==========================================================================*/
     void on_dailyReportGo_btn_clicked();
     void on_dailyReportCurrent_btn_clicked();
@@ -184,6 +184,8 @@ private slots:
     void on_calculateTotal_btn_clicked();
     void on_cashFloatGo_btn_clicked();
     void on_cashFloatCurrent_btn_clicked();
+    void on_monthlyReportGo_btn_clicked();
+    void updateMonthlyReportUi(QStringList list);
     
     
     
@@ -495,8 +497,8 @@ private slots:
 
     void on_btn_payNew_clicked();
 
-
     void on_actionLogout_triggered();
+
 
 private:
 
@@ -525,6 +527,8 @@ private:
     void updateShiftReportTables(QDate date, int shiftNo);
     void getShiftReportStats(QDate date, int shiftNo);
     void getCashFloat(QDate date, int shiftNo);
+    void getMonthlyReport(int month, int year);
+    void updateRestrictionTables();
 
 
 

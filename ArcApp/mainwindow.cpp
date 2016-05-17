@@ -10,7 +10,8 @@
 
 //MyModel* checkoutModel;
 Report *checkoutReport, *vacancyReport, *lunchReport, *wakeupReport,
-    *bookingReport, *transactionReport, *clientLogReport, *otherReport;
+    *bookingReport, *transactionReport, *clientLogReport, *otherReport,
+    *yellowReport, *redReport;
 bool firstTime = true;
 QStack<int> backStack;
 QStack<int> forwardStack;
@@ -51,15 +52,18 @@ MainWindow::MainWindow(QWidget *parent) :
     //detect if the widget is changed
     connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(initCurrentWidget(int)));
     connect(dbManager, SIGNAL(dailyReportStatsChanged(QList<int>)), this,
-            SLOT(updateDailyReportStats(QList<int>)));
+        SLOT(updateDailyReportStats(QList<int>)));
     connect(dbManager, SIGNAL(shiftReportStatsChanged(QList<int>)), this,
-            SLOT(updateShiftReportStats(QList<int>)));
+        SLOT(updateShiftReportStats(QList<int>)));
     connect(dbManager, SIGNAL(cashFloatChanged(QDate, int, QStringList)), this,
-            SLOT(updateCashFloat(QDate, int, QStringList)));
+        SLOT(updateCashFloat(QDate, int, QStringList)));
     connect(dbManager, SIGNAL(cashFloatInserted(QString, QString, QString)), this,
-            SLOT(updateCashFloatLastEditedLabels(QString, QString, QString)));
+        SLOT(updateCashFloatLastEditedLabels(QString, QString, QString)));
     connect(ui->other_lineEdit, SIGNAL(textEdited(const QString &)), this,
-            SLOT(on_other_lineEdit_textEdited(const QString &)));
+        SLOT(on_other_lineEdit_textEdited(const QString &)));
+    connect(dbManager, SIGNAL(monthlyReportChanged(QStringList)), this,
+        SLOT(updateMonthlyReportUi(QStringList)));
+
     curClient = 0;
     curBook = 0;
     trans = 0;
@@ -169,6 +173,8 @@ void MainWindow::initCurrentWidget(int idx){
             MainWindow::updateShiftReportTables(QDate::currentDate(), currentshiftid);
             MainWindow::getShiftReportStats(QDate::currentDate(), currentshiftid);
             MainWindow::getCashFloat(QDate::currentDate(), currentshiftid);
+            MainWindow::getMonthlyReport(QDate::currentDate().month(), QDate::currentDate().year());
+            MainWindow::updateRestrictionTables();
             break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
@@ -244,13 +250,7 @@ void MainWindow::on_actionDB_Connection_triggered()
 
 void MainWindow::on_actionTest_Query_triggered()
 {
-    dbManager->getCashFloatThread(QDate::currentDate(), currentshiftid);
-    // QList<int> coins;
-    // for (int i = 0; i < 10; i++)
-    // {
-    //     coins << 1;
-    // }
-    // dbManager->insertCashFloat(QDate::currentDate(), 1, "Joseph", "comments", coins);
+
 }
 
 void MainWindow::on_actionFile_Upload_triggered()
@@ -1109,7 +1109,7 @@ void MainWindow::on_editRoom_clicked()
 {
     ui->editDate->setEnabled(false);
    // swapper * swap = new Swapper();
-    EditRooms * edit = new EditRooms(this, curBook, userLoggedIn, QString::number(currentshiftid));
+    EditRooms * edit = new EditRooms(this, curBook, userLoggedIn, QString::number(currentshiftid), curClient);
     edit->exec();
     setBookSummary();
 }
@@ -3226,6 +3226,8 @@ void MainWindow::setupReportsScreen()
     transactionReport = new Report(this, ui->transaction_tableView, TRANSACTION_REPORT);
     clientLogReport = new Report(this, ui->clientLog_tableView, CLIENT_REPORT);
     otherReport = new Report(this, ui->other_tableView, OTHER_REPORT);
+    yellowReport = new Report(this, ui->yellowRestriction_tableView, YELLOW_REPORT);
+    redReport = new Report(this, ui->redRestriction_tableView, RED_REPORT);
 
     ui->saveOther_btn->setEnabled(false);
 
@@ -3235,6 +3237,20 @@ void MainWindow::setupReportsScreen()
     ui->cashFloat_dateEdit->setDate(QDate::currentDate());
     ui->cashFloat_spinBox->setValue(currentshiftid);
 
+    // Monthly Report Screen
+    QStringList monthList;
+    monthList << "Jan" << "Feb" << "Mar" << "Apr" << "May" << "Jun" << "Jul" << "Aug" << "Sep" << "Oct" << "Nov" << "Dec";
+    ui->month_comboBox->addItems(monthList);
+
+    QStringList yearList;
+    for (int i = 2016; i <= QDate::currentDate().year(); i++)
+    {
+        yearList << QString::number(i);
+    }
+    ui->year_comboBox->addItems(yearList);
+
+    ui->month_comboBox->setCurrentIndex(QDate::currentDate().month() - 1);
+    ui->year_comboBox->setCurrentIndex(yearList.size() - 1);
 }
 
 void MainWindow::updateDailyReportTables(QDate date)
@@ -3246,6 +3262,12 @@ void MainWindow::updateDailyReportTables(QDate date)
 
     ui->lbl_dailyReportDateVal->setText(date.toString(Qt::ISODate));
     ui->dailyReport_dateEdit->setDate(date);
+}
+
+void MainWindow::updateRestrictionTables()
+{
+    yellowReport->updateModel();
+    redReport->updateModel();
 }
 
 void MainWindow::updateShiftReportTables(QDate date, int shiftNo)
@@ -3327,6 +3349,11 @@ void MainWindow::getShiftReportStats(QDate date, int shiftNo)
 void MainWindow::getCashFloat(QDate date, int shiftNo)
 {
     QtConcurrent::run(dbManager, &DatabaseManager::getCashFloatThread, date, shiftNo);
+}
+
+void MainWindow::getMonthlyReport(int month, int year)
+{
+    QtConcurrent::run(dbManager, &DatabaseManager::getMonthlyReportThread, month, year);
 }
 
 void MainWindow::updateDailyReportStats(QList<int> list)
@@ -3422,6 +3449,22 @@ void MainWindow::updateCashFloatLastEditedLabels(QString empName,
     ui->lastModifiedDateTime_lbl->setText(currentDateStr + " at " + currentTimeStr);
 }
 
+void MainWindow::on_monthlyReportGo_btn_clicked()
+{
+    int month = ui->month_comboBox->currentIndex() + 1;
+    int year = ui->year_comboBox->currentText().toInt();
+    qDebug() << "Month: " << month << " Year: " << year;
+
+    MainWindow::getMonthlyReport(month, year);
+}
+
+void MainWindow::updateMonthlyReportUi(QStringList list)
+{
+    ui->numBedsUsed_lbl->setText(list.at(0) + "/" + list.at(2));
+    ui->numEmptyBeds_lbl->setText(list.at(1) + "/" + list.at(2));
+    ui->numNewClients_lbl->setText(list.at(3));
+    ui->numUniqueClients_lbl->setText(list.at(4));
+}
 /*==============================================================================
 REPORTS (END)
 ==============================================================================*/

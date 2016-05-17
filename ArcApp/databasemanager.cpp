@@ -508,6 +508,19 @@ bool DatabaseManager::addHistoryFromId(QString bookId, QString empId, QString sh
     }
 
 }
+QSqlQuery DatabaseManager::getBalance(QString clientId){
+    QSqlQuery query(db);
+    QString q = "SELECT Balance FROM Client WHERE ClientId ='" + clientId + "'";
+    query.exec(q);
+    return query;
+}
+
+QSqlQuery DatabaseManager::getRoomCosts(QString roomId){
+    QSqlQuery query(db);
+    QString q = "SELECT cost, Monthly FROM Space WHERE SpaceId ='" + roomId + "'";
+    query.exec(q);
+    return query;
+}
 
 bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage* profilePic)//QObject sth, QImage profilePic)
 {
@@ -805,11 +818,12 @@ bool DatabaseManager::getDailyReportVacancyQuery(QSqlQuery* queryResults, QDate 
     QString queryString =
         QString("SELECT s.SpaceId, s.ProgramCodes ")
         + QString("FROM Space s LEFT JOIN (SELECT SpaceId, Date ")
-        + QString("FROM Booking WHERE Date = '" + date.toString(Qt::ISODate))
+        + QString("FROM Booking WHERE StartDate <= '" + date.toString(Qt::ISODate))
+        + QString("' AND EndDate > '" + date.toString(Qt::ISODate))
         + QString("') as b ON s.SpaceId = b.SpaceId ")
         + QString("WHERE b.date IS NULL");
 
-        // qDebug() << queryString;
+        qDebug() << queryString;
     return queryResults->exec(queryString);
 }
 
@@ -855,7 +869,8 @@ QSqlQuery DatabaseManager::getSwapBookings(QDate start, QDate end, QString progr
                 " WHERE EndDate > '" + start.toString(Qt::ISODate) + "' AND StartDate <= '" + end.toString(Qt::ISODate)
             +"' AND EndDate <= '" + maxSwap +"' GROUP BY SpaceId ) AS T LEFT JOIN (SELECT * FROM Space) AS S on S.SpaceId = T.SpaceId" +
             " JOIN ( SELECT * FROM Booking WHERE EndDate > '" + start.toString(Qt::ISODate) + "' AND StartDate <= '" + end.toString(Qt::ISODate)
-            +"' AND EndDate <= '" + maxSwap +"') V on T.SpaceId = V.SpaceId WHERE C = 1 AND ProgramCodes ='" + program + "' AND BookingId != '" + curBook + "'";
+            +"' AND EndDate <= '" + maxSwap +"') V on T.SpaceId = V.SpaceId WHERE C = 1 AND BookingId != '" + curBook + "'" ;
+    //AND ProgramCodes ='" + program + "' AND BookingId != '" + curBook + "'";
 
     query.exec(q);
     qDebug() << q;
@@ -905,10 +920,11 @@ int DatabaseManager::getDailyReportEspVacancies(QDate date)
     QString queryString =
             QString("SELECT COUNT(s.SpaceId) ")
             + QString("FROM SPACE s LEFT JOIN ")
-            + QString("(SELECT SpaceId, Date FROM Booking WHERE Date = '")
+            + QString("(SELECT SpaceId, Date FROM Booking WHERE StartDate <= '")
+            + QString(date.toString(Qt::ISODate) + "' AND EndDate > '")
             + QString(date.toString(Qt::ISODate) + "') as b ")
             + QString("ON s.SpaceId = b.SpaceId ")
-            + QString("WHERE b.Date IS NULL AND s.ProgramCodes LIKE 'ESP'");
+            + QString("WHERE b.Date IS NULL AND s.ProgramCodes LIKE '%ESP%'");
     // qDebug() << queryString;
     return DatabaseManager::getIntFromQuery(queryString);
 }
@@ -918,11 +934,12 @@ int DatabaseManager::getDailyReportTotalVacancies(QDate date)
     QString queryString =
             QString("SELECT COUNT(s.SpaceId) ")
             + QString("FROM SPACE s LEFT JOIN ")
-            + QString("(SELECT SpaceId, Date FROM Booking WHERE Date = '")
+            + QString("(SELECT SpaceId, Date FROM Booking WHERE StartDate <= '")
+            + QString(date.toString(Qt::ISODate) + "' AND EndDate > '")
             + QString(date.toString(Qt::ISODate) + "') as b ")
             + QString("ON s.SpaceId = b.SpaceId ")
             + QString("WHERE b.Date IS NULL");
-    // qDebug() << queryString;
+    qDebug() << queryString;
     return DatabaseManager::getIntFromQuery(queryString);
 }
 
@@ -1165,6 +1182,94 @@ bool DatabaseManager::insertCashFloat(QDate date, int shiftNo, QString empName,
         emit DatabaseManager::cashFloatInserted(empName, currentDateStr, currentTimeStr);
     }
     return ret;
+}
+
+bool DatabaseManager::getMonthlyReportQuery(QSqlQuery* queryResults, int month, int year)
+{
+    QString queryString = 
+        QString("SELECT SUM(NumBedsUsed), SUM(NumVacancies), SUM(numSpaces), ")
+        + QString("SUM(NumNewClients), SUM(NumUniqueClients) ")
+        + QString("FROM DailyStats ")
+        + QString("WHERE MONTH(Date) = " + QString::number(month))
+        + QString(" AND YEAR(Date) = " + QString::number(year));
+    qDebug() << queryString;
+    return queryResults->exec(queryString);
+}
+
+bool DatabaseManager::getYellowRestrictionQuery(QSqlQuery* queryResults)
+{
+    QString queryString =
+        QString("SELECT (FirstName + ' ' + MiddleName + ' ' + LastName) ")
+        + QString("FROM Client Where Status = 'Yellow'");
+    return queryResults->exec(queryString);
+}
+
+bool DatabaseManager::getRedRestrictionQuery(QSqlQuery* queryResults)
+{
+    QString queryString =
+        QString("SELECT (FirstName + ' ' + MiddleName + ' ' + LastName) ")
+        + QString("FROM Client Where Status = 'Red'");
+    return queryResults->exec(queryString);
+}
+
+int DatabaseManager::getMonthlyUniqueClients(int month, int year)
+{
+    QDate firstDay(year, month, 1);
+    QDate lastDay(firstDay.addDays(firstDay.daysInMonth() - 1));
+
+    QString queryString =
+            QString("SELECT COUNT(DISTINCT ClientId) ")
+            + QString("FROM BookingHistory ")
+            + QString("WHERE ((StartDate <= '" + firstDay.toString(Qt::ISODate) + "' AND ")
+            + QString("EndDate > '" + firstDay.toString(Qt::ISODate) + "') OR ")
+            + QString("(StartDate >= '" + firstDay.toString(Qt::ISODate) + "' AND ")
+            + QString("StartDate <= '" + lastDay.toString(Qt::ISODate) + "')) ")
+            + QString("AND ClientId <> 68 ")
+            + QString("AND ClientId <> 69 AND Action <> 'DELETED'");
+    int numUniqueNamed = DatabaseManager::getIntFromQuery(queryString);
+
+    queryString =
+        QString("SELECT COUNT(ClientId) ")
+        + QString("FROM BookingHistory ")
+        + QString("WHERE ((StartDate <= '" + firstDay.toString(Qt::ISODate) + "' AND ")
+        + QString("EndDate > '" + firstDay.toString(Qt::ISODate) + "') OR ")
+        + QString("(StartDate >= '" + firstDay.toString(Qt::ISODate) + "' AND ")
+        + QString("StartDate <= '" + lastDay.toString(Qt::ISODate) + "')) ")
+        + QString("AND (ClientId = 68 ")
+        + QString("OR ClientId = 69) AND Action <> 'DELETED'");
+    int numAnonymous = DatabaseManager::getIntFromQuery(queryString);
+    qDebug() << queryString;
+    qDebug() << "numAnonymous " + QString::number(numAnonymous);
+    return numUniqueNamed + numAnonymous;
+}
+
+void DatabaseManager::getMonthlyReportThread(int month, int year)
+{
+    QString connName = QString::number(dbManager->getDbCounter());
+    QStringList list;
+    {
+        QSqlDatabase tempDb = QSqlDatabase::database();
+
+        if (dbManager->createDatabase(&tempDb, connName))
+        {
+            QSqlQuery query(tempDb);
+            if (DatabaseManager::getMonthlyReportQuery(&query, month, year))
+            {
+                if (query.next())
+                {
+                    list << query.value(0).toString()
+                         << query.value(1).toString()
+                         << query.value(2).toString()
+                         << query.value(3).toString()
+                         << QString::number(DatabaseManager::getMonthlyUniqueClients(month, year));
+                }
+            }
+            tempDb.close();
+        }   
+    } // Necessary braces: tempDb and query are destroyed because out of scope
+    QSqlDatabase::removeDatabase(connName);
+
+    emit DatabaseManager::monthlyReportChanged(list);
 }
 
 int DatabaseManager::getIntFromQuery(QString queryString)
