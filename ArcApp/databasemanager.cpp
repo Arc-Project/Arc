@@ -1174,7 +1174,7 @@ bool DatabaseManager::getMonthlyReportQuery(QSqlQuery* queryResults, int month, 
 {
     QString queryString = 
         QString("SELECT SUM(NumBedsUsed), SUM(NumVacancies), SUM(numSpaces), ")
-        + QString("SUM(NumNewClients), SUM(NumUniqueClients) ")
+        + QString("SUM(NumNewClients) ")
         + QString("FROM DailyStats ")
         + QString("WHERE MONTH(Date) = " + QString::number(month))
         + QString(" AND YEAR(Date) = " + QString::number(year));
