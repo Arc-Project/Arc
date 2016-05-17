@@ -2,6 +2,7 @@
 #include "ui_payment.h"
 #include <QDebug>
 #include "databasemanager.h"
+#include <QMessageBox>
 payment::payment(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::payment)
@@ -110,6 +111,15 @@ bool payment::addTransaction(){
 
 void payment::on_paymentBox_accepted()
 {
+
+}
+bool payment::doMessageBox(QString message){
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Confirm", message, QMessageBox::Yes | QMessageBox::No);
+    if(reply == QMessageBox::Yes){
+        return true;
+    }
+    return false;
 
 }
 
@@ -238,5 +248,12 @@ void payment::on_refundRadio_clicked()
 
 void payment::on_btn_ok_clicked()
 {
-    payment::on_addPaymentButton_clicked();
+    if(doMessageBox("Adding payment, this is permentant, confirm?")){
+
+        payment::on_addPaymentButton_clicked();
+        close();
+    }
+    else{
+        return;
+    }
 }
