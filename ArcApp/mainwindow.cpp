@@ -4562,4 +4562,11 @@ void MainWindow::on_btn_payNew_clicked()
     ui->pushButton_processPaymeent->setHidden(false);
 }
 
+void MainWindow::on_actionLogout_triggered()
+{
+    LoginPrompt* w = new LoginPrompt();
 
+    w->show();
+
+    close();
+}
