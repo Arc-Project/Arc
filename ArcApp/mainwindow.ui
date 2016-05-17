@@ -124,7 +124,7 @@ QHeaderView {
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>11</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -7876,8 +7876,8 @@ QHeaderView {
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0">
-                 <widget class="QPushButton" name="btn_shiftReport">
+                <item row="4" column="0">
+                 <widget class="QPushButton" name="btn_restrictedList">
                   <property name="minimumSize">
                    <size>
                     <width>225</width>
@@ -7892,7 +7892,7 @@ QHeaderView {
                    </font>
                   </property>
                   <property name="text">
-                   <string>Shift Report</string>
+                   <string>Restricted List</string>
                   </property>
                  </widget>
                 </item>
@@ -7916,8 +7916,8 @@ QHeaderView {
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="0">
-                 <widget class="QPushButton" name="btn_restrictedList">
+                <item row="1" column="0">
+                 <widget class="QPushButton" name="btn_shiftReport">
                   <property name="minimumSize">
                    <size>
                     <width>225</width>
@@ -7932,7 +7932,7 @@ QHeaderView {
                    </font>
                   </property>
                   <property name="text">
-                   <string>Restricted List</string>
+                   <string>Shift Report</string>
                   </property>
                  </widget>
                 </item>
@@ -7962,7 +7962,7 @@ QHeaderView {
              <item row="0" column="1">
               <widget class="QStackedWidget" name="swdg_reports">
                <property name="currentIndex">
-                <number>0</number>
+                <number>4</number>
                </property>
                <widget class="QWidget" name="page_3">
                 <layout class="QGridLayout" name="gridLayout_34">
@@ -8109,7 +8109,7 @@ QHeaderView {
                     </font>
                    </property>
                    <property name="currentIndex">
-                    <number>3</number>
+                    <number>0</number>
                    </property>
                    <widget class="QWidget" name="tab_4">
                     <attribute name="title">
@@ -9806,6 +9806,143 @@ QHeaderView {
                   <string>Monthly Report</string>
                  </property>
                 </widget>
+                <widget class="QComboBox" name="month_comboBox">
+                 <property name="geometry">
+                  <rect>
+                   <x>440</x>
+                   <y>80</y>
+                   <width>161</width>
+                   <height>22</height>
+                  </rect>
+                 </property>
+                </widget>
+                <widget class="QComboBox" name="year_comboBox">
+                 <property name="geometry">
+                  <rect>
+                   <x>630</x>
+                   <y>80</y>
+                   <width>73</width>
+                   <height>22</height>
+                  </rect>
+                 </property>
+                </widget>
+                <widget class="QLabel" name="label_71">
+                 <property name="geometry">
+                  <rect>
+                   <x>100</x>
+                   <y>190</y>
+                   <width>151</width>
+                   <height>16</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>Number of Beds Used:</string>
+                 </property>
+                </widget>
+                <widget class="QLabel" name="label_73">
+                 <property name="geometry">
+                  <rect>
+                   <x>100</x>
+                   <y>240</y>
+                   <width>151</width>
+                   <height>16</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>Number of Empty Beds:</string>
+                 </property>
+                </widget>
+                <widget class="QLabel" name="label_74">
+                 <property name="geometry">
+                  <rect>
+                   <x>100</x>
+                   <y>290</y>
+                   <width>241</width>
+                   <height>16</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>Number of Newly Registered Clients:</string>
+                 </property>
+                </widget>
+                <widget class="QLabel" name="label_75">
+                 <property name="geometry">
+                  <rect>
+                   <x>100</x>
+                   <y>340</y>
+                   <width>191</width>
+                   <height>16</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>Number of Unique Clients:</string>
+                 </property>
+                </widget>
+                <widget class="QLabel" name="numBedsUsed_lbl">
+                 <property name="geometry">
+                  <rect>
+                   <x>340</x>
+                   <y>190</y>
+                   <width>81</width>
+                   <height>16</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>0</string>
+                 </property>
+                </widget>
+                <widget class="QLabel" name="numEmptyBeds_lbl">
+                 <property name="geometry">
+                  <rect>
+                   <x>340</x>
+                   <y>240</y>
+                   <width>55</width>
+                   <height>16</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>0</string>
+                 </property>
+                </widget>
+                <widget class="QLabel" name="numNewClients_lbl">
+                 <property name="geometry">
+                  <rect>
+                   <x>350</x>
+                   <y>290</y>
+                   <width>55</width>
+                   <height>16</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>0</string>
+                 </property>
+                </widget>
+                <widget class="QLabel" name="numUniqueClients_lbl">
+                 <property name="geometry">
+                  <rect>
+                   <x>340</x>
+                   <y>330</y>
+                   <width>55</width>
+                   <height>16</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>0</string>
+                 </property>
+                </widget>
+                <widget class="QPushButton" name="monthlyReportGo_btn">
+                 <property name="geometry">
+                  <rect>
+                   <x>750</x>
+                   <y>80</y>
+                   <width>93</width>
+                   <height>28</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>Go</string>
+                 </property>
+                </widget>
                </widget>
                <widget class="QWidget" name="page_10">
                 <layout class="QGridLayout" name="gridLayout_48">
@@ -9847,11 +9984,11 @@ QHeaderView {
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="0">
-                  <widget class="QTableView" name="tableView_3"/>
-                 </item>
                  <item row="2" column="1">
-                  <widget class="QListView" name="listView"/>
+                  <widget class="QTableView" name="redRestriction_tableView"/>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QListView" name="yellowRestriction_tableView"/>
                  </item>
                 </layout>
                </widget>
@@ -12234,7 +12371,7 @@ QHeaderView {
        </layout>
       </widget>
       <widget class="QWidget" name="editShifts">
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>30</x>
@@ -12704,12 +12841,12 @@ QHeaderView {
          </property>
         </item>
        </widget>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>30</x>
           <y>460</y>
-          <width>209</width>
+          <width>227</width>
           <height>29</height>
          </rect>
         </property>
@@ -12772,12 +12909,12 @@ QHeaderView {
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>270</x>
           <y>460</y>
-          <width>262</width>
+          <width>265</width>
           <height>29</height>
          </rect>
         </property>

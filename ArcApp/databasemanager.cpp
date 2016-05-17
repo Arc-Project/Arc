@@ -1170,6 +1170,94 @@ bool DatabaseManager::insertCashFloat(QDate date, int shiftNo, QString empName,
     return ret;
 }
 
+bool DatabaseManager::getMonthlyReportQuery(QSqlQuery* queryResults, int month, int year)
+{
+    QString queryString = 
+        QString("SELECT SUM(NumBedsUsed), SUM(NumVacancies), SUM(numSpaces), ")
+        + QString("SUM(NumNewClients), SUM(NumUniqueClients) ")
+        + QString("FROM DailyStats ")
+        + QString("WHERE MONTH(Date) = " + QString::number(month))
+        + QString(" AND YEAR(Date) = " + QString::number(year));
+    qDebug() << queryString;
+    return queryResults->exec(queryString);
+}
+
+bool DatabaseManager::getYellowRestrictionQuery(QSqlQuery* queryResults)
+{
+    QString queryString =
+        QString("SELECT (FirstName + ' ' + MiddleName + ' ' + LastName) ")
+        + QString("FROM Client Where Status = 'Yellow'");
+    return queryResults->exec(queryString);
+}
+
+bool DatabaseManager::getRedRestrictionQuery(QSqlQuery* queryResults)
+{
+    QString queryString =
+        QString("SELECT (FirstName + ' ' + MiddleName + ' ' + LastName) ")
+        + QString("FROM Client Where Status = 'Red'");
+    return queryResults->exec(queryString);
+}
+
+int DatabaseManager::getMonthlyUniqueClients(int month, int year)
+{
+    QDate firstDay(year, month, 1);
+    QDate lastDay(firstDay.addDays(firstDay.daysInMonth() - 1));
+
+    QString queryString =
+            QString("SELECT COUNT(DISTINCT ClientId) ")
+            + QString("FROM BookingHistory ")
+            + QString("WHERE ((StartDate <= '" + firstDay.toString(Qt::ISODate) + "' AND ")
+            + QString("EndDate > '" + firstDay.toString(Qt::ISODate) + "') OR ")
+            + QString("(StartDate >= '" + firstDay.toString(Qt::ISODate) + "' AND ")
+            + QString("StartDate <= '" + lastDay.toString(Qt::ISODate) + "')) ")
+            + QString("AND ClientId <> 68 ")
+            + QString("AND ClientId <> 69 AND Action <> 'DELETED'");
+    int numUniqueNamed = DatabaseManager::getIntFromQuery(queryString);
+
+    queryString =
+        QString("SELECT COUNT(ClientId) ")
+        + QString("FROM BookingHistory ")
+        + QString("WHERE ((StartDate <= '" + firstDay.toString(Qt::ISODate) + "' AND ")
+        + QString("EndDate > '" + firstDay.toString(Qt::ISODate) + "') OR ")
+        + QString("(StartDate >= '" + firstDay.toString(Qt::ISODate) + "' AND ")
+        + QString("StartDate <= '" + lastDay.toString(Qt::ISODate) + "')) ")
+        + QString("AND (ClientId = 68 ")
+        + QString("OR ClientId = 69) AND Action <> 'DELETED'");
+    int numAnonymous = DatabaseManager::getIntFromQuery(queryString);
+    qDebug() << queryString;
+    qDebug() << "numAnonymous " + QString::number(numAnonymous);
+    return numUniqueNamed + numAnonymous;
+}
+
+void DatabaseManager::getMonthlyReportThread(int month, int year)
+{
+    QString connName = QString::number(dbManager->getDbCounter());
+    QStringList list;
+    {
+        QSqlDatabase tempDb = QSqlDatabase::database();
+
+        if (dbManager->createDatabase(&tempDb, connName))
+        {
+            QSqlQuery query(tempDb);
+            if (DatabaseManager::getMonthlyReportQuery(&query, month, year))
+            {
+                if (query.next())
+                {
+                    list << query.value(0).toString()
+                         << query.value(1).toString()
+                         << query.value(2).toString()
+                         << query.value(3).toString()
+                         << QString::number(DatabaseManager::getMonthlyUniqueClients(month, year));
+                }
+            }
+            tempDb.close();
+        }   
+    } // Necessary braces: tempDb and query are destroyed because out of scope
+    QSqlDatabase::removeDatabase(connName);
+
+    emit DatabaseManager::monthlyReportChanged(list);
+}
+
 int DatabaseManager::getIntFromQuery(QString queryString)
 {
     int result = -1;
