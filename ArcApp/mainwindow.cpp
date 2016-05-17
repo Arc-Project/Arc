@@ -4200,8 +4200,29 @@ void MainWindow::on_actionExport_to_PDF_triggered()
                     "C://"
                 );
     QTextDocument doc;
-    doc.setHtml("<h1>generated from Qt!</h1> regular text");
+    QString html;
+    html = "<div class='headerContainer' style='font-size=12px;'> "
+                "<div class='logo' align=left style=''> "
+                    "logo here "
+                "</div> "
+                "<div class='time' align=right style=''>"
+                    "<strong>"
+                        "Date: 2016-02-01 <br>"
+                        "Time: 4:09"
+                    "</strong>"
+                "</div>"
+                "<div class='title' align=center style='margin: 0 auto; width:50%; border: 2px solid black; clear:both;' >"
+                    "<h3>Salvation Army ARC</h3><br>"
+                    "<span>525 Johnson St, Victoria BC V8W 1M2</span><br>"
+                    "<h2>Shift Activity Report</h2>"
+                "</div>"
+           "</div>";
+    doc.setHtml(html);
+
     QPrinter printer;
+    printer.setOrientation(QPrinter::Landscape);
+    printer.setPaperSize(QPrinter::Letter);
+//    printer.setPageMargins(1,1,1,1,QPrinter.Inch);
     printer.setOutputFileName(tempDir+"\\file.pdf");
     printer.setOutputFormat(QPrinter::PdfFormat);
     doc.print(&printer);
@@ -4586,6 +4607,12 @@ void MainWindow::on_btn_payNew_clicked()
     ui->pushButton_processPaymeent->setHidden(false);
 }
 
+void MainWindow::on_actionLogout_triggered()
+{
+    LoginPrompt* w = new LoginPrompt();
 
+    w->show();
 
+    close();
+}
 

@@ -96,6 +96,7 @@ void MyCalendar::populateCells(){
             x = 1;
 
     }
+    maxIns = q - 1;
 }
 
 void MyCalendar::on_calendarTable_cellClicked(int row, int column)
@@ -210,12 +211,17 @@ void MyCalendar::loadPrevious(){
         oldLunch[i] = 0;
         oldWakeFlag[i] = 0;
     }
+
     if(mode == 1){
         result = dbManager->getLunches(sDate, eDate, curClient->clientId);
         while(result.next()){
             pull = QDate::fromString(result.value("LunchDate").toString(), "yyyy-MM-dd");
             ins = pull.toJulianDay() - calStart.toJulianDay();
             ins += offset;
+            if(ins > maxIns)
+                continue;
+            if(ins < 0)
+                continue;
             qDebug() << ins;
             nL = result.value("Number").toString().toInt();
             oldLunch[ins] = nL;

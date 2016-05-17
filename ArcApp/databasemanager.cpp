@@ -1197,7 +1197,7 @@ bool DatabaseManager::getMonthlyReportQuery(QSqlQuery* queryResults, int month, 
 {
     QString queryString = 
         QString("SELECT SUM(NumBedsUsed), SUM(NumVacancies), SUM(numSpaces), ")
-        + QString("SUM(NumNewClients), SUM(NumUniqueClients) ")
+        + QString("SUM(NumNewClients) ")
         + QString("FROM DailyStats ")
         + QString("WHERE MONTH(Date) = " + QString::number(month))
         + QString(" AND YEAR(Date) = " + QString::number(year));
@@ -1400,7 +1400,7 @@ QSqlQuery DatabaseManager::getNextBooking(QDate endDate, QString roomId){
 QSqlQuery DatabaseManager::getCurrentBooking(QDate start, QDate end, QString program){
     QSqlQuery query(db);
     QString q = "SELECT Space.SpaceId, Space.SpaceCode, Space.ProgramCodes, Space.type, Space.cost, Space.Monthly FROM Space"
-                " LEFT JOIN (SELECT * from Booking WHERE StartDate <= '" + start.toString(Qt::ISODate) + "' AND EndDate > '"
+                " LEFT JOIN (SELECT * from Booking WHERE StartDate <= '" + end.toString(Qt::ISODate) + "' AND EndDate > '"
                 + start.toString(Qt::ISODate) + "') AS a on Space.SpaceId = a.SpaceId WHERE BookingID IS NULL AND Space.ProgramCodes = '" + program + "'";
 
     qDebug() << q;
