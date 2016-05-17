@@ -102,13 +102,14 @@ void MainWindow::initCurrentWidget(int idx){
     switch(idx){
         case MAINMENU:  //WIDGET 0
             curClientID = "";
+            registerType = NOREGISTER;
             break;
         case CLIENTLOOKUP:  //WIDGET 1
             initClientLookupInfo();
             ui->tabWidget_cl_info->setCurrentIndex(0);
             if(registerType == EDITCLIENT)
                 getClientInfo();
-            registerType = 0;
+            registerType = NOREGISTER;
             //initimageview
             break;
         case BOOKINGLOOKUP: //WIDGET 2
@@ -4210,7 +4211,7 @@ void MainWindow::on_btn_createNewUser_3_clicked()
         idinfo.next();
 
         QString roomid = idinfo.value(0).toString();
-
+        qDebug() << roomid;
         QSqlQuery insertres = dbManager->execQuery("INSERT INTO Space "
                                                    "VALUES (" + bednumber +
                                                    ", " + roomid +
@@ -4220,7 +4221,22 @@ void MainWindow::on_btn_createNewUser_3_clicked()
                                                    ", NULL)");
         // update spacecodes
         dbManager->updateAllSpacecodes();
-
+        // clear everything
+        ui->cbox_roomLoc->clear();
+        ui->cbox_roomFloor->clear();
+        ui->cbox_roomRoom->clear();
+        ui->le_roomNo->clear();
+        ui->cbox_roomType->clear();
+        ui->le_roomNo->clear();
+        ui->doubleSpinBox->setValue(0.0);
+        ui->doubleSpinBox_2->setValue(0.0);
+        ui->tableWidget_5->clear();
+        ui->tableWidget_5->setRowCount(0);
+        ui->le_users_3->clear();
+        // set horizontal headers
+        ui->tableWidget_5->setColumnCount(8);
+        ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly");
+        populate_modRoom_cboxes();
         ui->lbl_editUserWarning_3->setText("Vacancy created");
     } else {
         ui->lbl_editUserWarning_3->setText("This vacancy already exists. Please change the bed number.");
@@ -4271,6 +4287,22 @@ void MainWindow::on_pushButton_14_clicked()
         populate_modRoom_cboxes();
 
         ui->lbl_editUserWarning_3->setText("Vacancy updated");
+        // clear everything
+        ui->cbox_roomLoc->clear();
+        ui->cbox_roomFloor->clear();
+        ui->cbox_roomRoom->clear();
+        ui->le_roomNo->clear();
+        ui->cbox_roomType->clear();
+        ui->le_roomNo->clear();
+        ui->doubleSpinBox->setValue(0.0);
+        ui->doubleSpinBox_2->setValue(0.0);
+        ui->tableWidget_5->clear();
+        ui->tableWidget_5->setRowCount(0);
+        ui->le_users_3->clear();
+        // set horizontal headers
+        ui->tableWidget_5->setColumnCount(8);
+        ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly");
+        populate_modRoom_cboxes();
     } else {
         ui->lbl_editUserWarning_3->setText("This vacancy doesn't exist. Please select a valid vacancy.");
     }
@@ -4359,8 +4391,24 @@ void MainWindow::on_btn_newTypeLoc_clicked()
         break;
     }
     }
-
+    // clear everything
+    ui->cbox_roomLoc->clear();
+    ui->cbox_roomFloor->clear();
+    ui->cbox_roomRoom->clear();
+    ui->le_roomNo->clear();
+    ui->cbox_roomType->clear();
+    ui->le_roomNo->clear();
+    ui->doubleSpinBox->setValue(0.0);
+    ui->doubleSpinBox_2->setValue(0.0);
+    ui->tableWidget_5->clear();
+    ui->tableWidget_5->setRowCount(0);
+    ui->le_users_3->clear();
+    // set horizontal headers
+    ui->tableWidget_5->setColumnCount(8);
+    ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly");
+    populate_modRoom_cboxes();
     ui->editroommodifybox->clear();
+    ui->editroommodifybox->setColumnCount(0);
 }
 
 void MainWindow::on_btn_delTypeLoc_clicked()
@@ -4428,7 +4476,24 @@ void MainWindow::on_btn_delTypeLoc_clicked()
         break;
     }
     }
+    // clear everything
+    ui->cbox_roomLoc->clear();
+    ui->cbox_roomFloor->clear();
+    ui->cbox_roomRoom->clear();
+    ui->le_roomNo->clear();
+    ui->cbox_roomType->clear();
+    ui->le_roomNo->clear();
+    ui->doubleSpinBox->setValue(0.0);
+    ui->doubleSpinBox_2->setValue(0.0);
+    ui->tableWidget_5->clear();
+    ui->tableWidget_5->setRowCount(0);
+    ui->le_users_3->clear();
+    // set horizontal headers
+    ui->tableWidget_5->setColumnCount(8);
+    ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly");
+    populate_modRoom_cboxes();
     ui->editroommodifybox->clear();
+    ui->editroommodifybox->setColumnCount(0);
 }
 
 void MainWindow::on_pushButton_15_clicked()
@@ -4454,6 +4519,24 @@ void MainWindow::on_pushButton_15_clicked()
         populate_modRoom_cboxes();
 
         ui->lbl_editUserWarning_3->setText("Vacancy Deleted");
+
+        // clear everything
+        ui->cbox_roomLoc->clear();
+        ui->cbox_roomFloor->clear();
+        ui->cbox_roomRoom->clear();
+        ui->le_roomNo->clear();
+        ui->cbox_roomType->clear();
+        ui->le_roomNo->clear();
+        ui->doubleSpinBox->setValue(0.0);
+        ui->doubleSpinBox_2->setValue(0.0);
+        ui->tableWidget_5->clear();
+        ui->tableWidget_5->setRowCount(0);
+        ui->le_users_3->clear();
+        // set horizontal headers
+        ui->tableWidget_5->setColumnCount(8);
+        ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly");
+        populate_modRoom_cboxes();
+
     } else {
         ui->lbl_editUserWarning_3->setText("This vacancy doesn't exist. Please select a valid vacancy.");
     }

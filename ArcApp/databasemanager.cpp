@@ -1519,12 +1519,19 @@ QSqlQuery DatabaseManager::searchSingleBed(QString buildingno, QString floorno, 
 QSqlQuery DatabaseManager::searchIDInformation(QString buildingno, QString floorno, QString roomno) {
     QSqlQuery query(db);
 
-    query.exec("SELECT r.RoomId, b.BuildingId, f.FloorId"
+    query.exec("SELECT r.RoomId, b.BuildingId, f.FloorId "
                "FROM Space s INNER JOIN Room r ON s.RoomId = r.RoomId INNER JOIN Floor f ON r.FloorId = f.FloorId "
                "INNER JOIN Building b ON f.BuildingId = b.BuildingId "
                "WHERE b.BuildingNo =" + buildingno + " "
                "AND f.FloorNo =" + floorno + " "
                "AND r.RoomNo =" + roomno + " ");
+
+    qDebug() << "AIYIAAA " << "SELECT r.RoomId, b.BuildingId, f.FloorId "
+                "FROM Space s INNER JOIN Room r ON s.RoomId = r.RoomId INNER JOIN Floor f ON r.FloorId = f.FloorId "
+                "INNER JOIN Building b ON f.BuildingId = b.BuildingId "
+                "WHERE b.BuildingNo =" + buildingno + " "
+                "AND f.FloorNo =" + floorno + " "
+                "AND r.RoomNo =" + roomno + " ";
 
     return query;
 }
