@@ -1,13 +1,28 @@
 #include "report.h"
 
-Report::Report(QObject *parent, QTableView* tableView, int type) :
+Report::Report(QObject *parent, QWidget* tableView, int type) :
   model(parent),
   reportType(type)
 {  
     qDebug() << "report constructor";
     Report::setTitle();
-    tableView->setModel(&model);
-    tableView->show();
+
+    if (type == YELLOW_REPORT)
+    {
+        ((QListView*)tableView)->setModel(&model);
+        tableView->show();
+    }
+    else
+    {
+        ((QTableView*)tableView)->setModel(&model);
+        tableView->show();
+    }
+
+}
+
+void Report::updateModel()
+{
+  QtConcurrent::run(this, &updateModelThread); 
 }
 
 void Report::updateModel(QDate date)
@@ -49,10 +64,46 @@ void Report::setTitle()
       break;
     case CLIENT_REPORT:
       *title << "Time" << "Employee" << "Action" << "Client";
+      break;
     case OTHER_REPORT:
-      *title << "Time" << "Employee" << "Log"; 
+      *title << "Time" << "Employee" << "Log";
+      break;
+    case YELLOW_REPORT:
+      *title << "Restriction: Yellow";
+      break;
+    case RED_REPORT:
+      *title << "Restriction: Red";
   }
   model.setTitle(title);
+}
+
+void Report::updateModelThread()
+{
+  QString connName = QString::number(dbManager->getDbCounter());
+  {
+    QSqlDatabase tempDb = QSqlDatabase::database();
+
+    if (dbManager->createDatabase(&tempDb, connName))
+    {
+      QSqlQuery query(tempDb);
+      bool ret = false;
+      switch(reportType)
+      {
+        case YELLOW_REPORT:
+          ret = dbManager->getYellowRestrictionQuery(&query);
+          break;
+        case RED_REPORT:
+          ret = dbManager->getRedRestrictionQuery(&query);
+          break;
+      }
+      if (ret)
+      {
+        Report::setData(&query);
+      }
+      tempDb.close();
+    }   
+  } // Necessary braces: tempDb and query are destroyed because out of scope
+  QSqlDatabase::removeDatabase(connName);
 }
 
 void Report::updateModelThread(QDate date)

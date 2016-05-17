@@ -91,6 +91,11 @@ public:
         QString comments, QList<int> coins);
     bool getCashFloatReportQuery(QSqlQuery* queryResults, QDate Date, int shiftNo);
     void getCashFloatThread(QDate date, int shiftNo);
+    bool getMonthlyReportQuery(QSqlQuery* queryResults, int month, int year);
+    void getMonthlyReportThread(int month, int year);
+    int getMonthlyUniqueClients(int month, int year);
+    bool getYellowRestrictionQuery(QSqlQuery* queryResults);
+    bool getRedRestrictionQuery(QSqlQuery* queryResults);
 
     //COLIN STUFF/////////////////////////////////////////////////////////////
     QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);
@@ -154,6 +159,7 @@ signals:
     void cashFloatChanged(QDate date, int shiftNo, QStringList list);
     void cashFloatInserted(QString empName, QString currentDateStr, 
         QString currentTimeStr);
+    void monthlyReportChanged(QStringList list);
 
 private:
     QSqlDatabase db = QSqlDatabase::database();
