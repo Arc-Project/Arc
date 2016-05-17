@@ -98,13 +98,14 @@ void MainWindow::initCurrentWidget(int idx){
     switch(idx){
         case MAINMENU:  //WIDGET 0
             curClientID = "";
+            registerType = NOREGISTER;
             break;
         case CLIENTLOOKUP:  //WIDGET 1
             initClientLookupInfo();
             ui->tabWidget_cl_info->setCurrentIndex(0);
             if(registerType == EDITCLIENT)
                 getClientInfo();
-            registerType = 0;
+            registerType = NOREGISTER;
             //initimageview
             break;
         case BOOKINGLOOKUP: //WIDGET 2
