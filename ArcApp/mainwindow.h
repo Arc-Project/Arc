@@ -500,6 +500,8 @@ private slots:
     void on_actionLogout_triggered();
 
 
+    void on_comboBox_3_currentTextChanged(const QString &arg1);
+
 private:
 
     Ui::MainWindow *ui;
