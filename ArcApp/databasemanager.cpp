@@ -508,6 +508,19 @@ bool DatabaseManager::addHistoryFromId(QString bookId, QString empId, QString sh
     }
 
 }
+QSqlQuery DatabaseManager::getBalance(QString clientId){
+    QSqlQuery query(db);
+    QString q = "SELECT Balance FROM Client WHERE ClientId ='" + clientId + "'";
+    query.exec(q);
+    return query;
+}
+
+QSqlQuery DatabaseManager::getRoomCosts(QString roomId){
+    QSqlQuery query(db);
+    QString q = "SELECT cost, Monthly FROM Space WHERE SpaceId ='" + roomId + "'";
+    query.exec(q);
+    return query;
+}
 
 bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage* profilePic)//QObject sth, QImage profilePic)
 {
@@ -855,7 +868,8 @@ QSqlQuery DatabaseManager::getSwapBookings(QDate start, QDate end, QString progr
                 " WHERE EndDate > '" + start.toString(Qt::ISODate) + "' AND StartDate <= '" + end.toString(Qt::ISODate)
             +"' AND EndDate <= '" + maxSwap +"' GROUP BY SpaceId ) AS T LEFT JOIN (SELECT * FROM Space) AS S on S.SpaceId = T.SpaceId" +
             " JOIN ( SELECT * FROM Booking WHERE EndDate > '" + start.toString(Qt::ISODate) + "' AND StartDate <= '" + end.toString(Qt::ISODate)
-            +"' AND EndDate <= '" + maxSwap +"') V on T.SpaceId = V.SpaceId WHERE C = 1 AND ProgramCodes ='" + program + "' AND BookingId != '" + curBook + "'";
+            +"' AND EndDate <= '" + maxSwap +"') V on T.SpaceId = V.SpaceId WHERE C = 1 AND BookingId != '" + curBook + "'" ;
+    //AND ProgramCodes ='" + program + "' AND BookingId != '" + curBook + "'";
 
     query.exec(q);
     qDebug() << q;

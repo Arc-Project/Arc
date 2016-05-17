@@ -121,8 +121,8 @@ public:
     QSqlQuery getSwapBookings(QDate start, QDate end, QString program, QString maxSwap, QString curBook);
     bool insertIntoBookingHistory(QString clientName, QString spaceId, QString program, QString start, QString end, QString action, QString emp, QString shift, QString clientId);
     bool addHistoryFromId(QString bookId, QString empId, QString shift, QString action);
-
-
+    QSqlQuery getRoomCosts(QString roomId);
+    QSqlQuery getBalance(QString clientId);
 
     //END COLIN STUFF///////////////////////////////////////////////////////
     void print();
