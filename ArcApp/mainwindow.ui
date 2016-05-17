@@ -459,6 +459,24 @@ QHeaderView {
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="QCheckBox" name="checkBox_search_anonymous">
+                <property name="maximumSize">
+                 <size>
+                  <width>90</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Anonymous</string>
+                </property>
+               </widget>
+              </item>
              </layout>
             </item>
            </layout>
