@@ -134,7 +134,7 @@ void payment::on_addPaymentButton_clicked()
         client->balance = newBal;
     }
     if(makePayment()){
-        ui->addPaymentButton->setEnabled(false);
+//        ui->addPaymentButton->setEnabled(false);
     }
 
 }
@@ -173,20 +173,35 @@ void payment::on_paymentDrop_currentIndexChanged(const QString &arg1)
     }
 }
 void payment::showCheque(){
-    ui->chequeDate->show();
-    ui->chequeInput->show();
-    ui->msqCheck->show();
-    ui->chequeLabel->show();
-    ui->payWaitMSD->show();
-    ui->dateLabel->show();
+//    ui->chequeDate->show();
+//    ui->chequeInput->show();
+//    ui->msqCheck->show();
+//    ui->chequeLabel->show();
+//    ui->payWaitMSD->show();
+//    ui->dateLabel->show();
+
+    ui->chequeDate->setEnabled(true);
+    ui->chequeInput->setEnabled(true);
+    ui->msqCheck->setEnabled(true);
+    ui->chequeLabel->setEnabled(true);
+    ui->payWaitMSD->setEnabled(true);
+    ui->dateLabel->setEnabled(true);
 }
 void payment::hideCheque(){
-    ui->chequeDate->hide();
-    ui->chequeLabel->hide();
-    ui->dateLabel->hide();
-    ui->chequeInput->hide();
-    ui->payWaitMSD->hide();
-    ui->msqCheck->hide();
+//    ui->chequeDate->hide();
+//    ui->chequeLabel->hide();
+//    ui->dateLabel->hide();
+//    ui->chequeInput->hide();
+//    ui->payWaitMSD->hide();
+//    ui->msqCheck->hide();
+
+    ui->chequeDate->setEnabled(false);
+    ui->chequeLabel->setEnabled(false);
+//    ui->dateLabel->setEnabed(false);
+    ui->chequeInput->setEnabled(false);
+    ui->payWaitMSD->setEnabled(false);
+    ui->msqCheck->setEnabled(false);
+
     ui->chequeInput->setText("");
     ui->msqCheck->setChecked(false);
     ui->payWaitMSD->setChecked(false);
@@ -194,13 +209,13 @@ void payment::hideCheque(){
 void payment::doPayment(){
     ui->paymentDrop->setEnabled(true);
     ui->payRefLabel->setText("Payment Amount");
-    ui->addPaymentButton->setText("Add Payment");
+//    ui->addPaymentButton->setText("Add Payment");
 
 }
 void payment::doRefund(){
     ui->payRefLabel->setText("Refund Amount");
     ui->paymentDrop->setEnabled(false);
-    ui->addPaymentButton->setText("Add Refund");
+//    ui->addPaymentButton->setText("Add Refund");
     hideCheque();
 
 }
