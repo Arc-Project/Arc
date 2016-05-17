@@ -13,6 +13,8 @@ public:
     QString program;
     bool monthly;
     double cost;
+    double costDaily;
+    double costMonthly;
     QString lunch;
     QString room;
     QString clientId;
