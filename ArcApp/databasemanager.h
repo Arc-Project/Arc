@@ -33,6 +33,7 @@ public:
     void printAll(QSqlQuery queryResults);
     QSqlQuery execQuery(QString queryString);
     bool execQuery(QSqlQuery* query, QString queryString);
+    void checkDatabaseConnection(QSqlDatabase* database);
 
     /*==========================================================================
     FILE DOWNLOAD AND UPLOAD RELATED FUNCTIONS
@@ -97,6 +98,7 @@ public:
     bool getYellowRestrictionQuery(QSqlQuery* queryResults);
     bool getRedRestrictionQuery(QSqlQuery* queryResults);
     bool getDoubleFromQuery(QString queryString, double* result);
+    void reconnectToDatabase(QSqlDatabase* database);
 
     //COLIN STUFF/////////////////////////////////////////////////////////////
     QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);
@@ -161,8 +163,9 @@ signals:
     void cashFloatInserted(QString empName, QString currentDateStr, 
         QString currentTimeStr);
     void monthlyReportChanged(QStringList list);
-    void noDatabaseConnection();
-;
+    void noDatabaseConnection(QSqlDatabase* database);
+    void reconnectedToDatabase();
+
 private:
     QSqlDatabase db = QSqlDatabase::database();
     static QMutex mutex;

@@ -112,13 +112,25 @@ QSqlQuery DatabaseManager::selectAll(QString tableName)
 {
     if (!db.open())
     {
-        emit noDatabaseConnection();
+        emit noDatabaseConnection(&db);
     }
     QSqlQuery query(db);
     query.exec("SELECT * FROM " + tableName);
     return query;
 }
 
+void DatabaseManager::reconnectToDatabase(QSqlDatabase* database)
+{
+    if (!database->open())
+    {
+        emit noDatabaseConnection(&db);
+    }
+    else
+    {
+        qDebug() << "reconnection successful";
+        emit reconnectedToDatabase();
+    }
+}
 /*
  * Prints all the results of QSqlQuery object.
  *
@@ -146,7 +158,7 @@ QSqlQuery DatabaseManager::execQuery(QString queryString)
     qDebug()<<"execQuery. ";
     if (!db.open())
     {
-        emit noDatabaseConnection();
+        emit noDatabaseConnection(&db);
     }
     QSqlQuery query(db);
     query.exec(queryString);
@@ -156,6 +168,14 @@ QSqlQuery DatabaseManager::execQuery(QString queryString)
 bool DatabaseManager::execQuery(QSqlQuery* query, QString queryString)
 {
     return query->exec(queryString);
+}
+
+void DatabaseManager::checkDatabaseConnection(QSqlDatabase* database)
+{
+    if (!database->open())
+    {
+        emit noDatabaseConnection(database);
+    }
 }
 /*==============================================================================
 GENERAL QUERYS (END)

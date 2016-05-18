@@ -76,7 +76,7 @@ public:
     void getCurrentClientId();   //get client id from client list table
     void getClientInfo();
     void statusColor();
-
+    
 
 
     //COLIN STUFF////
@@ -187,7 +187,7 @@ private slots:
     void on_monthlyReportGo_btn_clicked();
     void updateMonthlyReportUi(QStringList list);
     void on_restrictionRefresh_btn_clicked();
-    void on_noDatabaseConnection();
+    void on_noDatabaseConnection(QSqlDatabase* database);
     
     
     

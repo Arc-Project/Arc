@@ -65,8 +65,8 @@ MainWindow::MainWindow(QWidget *parent) :
         SLOT(on_other_lineEdit_textEdited(const QString &)));
     connect(dbManager, SIGNAL(monthlyReportChanged(QStringList)), this,
         SLOT(updateMonthlyReportUi(QStringList)));
-    connect(dbManager, SIGNAL(noDatabaseConnection()), this,
-        SLOT(on_noDatabaseConnection()));
+    connect(dbManager, SIGNAL(noDatabaseConnection(QSqlDatabase*)), this,
+        SLOT(on_noDatabaseConnection(QSqlDatabase*)), Qt::DirectConnection);
 
     curClient = 0;
     curBook = 0;
@@ -3521,15 +3521,28 @@ void MainWindow::updateMonthlyReportUi(QStringList list)
     ui->monthlyReportMonth_lbl->setText(QString(month + "-" + year));
 }
 
-void MainWindow::on_noDatabaseConnection()
+void MainWindow::on_noDatabaseConnection(QSqlDatabase* database)
 {
+    statusBar()->showMessage(tr(""));
     QString msg = QString("\nCould not connect to the database.\n")
         + QString("\nPlease remember to save your changes when the connection to the database returns.\n")
         + QString("\nSelect \"File\" followed by the \"Connect to Database\" menu item to attempt to connect to the database.\n");
     QMessageBox msgBox(this);
     msgBox.setWindowTitle("ArcWay");
+    QPushButton* reconnectButton = msgBox.addButton(tr("Re-connect"), QMessageBox::AcceptRole);
+    msgBox.setStandardButtons(QMessageBox::Close);
     msgBox.setText(msg);
     msgBox.exec();
+
+    if (msgBox.clickedButton() == reconnectButton)
+    {
+        statusBar()->showMessage(tr("Re-connecting"));
+        dbManager->reconnectToDatabase(database);
+    }
+    else
+    {
+        statusBar()->showMessage(tr("No database connection"));
+    }
 }
 /*==============================================================================
 REPORTS (END)
