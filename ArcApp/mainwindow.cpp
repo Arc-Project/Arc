@@ -53,8 +53,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(initCurrentWidget(int)));
     connect(dbManager, SIGNAL(dailyReportStatsChanged(QList<int>)), this,
         SLOT(updateDailyReportStats(QList<int>)));
-    connect(dbManager, SIGNAL(shiftReportStatsChanged(QList<int>)), this,
-        SLOT(updateShiftReportStats(QList<int>)));
+    connect(dbManager, SIGNAL(shiftReportStatsChanged(QStringList)), this,
+        SLOT(updateShiftReportStats(QStringList)));
     connect(dbManager, SIGNAL(cashFloatChanged(QDate, int, QStringList)), this,
         SLOT(updateCashFloat(QDate, int, QStringList)));
     connect(dbManager, SIGNAL(cashFloatInserted(QString, QString, QString)), this,
@@ -250,7 +250,7 @@ void MainWindow::on_actionDB_Connection_triggered()
 
 void MainWindow::on_actionTest_Query_triggered()
 {
-
+    dbManager->printAll(dbManager->getPrograms());
 }
 
 void MainWindow::on_actionFile_Upload_triggered()
@@ -3279,7 +3279,9 @@ void MainWindow::setupReportsScreen()
 
 void MainWindow::updateDailyReportTables(QDate date)
 {
-    useProgressDialog("Processing reports...", QtConcurrent::run(checkoutReport, &checkoutReport->updateModelThread, date));
+    // useProgressDialog("Processing reports...", 
+    //     QtConcurrent::run(checkoutReport, &checkoutReport->updateModelThread, date));
+    checkoutReport->updateModel(date);
     vacancyReport->updateModel(date);
     lunchReport->updateModel(date);
     wakeupReport->updateModel(date);
@@ -3290,12 +3292,19 @@ void MainWindow::updateDailyReportTables(QDate date)
 
 void MainWindow::updateRestrictionTables()
 {
-    yellowReport->updateModel();
+    useProgressDialog("Processing reports...",
+        QtConcurrent::run(yellowReport, &yellowReport->updateModelThread));
+    //yellowReport->updateModel();
     redReport->updateModel();
+
+    ui->restrictionLastUpdated_lbl->setText(QString(QDate::currentDate().toString(Qt::ISODate)
+        + " at " + QTime::currentTime().toString("h:mmAP")));
 }
 
 void MainWindow::updateShiftReportTables(QDate date, int shiftNo)
 {
+    // useProgressDialog("Processing reports...", 
+    //     QtConcurrent::run(bookingReport, &bookingReport->updateModelThread, date, shiftNo));
     bookingReport->updateModel(date, shiftNo);
     transactionReport->updateModel(date, shiftNo);
     clientLogReport->updateModel(date, shiftNo);
@@ -3362,22 +3371,26 @@ void MainWindow::on_saveOther_btn_clicked()
 
 void MainWindow::getDailyReportStats(QDate date)
 {
-    QtConcurrent::run(dbManager, &DatabaseManager::getDailyReportStatsThread, date);
+    useProgressDialog("Processing reports...", 
+        QtConcurrent::run(dbManager, &DatabaseManager::getDailyReportStatsThread, date));
 }
 
 void MainWindow::getShiftReportStats(QDate date, int shiftNo)
 {
-    QtConcurrent::run(dbManager, &DatabaseManager::getShiftReportStatsThread, date, shiftNo);   
+    useProgressDialog("Processing reports...", 
+        QtConcurrent::run(dbManager, &DatabaseManager::getShiftReportStatsThread, date, shiftNo));   
 }
 
 void MainWindow::getCashFloat(QDate date, int shiftNo)
 {
-    QtConcurrent::run(dbManager, &DatabaseManager::getCashFloatThread, date, shiftNo);
+    useProgressDialog("Processing reports...", 
+        QtConcurrent::run(dbManager, &DatabaseManager::getCashFloatThread, date, shiftNo));
 }
 
 void MainWindow::getMonthlyReport(int month, int year)
-{
-    QtConcurrent::run(dbManager, &DatabaseManager::getMonthlyReportThread, month, year);
+{   
+    useProgressDialog("Processing reports...", 
+        QtConcurrent::run(dbManager, &DatabaseManager::getMonthlyReportThread, month, year));
 }
 
 void MainWindow::updateDailyReportStats(QList<int> list)
@@ -3388,13 +3401,20 @@ void MainWindow::updateDailyReportStats(QList<int> list)
     ui->lbl_totalVacancies->setText(QString::number(list.at(3)));
 }
 
-void MainWindow::updateShiftReportStats(QList<int> list)
+void MainWindow::updateShiftReportStats(QStringList list)
 {
-    ui->lbl_cashAmt->setText(QString::number(list.at(0)));
-    ui->lbl_debitAmt->setText(QString::number(list.at(1)));
-    ui->lbl_chequeAmt->setText(QString::number(list.at(2)));
-    ui->lbl_depoAmt->setText(QString::number(list.at(3)));
-    ui->lbl_shiftAmt->setText(QString::number(list.at(4)));
+    if (list.size() != 0)
+    {
+        ui->lbl_cashAmt->setText(list.at(0));
+        ui->lbl_debitAmt->setText(list.at(1));
+        ui->lbl_chequeAmt->setText(list.at(2));
+        ui->lbl_depoAmt->setText(list.at(3));
+        ui->lbl_shiftAmt->setText(list.at(4));
+    }
+    else
+    {
+        statusBar()->showMessage(tr("Error Loading Shift Report Stats"), 3000);
+    }
 }
 
 void MainWindow::updateCashFloat(QDate date, int shiftNo, QStringList list)
@@ -3460,6 +3480,11 @@ void MainWindow::on_cashFloatGo_btn_clicked()
     MainWindow::getCashFloat(date, shiftNo);
 }
 
+void MainWindow::on_restrictionRefresh_btn_clicked()
+{
+    MainWindow::updateRestrictionTables();
+}
+
 void MainWindow::on_cashFloatCurrent_btn_clicked()
 {
     ui->cashFloat_dateEdit->setDate(QDate::currentDate());
@@ -3477,7 +3502,6 @@ void MainWindow::on_monthlyReportGo_btn_clicked()
 {
     int month = ui->month_comboBox->currentIndex() + 1;
     int year = ui->year_comboBox->currentText().toInt();
-    qDebug() << "Month: " << month << " Year: " << year;
 
     MainWindow::getMonthlyReport(month, year);
 }
@@ -3488,6 +3512,9 @@ void MainWindow::updateMonthlyReportUi(QStringList list)
     ui->numEmptyBeds_lbl->setText(list.at(1) + "/" + list.at(2));
     ui->numNewClients_lbl->setText(list.at(3));
     ui->numUniqueClients_lbl->setText(list.at(4));
+    QString month = ui->month_comboBox->currentText();
+    QString year = ui->year_comboBox->currentText();
+    ui->monthlyReportMonth_lbl->setText(QString(month + "-" + year));
 }
 /*==============================================================================
 REPORTS (END)
