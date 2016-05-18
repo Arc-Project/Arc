@@ -511,6 +511,8 @@ private slots:
 
     void on_actionLogout_triggered();
 
+    void setValue(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
+
     void on_comboBox_3_currentTextChanged(const QString &arg1);
 
     void on_btn_saveShift_clicked();

@@ -50,4 +50,7 @@
     <qresource prefix="/arcstyle">
         <file>style.qss</file>
     </qresource>
+    <qresource prefix="/templates">
+        <file>pdf/clientlist.xml</file>
+    </qresource>
 </RCC>

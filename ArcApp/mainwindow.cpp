@@ -7,6 +7,8 @@
 #include "payment.h"
 #include <QPrinter>
 #include <QProgressDialog>
+#include <qtrpt.h>
+
 
 //MyModel* checkoutModel;
 Report *checkoutReport, *vacancyReport, *lunchReport, *wakeupReport,
@@ -3669,23 +3671,12 @@ void MainWindow::on_btn_pcpKeySave_clicked()
 
 void MainWindow::on_actionPcptables_triggered()
 {
-    if (!ui->pushButton_bookRoom->isHidden()) {
-        ui->pushButton_CaseFiles->setVisible(true);
-        ui->pushButton_bookRoom->setVisible(false);
-        ui->pushButton_processPaymeent->setVisible(false);
-        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
-
-    } else {
-        ui->pushButton_CaseFiles->setVisible(true);
-        ui->pushButton_bookRoom->setVisible(true);
-        ui->pushButton_processPaymeent->setVisible(true);
-        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalLayout_15->update();
-    }
+    QtRPT *report = new QtRPT(this);
+    report->loadReport("clientList");
+    report->recordCount << ui->tableWidget_search_client->rowCount();
+    connect(report, SIGNAL(setValue(const int, const QString, const QString, const QString, const QString)),
+           this, SLOT(setValue(const int, const QString, const QString, const QString, const QString)));
+    report->printExec();
 }
 
 void MainWindow::on_btn_pcpRelaUndo_clicked()
@@ -4237,40 +4228,42 @@ void MainWindow::on_lineEdit_search_clientName_returnPressed()
 
 void MainWindow::on_actionExport_to_PDF_triggered()
 {
-    QString tempDir = QFileDialog::getExistingDirectory(
-                    this,
-                    tr("Select Directory"),
-                    "C://"
-                );
-    QTextDocument doc;
-    QString html;
-    html = "<div class='headerContainer' style='font-size=12px;'> "
-                "<div class='logo' align=left style=''> "
-                    "logo here "
-                "</div> "
-                "<div class='time' align=right style=''>"
-                    "<strong>"
-                        "Date: 2016-02-01 <br>"
-                        "Time: 4:09"
-                    "</strong>"
-                "</div>"
-                "<div class='title' align=center style='margin: 0 auto; width:50%; border: 2px solid black; clear:both;' >"
-                    "<h3>Salvation Army ARC</h3><br>"
-                    "<span>525 Johnson St, Victoria BC V8W 1M2</span><br>"
-                    "<h2>Shift Activity Report</h2>"
-                "</div>"
-           "</div>";
-    doc.setHtml(html);
+    const QString rptTemplate = "clientList.xml";
+//    QString fileName = QDir::currentPath() + "/clientList.xml";
+//    qDebug() << QDir::currentPath() + "/clientList.xml";
 
-    QPrinter printer;
-    printer.setOrientation(QPrinter::Landscape);
-    printer.setPaperSize(QPrinter::Letter);
-//    printer.setPageMargins(1,1,1,1,QPrinter.Inch);
-    printer.setOutputFileName(tempDir+"\\file.pdf");
-    printer.setOutputFormat(QPrinter::PdfFormat);
-    doc.print(&printer);
-    printer.newPage();
+//    QString fileName = $$_PRO_FILE_PWD_+ "/clientList.xml";
+//    qDebug() << $$_PRO_FILE_PWD_ + "/clientList.xml";
 
+    QtRPT *report = new QtRPT(this);
+    report->loadReport(":/templates/pdf/clientlist.xml");
+    report->recordCount << ui->tableWidget_search_client->rowCount();
+    connect(report, SIGNAL(setValue(const int, const QString, QVariant&, const int)),
+           this, SLOT(setValue(const int, const QString, QVariant&, const int)));
+    report->printExec();
+}
+
+void MainWindow::setValue(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
+   Q_UNUSED(reportPage);
+   if (paramName == "cid")
+       paramValue = recNo+1;
+   if (paramName == "fname")
+      paramValue = ui->tableWidget_search_client->item(recNo, 1)->text();
+   if (paramName == "cid")
+        if (ui->tableWidget_search_client->item(recNo, 2) == 0) return;
+        paramValue = ui->tableWidget_search_client->item(recNo, 1)->text();
+   if (paramName == "lname") {
+       if (ui->tableWidget_search_client->item(recNo, 3) == 0) return;
+       paramValue = ui->tableWidget_search_client->item(recNo, 3)->text();
+   }
+   if (paramName == "dob") {
+       if (ui->tableWidget_search_client->item(recNo, 4) == 0) return;
+       paramValue = ui->tableWidget_search_client->item(recNo, 4)->text();
+   }
+   if (paramName == "balance") {
+       if (ui->tableWidget_search_client->item(recNo, 5) == 0) return;
+       paramValue = ui->tableWidget_search_client->item(recNo, 5)->text();
+   }
 }
 
 void MainWindow::on_btn_createNewUser_3_clicked()
