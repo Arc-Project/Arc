@@ -156,13 +156,13 @@ public:
 
 signals:
     void dailyReportStatsChanged(QList<int> list);
-    //void shiftReportStatsChanged(QList<int> list);
     void shiftReportStatsChanged(QStringList list);
     void cashFloatChanged(QDate date, int shiftNo, QStringList list);
     void cashFloatInserted(QString empName, QString currentDateStr, 
         QString currentTimeStr);
     void monthlyReportChanged(QStringList list);
-
+    void noDatabaseConnection();
+;
 private:
     QSqlDatabase db = QSqlDatabase::database();
     static QMutex mutex;

@@ -110,6 +110,10 @@ GENERAL QUERYS (START)
  */
 QSqlQuery DatabaseManager::selectAll(QString tableName)
 {
+    if (!db.open())
+    {
+        emit noDatabaseConnection();
+    }
     QSqlQuery query(db);
     query.exec("SELECT * FROM " + tableName);
     return query;
@@ -140,6 +144,10 @@ void DatabaseManager::printAll(QSqlQuery queryResults)
 QSqlQuery DatabaseManager::execQuery(QString queryString)
 {
     qDebug()<<"execQuery. ";
+    if (!db.open())
+    {
+        emit noDatabaseConnection();
+    }
     QSqlQuery query(db);
     query.exec(queryString);
     return query;

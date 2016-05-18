@@ -187,6 +187,7 @@ private slots:
     void on_monthlyReportGo_btn_clicked();
     void updateMonthlyReportUi(QStringList list);
     void on_restrictionRefresh_btn_clicked();
+    void on_noDatabaseConnection();
     
     
     
