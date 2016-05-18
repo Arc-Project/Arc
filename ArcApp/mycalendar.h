@@ -40,6 +40,7 @@ private:
     int oldWakeFlag[70];
     int lunchDays[70];
     int offset;
+    int maxIns;
     QColor oneL, twoL, noL;
     Client * curClient;
     DatabaseManager * dbm;

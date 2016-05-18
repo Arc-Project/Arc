@@ -55,8 +55,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(initCurrentWidget(int)));
     connect(dbManager, SIGNAL(dailyReportStatsChanged(QList<int>)), this,
         SLOT(updateDailyReportStats(QList<int>)));
-    connect(dbManager, SIGNAL(shiftReportStatsChanged(QList<int>)), this,
-        SLOT(updateShiftReportStats(QList<int>)));
+    connect(dbManager, SIGNAL(shiftReportStatsChanged(QStringList)), this,
+        SLOT(updateShiftReportStats(QStringList)));
     connect(dbManager, SIGNAL(cashFloatChanged(QDate, int, QStringList)), this,
         SLOT(updateCashFloat(QDate, int, QStringList)));
     connect(dbManager, SIGNAL(cashFloatInserted(QString, QString, QString)), this,
@@ -65,6 +65,8 @@ MainWindow::MainWindow(QWidget *parent) :
         SLOT(on_other_lineEdit_textEdited(const QString &)));
     connect(dbManager, SIGNAL(monthlyReportChanged(QStringList)), this,
         SLOT(updateMonthlyReportUi(QStringList)));
+    connect(dbManager, SIGNAL(noDatabaseConnection()), this,
+        SLOT(on_noDatabaseConnection()));
 
     curClient = 0;
     curBook = 0;
@@ -252,7 +254,7 @@ void MainWindow::on_actionDB_Connection_triggered()
 
 void MainWindow::on_actionTest_Query_triggered()
 {
-
+    dbManager->printAll(dbManager->selectAll("Client"));
 }
 
 void MainWindow::on_actionFile_Upload_triggered()
@@ -1591,7 +1593,7 @@ void MainWindow::on_pushButton_search_client_clicked()
     qDebug() <<"START SEARCH CLIENT";
     ui->tabWidget_cl_info->setCurrentIndex(0);
     QString clientName = ui->lineEdit_search_clientName->text();
-
+    qDebug()<<"NAME: "<<clientName;
     QSqlQuery resultQ = dbManager->searchClientList(clientName);
     setup_searchClientTable(resultQ);
 
@@ -1599,17 +1601,41 @@ void MainWindow::on_pushButton_search_client_clicked()
 
 
 }
+void MainWindow::on_checkBox_search_anonymous_clicked(bool checked)
+{
+    if(checked){
+        QSqlQuery resultQ = dbManager->searchClientList("anonymous");
+        setup_searchClientTable(resultQ);
+     //  ui->lineEdit_search_clientName->
+    }
+    else
+    {
+        qDebug()<<"anonymous check not";
+        initClientLookupInfo();
+    }
+}
+
+void MainWindow::initClientLookupTable(){
+    ui->tableWidget_search_client->setRowCount(0);
+
+    ui->tableWidget_search_client->setColumnCount(6);
+    ui->tableWidget_search_client->clear();
+
+    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"FirstName"<<"Middle Initial"<<"LastName"<<"DateOfBirth"<<"Balance");
+}
 
 //set up table widget to add result of search client using name
 void MainWindow::setup_searchClientTable(QSqlQuery results){
+    //initClientLookupInfo();
 
     ui->tableWidget_search_client->setRowCount(0);
-
-    int colCnt = results.record().count();
+     int colCnt = results.record().count();
     ui->tableWidget_search_client->setColumnCount(colCnt);
     ui->tableWidget_search_client->clear();
 
     ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"FirstName"<<"Middle Initial"<<"LastName"<<"DateOfBirth"<<"Balance");
+
+
     int row =0;
     while(results.next()){
         ui->tableWidget_search_client->insertRow(row);
@@ -3257,7 +3283,9 @@ void MainWindow::setupReportsScreen()
 
 void MainWindow::updateDailyReportTables(QDate date)
 {
-    useProgressDialog("Processing reports...", QtConcurrent::run(checkoutReport, &checkoutReport->updateModelThread, date));
+    // useProgressDialog("Processing reports...", 
+    //     QtConcurrent::run(checkoutReport, &checkoutReport->updateModelThread, date));
+    checkoutReport->updateModel(date);
     vacancyReport->updateModel(date);
     lunchReport->updateModel(date);
     wakeupReport->updateModel(date);
@@ -3268,12 +3296,19 @@ void MainWindow::updateDailyReportTables(QDate date)
 
 void MainWindow::updateRestrictionTables()
 {
-    yellowReport->updateModel();
+    useProgressDialog("Processing reports...",
+        QtConcurrent::run(yellowReport, &yellowReport->updateModelThread));
+    //yellowReport->updateModel();
     redReport->updateModel();
+
+    ui->restrictionLastUpdated_lbl->setText(QString(QDate::currentDate().toString(Qt::ISODate)
+        + " at " + QTime::currentTime().toString("h:mmAP")));
 }
 
 void MainWindow::updateShiftReportTables(QDate date, int shiftNo)
 {
+    // useProgressDialog("Processing reports...", 
+    //     QtConcurrent::run(bookingReport, &bookingReport->updateModelThread, date, shiftNo));
     bookingReport->updateModel(date, shiftNo);
     transactionReport->updateModel(date, shiftNo);
     clientLogReport->updateModel(date, shiftNo);
@@ -3340,22 +3375,26 @@ void MainWindow::on_saveOther_btn_clicked()
 
 void MainWindow::getDailyReportStats(QDate date)
 {
-    QtConcurrent::run(dbManager, &DatabaseManager::getDailyReportStatsThread, date);
+    useProgressDialog("Processing reports...", 
+        QtConcurrent::run(dbManager, &DatabaseManager::getDailyReportStatsThread, date));
 }
 
 void MainWindow::getShiftReportStats(QDate date, int shiftNo)
 {
-    QtConcurrent::run(dbManager, &DatabaseManager::getShiftReportStatsThread, date, shiftNo);   
+    useProgressDialog("Processing reports...", 
+        QtConcurrent::run(dbManager, &DatabaseManager::getShiftReportStatsThread, date, shiftNo));   
 }
 
 void MainWindow::getCashFloat(QDate date, int shiftNo)
 {
-    QtConcurrent::run(dbManager, &DatabaseManager::getCashFloatThread, date, shiftNo);
+    useProgressDialog("Processing reports...", 
+        QtConcurrent::run(dbManager, &DatabaseManager::getCashFloatThread, date, shiftNo));
 }
 
 void MainWindow::getMonthlyReport(int month, int year)
-{
-    QtConcurrent::run(dbManager, &DatabaseManager::getMonthlyReportThread, month, year);
+{   
+    useProgressDialog("Processing reports...", 
+        QtConcurrent::run(dbManager, &DatabaseManager::getMonthlyReportThread, month, year));
 }
 
 void MainWindow::updateDailyReportStats(QList<int> list)
@@ -3366,13 +3405,20 @@ void MainWindow::updateDailyReportStats(QList<int> list)
     ui->lbl_totalVacancies->setText(QString::number(list.at(3)));
 }
 
-void MainWindow::updateShiftReportStats(QList<int> list)
+void MainWindow::updateShiftReportStats(QStringList list)
 {
-    ui->lbl_cashAmt->setText(QString::number(list.at(0)));
-    ui->lbl_debitAmt->setText(QString::number(list.at(1)));
-    ui->lbl_chequeAmt->setText(QString::number(list.at(2)));
-    ui->lbl_depoAmt->setText(QString::number(list.at(3)));
-    ui->lbl_shiftAmt->setText(QString::number(list.at(4)));
+    if (list.size() != 0)
+    {
+        ui->lbl_cashAmt->setText(list.at(0));
+        ui->lbl_debitAmt->setText(list.at(1));
+        ui->lbl_chequeAmt->setText(list.at(2));
+        ui->lbl_depoAmt->setText(list.at(3));
+        ui->lbl_shiftAmt->setText(list.at(4));
+    }
+    else
+    {
+        statusBar()->showMessage(tr("Error Loading Shift Report Stats"), 3000);
+    }
 }
 
 void MainWindow::updateCashFloat(QDate date, int shiftNo, QStringList list)
@@ -3438,6 +3484,11 @@ void MainWindow::on_cashFloatGo_btn_clicked()
     MainWindow::getCashFloat(date, shiftNo);
 }
 
+void MainWindow::on_restrictionRefresh_btn_clicked()
+{
+    MainWindow::updateRestrictionTables();
+}
+
 void MainWindow::on_cashFloatCurrent_btn_clicked()
 {
     ui->cashFloat_dateEdit->setDate(QDate::currentDate());
@@ -3455,7 +3506,6 @@ void MainWindow::on_monthlyReportGo_btn_clicked()
 {
     int month = ui->month_comboBox->currentIndex() + 1;
     int year = ui->year_comboBox->currentText().toInt();
-    qDebug() << "Month: " << month << " Year: " << year;
 
     MainWindow::getMonthlyReport(month, year);
 }
@@ -3466,6 +3516,20 @@ void MainWindow::updateMonthlyReportUi(QStringList list)
     ui->numEmptyBeds_lbl->setText(list.at(1) + "/" + list.at(2));
     ui->numNewClients_lbl->setText(list.at(3));
     ui->numUniqueClients_lbl->setText(list.at(4));
+    QString month = ui->month_comboBox->currentText();
+    QString year = ui->year_comboBox->currentText();
+    ui->monthlyReportMonth_lbl->setText(QString(month + "-" + year));
+}
+
+void MainWindow::on_noDatabaseConnection()
+{
+    QString msg = QString("\nCould not connect to the database.\n")
+        + QString("\nPlease remember to save your changes when the connection to the database returns.\n")
+        + QString("\nSelect \"File\" followed by the \"Connect to Database\" menu item to attempt to connect to the database.\n");
+    QMessageBox msgBox(this);
+    msgBox.setWindowTitle("ArcWay");
+    msgBox.setText(msg);
+    msgBox.exec();
 }
 /*==============================================================================
 REPORTS (END)
@@ -3917,6 +3981,9 @@ void MainWindow::on_EditShiftsButton_clicked()
 {
     addHistory(ADMINPAGE);
     ui->stackedWidget->setCurrentIndex(EDITSHIFT);
+    ui->comboBox_4->clear();
+    ui->comboBox_4->addItem("1");
+    ui->comboBox_3->setCurrentIndex(0);
 }
 
 void MainWindow::on_cbox_roomLoc_currentTextChanged(const QString &arg1)
@@ -4583,4 +4650,60 @@ void MainWindow::on_actionLogout_triggered()
     w->show();
 
     close();
+}
+
+void MainWindow::on_comboBox_3_currentTextChanged(const QString &arg1)
+{
+    if (arg1 == "1") {
+        ui->comboBox_4->clear();
+        ui->comboBox_4->addItem("1");
+    } else if (arg1 == "2") {
+        ui->comboBox_4->clear();
+        ui->comboBox_4->addItem("1");
+        ui->comboBox_4->addItem("2");
+    } else if (arg1 == "3") {
+        ui->comboBox_4->clear();
+        ui->comboBox_4->addItem("1");
+        ui->comboBox_4->addItem("2");
+        ui->comboBox_4->addItem("3");
+    } else if (arg1 == "4") {
+        ui->comboBox_4->clear();
+        ui->comboBox_4->addItem("1");
+        ui->comboBox_4->addItem("2");
+        ui->comboBox_4->addItem("3");
+        ui->comboBox_4->addItem("4");
+    } else if (arg1 == "5"){
+        ui->comboBox_4->clear();
+        ui->comboBox_4->addItem("1");
+        ui->comboBox_4->addItem("2");
+        ui->comboBox_4->addItem("3");
+        ui->comboBox_4->addItem("4");
+        ui->comboBox_4->addItem("5");
+    }
+}
+
+void MainWindow::on_btn_saveShift_clicked()
+{
+    QString day = ui->comboBox_2->currentText();
+    QString shiftno = ui->comboBox_4->currentText();
+
+    QString starttime = ui->timeEdit->text();
+    QString endtime = ui->timeEdit_2->text();
+
+    // if the shift does not exist, make one
+    QSqlQuery existcheck = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='" + day + "'");
+
+    if (!existcheck.next()) {
+        qDebug() << "Doesn't exist";
+        // insert
+        QSqlQuery insert = dbManager->execQuery("INSERT INTO Shift VALUES('" + day + "'"
+                                                ", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1)");
+    }
+
+    // update
+    QSqlQuery update = dbManager->execQuery("UPDATE Shift SET StartTimeShift" + shiftno +
+                                            "='" + starttime + "' WHERE DayOfWeek = '" + day + "'");
+    QSqlQuery update2 = dbManager->execQuery("UPDATE Shift SET EndTimeShift" + shiftno +
+                                            "='" + endtime + "' WHERE DayOfWeek = '" + day + "'");
+
 }

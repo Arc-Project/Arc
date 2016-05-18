@@ -459,6 +459,24 @@ QHeaderView {
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="QCheckBox" name="checkBox_search_anonymous">
+                <property name="maximumSize">
+                 <size>
+                  <width>90</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Anonymous</string>
+                </property>
+               </widget>
+              </item>
              </layout>
             </item>
            </layout>
@@ -694,7 +712,7 @@ QHeaderView {
                 <item>
                  <widget class="QGraphicsView" name="graphicsView_getInfo">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
@@ -2010,6 +2028,9 @@ QHeaderView {
                 <property name="contextMenuPolicy">
                  <enum>Qt::NoContextMenu</enum>
                 </property>
+                <property name="autoScrollMargin">
+                 <number>17</number>
+                </property>
                 <property name="editTriggers">
                  <set>QAbstractItemView::NoEditTriggers</set>
                 </property>
@@ -2019,11 +2040,20 @@ QHeaderView {
                 <property name="selectionBehavior">
                  <enum>QAbstractItemView::SelectRows</enum>
                 </property>
+                <attribute name="horizontalHeaderDefaultSectionSize">
+                 <number>100</number>
+                </attribute>
+                <attribute name="horizontalHeaderMinimumSectionSize">
+                 <number>45</number>
+                </attribute>
                 <attribute name="verticalHeaderVisible">
                  <bool>false</bool>
                 </attribute>
                 <attribute name="verticalHeaderMinimumSectionSize">
                  <number>30</number>
+                </attribute>
+                <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+                 <bool>true</bool>
                 </attribute>
                </widget>
               </item>
@@ -2183,7 +2213,7 @@ QHeaderView {
                 <property name="maximumSize">
                  <size>
                   <width>16777215</width>
-                  <height>400</height>
+                  <height>16777215</height>
                  </size>
                 </property>
                 <property name="font">
@@ -2208,6 +2238,9 @@ QHeaderView {
                 </attribute>
                 <attribute name="verticalHeaderMinimumSectionSize">
                  <number>30</number>
+                </attribute>
+                <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+                 <bool>true</bool>
                 </attribute>
                </widget>
               </item>
@@ -2299,7 +2332,7 @@ QHeaderView {
               <property name="sizeHint" stdset="0">
                <size>
                 <width>20</width>
-                <height>596</height>
+                <height>20</height>
                </size>
               </property>
              </spacer>
@@ -4491,7 +4524,7 @@ QHeaderView {
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>1111</width>
+                 <width>718</width>
                  <height>1381</height>
                 </rect>
                </property>
@@ -7962,7 +7995,7 @@ QHeaderView {
              <item row="0" column="1">
               <widget class="QStackedWidget" name="swdg_reports">
                <property name="currentIndex">
-                <number>0</number>
+                <number>4</number>
                </property>
                <widget class="QWidget" name="page_3">
                 <layout class="QGridLayout" name="gridLayout_34">
@@ -8109,7 +8142,7 @@ QHeaderView {
                     </font>
                    </property>
                    <property name="currentIndex">
-                    <number>0</number>
+                    <number>2</number>
                    </property>
                    <widget class="QWidget" name="tab_4">
                     <attribute name="title">
@@ -9943,9 +9976,52 @@ QHeaderView {
                   <string>Go</string>
                  </property>
                 </widget>
+                <widget class="QLabel" name="label_76">
+                 <property name="geometry">
+                  <rect>
+                   <x>130</x>
+                   <y>80</y>
+                   <width>55</width>
+                   <height>16</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>Month:</string>
+                 </property>
+                </widget>
+                <widget class="QLabel" name="monthlyReportMonth_lbl">
+                 <property name="geometry">
+                  <rect>
+                   <x>190</x>
+                   <y>80</y>
+                   <width>161</width>
+                   <height>16</height>
+                  </rect>
+                 </property>
+                 <property name="text">
+                  <string>mmm-YYYY</string>
+                 </property>
+                </widget>
                </widget>
                <widget class="QWidget" name="page_10">
                 <layout class="QGridLayout" name="gridLayout_48">
+                 <item row="4" column="1">
+                  <widget class="QTableView" name="redRestriction_tableView"/>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QLabel" name="restrictionLastUpdated_lbl">
+                   <property name="text">
+                    <string>date time</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_77">
+                   <property name="text">
+                    <string>Last Updated On:</string>
+                   </property>
+                  </widget>
+                 </item>
                  <item row="0" column="0">
                   <widget class="QLabel" name="label_8">
                    <property name="font">
@@ -9960,7 +10036,7 @@ QHeaderView {
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="0">
+                 <item row="3" column="0">
                   <widget class="QLabel" name="label_68">
                    <property name="font">
                     <font>
@@ -9972,7 +10048,7 @@ QHeaderView {
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="1">
+                 <item row="3" column="1">
                   <widget class="QLabel" name="label_69">
                    <property name="font">
                     <font>
@@ -9984,11 +10060,18 @@ QHeaderView {
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="1">
-                  <widget class="QTableView" name="redRestriction_tableView"/>
+                 <item row="4" column="0">
+                  <widget class="QTableView" name="yellowRestriction_tableView"/>
                  </item>
                  <item row="2" column="0">
-                  <widget class="QListView" name="yellowRestriction_tableView"/>
+                  <widget class="QPushButton" name="restrictionRefresh_btn">
+                   <property name="text">
+                    <string>Refresh</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1" rowspan="2">
+                  <widget class="QTableView" name="redRestriction_tableView"/>
                  </item>
                 </layout>
                </widget>

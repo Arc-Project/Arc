@@ -29,16 +29,16 @@
 class Report
 {
 public:
-    Report(QObject *parent, QWidget* tableView, int type);
+    Report(QObject *parent, QTableView* tableView, int type);
     void updateModel();
     void updateModel(QDate date);
     void updateModel(QDate date, int shiftNo);
-    void updateModelThread(QDate date);
     void updateModelThread();
+    void updateModelThread(QDate date);
+    void updateModelThread(QDate date, int shiftNo);
 private:
     MyModel model;
     int reportType;
-    void updateModelThread(QDate date, int shiftNo);
     void setTransactionData(QSqlQuery* query);
     void setData(QSqlQuery* query);
     void setTitle();

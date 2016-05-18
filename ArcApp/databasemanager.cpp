@@ -110,6 +110,10 @@ GENERAL QUERYS (START)
  */
 QSqlQuery DatabaseManager::selectAll(QString tableName)
 {
+    if (!db.open())
+    {
+        emit noDatabaseConnection();
+    }
     QSqlQuery query(db);
     query.exec("SELECT * FROM " + tableName);
     return query;
@@ -140,6 +144,10 @@ void DatabaseManager::printAll(QSqlQuery queryResults)
 QSqlQuery DatabaseManager::execQuery(QString queryString)
 {
     qDebug()<<"execQuery. ";
+    if (!db.open())
+    {
+        emit noDatabaseConnection();
+    }
     QSqlQuery query(db);
     query.exec(queryString);
     return query;
@@ -350,10 +358,15 @@ QSqlQuery DatabaseManager::searchClientList(QString ClientName){
     QString searchQuery = QString("SELECT ClientId, FirstName, MiddleName, LastName, Dob, Balance ")
             + QString("FROM Client ");
     QStringList clientNames;
-    if(ClientName != ""){
+    if(ClientName.toLower() == "anonymous"){
+            qDebug()<<"case: " + ClientName.toLower();
+            searchQuery += QString("WHERE FirstName Like '"+ ClientName.toLower() + "' ")
+                         + QString("ORDER BY FirstName ASC, LastName ASC");
+    }
+    else if(ClientName != ""){
         clientNames = ClientName.split(" ");
     }
-    //if 1 word name, match first name or last name
+
     if(clientNames.count() == 1){
         qDebug()<<"Name 1 words";
         searchQuery += QString("WHERE (FirstName LIKE '"+clientNames.at(0) + "%' ")
@@ -370,8 +383,12 @@ QSqlQuery DatabaseManager::searchClientList(QString ClientName){
                      + QString("ORDER BY FirstName ASC, LastName ASC");
     }
     else{
-        qDebug()<<"no name or more than 1 ";
+        if(ClientName =="")
+            qDebug()<<"DB no name";
+        else
+            qDebug()<<"Wrong name";
     }
+
     query.prepare(searchQuery);
     query.exec();
     return query;
@@ -487,9 +504,8 @@ bool DatabaseManager::insertIntoBookingHistory(QString clientName, QString space
             + "','" + clientId + "')";
     qDebug() << q;
     return query.exec(q);
-
-
 }
+
 bool DatabaseManager::addHistoryFromId(QString bookId, QString empId, QString shift, QString action){
     QSqlQuery query(db);
     QString q = "SELECT * FROM Booking WHERE BookingId = '" + bookId + "'";
@@ -803,11 +819,12 @@ REPORT QUERYS (START)
 bool DatabaseManager::getDailyReportCheckoutQuery(QSqlQuery* queryResults, QDate date)
 {
     QString queryString =
-        QString("SELECT b.ClientName, b.SpaceId, b.StartDate, ")
-        + QString("b.EndDate, b.ProgramCode, c.Balance ")
+        QString("SELECT b.ClientName, s.SpaceCode, b.StartDate, ")
+        + QString("b.EndDate, b.ProgramCode, REPLACE('$' + CAST(c.Balance AS VARCHAR), '$-', '-$') ")
         + QString("FROM Booking b INNER JOIN Client c ON b.ClientId = c.ClientId ")
+        + QString("INNER JOIN Space s ON b.SpaceId = s.SpaceId ")
         + QString("WHERE EndDate = '" + date.toString(Qt::ISODate))
-        + QString("' AND FirstBook = 'YES'");
+        + QString("' AND FirstBook = 'YES' ORDER BY b.ProgramCode Desc" );
 
         // qDebug() << queryString;
     return queryResults->exec(queryString);
@@ -816,38 +833,40 @@ bool DatabaseManager::getDailyReportCheckoutQuery(QSqlQuery* queryResults, QDate
 bool DatabaseManager::getDailyReportVacancyQuery(QSqlQuery* queryResults, QDate date)
 {
     QString queryString =
-        QString("SELECT s.SpaceId, s.ProgramCodes ")
+        QString("SELECT s.SpaceCode, s.ProgramCodes ")
         + QString("FROM Space s LEFT JOIN (SELECT SpaceId, Date ")
         + QString("FROM Booking WHERE StartDate <= '" + date.toString(Qt::ISODate))
         + QString("' AND EndDate > '" + date.toString(Qt::ISODate))
         + QString("') as b ON s.SpaceId = b.SpaceId ")
-        + QString("WHERE b.date IS NULL");
+        + QString("WHERE b.date IS NULL ORDER BY s.ProgramCodes Desc");
 
-        qDebug() << queryString;
+        // qDebug() << queryString;
     return queryResults->exec(queryString);
 }
 
 bool DatabaseManager::getDailyReportLunchQuery(QSqlQuery* queryResults, QDate date)
 {
     QString queryString =
-        QString("SELECT ClientName, SpaceId, Lunch ")
-        + QString("FROM Booking ")
-        + QString("WHERE Date = '" + date.toString(Qt::ISODate)) + "' AND "
-        + QString("Lunch = 'YES'");
+        QString("SELECT ISNULL(c.LastName, '') + ', ' + ISNULL(c.FirstName, '') ")
+        + QString("+ ' ' + ISNULL(c.MiddleName, ''), l.SpaceCode, l.Number ")
+        + QString("FROM Lunches l INNER JOIN Client c ON l.ClientId = c.ClientId ")
+        + QString("WHERE LunchDate = '" + date.toString(Qt::ISODate) + "'");
 
-        // qDebug() << queryString;
+        //qDebug() << queryString;
     return queryResults->exec(queryString);
 }
 
 bool DatabaseManager::getDailyReportWakeupQuery(QSqlQuery* queryResults, QDate date)
 {
     QString queryString =
-        QString("SELECT ClientName, SpaceId, Wakeup ")
-        + QString("FROM Booking ")
-        + QString("WHERE Date = '" + date.toString(Qt::ISODate)) + "' AND "
-        + QString("Wakeup <> 'NO' AND Wakeup IS NOT NULL");
+            QString("SELECT ISNULL(c.LastName, '') + ', ' + ISNULL(c.FirstName, '') ")
+            + QString("+ ' ' + ISNULL(c.MiddleName, ''), w.SpaceCode, ")
+            + QString("CONVERT(VARCHAR(15), CAST(w.WakeTime AS TIME(0)) , 100) ")
+            + QString("FROM Wakeup w INNER JOIN Client c ON w.ClientId = c.ClientId ")
+            + QString("WHERE WakeDate = '" + date.toString(Qt::ISODate) + "' ")
+            + QString("ORDER BY CAST(w.WakeTime AS TIME(0)) Asc");
 
-        // qDebug() << queryString;
+    // qDebug() << queryString;
     return queryResults->exec(queryString);
 }
 
@@ -856,11 +875,12 @@ bool DatabaseManager::getShiftReportBookingQuery(QSqlQuery* queryResults,
 {
     QString queryString =
         QString("SELECT ClientName, SpaceCode, ProgramCode, StartDate, ")
-        + QString("EndDate, Action, Status, EmpName, Time ")
+        + QString("EndDate, Action, EmpName, CONVERT(VARCHAR(15), Time, 100) ")
         + QString("FROM BookingHistory ")
         + QString("WHERE Date = '" + date.toString(Qt::ISODate) + "' AND ")
-        + QString("ShiftNo = " + QString::number(shiftNo));
-    // qDebug() << queryString;
+        + QString("ShiftNo = " + QString::number(shiftNo))
+        + QString(" ORDER BY Time Asc");
+    //qDebug() << queryString;
     return queryResults->exec(queryString);
 }
 QSqlQuery DatabaseManager::getSwapBookings(QDate start, QDate end, QString program, QString maxSwap, QString curBook){
@@ -884,10 +904,11 @@ bool DatabaseManager::getShiftReportTransactionQuery(QSqlQuery* queryResults,
         QString("SELECT c.FirstName, c.MiddleName, c.LastName, t.TransType, ")
         + QString("t.Type, t.MSQ, t.ChequeNo, t.ChequeDate, ")
         + QString("CAST(t.Outstanding AS INT), CAST(t.Deleted AS INT), ")
-        + QString("t.EmpName, t.Time, t.Notes " )
+        + QString("t.EmpName, CONVERT(VARCHAR(15), t.Time, 100), t.Notes " )
         + QString("FROM Client c INNER JOIN Transac t ON c.ClientId = t.ClientId ")
         + QString("WHERE Date = '" + date.toString(Qt::ISODate) + "' AND ")
-        + QString("ShiftNo = " + QString::number(shiftNo));
+        + QString("ShiftNo = " + QString::number(shiftNo))
+        + QString(" ORDER BY t.Time Asc");
     // qDebug() << queryString;
     return queryResults->exec(queryString);
 }
@@ -953,7 +974,8 @@ void DatabaseManager::getDailyReportStatsThread(QDate date)
     emit DatabaseManager::dailyReportStatsChanged(list);
 }
 
-int DatabaseManager::getShiftReportTotal(QDate date, int shiftNo, QString payType)
+int DatabaseManager::getShiftReportTotal(QDate date, int shiftNo, QString payType,
+    double* result)
 {
     QString queryString = 
         QString("SELECT ISNULL(p.total, 0) - ISNULL(r.total, 0) ")
@@ -974,18 +996,32 @@ int DatabaseManager::getShiftReportTotal(QDate date, int shiftNo, QString payTyp
         + QString("AND ((TransType = 'Refund' AND Deleted = 0 AND Outstanding = 0) ")
         + QString("OR (TransType = 'Payment' AND Deleted = 1 AND Outstanding = 0))) as r");
     // qDebug() << queryString;
-    return DatabaseManager::getIntFromQuery(queryString);
+    return DatabaseManager::getDoubleFromQuery(queryString, result);
 }
 
 void DatabaseManager::getShiftReportStatsThread(QDate date, int shiftNo)
 {
-    int cashTotal = DatabaseManager::getShiftReportTotal(date, shiftNo, PAY_CASH);
-    int electronicTotal = DatabaseManager::getShiftReportTotal(date, shiftNo, PAY_ELECTRONIC);
-    int chequeTotal = DatabaseManager::getShiftReportTotal(date, shiftNo, PAY_CHEQUE);
-
-    QList<int> list = QList<int>() << cashTotal << electronicTotal << chequeTotal
-                                   << cashTotal + chequeTotal
-                                   << cashTotal + electronicTotal + chequeTotal;
+    double cashTotal, electronicTotal, chequeTotal;
+    QStringList list;
+    if (DatabaseManager::getShiftReportTotal(date, shiftNo, PAY_CASH, &cashTotal))
+    {
+        if (DatabaseManager::getShiftReportTotal(date, shiftNo, PAY_ELECTRONIC, &electronicTotal))
+        {
+            if (DatabaseManager::getShiftReportTotal(date, shiftNo, PAY_CHEQUE, &chequeTotal))
+            {
+                list << QString("%1%2").arg(cashTotal >= 0 ? "$" : "-$").
+                    arg(QString::number(fabs(cashTotal), 'f', 2));
+                list << QString("%1%2").arg(electronicTotal >= 0 ? "$" : "-$").
+                    arg(QString::number(fabs(electronicTotal), 'f', 2));
+                list << QString("%1%2").arg(chequeTotal >= 0 ? "$" : "-$").
+                    arg(QString::number(fabs(chequeTotal), 'f', 2));
+                list << QString("%1%2").arg(cashTotal + chequeTotal >= 0 ? "$" : "-$").
+                    arg(QString::number(fabs(cashTotal + chequeTotal), 'f', 2));
+                list << QString("%1%2").arg(cashTotal + electronicTotal + chequeTotal >= 0 ? "$" : "-$").
+                    arg(QString::number(fabs(cashTotal + electronicTotal + chequeTotal), 'f', 2));
+            }        
+        }    
+    }
     emit DatabaseManager::shiftReportStatsChanged(list);
 }
 
@@ -993,12 +1029,12 @@ bool DatabaseManager::getShiftReportClientLogQuery(QSqlQuery* queryResults,
     QDate date, int shiftNo)
 {
     QString queryString =
-        QString("SELECT CONVERT(VARCHAR(15), Time, 100), EmpName, Action, ClientName ")
+        QString("SELECT ClientName, Action, EmpName, CONVERT(VARCHAR(15), Time, 100) ")
         + QString("FROM ClientLog ")
         + QString("WHERE Date = '" + date.toString(Qt::ISODate) + "' AND ")
         + QString("ShiftNo = " + QString::number(shiftNo))
         + QString("ORDER BY Time Desc");
-    qDebug() << queryString;
+    // qDebug() << queryString;
     return queryResults->exec(queryString);
 }
 
@@ -1006,12 +1042,12 @@ bool DatabaseManager::getShiftReportOtherQuery(QSqlQuery* queryResults,
     QDate date, int shiftNo)
 {
     QString queryString = 
-        QString("SELECT Time, EmpName, Log ")
+        QString("SELECT CONVERT(VARCHAR(15), Time, 100), EmpName, Log ")
         + QString("FROM OtherLog ")
         + QString("WHERE Date = '" + date.toString(Qt::ISODate) + "' AND ")
-        + QString("ShiftNo = " + QString::number(shiftNo))
+        + QString("ShiftNo = " + QString::number(shiftNo) + " ")
         + QString("ORDER BY Time Desc");
-    qDebug() << queryString;
+    // qDebug() << queryString;
     return queryResults->exec(queryString);
 }
 
@@ -1033,13 +1069,13 @@ bool DatabaseManager::insertOtherLog(QString empName, int shiftNo, QString logTe
 bool DatabaseManager::getCashFloatReportQuery(QSqlQuery* queryResults, QDate date, int shiftNo)
 {
     QString queryString = 
-        QString("SELECT EmpName, DateEdited, TimeEdited, Comments, Nickels, Dimes, ")
-        + QString("Quarters, Loonies, Toonies, Fives, Tens, Twenties, ")
-        + QString("Fifties, Hundreds ")
+        QString("SELECT EmpName, DateEdited, CONVERT(VARCHAR(15), TimeEdited, 100), ")
+        + QString("Comments, Nickels, Dimes, Quarters, Loonies, Toonies, ")
+        + QString("Fives, Tens, Twenties, Fifties, Hundreds ")
         + QString("FROM CashFloat ")
         + QString("WHERE Date = '" + date.toString(Qt::ISODate) + "' AND ")
         + QString("ShiftNo = " + QString::number(shiftNo));
-    qDebug() << queryString;
+    // qDebug() << queryString;
     return queryResults->exec(queryString);
 }
 
@@ -1100,7 +1136,7 @@ void DatabaseManager::getCashFloatThread(QDate date, int shiftNo)
          << QString::number(toonies) << QString::number(fives)
          << QString::number(tens) << QString::number(twenties)
          << QString::number(fifties) << QString::number(hundreds)
-         << QString("$ " + QString::number(total, 'f', 2));
+         << QString("$" + QString::number(total, 'f', 2));
 
     emit DatabaseManager::cashFloatChanged(date, shiftNo, list);
 }
@@ -1109,8 +1145,10 @@ bool DatabaseManager::insertCashFloat(QDate date, int shiftNo, QString empName,
     QString comments, QList<int> coins)
 {
     bool ret = false;
+    QTime currentTime(QTime::currentTime());
     QString currentDateStr = QDate::currentDate().toString(Qt::ISODate);
-    QString currentTimeStr = QTime::currentTime().toString("hh:mm:ss");
+    QString currentTimeStr = currentTime.toString("hh:mm:ss");
+    QString currentTimeStr12hr = currentTime.toString("h:mmAP");
     QString connName = QString::number(DatabaseManager::getDbCounter());
     {
         QSqlDatabase tempDb = QSqlDatabase::database();
@@ -1179,7 +1217,7 @@ bool DatabaseManager::insertCashFloat(QDate date, int shiftNo, QString empName,
     QSqlDatabase::removeDatabase(connName);
     if (ret)
     {
-        emit DatabaseManager::cashFloatInserted(empName, currentDateStr, currentTimeStr);
+        emit DatabaseManager::cashFloatInserted(empName, currentDateStr, currentTimeStr12hr);
     }
     return ret;
 }
@@ -1192,14 +1230,14 @@ bool DatabaseManager::getMonthlyReportQuery(QSqlQuery* queryResults, int month, 
         + QString("FROM DailyStats ")
         + QString("WHERE MONTH(Date) = " + QString::number(month))
         + QString(" AND YEAR(Date) = " + QString::number(year));
-    qDebug() << queryString;
+    // qDebug() << queryString;
     return queryResults->exec(queryString);
 }
 
 bool DatabaseManager::getYellowRestrictionQuery(QSqlQuery* queryResults)
 {
     QString queryString =
-        QString("SELECT (FirstName + ' ' + MiddleName + ' ' + LastName) ")
+        QString("SELECT (LastName + ', ' + FirstName + ' ' + MiddleName) ")
         + QString("FROM Client Where Status = 'Yellow'");
     return queryResults->exec(queryString);
 }
@@ -1207,7 +1245,7 @@ bool DatabaseManager::getYellowRestrictionQuery(QSqlQuery* queryResults)
 bool DatabaseManager::getRedRestrictionQuery(QSqlQuery* queryResults)
 {
     QString queryString =
-        QString("SELECT (FirstName + ' ' + MiddleName + ' ' + LastName) ")
+        QString("SELECT (LastName + ', ' + FirstName + ' ' + MiddleName) ")
         + QString("FROM Client Where Status = 'Red'");
     return queryResults->exec(queryString);
 }
@@ -1238,8 +1276,8 @@ int DatabaseManager::getMonthlyUniqueClients(int month, int year)
         + QString("AND (ClientId = 68 ")
         + QString("OR ClientId = 69) AND Action <> 'DELETED'");
     int numAnonymous = DatabaseManager::getIntFromQuery(queryString);
-    qDebug() << queryString;
-    qDebug() << "numAnonymous " + QString::number(numAnonymous);
+    // qDebug() << queryString;
+    // qDebug() << "numAnonymous " + QString::number(numAnonymous);
     return numUniqueNamed + numAnonymous;
 }
 
@@ -1285,14 +1323,42 @@ int DatabaseManager::getIntFromQuery(QString queryString)
             qDebug() << queryString;
             if (query.exec(queryString))
             {
-                query.next();
-                result = query.value(0).toInt();
+                if (query.next())
+                {
+                    result = query.value(0).toInt();    
+                }
             }
         }
         tempDb.close();
     } // Necessary braces: tempDb and query are destroyed because out of scope
     QSqlDatabase::removeDatabase(connName);
     return result;
+}
+
+bool DatabaseManager::getDoubleFromQuery(QString queryString, double* result)
+{
+    bool ret = false;
+    QString connName = QString::number(DatabaseManager::getDbCounter());
+    {
+        QSqlDatabase tempDb = QSqlDatabase::database();
+        if (DatabaseManager::createDatabase(&tempDb, connName))
+        {
+            QSqlQuery query(tempDb);
+
+            qDebug() << queryString;
+            if (query.exec(queryString))
+            {
+                if (query.next())
+                {
+                    *result = query.value(0).toDouble();
+                    ret = true;
+                }
+            }
+        }
+        tempDb.close();
+    } // Necessary braces: tempDb and query are destroyed because out of scope
+    QSqlDatabase::removeDatabase(connName);
+    return ret;
 }
 
 
@@ -1391,7 +1457,7 @@ QSqlQuery DatabaseManager::getNextBooking(QDate endDate, QString roomId){
 QSqlQuery DatabaseManager::getCurrentBooking(QDate start, QDate end, QString program){
     QSqlQuery query(db);
     QString q = "SELECT Space.SpaceId, Space.SpaceCode, Space.ProgramCodes, Space.type, Space.cost, Space.Monthly FROM Space"
-                " LEFT JOIN (SELECT * from Booking WHERE StartDate <= '" + start.toString(Qt::ISODate) + "' AND EndDate > '"
+                " LEFT JOIN (SELECT * from Booking WHERE StartDate <= '" + end.toString(Qt::ISODate) + "' AND EndDate > '"
                 + start.toString(Qt::ISODate) + "') AS a on Space.SpaceId = a.SpaceId WHERE BookingID IS NULL AND Space.ProgramCodes = '" + program + "'";
 
     qDebug() << q;
