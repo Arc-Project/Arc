@@ -175,7 +175,7 @@ private slots:
     void updateDailyReportStats(QList<int> list);
     void on_shiftReportGo_btn_clicked();
     void on_shiftReportCurrent_btn_clicked();
-    void updateShiftReportStats(QList<int> list);
+    void updateShiftReportStats(QStringList list);
     void on_saveOther_btn_clicked();
     void on_other_lineEdit_textEdited(const QString &text);
     void updateCashFloat(QDate date, int shiftNo, QStringList list);
@@ -187,10 +187,13 @@ private slots:
     void on_cashFloatCurrent_btn_clicked();
     void on_monthlyReportGo_btn_clicked();
     void updateMonthlyReportUi(QStringList list);
+    void on_restrictionRefresh_btn_clicked();
+    void on_noDatabaseConnection();
     
     
     
     void resizeEvent();
+
 
 
     void on_EditUserButton_clicked();
@@ -200,31 +203,45 @@ private slots:
     void on_actionMain_Menu_triggered();
 
 
+    /*==========================================================================
+    CLIENT LOOPUP WIDGET FUNCTIONS
+    ==========================================================================*/
+
     void on_pushButton_RegisterClient_clicked();
-
-    void on_button_cancel_client_register_clicked();
-
-    
 
     void on_pushButton_search_client_clicked();
 
+    void on_checkBox_search_anonymous_clicked(bool checked);    //SEARCH ANONYMOUS
+
     void selected_client_info(int nRow, int nCol);
 
-    void on_button_register_client_clicked();
+    void initClientLookupTable();                               //initialize anonymouse
+
+    void searchTransaction(QString clientId);
+
+    void displayTransaction(QSqlQuery results);
+
+    void displayBookHistory(QSqlQuery results);
+
+    void searchBookHistory(QString clientId);
 
     /*==========================================================================
     CLIENT REGISTRATION FUNCTION
     ==========================================================================*/
 
-    void getListRegisterFields(QStringList* fieldList);
-    
-    bool check_client_register_form();
+    void getListRegisterFields(QStringList* fieldList); //GET LIST TO UPDATE DB
+
+    void on_button_register_client_clicked();           //BUTTON REGISTER OR EDIT INFO
+
+    bool check_client_register_form();                  //CHECK IF IT IS EMPTY OR NOT
 
     void clear_client_register_form();
 
     void read_curClient_Information(QString ClientId);
 
     void on_button_clear_client_regForm_clicked();
+
+    void on_button_cancel_client_register_clicked();
 
     void on_button_cl_takePic_clicked();
 
@@ -234,12 +251,7 @@ private slots:
 
     void defaultRegisterOptions();
 
-    void searchTransaction(QString clientId);
 
-    void displayTransaction(QSqlQuery results);
-
-    void displayBookHistory(QSqlQuery results);
-    void searchBookHistory(QString clientId);
 
     /*========================================================================*/
 
@@ -500,6 +512,11 @@ private slots:
 
     void on_actionLogout_triggered();
 
+    void setValue(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
+
+    void on_comboBox_3_currentTextChanged(const QString &arg1);
+
+    void on_btn_saveShift_clicked();
 
     void on_editProgramDrop_currentIndexChanged(const QString &arg1);
 
