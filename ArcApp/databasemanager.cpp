@@ -440,10 +440,23 @@ bool DatabaseManager::searchClientInfoPic(QImage * img, QString ClientId){
 
 QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId){
     QSqlQuery clientTransQuery;
-    clientTransQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) )
+    QString queryStart;
+    if(maxNum > 0)
+        queryStart = "SELECT TOP "+ QString::number(maxNum);
+    else
+        queryStart = "SELECT ";
+  /*
+    clientTransQuery.prepare(queryStart
                            + QString(" t.Date, t.Amount, t.Type, e.Username, t.ChequeNo, t.ChequeDate, t.Deleted ")
                            + QString("FROM Transac t INNER JOIN Employee e ON t.EmpId = e.EmpId ")
                            + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC"));
+*/
+
+    clientTransQuery.prepare(queryStart
+                           + QString("Date, Amount, Type, ChequeNo, MSQ, ChequeDate, TransType, Deleted ")
+                           + QString("FROM Transac ")
+                           + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC"));
+
     clientTransQuery.exec();
     return clientTransQuery;
 }

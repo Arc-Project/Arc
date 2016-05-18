@@ -27,6 +27,12 @@
 #define NOREGISTER          0
 #define NEWCLIENT           1
 #define EDITCLIENT          2
+
+#define PERSIONACASEPLAN 	0
+#define RUNNINGNOTE			1
+#define BOOKINGHISTORY		2
+#define TRANSACTIONHISTORY	3
+
 #include <QMainWindow>
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
@@ -71,7 +77,7 @@ public:
     void setSelectedClientInfo();
     void initClBookHistoryTable();
     void initClTransactionTable();
-
+    void initClTransactionTable(QTableWidget* table);
 
     void getRegisterLogFields(QStringList* fieldList);
     void getCurrentClientId();   //get client id from client list table
@@ -519,6 +525,8 @@ private slots:
     void on_btn_saveShift_clicked();
 
     void on_editProgramDrop_currentIndexChanged(const QString &arg1);
+
+    void on_tabw_casefiles_currentChanged(int index);
 
 private:
 

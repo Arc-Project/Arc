@@ -1894,7 +1894,7 @@ void MainWindow::setSelectedClientInfo(){
     //
     curClient = new Client();
     int nRow = ui->tableWidget_search_client->currentRow();
-    if (nRow <0){
+    if (nRow <=0){
         if(curClientID == NULL)
             return;
         else{
@@ -1951,9 +1951,19 @@ void MainWindow::initClTransactionTable(){
     ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Amount"<<"Type"<<"Employee"<<"ChequeNo"<<"ChequeDate");
 }
 
+void MainWindow::initClTransactionTable(QTableWidget* table){
+    table->setRowCount(0);
+
+
+    table->setColumnCount(6);
+    table->clear();
+
+    table->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Amount"<<"Type"<<"Employee"<<"ChequeNo"<<"ChequeDate");
+}
+
 //search transaction list when click transaction list
 void MainWindow::displayTransaction(QSqlQuery results){
-    initClTransactionTable();
+    initClTransactionTable(ui->tableWidget_transaction);
     int row =ui->tableWidget_transaction->rowCount();
     int colCnt = results.record().count() -1;
     while(results.next()){
@@ -2426,6 +2436,28 @@ void MainWindow::populateCaseFiles(QString type, int tableId) {
         }
     }
 }
+//CASEFILE WIDGET CHANGE CONTROL
+void MainWindow::on_tabw_casefiles_currentChanged(int index)
+{
+    switch(index)
+    {
+        case PERSIONACASEPLAN:
+            break;
+        case RUNNINGNOTE:
+            break;
+        case BOOKINGHISTORY:
+
+            break;
+        case TRANSACTIONHISTORY:
+            break;
+    }
+}
+
+
+//CASEFILE TRANSACTION
+
+
+
 
 // HANK
 void MainWindow::on_EditRoomsButton_clicked()
@@ -4779,3 +4811,4 @@ void MainWindow::on_btn_saveShift_clicked()
                                             "='" + endtime + "' WHERE DayOfWeek = '" + day + "'");
 
 }
+
