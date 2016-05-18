@@ -70,6 +70,7 @@ public:
     int currentshiftid = 0;
 
     bookingManager book;
+    void searchClientListThread();
     void setup_searchClientTable(QSqlQuery results);
     void displayClientInfoThread(QString val);
     void addInfoPic(QImage img);
@@ -78,7 +79,6 @@ public:
     void setSelectedClientInfo();
     void initClBookHistoryTable();
     void initClTransactionTable();
-    void initClTransactionTable(QTableWidget* table);
 
     void getRegisterLogFields(QStringList* fieldList);
     void getCurrentClientId();   //get client id from client list table
