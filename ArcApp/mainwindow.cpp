@@ -63,6 +63,8 @@ MainWindow::MainWindow(QWidget *parent) :
         SLOT(on_other_lineEdit_textEdited(const QString &)));
     connect(dbManager, SIGNAL(monthlyReportChanged(QStringList)), this,
         SLOT(updateMonthlyReportUi(QStringList)));
+    connect(dbManager, SIGNAL(noDatabaseConnection()), this,
+        SLOT(on_noDatabaseConnection()));
 
     curClient = 0;
     curBook = 0;
@@ -250,7 +252,7 @@ void MainWindow::on_actionDB_Connection_triggered()
 
 void MainWindow::on_actionTest_Query_triggered()
 {
-    dbManager->printAll(dbManager->getPrograms());
+    dbManager->printAll(dbManager->selectAll("Client"));
 }
 
 void MainWindow::on_actionFile_Upload_triggered()
@@ -3515,6 +3517,17 @@ void MainWindow::updateMonthlyReportUi(QStringList list)
     QString month = ui->month_comboBox->currentText();
     QString year = ui->year_comboBox->currentText();
     ui->monthlyReportMonth_lbl->setText(QString(month + "-" + year));
+}
+
+void MainWindow::on_noDatabaseConnection()
+{
+    QString msg = QString("\nCould not connect to the database.\n")
+        + QString("\nPlease remember to save your changes when the connection to the database returns.\n")
+        + QString("\nSelect \"File\" followed by the \"Connect to Database\" menu item to attempt to connect to the database.\n");
+    QMessageBox msgBox(this);
+    msgBox.setWindowTitle("ArcWay");
+    msgBox.setText(msg);
+    msgBox.exec();
 }
 /*==============================================================================
 REPORTS (END)
