@@ -52,6 +52,7 @@
 #include "editrooms.h"
 #include "addmsd.h"
 #include "mycalendar.h"
+#include <QPointer>
 
 namespace Ui {
 class MainWindow;

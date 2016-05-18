@@ -1425,6 +1425,31 @@ bool DatabaseManager::setPaid(QString id, QString chequeNo){
         return true;
     return false;
 }
+bool DatabaseManager::escapePayment(QString clientId, QString curDate, QString amount, QString type, QString notes, QString chequeNo, QString msd, QString issued,
+                                    QString transtype, QString outstanding, QString empId, QString shiftNo, QString time){
+
+    QSqlQuery query(db);
+    query.prepare("INSERT INTO Transac VALUES(:clientId, :curDate, :amount, :type, :notes, :chequeNo, :msd, :issued, :transtype, :deleted, :outstanding, :empId, :shiftNo, :time)");
+
+    query.bindValue(":clientId", clientId);
+    query.bindValue(":curdate", QDate::currentDate());
+    query.bindValue(":amount",amount );
+    query.bindValue(":type", type );
+    query.bindValue(":notes",notes );
+    query.bindValue(":chequeNo", chequeNo);
+    query.bindValue(":msd",msd );
+    query.bindValue(":issued",issued );
+    query.bindValue(":transtype",transtype );
+    query.bindValue(":deleted", "0");
+    query.bindValue(":outstanding",outstanding );
+    query.bindValue(":empId",empId );
+    query.bindValue(":shiftNo",shiftNo );
+    query.bindValue(":time",QTime::currentTime() );
+    return query.exec();
+
+
+}
+
 QSqlQuery DatabaseManager::getOutstanding(){
     QSqlQuery query(db);
     QString q = "SELECT * FROM Transac JOIN Client on Transac.ClientId = Client.ClientId WHERE Outstanding = 1";

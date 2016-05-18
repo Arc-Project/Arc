@@ -44,20 +44,22 @@ bool payment::makePayment(){
     QString values;
     if(ui->paymentRadio->isChecked()){
         if(ui->paymentDrop->currentIndex() == 1){
+
+
             values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
-                    + "','" + QString::number(transact->amount) + "','" + "2" + "','" + transact->type + "','" + transact->notes
+                    + "','" + QString::number(transact->amount) + "','" + transact->type + "','" + transact->notes
                     + "','" + transact->chequeNo + "','" + transact->MSQ + "','" + transact->issuedString + "','" + transact->transType
                     + "', 0" + ",'" + transact->outstanding + "', '" + empId + "','" + shiftNo + "','" + QTime::currentTime().toString() + "'";
         }
         else{
         values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
-                + "','" + QString::number(transact->amount) + "','" + "2" + "','" + transact->type + "','" + transact->notes
+                + "','" + QString::number(transact->amount) + "','" +  transact->type + "','" + transact->notes
                 + "', NULL, NULL, NULL" + ",'" + transact->transType + "', 0" + ",'" + transact->outstanding + "', '" + empId + "','" + shiftNo + "','" + QTime::currentTime().toString() + "'";
         }
     }
     else{
         values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
-                + "','" + QString::number(transact->amount) + "','" + "2" + "','" + transact->type + "','" + transact->notes
+                + "','" + QString::number(transact->amount) + "','" + transact->type + "','" + transact->notes
                 + "', NULL, NULL, NULL" + ",'" + transact->transType + "', 0" + ",'" + transact->outstanding + "', '" + empId + "','" + shiftNo + "','" + QTime::currentTime().toString() + "'";
 
     }
@@ -149,7 +151,10 @@ void payment::on_addPaymentButton_clicked()
 
 }
 bool payment::checkNumber(QString num){
+
     int l = num.length();
+    if(l > 8)
+        return false;
     int period = 0;
     char copy[l];
     strcpy(copy, num.toStdString().c_str());
@@ -245,11 +250,28 @@ void payment::on_refundRadio_clicked()
     }
     doRefund();
 }
+bool payment::checkQuote(QString text){
+    const char * test = text.toStdString().c_str();
+    for(int i = 0; i < text.length(); i++){
+        if(test[i] == '\'')
+            return false;
+    }
+    return true;
+}
 
 void payment::on_btn_ok_clicked()
 {
     if(!checkNumber(ui->paymentInput->text()))
         return;
+    if(!checkQuote(ui->plainTextEdit->toPlainText())){
+        QMessageBox msgBox(this);
+        msgBox.setWindowTitle("ArcWay");
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setText("Single quotes (') not allowed in note");
+        msgBox.exec();
+
+        return;
+    }
     if(doMessageBox("Adding payment, this is permentant, confirm?")){
 
         payment::on_addPaymentButton_clicked();

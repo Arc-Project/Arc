@@ -252,6 +252,8 @@ void EditRooms::on_editRoom_itemSelectionChanged()
 bool EditRooms::checkNumber(QString num){
     int l = num.length();
     int period = 0;
+    if(l > 8)
+        return false;
     char copy[l];
     strcpy(copy, num.toStdString().c_str());
     for(int i = 0; i < num.length(); i++){
