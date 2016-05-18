@@ -382,6 +382,7 @@ void EditRooms::on_editOkButton_clicked()
         double costDiff;
         costDiff = ui->curCost->text().toDouble() - curBook->cost;
         dbManager->updateBalance(curClient->balance + costDiff, curClient->clientId);
+        curClient->balance+= costDiff;
         QString q = "UPDATE Booking SET Cost='" + QString::number(curBook->cost) +"', SpaceId ='" + curBook->roomId +
                 "' WHERE BookingId='" + curBook->bookID + "'";
         dbManager->updateBooking(q);
