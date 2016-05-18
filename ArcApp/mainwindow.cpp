@@ -66,8 +66,10 @@ MainWindow::MainWindow(QWidget *parent) :
         SLOT(on_other_lineEdit_textEdited(const QString &)));
     connect(dbManager, SIGNAL(monthlyReportChanged(QStringList)), this,
         SLOT(updateMonthlyReportUi(QStringList)));
-    connect(dbManager, SIGNAL(noDatabaseConnection()), this,
-        SLOT(on_noDatabaseConnection()));
+    connect(dbManager, SIGNAL(noDatabaseConnection(QSqlDatabase*)), this,
+        SLOT(on_noDatabaseConnection(QSqlDatabase*)), Qt::DirectConnection);
+    connect(dbManager, SIGNAL(reconnectedToDatabase()), this,
+        SLOT(on_reconnectedToDatabase()));
 
     curClient = 0;
     curBook = 0;
@@ -139,6 +141,8 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case PAYMENTPAGE: //WIDGET 4
             popManagePayment();
+
+            ui->editRemoveCheque->setHidden(true);
 
             break;
         case ADMINPAGE: //WIDGET 5
@@ -529,6 +533,8 @@ void MainWindow::popManagePayment(){
 
 void MainWindow::on_cbox_payDateRange_activated(int index)
 {
+    ui->editRemoveCheque->setHidden(true);
+
     QString startDate;
     QDate endDate = QDate::currentDate();
     QDate hold = QDate::currentDate();
@@ -590,6 +596,8 @@ void MainWindow::on_cbox_payDateRange_activated(int index)
 
 void MainWindow::on_btn_payListAllUsers_clicked()
 {
+    ui->editRemoveCheque->setHidden(true);
+
     ui->btn_payDelete->setText("Add Payment");
     QStringList cols;
     QStringList heads;
@@ -1035,6 +1043,7 @@ void MainWindow::getTransactionFromRow(int row){
 void MainWindow::on_btn_payOutstanding_clicked()
 {
     ui->btn_payDelete->setText("Cash Cheque");
+    ui->editRemoveCheque->setHidden(false);
     QSqlQuery result;
     result = dbManager->getOutstanding();
     QStringList headers;
@@ -3634,19 +3643,42 @@ void MainWindow::updateMonthlyReportUi(QStringList list)
     ui->monthlyReportMonth_lbl->setText(QString(month + "-" + year));
 }
 
-void MainWindow::on_noDatabaseConnection()
+void MainWindow::on_noDatabaseConnection(QSqlDatabase* database)
 {
+    statusBar()->showMessage(tr(""));
     QString msg = QString("\nCould not connect to the database.\n")
         + QString("\nPlease remember to save your changes when the connection to the database returns.\n")
         + QString("\nSelect \"File\" followed by the \"Connect to Database\" menu item to attempt to connect to the database.\n");
     QMessageBox msgBox(this);
     msgBox.setWindowTitle("ArcWay");
+    QPushButton* reconnectButton = msgBox.addButton(tr("Re-connect"), QMessageBox::AcceptRole);
+    msgBox.setStandardButtons(QMessageBox::Close);
     msgBox.setText(msg);
     msgBox.exec();
+
+    if (msgBox.clickedButton() == reconnectButton)
+    {
+        statusBar()->showMessage(tr("Re-connecting"));
+        dbManager->reconnectToDatabase(database);
+    }
+    else
+    {
+        statusBar()->showMessage(tr("No database connection"));
+    }
+}
+
+void MainWindow::on_reconnectedToDatabase()
+{
+    statusBar()->showMessage(tr("Database conenction established"), 3000);
 }
 /*==============================================================================
 REPORTS (END)
 ==============================================================================*/
+void MainWindow::on_actionReconnect_to_Database_triggered()
+{
+    statusBar()->showMessage(tr("Re-connecting"));
+    dbManager->reconnectToDatabase();
+}
 
 void MainWindow::on_actionBack_triggered()
 {
@@ -3784,12 +3816,16 @@ void MainWindow::on_btn_pcpKeySave_clicked()
 
 void MainWindow::on_actionPcptables_triggered()
 {
-    QtRPT *report = new QtRPT(this);
-    report->loadReport("clientList");
-    report->recordCount << ui->tableWidget_search_client->rowCount();
-    connect(report, SIGNAL(setValue(const int, const QString, const QString, const QString, const QString)),
-           this, SLOT(setValue(const int, const QString, const QString, const QString, const QString)));
-    report->printExec();
+//    QtRPT *report = new QtRPT(this);
+//    report->loadReport("clientList");
+//    report->recordCount << ui->tableWidget_search_client->rowCount();
+//    connect(report, SIGNAL(setValue(const int, const QString, const QString, const QString, const QString)),
+//           this, SLOT(setValue(const int, const QString, const QString, const QString, const QString)));
+//    report->printExec();
+    QTableWidget *tw = pcp_tables.at(0);
+    qDebug() << tw->item(0,0)->text();
+    qDebug() << tw->item(0,1)->text();
+    qDebug() << tw->item(0,2)->text();
 }
 
 void MainWindow::on_btn_pcpRelaUndo_clicked()
@@ -4356,14 +4392,17 @@ void MainWindow::on_actionExport_to_PDF_triggered()
 //    qDebug() << $$_PRO_FILE_PWD_ + "/clientList.xml";
 
     QtRPT *report = new QtRPT(this);
-    report->loadReport(":/templates/pdf/daily.xml");
-    report->recordCount << ui->tableWidget_search_client->rowCount();
+    report->loadReport(":/templates/pdf/pcp.xml");
+    for (auto x: pcp_tables) {
+        report->recordCount << x->rowCount();
+    }
+
     connect(report, SIGNAL(setValue(const int, const QString, QVariant&, const int)),
            this, SLOT(setValue(const int, const QString, QVariant&, const int)));
     report->printExec();
 }
 
-void MainWindow::setValue(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
+//void MainWindow::setValue(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
 //   Q_UNUSED(reportPage);
 //   if (paramName == "client")
 //        paramValue = ui->booking_tableView->item(recNo, 1)->text();
@@ -4382,7 +4421,42 @@ void MainWindow::setValue(const int recNo, const QString paramName, QVariant &pa
 //   else if (paramName == "time")
 //        paramValue = ui->booking_tableView->item(recNo, 8)->text();
 //   paramValue = recNo+1;
+//}
+
+void MainWindow::setValue(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
+    if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == 0){
+        printPCP(recNo, paramName, paramValue, reportPage);
+    }
 }
+
+void MainWindow::printPCP(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
+    qDebug() << "report page: " << reportPage;
+
+    QTableWidget *tw_pcp = pcp_tables.at(reportPage);
+
+    if (paramName == "goal") {
+        if (tw_pcp->item(recNo, 0)->text().isEmpty()) return;
+         paramValue = tw_pcp->item(recNo, 0)->text();
+         qDebug() << "report page: " << reportPage << " recNp: " << recNo << " value: " << tw_pcp->item(recNo, 0)->text();
+    } else if (paramName == "strategy") {
+        if (tw_pcp->item(recNo, 1)->text().isEmpty()) return;
+         paramValue = tw_pcp->item(recNo, 1)->text();
+         qDebug() << "report page: " << reportPage << " recNp: " << recNo << " value: " << tw_pcp->item(recNo, 1)->text();
+    } else if (paramName == "date") {
+        if (tw_pcp->item(recNo, 2)->text().isEmpty()) return;
+         paramValue = tw_pcp->item(recNo, 2)->text();
+         qDebug() << "report page: " << reportPage << " recNp: " << recNo << " value: " << tw_pcp->item(recNo, 2)->text();
+    } else if (paramName == "person") {
+        if (tw_pcp->item(recNo, 0)->text().isEmpty()) return;
+         paramValue = tw_pcp->item(recNo, 0)->text();
+         qDebug() << "report page: " << reportPage << " recNp: " << recNo << " value: " << tw_pcp->item(recNo, 0)->text();
+    } else if (paramName == "task"){
+        if (tw_pcp->item(recNo, 1)->text().isEmpty()) return;
+         paramValue = tw_pcp->item(recNo, 1)->text();
+         qDebug() << "report page: " << reportPage << " recNp: " << recNo << " value: " << tw_pcp->item(recNo, 1)->text();
+    }
+}
+
 
 void MainWindow::on_btn_createNewUser_3_clicked()
 {
@@ -4812,6 +4886,7 @@ void MainWindow::on_actionLogout_triggered()
 }
 
 
+
 void MainWindow::on_editProgramDrop_currentIndexChanged(const QString &arg1)
 {
     ui->editUpdate->setEnabled(true);
@@ -4872,3 +4947,20 @@ void MainWindow::on_btn_saveShift_clicked()
 
 }
 
+void MainWindow::on_editRemoveCheque_clicked()
+{
+    int row = ui->mpTable->selectionModel()->currentIndex().row();
+    if(row == -1)
+        return;
+    QString chequeNo = "";
+    QString transId = ui->mpTable->item(row, 6)->text();
+    double retAmt = ui->mpTable->item(row, 3)->text().toDouble();
+    QString clientId = ui->mpTable->item(row, 5)->text();
+    curClient = new Client();
+    popClientFromId(clientId);
+    double curBal = curClient->balance + retAmt;
+    if(!dbManager->setPaid(transId, chequeNo )){
+
+    }
+    ui->mpTable->removeRow(row);
+}
