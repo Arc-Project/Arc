@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>843</width>
-    <height>495</height>
+    <height>513</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -383,22 +383,6 @@
  </widget>
  <resources/>
  <connections>
-  <connection>
-   <sender>btn_ok</sender>
-   <signal>clicked()</signal>
-   <receiver>payment</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>617</x>
-     <y>425</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>btn_cancel</sender>
    <signal>clicked()</signal>

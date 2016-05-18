@@ -350,10 +350,15 @@ QSqlQuery DatabaseManager::searchClientList(QString ClientName){
     QString searchQuery = QString("SELECT ClientId, FirstName, MiddleName, LastName, Dob, Balance ")
             + QString("FROM Client ");
     QStringList clientNames;
-    if(ClientName != ""){
+    if(ClientName.toLower() == "anonymous"){
+            qDebug()<<"case: " + ClientName.toLower();
+            searchQuery += QString("WHERE FirstName Like '"+ ClientName.toLower() + "' ")
+                         + QString("ORDER BY FirstName ASC, LastName ASC");
+    }
+    else if(ClientName != ""){
         clientNames = ClientName.split(" ");
     }
-    //if 1 word name, match first name or last name
+
     if(clientNames.count() == 1){
         qDebug()<<"Name 1 words";
         searchQuery += QString("WHERE (FirstName LIKE '"+clientNames.at(0) + "%' ")
@@ -370,8 +375,12 @@ QSqlQuery DatabaseManager::searchClientList(QString ClientName){
                      + QString("ORDER BY FirstName ASC, LastName ASC");
     }
     else{
-        qDebug()<<"no name or more than 1 ";
+        if(ClientName =="")
+            qDebug()<<"DB no name";
+        else
+            qDebug()<<"Wrong name";
     }
+
     query.prepare(searchQuery);
     query.exec();
     return query;
@@ -1440,7 +1449,7 @@ QSqlQuery DatabaseManager::getNextBooking(QDate endDate, QString roomId){
 QSqlQuery DatabaseManager::getCurrentBooking(QDate start, QDate end, QString program){
     QSqlQuery query(db);
     QString q = "SELECT Space.SpaceId, Space.SpaceCode, Space.ProgramCodes, Space.type, Space.cost, Space.Monthly FROM Space"
-                " LEFT JOIN (SELECT * from Booking WHERE StartDate <= '" + start.toString(Qt::ISODate) + "' AND EndDate > '"
+                " LEFT JOIN (SELECT * from Booking WHERE StartDate <= '" + end.toString(Qt::ISODate) + "' AND EndDate > '"
                 + start.toString(Qt::ISODate) + "') AS a on Space.SpaceId = a.SpaceId WHERE BookingID IS NULL AND Space.ProgramCodes = '" + program + "'";
 
     qDebug() << q;

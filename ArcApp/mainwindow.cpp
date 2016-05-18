@@ -1589,7 +1589,7 @@ void MainWindow::on_pushButton_search_client_clicked()
     qDebug() <<"START SEARCH CLIENT";
     ui->tabWidget_cl_info->setCurrentIndex(0);
     QString clientName = ui->lineEdit_search_clientName->text();
-
+    qDebug()<<"NAME: "<<clientName;
     QSqlQuery resultQ = dbManager->searchClientList(clientName);
     setup_searchClientTable(resultQ);
 
@@ -1597,17 +1597,41 @@ void MainWindow::on_pushButton_search_client_clicked()
 
 
 }
+void MainWindow::on_checkBox_search_anonymous_clicked(bool checked)
+{
+    if(checked){
+        QSqlQuery resultQ = dbManager->searchClientList("anonymous");
+        setup_searchClientTable(resultQ);
+     //  ui->lineEdit_search_clientName->
+    }
+    else
+    {
+        qDebug()<<"anonymous check not";
+        initClientLookupInfo();
+    }
+}
+
+void MainWindow::initClientLookupTable(){
+    ui->tableWidget_search_client->setRowCount(0);
+
+    ui->tableWidget_search_client->setColumnCount(6);
+    ui->tableWidget_search_client->clear();
+
+    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"FirstName"<<"Middle Initial"<<"LastName"<<"DateOfBirth"<<"Balance");
+}
 
 //set up table widget to add result of search client using name
 void MainWindow::setup_searchClientTable(QSqlQuery results){
+    //initClientLookupInfo();
 
     ui->tableWidget_search_client->setRowCount(0);
-
-    int colCnt = results.record().count();
+     int colCnt = results.record().count();
     ui->tableWidget_search_client->setColumnCount(colCnt);
     ui->tableWidget_search_client->clear();
 
     ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"FirstName"<<"Middle Initial"<<"LastName"<<"DateOfBirth"<<"Balance");
+
+
     int row =0;
     while(results.next()){
         ui->tableWidget_search_client->insertRow(row);
@@ -3953,6 +3977,9 @@ void MainWindow::on_EditShiftsButton_clicked()
 {
     addHistory(ADMINPAGE);
     ui->stackedWidget->setCurrentIndex(EDITSHIFT);
+    ui->comboBox_4->clear();
+    ui->comboBox_4->addItem("1");
+    ui->comboBox_3->setCurrentIndex(0);
 }
 
 void MainWindow::on_cbox_roomLoc_currentTextChanged(const QString &arg1)
@@ -4203,8 +4230,29 @@ void MainWindow::on_actionExport_to_PDF_triggered()
                     "C://"
                 );
     QTextDocument doc;
-    doc.setHtml("<h1>generated from Qt!</h1> regular text");
+    QString html;
+    html = "<div class='headerContainer' style='font-size=12px;'> "
+                "<div class='logo' align=left style=''> "
+                    "logo here "
+                "</div> "
+                "<div class='time' align=right style=''>"
+                    "<strong>"
+                        "Date: 2016-02-01 <br>"
+                        "Time: 4:09"
+                    "</strong>"
+                "</div>"
+                "<div class='title' align=center style='margin: 0 auto; width:50%; border: 2px solid black; clear:both;' >"
+                    "<h3>Salvation Army ARC</h3><br>"
+                    "<span>525 Johnson St, Victoria BC V8W 1M2</span><br>"
+                    "<h2>Shift Activity Report</h2>"
+                "</div>"
+           "</div>";
+    doc.setHtml(html);
+
     QPrinter printer;
+    printer.setOrientation(QPrinter::Landscape);
+    printer.setPaperSize(QPrinter::Letter);
+//    printer.setPageMargins(1,1,1,1,QPrinter.Inch);
     printer.setOutputFileName(tempDir+"\\file.pdf");
     printer.setOutputFormat(QPrinter::PdfFormat);
     doc.print(&printer);
@@ -4598,4 +4646,58 @@ void MainWindow::on_actionLogout_triggered()
     close();
 }
 
+void MainWindow::on_comboBox_3_currentTextChanged(const QString &arg1)
+{
+    if (arg1 == "1") {
+        ui->comboBox_4->clear();
+        ui->comboBox_4->addItem("1");
+    } else if (arg1 == "2") {
+        ui->comboBox_4->clear();
+        ui->comboBox_4->addItem("1");
+        ui->comboBox_4->addItem("2");
+    } else if (arg1 == "3") {
+        ui->comboBox_4->clear();
+        ui->comboBox_4->addItem("1");
+        ui->comboBox_4->addItem("2");
+        ui->comboBox_4->addItem("3");
+    } else if (arg1 == "4") {
+        ui->comboBox_4->clear();
+        ui->comboBox_4->addItem("1");
+        ui->comboBox_4->addItem("2");
+        ui->comboBox_4->addItem("3");
+        ui->comboBox_4->addItem("4");
+    } else if (arg1 == "5"){
+        ui->comboBox_4->clear();
+        ui->comboBox_4->addItem("1");
+        ui->comboBox_4->addItem("2");
+        ui->comboBox_4->addItem("3");
+        ui->comboBox_4->addItem("4");
+        ui->comboBox_4->addItem("5");
+    }
+}
 
+void MainWindow::on_btn_saveShift_clicked()
+{
+    QString day = ui->comboBox_2->currentText();
+    QString shiftno = ui->comboBox_4->currentText();
+
+    QString starttime = ui->timeEdit->text();
+    QString endtime = ui->timeEdit_2->text();
+
+    // if the shift does not exist, make one
+    QSqlQuery existcheck = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='" + day + "'");
+
+    if (!existcheck.next()) {
+        qDebug() << "Doesn't exist";
+        // insert
+        QSqlQuery insert = dbManager->execQuery("INSERT INTO Shift VALUES('" + day + "'"
+                                                ", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1)");
+    }
+
+    // update
+    QSqlQuery update = dbManager->execQuery("UPDATE Shift SET StartTimeShift" + shiftno +
+                                            "='" + starttime + "' WHERE DayOfWeek = '" + day + "'");
+    QSqlQuery update2 = dbManager->execQuery("UPDATE Shift SET EndTimeShift" + shiftno +
+                                            "='" + endtime + "' WHERE DayOfWeek = '" + day + "'");
+
+}
