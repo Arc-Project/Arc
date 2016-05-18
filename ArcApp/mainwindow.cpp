@@ -4408,6 +4408,13 @@ void MainWindow::on_btn_newTypeLoc_clicked()
             QSqlQuery q2 = dbManager->execQuery("INSERT INTO Building VALUES(" + ui->le_newTypeLoc->text() + ", '')");
             ui->lbl_editUserWarning_3->setText("Building Created");
 
+            ui->cbox_roomLoc->clear();
+            ui->cbox_roomFloor->clear();
+            ui->cbox_roomRoom->clear();
+            ui->le_roomNo->clear();
+            ui->cbox_roomType->clear();
+            populate_modRoom_cboxes();
+            on_btn_modRoomBdlg_clicked();
         }
         break;
     }
@@ -4431,6 +4438,17 @@ void MainWindow::on_btn_newTypeLoc_clicked()
             QSqlQuery q4 = dbManager->execQuery("INSERT INTO Floor VALUES (" + ui->le_newTypeLoc->text()
                                                 + ", " + buildingidq.value(0).toString() + ")");
             ui->lbl_editUserWarning_3->setText("Floor Created");
+
+            ui->cbox_roomFloor->clear();
+            ui->cbox_roomRoom->clear();
+            ui->le_roomNo->clear();
+            ui->cbox_roomType->clear();
+
+            // fake an update to the building cbox to refresh the dropdown
+            int before = ui->cbox_roomLoc->currentIndex();
+            ui->cbox_roomLoc->setCurrentIndex(0);
+            ui->cbox_roomLoc->setCurrentIndex(before);
+            on_btn_modRoomFloor_clicked();
         }
 
         break;
@@ -4458,6 +4476,16 @@ void MainWindow::on_btn_newTypeLoc_clicked()
         } else {
             dbManager->execQuery("INSERT INTO Room VALUES (" + floorid + ", " + ui->le_newTypeLoc->text() + ")");
             ui->lbl_editUserWarning_3->setText("Room created");
+
+            ui->cbox_roomRoom->clear();
+            ui->le_roomNo->clear();
+            ui->cbox_roomType->clear();
+
+            // fake an update to the floors cbox to refresh the dropdown
+            int before = ui->cbox_roomFloor->currentIndex();
+            ui->cbox_roomFloor->setCurrentIndex(0);
+            ui->cbox_roomFloor->setCurrentIndex(before);
+            on_btn_modRoomRoom_clicked();
         }
 
         break;
@@ -4470,13 +4498,7 @@ void MainWindow::on_btn_newTypeLoc_clicked()
         break;
     }
     }
-    // clear everything
-    ui->cbox_roomLoc->clear();
-    ui->cbox_roomFloor->clear();
-    ui->cbox_roomRoom->clear();
-    ui->le_roomNo->clear();
-    ui->cbox_roomType->clear();
-    ui->le_roomNo->clear();
+    // clear everything    
     ui->doubleSpinBox->setValue(0.0);
     ui->doubleSpinBox_2->setValue(0.0);
     ui->tableWidget_5->clear();
@@ -4485,9 +4507,7 @@ void MainWindow::on_btn_newTypeLoc_clicked()
     // set horizontal headers
     ui->tableWidget_5->setColumnCount(8);
     ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly");
-    populate_modRoom_cboxes();
-    ui->editroommodifybox->clear();
-    ui->editroommodifybox->setColumnCount(0);
+    ui->le_newTypeLoc->clear();
 }
 
 void MainWindow::on_btn_delTypeLoc_clicked()
@@ -4503,8 +4523,15 @@ void MainWindow::on_btn_delTypeLoc_clicked()
         } else {
             QSqlQuery q2 = dbManager->execQuery("DELETE FROM Building WHERE BuildingNo=" + ui->le_newTypeLoc->text());
             ui->lbl_editUserWarning_3->setText("Building Deleted");
+
+            ui->cbox_roomLoc->clear();
+            ui->cbox_roomFloor->clear();
+            ui->cbox_roomRoom->clear();
+            ui->le_roomNo->clear();
+            ui->cbox_roomType->clear();
+            populate_modRoom_cboxes();
+            on_btn_modRoomBdlg_clicked();
         }
-        break;
         break;
     }
     case FLOORS: {
@@ -4519,6 +4546,17 @@ void MainWindow::on_btn_delTypeLoc_clicked()
             QSqlQuery q4 = dbManager->execQuery("DELETE FROM Floor WHERE FloorNo=" + ui->le_newTypeLoc->text()
                                                 + " AND BuildingId=" + buildingidq.value(0).toString());
             ui->lbl_editUserWarning_3->setText("Floor Deleted");
+
+            ui->cbox_roomFloor->clear();
+            ui->cbox_roomRoom->clear();
+            ui->le_roomNo->clear();
+            ui->cbox_roomType->clear();
+
+            // fake an update to the building cbox to refresh the dropdown
+            int before = ui->cbox_roomLoc->currentIndex();
+            ui->cbox_roomLoc->setCurrentIndex(0);
+            ui->cbox_roomLoc->setCurrentIndex(before);
+            on_btn_modRoomFloor_clicked();
         }
 
         break;
@@ -4545,6 +4583,16 @@ void MainWindow::on_btn_delTypeLoc_clicked()
         } else {
             dbManager->execQuery("DELETE FROM Room WHERE FloorId=" + floorid + " AND RoomNo=" + ui->le_newTypeLoc->text());
             ui->lbl_editUserWarning_3->setText("Room Deleted");
+
+            ui->cbox_roomRoom->clear();
+            ui->le_roomNo->clear();
+            ui->cbox_roomType->clear();
+
+            // fake an update to the floors cbox to refresh the dropdown
+            int before = ui->cbox_roomFloor->currentIndex();
+            ui->cbox_roomFloor->setCurrentIndex(0);
+            ui->cbox_roomFloor->setCurrentIndex(before);
+            on_btn_modRoomRoom_clicked();
         }
         break;
     }
@@ -4556,11 +4604,6 @@ void MainWindow::on_btn_delTypeLoc_clicked()
     }
     }
     // clear everything
-    ui->cbox_roomLoc->clear();
-    ui->cbox_roomFloor->clear();
-    ui->cbox_roomRoom->clear();
-    ui->le_roomNo->clear();
-    ui->cbox_roomType->clear();
     ui->le_roomNo->clear();
     ui->doubleSpinBox->setValue(0.0);
     ui->doubleSpinBox_2->setValue(0.0);
@@ -4570,9 +4613,7 @@ void MainWindow::on_btn_delTypeLoc_clicked()
     // set horizontal headers
     ui->tableWidget_5->setColumnCount(8);
     ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly");
-    populate_modRoom_cboxes();
-    ui->editroommodifybox->clear();
-    ui->editroommodifybox->setColumnCount(0);
+    ui->le_newTypeLoc->clear();
 }
 
 void MainWindow::on_pushButton_15_clicked()

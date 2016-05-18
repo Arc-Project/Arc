@@ -14,6 +14,10 @@ int main(int argc, char *argv[])
     //LoginPrompt w; //
 
     w.show();
+
+    // make thread to update shift no
+
+
     /*QFile styleFile(":qdarkstyle/style.qss");
     styleFile.open(QFile::ReadOnly | QFile::Text);
     QByteArray bt = styleFile.readAll();
