@@ -523,6 +523,8 @@ private slots:
 
     void setValue(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
 
+    void printPCP(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
+
     void on_comboBox_3_currentTextChanged(const QString &arg1);
 
     void on_btn_saveShift_clicked();
@@ -530,6 +532,7 @@ private slots:
     void on_editProgramDrop_currentIndexChanged(const QString &arg1);
 
     void on_tabw_casefiles_currentChanged(int index);
+
 
 private:
 

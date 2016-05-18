@@ -3790,12 +3790,16 @@ void MainWindow::on_btn_pcpKeySave_clicked()
 
 void MainWindow::on_actionPcptables_triggered()
 {
-    QtRPT *report = new QtRPT(this);
-    report->loadReport("clientList");
-    report->recordCount << ui->tableWidget_search_client->rowCount();
-    connect(report, SIGNAL(setValue(const int, const QString, const QString, const QString, const QString)),
-           this, SLOT(setValue(const int, const QString, const QString, const QString, const QString)));
-    report->printExec();
+//    QtRPT *report = new QtRPT(this);
+//    report->loadReport("clientList");
+//    report->recordCount << ui->tableWidget_search_client->rowCount();
+//    connect(report, SIGNAL(setValue(const int, const QString, const QString, const QString, const QString)),
+//           this, SLOT(setValue(const int, const QString, const QString, const QString, const QString)));
+//    report->printExec();
+    QTableWidget *tw = pcp_tables.at(0);
+    qDebug() << tw->item(0,0)->text();
+    qDebug() << tw->item(0,1)->text();
+    qDebug() << tw->item(0,2)->text();
 }
 
 void MainWindow::on_btn_pcpRelaUndo_clicked()
@@ -4362,14 +4366,17 @@ void MainWindow::on_actionExport_to_PDF_triggered()
 //    qDebug() << $$_PRO_FILE_PWD_ + "/clientList.xml";
 
     QtRPT *report = new QtRPT(this);
-    report->loadReport(":/templates/pdf/daily.xml");
-    report->recordCount << ui->tableWidget_search_client->rowCount();
+    report->loadReport(":/templates/pdf/pcp.xml");
+    for (auto x: pcp_tables) {
+        report->recordCount << x->rowCount();
+    }
+
     connect(report, SIGNAL(setValue(const int, const QString, QVariant&, const int)),
            this, SLOT(setValue(const int, const QString, QVariant&, const int)));
     report->printExec();
 }
 
-void MainWindow::setValue(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
+//void MainWindow::setValue(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
 //   Q_UNUSED(reportPage);
 //   if (paramName == "client")
 //        paramValue = ui->booking_tableView->item(recNo, 1)->text();
@@ -4388,7 +4395,42 @@ void MainWindow::setValue(const int recNo, const QString paramName, QVariant &pa
 //   else if (paramName == "time")
 //        paramValue = ui->booking_tableView->item(recNo, 8)->text();
 //   paramValue = recNo+1;
+//}
+
+void MainWindow::setValue(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
+    if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == 0){
+        printPCP(recNo, paramName, paramValue, reportPage);
+    }
 }
+
+void MainWindow::printPCP(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
+    qDebug() << "report page: " << reportPage;
+
+    QTableWidget *tw_pcp = pcp_tables.at(reportPage);
+
+    if (paramName == "goal") {
+        if (tw_pcp->item(recNo, 0)->text().isEmpty()) return;
+         paramValue = tw_pcp->item(recNo, 0)->text();
+         qDebug() << "report page: " << reportPage << " recNp: " << recNo << " value: " << tw_pcp->item(recNo, 0)->text();
+    } else if (paramName == "strategy") {
+        if (tw_pcp->item(recNo, 1)->text().isEmpty()) return;
+         paramValue = tw_pcp->item(recNo, 1)->text();
+         qDebug() << "report page: " << reportPage << " recNp: " << recNo << " value: " << tw_pcp->item(recNo, 1)->text();
+    } else if (paramName == "date") {
+        if (tw_pcp->item(recNo, 2)->text().isEmpty()) return;
+         paramValue = tw_pcp->item(recNo, 2)->text();
+         qDebug() << "report page: " << reportPage << " recNp: " << recNo << " value: " << tw_pcp->item(recNo, 2)->text();
+    } else if (paramName == "person") {
+        if (tw_pcp->item(recNo, 0)->text().isEmpty()) return;
+         paramValue = tw_pcp->item(recNo, 0)->text();
+         qDebug() << "report page: " << reportPage << " recNp: " << recNo << " value: " << tw_pcp->item(recNo, 0)->text();
+    } else if (paramName == "task"){
+        if (tw_pcp->item(recNo, 1)->text().isEmpty()) return;
+         paramValue = tw_pcp->item(recNo, 1)->text();
+         qDebug() << "report page: " << reportPage << " recNp: " << recNo << " value: " << tw_pcp->item(recNo, 1)->text();
+    }
+}
+
 
 void MainWindow::on_btn_createNewUser_3_clicked()
 {
