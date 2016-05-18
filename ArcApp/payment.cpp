@@ -248,6 +248,8 @@ void payment::on_refundRadio_clicked()
 
 void payment::on_btn_ok_clicked()
 {
+    if(!checkNumber(ui->paymentInput->text()))
+        return;
     if(doMessageBox("Adding payment, this is permentant, confirm?")){
 
         payment::on_addPaymentButton_clicked();

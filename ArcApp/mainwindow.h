@@ -44,7 +44,9 @@
 #include "mymodel.h"
 #include "report.h"
 #include "editrooms.h"
+#include "addmsd.h"
 #include "mycalendar.h"
+#include <QPointer>
 
 namespace Ui {
 class MainWindow;
@@ -88,7 +90,7 @@ public:
     void popEditPage();
     void populateATable(QTableWidget * table, QStringList headers, QStringList items, QSqlQuery result, bool stretch);
     void handleNewPayment(int row);
-    void updateCheque(int row);
+    void updateCheque(int row, QString chequeNo);
     double calcRefund(QDate old, QDate n);
     bool checkNumber(QString num);
     bool updateBooking(Booking b);
@@ -517,11 +519,14 @@ private slots:
 
     void on_btn_saveShift_clicked();
 
+    void on_editProgramDrop_currentIndexChanged(const QString &arg1);
+
 private:
 
     Ui::MainWindow *ui;
     MainWindow * mw;
     Booking * curBook;
+    bool setup;
     transaction * trans;
     Client * curClient;
     QString curClientID;
