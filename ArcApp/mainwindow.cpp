@@ -1538,7 +1538,13 @@ bool MainWindow::check_client_register_form(){
     if(ui->lineEdit_cl_fName->text().isEmpty()
             && ui->lineEdit_cl_mName->text().isEmpty()
             && ui->lineEdit_cl_lName->text().isEmpty()){
-        ui->lineEdit_cl_fName->setText("anonymous");
+        statusBar()->showMessage(QString("Please Enter Name of Clients"), 5000);
+        QPalette pal;
+        pal.setColor(QPalette::Normal, QPalette::WindowText, Qt::red);
+        ui->label_cl_fName->setPalette(pal);
+        ui->label_cl_mName->setPalette(pal);
+        ui->label_cl_lName->setPalette(pal);
+        return false;
     }
 
     return true;
@@ -1971,6 +1977,105 @@ void MainWindow::on_pushButton_cl_book_more_clicked()
 }
 
 
+void MainWindow::initClientLookupInfo(){
+    //init client search table
+    if(ui->tableWidget_search_client->columnCount()>0){
+        ui->tableWidget_search_client->setColumnCount(0);
+        ui->tableWidget_search_client->clear();
+        ui->lineEdit_search_clientName->clear();
+    }
+
+    //init client Info Form Field
+    ui->label_cl_info_fName_val->clear();
+    ui->label_cl_info_mName_val->clear();
+    ui->label_cl_info_lName_val->clear();
+    ui->label_cl_info_dob_val->clear();
+    ui->label_cl_info_balance_amt->clear();
+    ui->label_cl_info_sin_val->clear();
+    ui->label_cl_info_gaNum_val->clear();
+    ui->label_cl_info_caseWorker_val->clear();
+    ui->label_cl_info_ruleSignDate_val->clear();
+    ui->label_cl_info_status->clear();
+
+    ui->label_cl_info_nok_name_val->clear();
+    ui->label_cl_info_nok_relationship_val->clear();
+    ui->label_cl_info_nok_loc_val->clear();
+    ui->label_cl_info_nok_contatct_val->clear();
+
+    ui->label_cl_info_phys_name_val->clear();
+    ui->label_cl_info_phys_contact_val->clear();
+
+    ui->label_cl_info_Supporter_name_val->clear();
+    ui->label_cl_info_Supporter_contact_val->clear();
+    ui->label_cl_info_Supporter2_name_val->clear();
+    ui->label_cl_info_Supporter2_contact_val->clear();
+
+    ui->label_cl_info_comment->clear();
+
+    QGraphicsScene *scene = new QGraphicsScene();
+    scene->clear();
+    ui->graphicsView_getInfo->setScene(scene);
+
+    profilePic = (QImage)NULL;
+
+    ui->label_cl_info_status->setAutoFillBackground(false);
+
+    //initialize transaction
+    initClTransactionTable();
+
+    //initialize booking history table
+    initClBookHistoryTable();
+
+
+    //disable buttons that need a clientId
+    if(curClientID == NULL){
+        ui->pushButton_bookRoom->setEnabled(false);
+        ui->pushButton_processPaymeent->setEnabled(false);
+        ui->pushButton_editClientInfo->setEnabled(false);
+        ui->pushButton_CaseFiles->setEnabled(false);
+    }
+
+    //hide buttons for different workflows
+    switch (workFlow){
+    case BOOKINGPAGE:
+        ui->pushButton_CaseFiles->setVisible(false);
+        ui->pushButton_processPaymeent->setVisible(false);
+        ui->pushButton_bookRoom->setVisible(true);
+        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        break;
+    case PAYMENTPAGE:
+        ui->pushButton_CaseFiles->setVisible(false);
+        ui->pushButton_bookRoom->setVisible(false);
+        ui->pushButton_processPaymeent->setVisible(true);
+        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        break;
+    case CASEFILE:
+        ui->pushButton_CaseFiles->setVisible(true);
+        ui->pushButton_bookRoom->setVisible(false);
+        ui->pushButton_processPaymeent->setVisible(false);
+        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+        break;
+    case CLIENTLOOKUP:
+        ui->pushButton_CaseFiles->setVisible(true);
+        ui->pushButton_processPaymeent->setVisible(true);
+        ui->pushButton_bookRoom->setVisible(true);
+        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->horizontalLayout_15->update();
+        break;
+    }
+
+
+}
+
+
 /////////////////////////////////////////////////////////////////////////////////
 
 
@@ -2115,103 +2220,6 @@ void MainWindow::on_btn_searchUsers_clicked()
 
 
 
-void MainWindow::initClientLookupInfo(){
-    //init client search table
-    if(ui->tableWidget_search_client->columnCount()>0){
-        ui->tableWidget_search_client->setColumnCount(0);
-        ui->tableWidget_search_client->clear();
-        ui->lineEdit_search_clientName->clear();
-    }
-
-    //init client Info Form Field
-    ui->label_cl_info_fName_val->clear();
-    ui->label_cl_info_mName_val->clear();
-    ui->label_cl_info_lName_val->clear();
-    ui->label_cl_info_dob_val->clear();
-    ui->label_cl_info_balance_amt->clear();
-    ui->label_cl_info_sin_val->clear();
-    ui->label_cl_info_gaNum_val->clear();
-    ui->label_cl_info_caseWorker_val->clear();
-    ui->label_cl_info_ruleSignDate_val->clear();
-    ui->label_cl_info_status->clear();
-
-    ui->label_cl_info_nok_name_val->clear();
-    ui->label_cl_info_nok_relationship_val->clear();
-    ui->label_cl_info_nok_loc_val->clear();
-    ui->label_cl_info_nok_contatct_val->clear();
-
-    ui->label_cl_info_phys_name_val->clear();
-    ui->label_cl_info_phys_contact_val->clear();
-
-    ui->label_cl_info_Supporter_name_val->clear();
-    ui->label_cl_info_Supporter_contact_val->clear();
-    ui->label_cl_info_Supporter2_name_val->clear();
-    ui->label_cl_info_Supporter2_contact_val->clear();
-
-    ui->label_cl_info_comment->clear();
-
-    QGraphicsScene *scene = new QGraphicsScene();
-    scene->clear();
-    ui->graphicsView_getInfo->setScene(scene);
-
-    profilePic = (QImage)NULL;
-
-    ui->label_cl_info_status->setAutoFillBackground(false);
-
-    //initialize transaction
-    initClTransactionTable();
-
-    //initialize booking history table
-    initClBookHistoryTable();
-
-
-    //disable buttons that need a clientId
-    if(curClientID == NULL){
-        ui->pushButton_bookRoom->setEnabled(false);
-        ui->pushButton_processPaymeent->setEnabled(false);
-        ui->pushButton_editClientInfo->setEnabled(false);
-        ui->pushButton_CaseFiles->setEnabled(false);
-    }
-
-    //hide buttons for different workflows
-    switch (workFlow){
-    case BOOKINGPAGE:
-        ui->pushButton_CaseFiles->setVisible(false);
-        ui->pushButton_processPaymeent->setVisible(false);
-        ui->pushButton_bookRoom->setVisible(true);
-        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
-        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        break;
-    case PAYMENTPAGE:
-        ui->pushButton_CaseFiles->setVisible(false);
-        ui->pushButton_bookRoom->setVisible(false);
-        ui->pushButton_processPaymeent->setVisible(true);
-        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
-        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        break;
-    case CASEFILE:
-        ui->pushButton_CaseFiles->setVisible(true);
-        ui->pushButton_bookRoom->setVisible(false);
-        ui->pushButton_processPaymeent->setVisible(false);
-        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
-        break;
-    case CLIENTLOOKUP:
-        ui->pushButton_CaseFiles->setVisible(true);
-        ui->pushButton_processPaymeent->setVisible(true);
-        ui->pushButton_bookRoom->setVisible(true);
-        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalLayout_15->update();
-        break;
-    }
-
-
-}
 
 // double clicked employee
 void MainWindow::on_tableWidget_3_doubleClicked(const QModelIndex &index)
