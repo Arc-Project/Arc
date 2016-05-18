@@ -63,4 +63,6 @@ RESOURCES += arcstyle/styling.qrc
 
 RC_FILE = ArcApp.rc
 
+include(../QtRPT/QtRpt.pri)
+
 DISTFILES +=

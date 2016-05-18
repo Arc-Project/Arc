@@ -499,6 +499,8 @@ private slots:
 
     void on_actionLogout_triggered();
 
+    void setValue(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
+
 
 private:
 
