@@ -471,13 +471,16 @@ bool DatabaseManager::searchClientInfoPic(QImage * img, QString ClientId){
     return true;
 }
 
-QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId){
+QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId, int type = 0){
     QSqlQuery clientTransQuery;
     QString queryStart;
-    if(maxNum > 0)
-        queryStart = "SELECT TOP "+ QString::number(maxNum);
-    else
-        queryStart = "SELECT ";
+    if(type == 1){
+        queryStart = "SELECT TOP "+ QString::number(maxNum)
+                   + QString("Date, Amount, Type, ChequeNo, MSQ, ChequeDate, TransType, EmpName ");
+    }else{
+        queryStart = "SELECT "
+                   + QString("Date, Amount, Type, ChequeNo, MSQ, ChequeDate, TransType, Deleted, Outstanding, EmpName, Notes");
+    }
   /*
     clientTransQuery.prepare(queryStart
                            + QString(" t.Date, t.Amount, t.Type, e.Username, t.ChequeNo, t.ChequeDate, t.Deleted ")
@@ -486,7 +489,6 @@ QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId){
 */
 
     clientTransQuery.prepare(queryStart
-                           + QString("Date, Amount, Type, ChequeNo, MSQ, ChequeDate, TransType, Deleted ")
                            + QString("FROM Transac ")
                            + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC"));
 
