@@ -33,6 +33,7 @@ public:
     void printAll(QSqlQuery queryResults);
     QSqlQuery execQuery(QString queryString);
     bool execQuery(QSqlQuery* query, QString queryString);
+    void checkDatabaseConnection(QSqlDatabase* database);
 
     /*==========================================================================
     FILE DOWNLOAD AND UPLOAD RELATED FUNCTIONS
@@ -97,6 +98,8 @@ public:
     bool getYellowRestrictionQuery(QSqlQuery* queryResults);
     bool getRedRestrictionQuery(QSqlQuery* queryResults);
     bool getDoubleFromQuery(QString queryString, double* result);
+    void reconnectToDatabase();
+    void reconnectToDatabase(QSqlDatabase* database);
 
     //COLIN STUFF/////////////////////////////////////////////////////////////
     QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);
@@ -110,17 +113,17 @@ public:
     QSqlQuery pullClient(QString id);
     bool updateBalance(double d, QString id);
     bool removeTransaction(QString id);
-    bool setPaid(QString id);
+    bool setPaid(QString id, QString chequeNo);
     QSqlQuery getOutstanding();
     QSqlQuery getOwingClients();
-    QSqlQuery setLunches(QDate date, int num, QString id);
+    QSqlQuery setLunches(QDate date, int num, QString id, QString room);
     QSqlQuery getLunches(QDate start, QDate end, QString id);
     bool updateLunches(QDate date, int num, QString id);
     bool removeLunches(QDate date, QString id);
     QSqlQuery getWakeups(QDate start, QDate end, QString id);
     bool removeLunchesMulti(QDate date, QString id);
     bool deleteWakeupsMulti(QDate date, QString id);
-    bool setWakeup(QDate date, QString time, QString id);
+    bool setWakeup(QDate date, QString time, QString id, QString room);
     bool updateWakeups(QDate date, QString time, QString id);
     bool deleteWakeups(QDate date, QString id);
     QSqlQuery getNextBooking(QDate endDate, QString roomId);
@@ -129,6 +132,11 @@ public:
     bool addHistoryFromId(QString bookId, QString empId, QString shift, QString action);
     QSqlQuery getRoomCosts(QString roomId);
     QSqlQuery getBalance(QString clientId);
+    bool updateLunchRoom(QDate startDate, QDate endDate, QString clientId, QString rooomId);
+    bool updateWakeupRoom(QDate startDate, QDate endDate, QString clientId, QString rooomId);
+    QSqlQuery getBooking(QString bId);
+    bool escapePayment(QString clientId, QString curDate, QString amount, QString type, QString notes, QString chequeNo, QString msd, QString issued,
+                                        QString transtype, QString outstanding, QString empId, QString shiftNo, QString time);
 
     //END COLIN STUFF///////////////////////////////////////////////////////
     void print();
@@ -161,8 +169,9 @@ signals:
     void cashFloatInserted(QString empName, QString currentDateStr, 
         QString currentTimeStr);
     void monthlyReportChanged(QStringList list);
-    void noDatabaseConnection();
-;
+    void noDatabaseConnection(QSqlDatabase* database);
+    void reconnectedToDatabase();
+
 private:
     QSqlDatabase db = QSqlDatabase::database();
     static QMutex mutex;

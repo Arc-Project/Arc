@@ -27,6 +27,12 @@
 #define NOREGISTER          0
 #define NEWCLIENT           1
 #define EDITCLIENT          2
+
+#define PERSIONACASEPLAN 	0
+#define RUNNINGNOTE			1
+#define BOOKINGHISTORY		2
+#define TRANSACTIONHISTORY	3
+
 #include <QMainWindow>
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
@@ -44,7 +50,9 @@
 #include "mymodel.h"
 #include "report.h"
 #include "editrooms.h"
+#include "addmsd.h"
 #include "mycalendar.h"
+#include <QPointer>
 
 namespace Ui {
 class MainWindow;
@@ -70,13 +78,13 @@ public:
     void setSelectedClientInfo();
     void initClBookHistoryTable();
     void initClTransactionTable();
-
+    void initClTransactionTable(QTableWidget* table);
 
     void getRegisterLogFields(QStringList* fieldList);
     void getCurrentClientId();   //get client id from client list table
     void getClientInfo();
     void statusColor();
-
+    
 
 
     //COLIN STUFF////
@@ -88,7 +96,7 @@ public:
     void popEditPage();
     void populateATable(QTableWidget * table, QStringList headers, QStringList items, QSqlQuery result, bool stretch);
     void handleNewPayment(int row);
-    void updateCheque(int row);
+    void updateCheque(int row, QString chequeNo);
     double calcRefund(QDate old, QDate n);
     bool checkNumber(QString num);
     bool updateBooking(Booking b);
@@ -187,9 +195,9 @@ private slots:
     void on_monthlyReportGo_btn_clicked();
     void updateMonthlyReportUi(QStringList list);
     void on_restrictionRefresh_btn_clicked();
-    void on_noDatabaseConnection();
+    void on_noDatabaseConnection(QSqlDatabase* database);
     
-    
+    void on_reconnectedToDatabase();
     
     void resizeEvent();
 
@@ -511,6 +519,8 @@ private slots:
 
     void on_actionLogout_triggered();
 
+    void on_actionReconnect_to_Database_triggered();
+
     void setValue(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
 
     void printPCP(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
@@ -519,6 +529,9 @@ private slots:
 
     void on_btn_saveShift_clicked();
 
+    void on_editProgramDrop_currentIndexChanged(const QString &arg1);
+
+    void on_tabw_casefiles_currentChanged(int index);
 
 
 private:
@@ -526,6 +539,7 @@ private:
     Ui::MainWindow *ui;
     MainWindow * mw;
     Booking * curBook;
+    bool setup;
     transaction * trans;
     Client * curClient;
     QString curClientID;
