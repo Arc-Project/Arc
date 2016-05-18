@@ -30,6 +30,10 @@ public:
     void calcCosts();
     bool checkNumber(QString num);
     void setCurbook();
+    void setNewPrice(int row);
+    bool doMessageBox(QString message);
+    void updateClient(int row);
+
 private slots:
     void on_editProgram_currentIndexChanged(const QString &arg1);
 
@@ -38,6 +42,10 @@ private slots:
     void on_editSwap_clicked();
 
     void on_editRoom_itemSelectionChanged();
+
+    void on_editOkButton_clicked();
+
+    void on_editCancelButton_clicked();
 
 private:
     bool swapping;
