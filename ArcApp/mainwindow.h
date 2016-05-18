@@ -84,7 +84,7 @@ public:
     void getCurrentClientId();   //get client id from client list table
     void getClientInfo();
     void statusColor();
-
+    
 
 
     //COLIN STUFF////
@@ -195,9 +195,9 @@ private slots:
     void on_monthlyReportGo_btn_clicked();
     void updateMonthlyReportUi(QStringList list);
     void on_restrictionRefresh_btn_clicked();
-    void on_noDatabaseConnection();
+    void on_noDatabaseConnection(QSqlDatabase* database);
     
-    
+    void on_reconnectedToDatabase();
     
     void resizeEvent();
 
@@ -518,6 +518,8 @@ private slots:
     void on_btn_payNew_clicked();
 
     void on_actionLogout_triggered();
+
+    void on_actionReconnect_to_Database_triggered();
 
     void setValue(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
 
