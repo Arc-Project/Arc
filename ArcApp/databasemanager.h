@@ -82,7 +82,7 @@ public:
     int getIntFromQuery(QString queryString);
     bool getShiftReportBookingQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
     bool getShiftReportTransactionQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
-    int getShiftReportTotal(QDate date, int shiftNo, QString payType);
+    int getShiftReportTotal(QDate date, int shiftNo, QString payType, double* result);
     void getShiftReportStatsThread(QDate date, int shiftNo);
     bool getShiftReportClientLogQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
     bool getShiftReportOtherQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
@@ -96,6 +96,7 @@ public:
     int getMonthlyUniqueClients(int month, int year);
     bool getYellowRestrictionQuery(QSqlQuery* queryResults);
     bool getRedRestrictionQuery(QSqlQuery* queryResults);
+    bool getDoubleFromQuery(QString queryString, double* result);
 
     //COLIN STUFF/////////////////////////////////////////////////////////////
     QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);
@@ -155,7 +156,8 @@ public:
 
 signals:
     void dailyReportStatsChanged(QList<int> list);
-    void shiftReportStatsChanged(QList<int> list);
+    //void shiftReportStatsChanged(QList<int> list);
+    void shiftReportStatsChanged(QStringList list);
     void cashFloatChanged(QDate date, int shiftNo, QStringList list);
     void cashFloatInserted(QString empName, QString currentDateStr, 
         QString currentTimeStr);

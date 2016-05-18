@@ -174,7 +174,7 @@ private slots:
     void updateDailyReportStats(QList<int> list);
     void on_shiftReportGo_btn_clicked();
     void on_shiftReportCurrent_btn_clicked();
-    void updateShiftReportStats(QList<int> list);
+    void updateShiftReportStats(QStringList list);
     void on_saveOther_btn_clicked();
     void on_other_lineEdit_textEdited(const QString &text);
     void updateCashFloat(QDate date, int shiftNo, QStringList list);
@@ -499,6 +499,8 @@ private slots:
 
     void on_actionLogout_triggered();
 
+
+    void on_restrictionRefresh_btn_clicked();
 
 private:
 
