@@ -1,6 +1,6 @@
 #include "editrooms.h"
 #include "ui_editrooms.h"
-
+#include <QMessageBox>
 EditRooms::EditRooms(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::EditRooms)
@@ -22,6 +22,7 @@ EditRooms::EditRooms(QWidget *parent, Booking * curBook, QString empId, QString 
     setup = false;
     swapClient = new Client();
     swapBook = new Booking();
+    setCurbook();
 
 }
 EditRooms::~EditRooms()
@@ -45,7 +46,7 @@ void EditRooms::showSwap(){
     ui->label_15->setHidden(false);
     ui->label_16->setHidden(false);
     ui->label_17->setHidden(false);
-    ui->curAdjust->setHidden(false);
+    /*ui->curAdjust->setHidden(false);
     ui->curCost->setHidden(false);
     ui->curEnd->setHidden(false);
     ui->curFinal->setHidden(false);
@@ -53,6 +54,7 @@ void EditRooms::showSwap(){
     ui->currentUse->setHidden(false);
     ui->curRoom->setHidden(false);
     ui->curStart->setHidden(false);
+    */
     ui->swapAdjust->setHidden(false);
     ui->swapCost->setHidden(false);
     ui->swapEnd->setHidden(false);
@@ -65,23 +67,23 @@ void EditRooms::showSwap(){
 }
 
 void EditRooms::hideSwap(){
-    ui->label_2->setHidden(true);
+   //ui->label_2->setHidden(true);
     ui->label_3->setHidden(true);
-    ui->label_4->setHidden(true);
-    ui->label_5->setHidden(true);
-    ui->label_6->setHidden(true);
-    ui->label_7->setHidden(true);
-    ui->label_8->setHidden(true);
+    //ui->label_4->setHidden(true);
+   // ui->label_5->setHidden(true);
+    //ui->label_6->setHidden(true);
+    //ui->label_7->setHidden(true);
+    //ui->label_8->setHidden(true);
     ui->label_9->setHidden(true);
     ui->label_10->setHidden(true);
     ui->label_11->setHidden(true);
     ui->label_12->setHidden(true);
-    ui->label_13->setHidden(true);
+    //ui->label_13->setHidden(true);
     ui->label_14->setHidden(true);
     ui->label_15->setHidden(true);
-    ui->label_16->setHidden(true);
+   // ui->label_16->setHidden(true);
     ui->label_17->setHidden(true);
-    ui->curAdjust->setHidden(true);
+    /*ui->curAdjust->setHidden(true);
     ui->curCost->setHidden(true);
     ui->curEnd->setHidden(true);
     ui->curFinal->setHidden(true);
@@ -89,6 +91,7 @@ void EditRooms::hideSwap(){
     ui->currentUse->setHidden(true);
     ui->curRoom->setHidden(true);
     ui->curStart->setHidden(true);
+    */
     ui->swapAdjust->setHidden(true);
     ui->swapCost->setHidden(true);
     ui->swapEnd->setHidden(true);
@@ -172,78 +175,15 @@ void EditRooms::on_editProgram_currentIndexChanged(const QString &arg1)
         return;
     searchAvailable(arg1);
 }
+void EditRooms::updateClient(int row){
+    curBook->cost = ui->curFinal->text().toDouble();
+    curBook->room = ui->editRoom->item(row, 0)->text();
+    curBook->roomId = ui->editRoom->item(row,5)->text();
+    curBook->program = ui->editProgram->currentText();
+}
 
 void EditRooms::on_buttonBox_accepted()
 {
-    if(ui->editRoom->selectionModel()->currentIndex().row() == -1)
-        return;
-
-    int row;
-    row = ui->editRoom->selectionModel()->currentIndex().row();
-    if(!swapping){
-       if(curBook->monthly){
-            curBook->cost = ui->editRoom->item(row,4)->text().toDouble();
-        }
-        else{
-
-            curBook->cost = ui->editRoom->item(row,3 )->text().toDouble() * curBook->stayLength;
-        }
-        curBook->room = ui->editRoom->item(row, 0)->text();
-        curBook->roomId = ui->editRoom->item(row,5)->text();
-        curBook->program = ui->editRoom->item(row,1)->text();
-    }
-    else{
-        double curBalance, swapBalance;
-        double curDiff, swapDiff;
-        QString swapBooks = ui->editRoom->item(row, 6)->text();
-
-        QString swapRoom = ui->editRoom->item(row, 7)->text();
-        QString curCost, swapCost;
-        curCost = ui->curFinal->text();
-        swapCost = ui->swapFinal->text();
-        if(!checkNumber(curCost) || !checkNumber(swapCost))
-            return;
-
-        QString updateSwap = "UPDATE Booking SET SpaceId = '" + curBook->roomId +"', Cost ='" + curCost + "' WHERE BookingId = '" + swapBooks +"'";
-        if(dbManager->updateBooking(updateSwap)){
-            QString updateOrig = "UPDATE Booking SET SpaceId = '" + swapRoom +"', Cost='" + swapCost + "' WHERE BookingId = '" + curBook->bookID + "'";
-            if(dbManager->updateBooking(updateOrig)){
-                curBook->roomId = swapRoom;
-
-            QSqlQuery result;
-            result = dbManager->getBalance(curClient->clientId);
-            result.next();
-            curBalance = result.value("Balance").toString().toDouble();
-            result = dbManager->getBalance(swapClient->clientId);
-            result.next();
-            swapBalance = result.value("Balance").toString().toDouble();
-            QString fqt = ui->curFinal->text();
-            curDiff = curBook->cost - fqt.toDouble();
-            fqt = ui->swapFinal->text();
-            swapDiff = swapBook->cost - fqt.toDouble();
-            curClient->balance = curBalance + curDiff;
-            swapClient->balance = swapBalance + swapDiff;
-            if(swapDiff != 0){
-
-                dbManager->updateBalance(swapClient->balance, swapClient->clientId);
-            }
-            if(curDiff != 0){
-                dbManager->updateBalance(curClient->balance, curClient->clientId);
-            }
-
-            }
-            else{
-                qDebug() << "ERROR INSERTING SECOND SWAP";
-            }
-        }
-        else{
-            qDebug() << "ERROR INSERTING SWAP";
-        }
-        dbManager->addHistoryFromId(swapBooks, empId, shift, "SWAP");
-        dbManager->addHistoryFromId(curBook->bookID, empId, shift, "SWAP");
-
-    }
-
 
 }
 
@@ -285,24 +225,29 @@ void EditRooms::on_editSwap_clicked()
 }
 void EditRooms::setCurbook(){
     ui->curCost->setText(QString::number(curBook->cost,'f',2));
-    ui->curEnd->setText(curBook->stringStart);
+    ui->curEnd->setText(curBook->stringEnd);
     ui->curStart->setText(curBook->stringStart);
     ui->curProgram->setText(curBook->program);
-    ui->curRoom->setText(curBook->roomId);
+    ui->curRoom->setText(curBook->room);
     ui->currentUse->setText(curClient->fullName);
 
 }
 
 void EditRooms::on_editRoom_itemSelectionChanged()
 {
-    if(!swapping)
-        return;
     int row = ui->editRoom->selectionModel()->currentIndex().row();
     if(row == -1)
         return;
-    popSwapClient(row);
-    displaySwapClient();
 
+    if(!swapping){
+        setNewPrice(row);
+
+    }
+    else{
+
+        popSwapClient(row);
+        displaySwapClient();
+    }
 }
 bool EditRooms::checkNumber(QString num){
     int l = num.length();
@@ -352,14 +297,29 @@ void EditRooms::popSwapClient(int row){
         swapBook->monthly = false;
 
 }
+void EditRooms::setNewPrice(int row){
+    double cost = ui->editRoom->item(row, 3)->text().toDouble();
+    double monthly = ui->editRoom->item(row, 4)->text().toDouble();
+    ui->curProgram->setText(ui->editRoom->item(row,1 )->text());
+    cost *= curBook->stayLength;
+    if(!curBook->monthly){
+        ui->curAdjust->setText(QString::number(cost, 'f' ,2));
+        ui->curFinal->setText(QString::number(cost, 'f', 2));
+    }
+    else{
+        ui->curFinal->setText(QString::number(monthly, 'f', 2));
+        ui->curAdjust->setText(QString::number(monthly, 'f', 2));
+    }
+}
+
 void EditRooms::displaySwapClient(){
-    ui->swapCost->setText(QString::number(swapBook->cost));
     ui->swapEnd->setText(swapBook->endDate.toString(Qt::ISODate));
     ui->swapStart->setText(swapBook->startDate.toString(Qt::ISODate));
     ui->swapProgram->setText(swapBook->program);
     ui->swapRoom->setText(swapBook->room);
     ui->swapUser->setText(swapClient->fullName);
     calcCosts();
+    ui->swapCost->setText(QString::number(swapBook->cost));
 
 
 }
@@ -374,14 +334,125 @@ void EditRooms::calcCosts(){
     result = dbManager->getRoomCosts(curBook->roomId);
     result.next();
     double cost = result.value("cost").toString().toDouble();
-    double monthly = result.value("Monthly").toString().toDouble();
-
+    result = dbManager->getBooking(swapBook->bookID);
+    if(!result.next())
+        qDebug() << "Error getting swap booking";
+    QString m = result.value("Monthly").toString();
+    double monthly = m.toDouble();
+    QString c = result.value("Cost").toString();
+    swapBook->cost = c.toDouble();
+    m == "YES" ? swapBook->monthly = true : swapBook->monthly = false;
     if(swapBook->monthly)
-        swapCost =monthly;
+        swapCost = monthly;
     else{
         swapCost = swapBook->stayLength * cost;
     }
 
     ui->swapAdjust->setText(QString::number(swapCost, 'f', 2));
     ui->curAdjust->setText(QString::number(curCost, 'f', 2));
+    ui->swapFinal->setText(QString::number(swapCost,'f', 2));
+    ui->curFinal->setText(QString::number(curCost, 'f', 2));
+}
+bool EditRooms::doMessageBox(QString message){
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Confirm", message, QMessageBox::Yes | QMessageBox::No);
+    if(reply == QMessageBox::Yes){
+        return true;
+    }
+    return false;
+
+}
+
+void EditRooms::on_editOkButton_clicked()
+{
+    if(ui->editRoom->selectionModel()->currentIndex().row() == -1)
+        return;
+
+    int row;
+    if(!doMessageBox("Room change and cost are final. Continue?"))
+        return;
+    row = ui->editRoom->selectionModel()->currentIndex().row();
+    if(!swapping){
+        if(!checkNumber(ui->curFinal->text())){
+            return;
+        }
+        updateClient(row);
+        double costDiff;
+        costDiff = ui->curCost->text().toDouble() - curBook->cost;
+        dbManager->updateBalance(curClient->balance + costDiff, curClient->clientId);
+        QString q = "UPDATE Booking SET Cost='" + QString::number(curBook->cost) +"', SpaceId ='" + curBook->roomId +
+                "' WHERE BookingId='" + curBook->bookID + "'";
+        dbManager->updateBooking(q);
+
+        dbManager->addHistoryFromId(curBook->bookID, empId, shift, "EDIT");
+
+    }
+    else{
+
+        double curBalance, swapBalance;
+        double curDiff, swapDiff;
+        QString swapBooks = ui->editRoom->item(row, 6)->text();
+        QString swapRoom = ui->editRoom->item(row, 7)->text();
+        QString curCost, swapCost;
+        curCost = ui->curFinal->text();
+        swapCost = ui->swapFinal->text();
+        if(!checkNumber(curCost) || !checkNumber(swapCost))
+            return;
+        QString updateSwap = "UPDATE Booking SET SpaceId = '" + curBook->roomId +"', Cost ='" + curCost + "' WHERE BookingId = '" + swapBooks +"'";
+        if(dbManager->updateBooking(updateSwap)){
+            QString updateOrig = "UPDATE Booking SET SpaceId = '" + swapRoom +"', Cost='" + swapCost + "' WHERE BookingId = '" + curBook->bookID + "'";
+            if(dbManager->updateBooking(updateOrig)){
+                curBook->roomId = swapRoom;
+            if(!dbManager->updateWakeupRoom(QDate::currentDate(), swapBook->endDate, swapClient->clientId, curBook->room))
+                qDebug() << "Error with update wakeup";
+            if(!dbManager->updateLunchRoom(QDate::currentDate(), swapBook->endDate, swapClient->clientId, curBook->room))
+                qDebug() << "Error with update lunch";
+
+                QSqlQuery result;
+                result = dbManager->getBalance(curClient->clientId);
+                result.next();
+                curBalance = result.value("Balance").toString().toDouble();
+                result = dbManager->getBalance(swapClient->clientId);
+                result.next();
+                swapBalance = result.value("Balance").toString().toDouble();
+                QString fqt = ui->curFinal->text();
+                curDiff = curBook->cost - fqt.toDouble();
+                fqt = ui->swapFinal->text();
+                swapDiff = swapBook->cost - fqt.toDouble();
+                curClient->balance = curBalance + curDiff;
+                swapClient->balance = swapBalance + swapDiff;
+                curBook->cost = curCost.toDouble();
+                curBook->room = swapBook->room;
+                curBook->roomId = swapBook->roomId;
+                if(swapDiff != 0){
+
+                    dbManager->updateBalance(swapClient->balance, swapClient->clientId);
+                }
+                if(curDiff != 0){
+                    dbManager->updateBalance(curClient->balance, curClient->clientId);
+                }
+
+            }
+            else{
+                qDebug() << "ERROR INSERTING SECOND SWAP";
+            }
+        }
+        else{
+            qDebug() << "ERROR INSERTING SWAP";
+        }
+        dbManager->addHistoryFromId(swapBooks, empId, shift, "SWAP");
+        dbManager->addHistoryFromId(curBook->bookID, empId, shift, "SWAP");
+
+    }
+    if(!dbManager->updateLunchRoom(QDate::currentDate(), curBook->endDate, curClient->clientId, curBook->room))
+        qDebug() << "Error updating lnch room";
+    if(!dbManager->updateWakeupRoom(QDate::currentDate(), curBook->endDate, curClient->clientId, curBook->room))
+        qDebug() << "Error updating wkeup room";
+    close();
+
+}
+
+void EditRooms::on_editCancelButton_clicked()
+{
+    close();
 }

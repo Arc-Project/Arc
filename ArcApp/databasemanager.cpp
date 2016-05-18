@@ -492,13 +492,13 @@ bool DatabaseManager::insertIntoBookingHistory(QString clientName, QString space
 }
 bool DatabaseManager::addHistoryFromId(QString bookId, QString empId, QString shift, QString action){
     QSqlQuery query(db);
-    QString q = "SELECT * FROM Booking WHERE BookingId = '" + bookId + "'";
+    QString q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE BookingId = '" + bookId + "'";
     if(!query.exec(q)){
         return false;
     }
     while(query.next()){
         QString clientName =query.value("ClientName").toString();
-        QString spaceId = query.value("SpaceId").toString();
+        QString spaceId = query.value("SpaceCode").toString();
         QString program = query.value("ProgramCode").toString();
         QString start = query.value("StartDate").toString();
         QString end = query.value("EndDate").toString();
@@ -625,8 +625,21 @@ bool DatabaseManager::updateClientWithPic(QStringList* registerFieldList, QStrin
     }
     return false;
 }
+QSqlQuery DatabaseManager::getBooking(QString bId){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Booking where BookingId ='" + bId + "'";
+    query.exec(q);
+    return query;
 
+}
 
+bool DatabaseManager::updateWakeupRoom(QDate startDate, QDate endDate, QString clientId, QString rooomId){
+    QSqlQuery query(db);
+    QString q = "UPDATE Wakeup SET SpaceCode ='" + rooomId +"' WHERE WakeDate >= '" + startDate.toString(Qt::ISODate) + "' AND WakeDate <= '" + endDate.toString(Qt::ISODate)
+            + "' AND ClientId = '" + clientId +"'";
+    qDebug() <<q;
+    return query.exec(q);
+}
 
 QSqlQuery DatabaseManager::getTransactions(QDate start, QDate end){
     QSqlQuery query(db);
@@ -642,9 +655,9 @@ QSqlQuery DatabaseManager::getOwingClients(){
     query.exec(q);
     return query;
 }
-QSqlQuery DatabaseManager::setLunches(QDate date, int num, QString id){
+QSqlQuery DatabaseManager::setLunches(QDate date, int num, QString id, QString room){
     QSqlQuery query(db);
-    QString q = "INSERT INTO Lunches Values('" + id + "','" + date.toString(Qt::ISODate) + "','" + QString::number(num) + "')";
+    QString q = "INSERT INTO Lunches Values('" + id + "','" + date.toString(Qt::ISODate) + "','" + QString::number(num) + "', '" + room + "' )";
     qDebug() << q;
     query.exec(q);
     return query;
@@ -693,9 +706,9 @@ bool DatabaseManager::updateWakeups(QDate date, QString time, QString id){
     return query.exec(q);
 }
 
-bool DatabaseManager::setWakeup(QDate date, QString time, QString id){
+bool DatabaseManager::setWakeup(QDate date, QString time, QString id, QString room){
     QSqlQuery query(db);
-    QString q = "INSERT INTO Wakeup Values('" + id + "','" + date.toString(Qt::ISODate) + "','" + time + "')";
+    QString q = "INSERT INTO Wakeup Values('" + id + "','" + date.toString(Qt::ISODate) + "','" + time + "','" + room +"')";
     qDebug() << q;
     return query.exec(q);
 
@@ -1317,10 +1330,17 @@ bool DatabaseManager::removeTransaction(QString id){
     return false;
 
 }
-bool DatabaseManager::setPaid(QString id){
+bool DatabaseManager::setPaid(QString id, QString chequeNo){
     QSqlQuery query(db);
     QString curDate = QDate::currentDate().toString(Qt::ISODate);
-    QString q = "UPDATE Transac SET Outstanding = 0, Date = '" + curDate + "' WHERE TransacId ='" + id + "'";
+    QString q;
+    if(chequeNo.length() > 0){
+        q = "UPDATE Transac SET Outstanding = 0, Date = '" + curDate + "', ChequeNo ='" + chequeNo + "' WHERE TransacId ='" + id + "'";
+
+    }else{
+
+        q = "UPDATE Transac SET Outstanding = 0, Date = '" + curDate + "' WHERE TransacId ='" + id + "'";
+    }
     qDebug() << q;
     if(query.exec(q))
         return true;
@@ -1392,7 +1412,7 @@ QSqlQuery DatabaseManager::getCurrentBooking(QDate start, QDate end, QString pro
     QSqlQuery query(db);
     QString q = "SELECT Space.SpaceId, Space.SpaceCode, Space.ProgramCodes, Space.type, Space.cost, Space.Monthly FROM Space"
                 " LEFT JOIN (SELECT * from Booking WHERE StartDate <= '" + end.toString(Qt::ISODate) + "' AND EndDate > '"
-                + start.toString(Qt::ISODate) + "') AS a on Space.SpaceId = a.SpaceId WHERE BookingID IS NULL AND Space.ProgramCodes = '" + program + "'";
+                + start.toString(Qt::ISODate) + "') AS a on Space.SpaceId = a.SpaceId WHERE BookingID IS NULL AND Space.ProgramCodes LIKE '%" + program + "%'";
 
     qDebug() << q;
     query.exec(q);
@@ -1596,6 +1616,13 @@ QSqlQuery DatabaseManager::updateSpaceProgram(QString spaceid, QString program) 
     query.exec("UPDATE Space SET ProgramCodes='" + program + "' WHERE SpaceId=" + spaceid);
 
     return query;
+}
+bool DatabaseManager::updateLunchRoom(QDate startDate, QDate endDate, QString clientId, QString rooomId){
+    QSqlQuery query(db);
+    QString q = "UPDATE Lunches SET SpaceCode ='" + rooomId +"' WHERE LunchDate >= '" + startDate.toString(Qt::ISODate) + "' AND LunchDate <= '" + endDate.toString(Qt::ISODate)
+            + "' AND ClientId = '" + clientId +"'";
+    qDebug() <<q;
+    return query.exec(q);
 }
 
 QSqlQuery DatabaseManager::addPcp(int rowId, QString clientId, QString type, QString goal, QString strategy, QString date) {

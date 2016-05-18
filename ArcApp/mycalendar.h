@@ -16,7 +16,7 @@ class MyCalendar : public QDialog
 public:
     explicit MyCalendar(QWidget *parent = 0);
 
-    MyCalendar(QWidget *parent, QDate start, QDate end, Client * client, int mode);
+    MyCalendar(QWidget *parent, QDate start, QDate end, Client * client, int mode, QString room);
     void populateCells();
     ~MyCalendar();
     void colorRow(int row, int column, QColor c);
@@ -44,6 +44,7 @@ private:
     QColor oneL, twoL, noL;
     Client * curClient;
     DatabaseManager * dbm;
+    QString roomId;
 
 };
 
