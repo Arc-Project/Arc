@@ -7,6 +7,8 @@
 #include "payment.h"
 #include <QPrinter>
 #include <QProgressDialog>
+#include <qtrpt.h>
+
 
 //MyModel* checkoutModel;
 Report *checkoutReport, *vacancyReport, *lunchReport, *wakeupReport,
@@ -53,8 +55,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(initCurrentWidget(int)));
     connect(dbManager, SIGNAL(dailyReportStatsChanged(QList<int>)), this,
         SLOT(updateDailyReportStats(QList<int>)));
-    connect(dbManager, SIGNAL(shiftReportStatsChanged(QList<int>)), this,
-        SLOT(updateShiftReportStats(QList<int>)));
+    connect(dbManager, SIGNAL(shiftReportStatsChanged(QStringList)), this,
+        SLOT(updateShiftReportStats(QStringList)));
     connect(dbManager, SIGNAL(cashFloatChanged(QDate, int, QStringList)), this,
         SLOT(updateCashFloat(QDate, int, QStringList)));
     connect(dbManager, SIGNAL(cashFloatInserted(QString, QString, QString)), this,
@@ -63,6 +65,8 @@ MainWindow::MainWindow(QWidget *parent) :
         SLOT(on_other_lineEdit_textEdited(const QString &)));
     connect(dbManager, SIGNAL(monthlyReportChanged(QStringList)), this,
         SLOT(updateMonthlyReportUi(QStringList)));
+    connect(dbManager, SIGNAL(noDatabaseConnection()), this,
+        SLOT(on_noDatabaseConnection()));
 
     curClient = 0;
     curBook = 0;
@@ -250,7 +254,7 @@ void MainWindow::on_actionDB_Connection_triggered()
 
 void MainWindow::on_actionTest_Query_triggered()
 {
-
+    dbManager->printAll(dbManager->selectAll("Client"));
 }
 
 void MainWindow::on_actionFile_Upload_triggered()
@@ -3287,7 +3291,9 @@ void MainWindow::setupReportsScreen()
 
 void MainWindow::updateDailyReportTables(QDate date)
 {
-    useProgressDialog("Processing reports...", QtConcurrent::run(checkoutReport, &checkoutReport->updateModelThread, date));
+    // useProgressDialog("Processing reports...", 
+    //     QtConcurrent::run(checkoutReport, &checkoutReport->updateModelThread, date));
+    checkoutReport->updateModel(date);
     vacancyReport->updateModel(date);
     lunchReport->updateModel(date);
     wakeupReport->updateModel(date);
@@ -3298,12 +3304,19 @@ void MainWindow::updateDailyReportTables(QDate date)
 
 void MainWindow::updateRestrictionTables()
 {
-    yellowReport->updateModel();
+    useProgressDialog("Processing reports...",
+        QtConcurrent::run(yellowReport, &yellowReport->updateModelThread));
+    //yellowReport->updateModel();
     redReport->updateModel();
+
+    ui->restrictionLastUpdated_lbl->setText(QString(QDate::currentDate().toString(Qt::ISODate)
+        + " at " + QTime::currentTime().toString("h:mmAP")));
 }
 
 void MainWindow::updateShiftReportTables(QDate date, int shiftNo)
 {
+    // useProgressDialog("Processing reports...", 
+    //     QtConcurrent::run(bookingReport, &bookingReport->updateModelThread, date, shiftNo));
     bookingReport->updateModel(date, shiftNo);
     transactionReport->updateModel(date, shiftNo);
     clientLogReport->updateModel(date, shiftNo);
@@ -3370,22 +3383,26 @@ void MainWindow::on_saveOther_btn_clicked()
 
 void MainWindow::getDailyReportStats(QDate date)
 {
-    QtConcurrent::run(dbManager, &DatabaseManager::getDailyReportStatsThread, date);
+    useProgressDialog("Processing reports...", 
+        QtConcurrent::run(dbManager, &DatabaseManager::getDailyReportStatsThread, date));
 }
 
 void MainWindow::getShiftReportStats(QDate date, int shiftNo)
 {
-    QtConcurrent::run(dbManager, &DatabaseManager::getShiftReportStatsThread, date, shiftNo);   
+    useProgressDialog("Processing reports...", 
+        QtConcurrent::run(dbManager, &DatabaseManager::getShiftReportStatsThread, date, shiftNo));   
 }
 
 void MainWindow::getCashFloat(QDate date, int shiftNo)
 {
-    QtConcurrent::run(dbManager, &DatabaseManager::getCashFloatThread, date, shiftNo);
+    useProgressDialog("Processing reports...", 
+        QtConcurrent::run(dbManager, &DatabaseManager::getCashFloatThread, date, shiftNo));
 }
 
 void MainWindow::getMonthlyReport(int month, int year)
-{
-    QtConcurrent::run(dbManager, &DatabaseManager::getMonthlyReportThread, month, year);
+{   
+    useProgressDialog("Processing reports...", 
+        QtConcurrent::run(dbManager, &DatabaseManager::getMonthlyReportThread, month, year));
 }
 
 void MainWindow::updateDailyReportStats(QList<int> list)
@@ -3396,13 +3413,20 @@ void MainWindow::updateDailyReportStats(QList<int> list)
     ui->lbl_totalVacancies->setText(QString::number(list.at(3)));
 }
 
-void MainWindow::updateShiftReportStats(QList<int> list)
+void MainWindow::updateShiftReportStats(QStringList list)
 {
-    ui->lbl_cashAmt->setText(QString::number(list.at(0)));
-    ui->lbl_debitAmt->setText(QString::number(list.at(1)));
-    ui->lbl_chequeAmt->setText(QString::number(list.at(2)));
-    ui->lbl_depoAmt->setText(QString::number(list.at(3)));
-    ui->lbl_shiftAmt->setText(QString::number(list.at(4)));
+    if (list.size() != 0)
+    {
+        ui->lbl_cashAmt->setText(list.at(0));
+        ui->lbl_debitAmt->setText(list.at(1));
+        ui->lbl_chequeAmt->setText(list.at(2));
+        ui->lbl_depoAmt->setText(list.at(3));
+        ui->lbl_shiftAmt->setText(list.at(4));
+    }
+    else
+    {
+        statusBar()->showMessage(tr("Error Loading Shift Report Stats"), 3000);
+    }
 }
 
 void MainWindow::updateCashFloat(QDate date, int shiftNo, QStringList list)
@@ -3468,6 +3492,11 @@ void MainWindow::on_cashFloatGo_btn_clicked()
     MainWindow::getCashFloat(date, shiftNo);
 }
 
+void MainWindow::on_restrictionRefresh_btn_clicked()
+{
+    MainWindow::updateRestrictionTables();
+}
+
 void MainWindow::on_cashFloatCurrent_btn_clicked()
 {
     ui->cashFloat_dateEdit->setDate(QDate::currentDate());
@@ -3485,7 +3514,6 @@ void MainWindow::on_monthlyReportGo_btn_clicked()
 {
     int month = ui->month_comboBox->currentIndex() + 1;
     int year = ui->year_comboBox->currentText().toInt();
-    qDebug() << "Month: " << month << " Year: " << year;
 
     MainWindow::getMonthlyReport(month, year);
 }
@@ -3496,6 +3524,20 @@ void MainWindow::updateMonthlyReportUi(QStringList list)
     ui->numEmptyBeds_lbl->setText(list.at(1) + "/" + list.at(2));
     ui->numNewClients_lbl->setText(list.at(3));
     ui->numUniqueClients_lbl->setText(list.at(4));
+    QString month = ui->month_comboBox->currentText();
+    QString year = ui->year_comboBox->currentText();
+    ui->monthlyReportMonth_lbl->setText(QString(month + "-" + year));
+}
+
+void MainWindow::on_noDatabaseConnection()
+{
+    QString msg = QString("\nCould not connect to the database.\n")
+        + QString("\nPlease remember to save your changes when the connection to the database returns.\n")
+        + QString("\nSelect \"File\" followed by the \"Connect to Database\" menu item to attempt to connect to the database.\n");
+    QMessageBox msgBox(this);
+    msgBox.setWindowTitle("ArcWay");
+    msgBox.setText(msg);
+    msgBox.exec();
 }
 /*==============================================================================
 REPORTS (END)
@@ -3637,23 +3679,12 @@ void MainWindow::on_btn_pcpKeySave_clicked()
 
 void MainWindow::on_actionPcptables_triggered()
 {
-    if (!ui->pushButton_bookRoom->isHidden()) {
-        ui->pushButton_CaseFiles->setVisible(true);
-        ui->pushButton_bookRoom->setVisible(false);
-        ui->pushButton_processPaymeent->setVisible(false);
-        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
-
-    } else {
-        ui->pushButton_CaseFiles->setVisible(true);
-        ui->pushButton_bookRoom->setVisible(true);
-        ui->pushButton_processPaymeent->setVisible(true);
-        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalLayout_15->update();
-    }
+    QtRPT *report = new QtRPT(this);
+    report->loadReport("clientList");
+    report->recordCount << ui->tableWidget_search_client->rowCount();
+    connect(report, SIGNAL(setValue(const int, const QString, const QString, const QString, const QString)),
+           this, SLOT(setValue(const int, const QString, const QString, const QString, const QString)));
+    report->printExec();
 }
 
 void MainWindow::on_btn_pcpRelaUndo_clicked()
@@ -4205,40 +4236,40 @@ void MainWindow::on_lineEdit_search_clientName_returnPressed()
 
 void MainWindow::on_actionExport_to_PDF_triggered()
 {
-    QString tempDir = QFileDialog::getExistingDirectory(
-                    this,
-                    tr("Select Directory"),
-                    "C://"
-                );
-    QTextDocument doc;
-    QString html;
-    html = "<div class='headerContainer' style='font-size=12px;'> "
-                "<div class='logo' align=left style=''> "
-                    "logo here "
-                "</div> "
-                "<div class='time' align=right style=''>"
-                    "<strong>"
-                        "Date: 2016-02-01 <br>"
-                        "Time: 4:09"
-                    "</strong>"
-                "</div>"
-                "<div class='title' align=center style='margin: 0 auto; width:50%; border: 2px solid black; clear:both;' >"
-                    "<h3>Salvation Army ARC</h3><br>"
-                    "<span>525 Johnson St, Victoria BC V8W 1M2</span><br>"
-                    "<h2>Shift Activity Report</h2>"
-                "</div>"
-           "</div>";
-    doc.setHtml(html);
+    const QString rptTemplate = "clientList.xml";
+//    QString fileName = QDir::currentPath() + "/clientList.xml";
+//    qDebug() << QDir::currentPath() + "/clientList.xml";
 
-    QPrinter printer;
-    printer.setOrientation(QPrinter::Landscape);
-    printer.setPaperSize(QPrinter::Letter);
-//    printer.setPageMargins(1,1,1,1,QPrinter.Inch);
-    printer.setOutputFileName(tempDir+"\\file.pdf");
-    printer.setOutputFormat(QPrinter::PdfFormat);
-    doc.print(&printer);
-    printer.newPage();
+//    QString fileName = $$_PRO_FILE_PWD_+ "/clientList.xml";
+//    qDebug() << $$_PRO_FILE_PWD_ + "/clientList.xml";
 
+    QtRPT *report = new QtRPT(this);
+    report->loadReport(":/templates/pdf/daily.xml");
+    report->recordCount << ui->tableWidget_search_client->rowCount();
+    connect(report, SIGNAL(setValue(const int, const QString, QVariant&, const int)),
+           this, SLOT(setValue(const int, const QString, QVariant&, const int)));
+    report->printExec();
+}
+
+void MainWindow::setValue(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
+//   Q_UNUSED(reportPage);
+//   if (paramName == "client")
+//        paramValue = ui->booking_tableView->item(recNo, 1)->text();
+//   else if (paramName == "space")
+//        paramValue = ui->booking_tableView->item(recNo, 2)->text();
+//   else if (paramName == "prog")
+//        paramValue = ui->booking_tableView->item(recNo, 3)->text();
+//   else if (paramName == "start")
+//        paramValue = ui->booking_tableView->item(recNo, 4)->text();
+//   else if (paramName == "end")
+//        paramValue = ui->booking_tableView->item(recNo, 5)->text();
+//   else if (paramName == "action")
+//        paramValue = ui->booking_tableView->item(recNo, 6)->text();
+//   else if (paramName == "staff")
+//        paramValue = ui->booking_tableView->item(recNo, 7)->text();
+//   else if (paramName == "time")
+//        paramValue = ui->booking_tableView->item(recNo, 8)->text();
+//   paramValue = recNo+1;
 }
 
 void MainWindow::on_btn_createNewUser_3_clicked()

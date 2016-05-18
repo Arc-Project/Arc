@@ -1,23 +1,14 @@
 #include "report.h"
 
-Report::Report(QObject *parent, QWidget* tableView, int type) :
+Report::Report(QObject *parent, QTableView* tableView, int type) :
   model(parent),
   reportType(type)
 {  
     qDebug() << "report constructor";
     Report::setTitle();
 
-    if (type == YELLOW_REPORT)
-    {
-        ((QListView*)tableView)->setModel(&model);
-        tableView->show();
-    }
-    else
-    {
-        ((QTableView*)tableView)->setModel(&model);
-        tableView->show();
-    }
-
+    tableView->setModel(&model);
+    tableView->show();
 }
 
 void Report::updateModel()
@@ -48,14 +39,14 @@ void Report::setTitle()
       *title << "Space #" << "Program Codes";
       break;
     case LUNCH_REPORT:
-      *title << "Client" << "Space #" << "Lunch";
+      *title << "Client" << "Space #" << "# Lunches";
       break;
     case WAKEUP_REPORT:
       *title << "Client" << "Space #" << "Time";
       break;
     case BOOKING_REPORT:
       *title << "Client" << "Space #" << "Program" << "Start Date" 
-             << "End Date" << "Action" << "Status" << "Employee" << "Time";
+             << "End Date" << "Action" << "Employee" << "Time";
       break;
     case TRANSACTION_REPORT:
       *title << "Client" << "Transaction" << "Type" << "MSDD" << "Cheque #" 
@@ -63,7 +54,7 @@ void Report::setTitle()
              << "Notes";
       break;
     case CLIENT_REPORT:
-      *title << "Time" << "Employee" << "Action" << "Client";
+      *title << "Client" << "Action" << "Employee" << "Time";
       break;
     case OTHER_REPORT:
       *title << "Time" << "Employee" << "Log";
@@ -214,7 +205,7 @@ void Report::setTransactionData(QSqlQuery* query)
           if (i == 8)
             *data << "Pending";  
           else
-            *data << "YES";
+            *data << "Yes";
         }
       }
       else
