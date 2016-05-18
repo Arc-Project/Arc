@@ -139,6 +139,8 @@ void MainWindow::initCurrentWidget(int idx){
         case PAYMENTPAGE: //WIDGET 4
             popManagePayment();
 
+            ui->editRemoveCheque->setHidden(true);
+
             break;
         case ADMINPAGE: //WIDGET 5
             //initcode
@@ -528,6 +530,8 @@ void MainWindow::popManagePayment(){
 
 void MainWindow::on_cbox_payDateRange_activated(int index)
 {
+    ui->editRemoveCheque->setHidden(true);
+
     QString startDate;
     QDate endDate = QDate::currentDate();
     QDate hold = QDate::currentDate();
@@ -589,6 +593,8 @@ void MainWindow::on_cbox_payDateRange_activated(int index)
 
 void MainWindow::on_btn_payListAllUsers_clicked()
 {
+    ui->editRemoveCheque->setHidden(true);
+
     ui->btn_payDelete->setText("Add Payment");
     QStringList cols;
     QStringList heads;
@@ -1034,6 +1040,7 @@ void MainWindow::getTransactionFromRow(int row){
 void MainWindow::on_btn_payOutstanding_clicked()
 {
     ui->btn_payDelete->setText("Cash Cheque");
+    ui->editRemoveCheque->setHidden(false);
     QSqlQuery result;
     result = dbManager->getOutstanding();
     QStringList headers;
@@ -4819,4 +4826,22 @@ void MainWindow::on_btn_saveShift_clicked()
     QSqlQuery update2 = dbManager->execQuery("UPDATE Shift SET EndTimeShift" + shiftno +
                                             "='" + endtime + "' WHERE DayOfWeek = '" + day + "'");
 
+}
+
+void MainWindow::on_editRemoveCheque_clicked()
+{
+    int row = ui->mpTable->selectionModel()->currentIndex().row();
+    if(row == -1)
+        return;
+    QString chequeNo = "";
+    QString transId = ui->mpTable->item(row, 6)->text();
+    double retAmt = ui->mpTable->item(row, 3)->text().toDouble();
+    QString clientId = ui->mpTable->item(row, 5)->text();
+    curClient = new Client();
+    popClientFromId(clientId);
+    double curBal = curClient->balance + retAmt;
+    if(!dbManager->setPaid(transId, chequeNo )){
+
+    }
+    ui->mpTable->removeRow(row);
 }
