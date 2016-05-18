@@ -106,9 +106,7 @@ void MainWindow::initCurrentWidget(int idx){
     switch(idx){
         case MAINMENU:  //WIDGET 0
             curClientID = "";
-            delete(curClient);
-            delete(curBook);
-            delete(trans);
+
             registerType = NOREGISTER;
             break;
         case CLIENTLOOKUP:  //WIDGET 1
