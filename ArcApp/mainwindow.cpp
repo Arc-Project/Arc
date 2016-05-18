@@ -106,6 +106,9 @@ void MainWindow::initCurrentWidget(int idx){
     switch(idx){
         case MAINMENU:  //WIDGET 0
             curClientID = "";
+            delete(curClient);
+            delete(curBook);
+            delete(trans);
             registerType = NOREGISTER;
             break;
         case CLIENTLOOKUP:  //WIDGET 1
@@ -331,6 +334,7 @@ void MainWindow::on_lunchCheck_clicked()
 
    MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,1, curBook->room);
    mc->exec();
+   delete(mc);
 }
 
 void MainWindow::on_paymentButton_2_clicked()
@@ -344,6 +348,7 @@ void MainWindow::on_paymentButton_2_clicked()
     pay->exec();
     ui->stayLabel->setText(QString::number(curClient->balance, 'f', 2));
     qDebug() << "Done";
+    delete(pay);
 
 
 }
@@ -365,6 +370,7 @@ void MainWindow::on_wakeupCheck_clicked()
 {
     MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,2, curBook->room);
     mc->exec();
+    delete(mc);
 }
 
 void MainWindow::on_endDateEdit_dateChanged()
@@ -951,6 +957,7 @@ void MainWindow::on_btn_payDelete_clicked()
         if(t->chequeNo == "NO")
             return;
         updateCheque(index, t->chequeNo);
+        delete(amd);
     }
     else if(ui->btn_payDelete->text() == "Delete"){
         int index = ui->mpTable->selectionModel()->currentIndex().row();
@@ -965,6 +972,7 @@ void MainWindow::on_btn_payDelete_clicked()
             return;
         handleNewPayment(index);
     }
+
 }
 
 void MainWindow::handleNewPayment(int row){
@@ -978,6 +986,7 @@ void MainWindow::handleNewPayment(int row){
     payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true, userLoggedIn, QString::number(currentshiftid));
     pay->exec();
     ui->mpTable->removeRow(row);
+    delete(pay);
 }
 
 void MainWindow::updateCheque(int row, QString chequeNo){
@@ -1102,6 +1111,7 @@ void MainWindow::on_editManagePayment_clicked()
     QString note = "";
     payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, type, userLoggedIn, QString::number(currentshiftid));
     pay->exec();
+    delete(pay);
 }
 
 void MainWindow::on_editCost_textChanged()
@@ -1155,6 +1165,7 @@ void MainWindow::on_editRoom_clicked()
     ui->editRefundAmt->setText("0");
     ui->editUpdate->setEnabled(false);
     ui->editRoomLabel->setText(curBook->room);
+    delete(edit);
 
 }
 
@@ -3631,7 +3642,7 @@ void MainWindow::on_pushButton_processPaymeent_clicked()
     QString note = "";
     payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true, userLoggedIn, QString::number(currentshiftid));
     pay->exec();
-
+    delete(pay);
 }
 
 void MainWindow::insertPcp(QTableWidget *tw, QString type){
@@ -4152,12 +4163,14 @@ void MainWindow::on_confirmAddLunch_clicked()
 {
     MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,1, curBook->room);
        mc->exec();
+       delete(mc);
 }
 
 void MainWindow::on_confirmAddWake_clicked()
 {
     MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,2, curBook->room);
-        mc->exec();
+        mc->exec();\
+        delete(mc);
 }
 
 void MainWindow::on_editLunches_clicked()
@@ -4173,6 +4186,7 @@ void MainWindow::on_editLunches_clicked()
        mc = new MyCalendar(this, QDate::currentDate(), curBook->endDate, curClient,1, curBook->room);
     }
        mc->exec();
+       delete(mc);
 }
 
 void MainWindow::on_editWakeup_clicked()
@@ -4187,6 +4201,7 @@ void MainWindow::on_editWakeup_clicked()
         mc = new MyCalendar(this, QDate::currentDate(),curBook->endDate, curClient,2,  curBook->room);
     }
         mc->exec();
+        delete(mc);
 }
 
 void MainWindow::on_actionQuit_triggered()
