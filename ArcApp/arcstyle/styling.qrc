@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/qss_icons">
+        <file>img/hope.png</file>
         <file>img/calendar.png</file>
         <file>img/logo.png</file>
         <file>img/up_arrow_disabled.png</file>
@@ -49,5 +50,8 @@
     </qresource>
     <qresource prefix="/templates">
         <file>pdf/clientlist.xml</file>
+        <file>pdf/daily.xml</file>
+        <file>pdf/shift.xml</file>
+        <file>pdf/float.xml</file>
     </qresource>
 </RCC>

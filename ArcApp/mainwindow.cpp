@@ -4236,7 +4236,7 @@ void MainWindow::on_actionExport_to_PDF_triggered()
 //    qDebug() << $$_PRO_FILE_PWD_ + "/clientList.xml";
 
     QtRPT *report = new QtRPT(this);
-    report->loadReport(":/templates/pdf/clientlist.xml");
+    report->loadReport(":/templates/pdf/daily.xml");
     report->recordCount << ui->tableWidget_search_client->rowCount();
     connect(report, SIGNAL(setValue(const int, const QString, QVariant&, const int)),
            this, SLOT(setValue(const int, const QString, QVariant&, const int)));
@@ -4244,26 +4244,24 @@ void MainWindow::on_actionExport_to_PDF_triggered()
 }
 
 void MainWindow::setValue(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
-   Q_UNUSED(reportPage);
-   if (paramName == "cid")
-       paramValue = recNo+1;
-   if (paramName == "fname")
-      paramValue = ui->tableWidget_search_client->item(recNo, 1)->text();
-   if (paramName == "cid")
-        if (ui->tableWidget_search_client->item(recNo, 2) == 0) return;
-        paramValue = ui->tableWidget_search_client->item(recNo, 1)->text();
-   if (paramName == "lname") {
-       if (ui->tableWidget_search_client->item(recNo, 3) == 0) return;
-       paramValue = ui->tableWidget_search_client->item(recNo, 3)->text();
-   }
-   if (paramName == "dob") {
-       if (ui->tableWidget_search_client->item(recNo, 4) == 0) return;
-       paramValue = ui->tableWidget_search_client->item(recNo, 4)->text();
-   }
-   if (paramName == "balance") {
-       if (ui->tableWidget_search_client->item(recNo, 5) == 0) return;
-       paramValue = ui->tableWidget_search_client->item(recNo, 5)->text();
-   }
+//   Q_UNUSED(reportPage);
+//   if (paramName == "client")
+//        paramValue = ui->booking_tableView->item(recNo, 1)->text();
+//   else if (paramName == "space")
+//        paramValue = ui->booking_tableView->item(recNo, 2)->text();
+//   else if (paramName == "prog")
+//        paramValue = ui->booking_tableView->item(recNo, 3)->text();
+//   else if (paramName == "start")
+//        paramValue = ui->booking_tableView->item(recNo, 4)->text();
+//   else if (paramName == "end")
+//        paramValue = ui->booking_tableView->item(recNo, 5)->text();
+//   else if (paramName == "action")
+//        paramValue = ui->booking_tableView->item(recNo, 6)->text();
+//   else if (paramName == "staff")
+//        paramValue = ui->booking_tableView->item(recNo, 7)->text();
+//   else if (paramName == "time")
+//        paramValue = ui->booking_tableView->item(recNo, 8)->text();
+//   paramValue = recNo+1;
 }
 
 void MainWindow::on_btn_createNewUser_3_clicked()
