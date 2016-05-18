@@ -531,6 +531,7 @@ private slots:
 
     void on_editProgramDrop_currentIndexChanged(const QString &arg1);
 
+    void on_editRemoveCheque_clicked();
     void on_tabw_casefiles_currentChanged(int index);
 
 

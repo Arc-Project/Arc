@@ -3123,6 +3123,13 @@ QHeaderView {
               </spacer>
              </item>
              <item>
+              <widget class="QPushButton" name="editRemoveCheque">
+               <property name="text">
+                <string>Remove Cheque</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QPushButton" name="btn_payDelete">
                <property name="minimumSize">
                 <size>
