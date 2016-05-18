@@ -132,6 +132,8 @@ public:
     bool updateLunchRoom(QDate startDate, QDate endDate, QString clientId, QString rooomId);
     bool updateWakeupRoom(QDate startDate, QDate endDate, QString clientId, QString rooomId);
     QSqlQuery getBooking(QString bId);
+    bool escapePayment(QString clientId, QString curDate, QString amount, QString type, QString notes, QString chequeNo, QString msd, QString issued,
+                                        QString transtype, QString outstanding, QString empId, QString shiftNo, QString time);
 
     //END COLIN STUFF///////////////////////////////////////////////////////
     void print();

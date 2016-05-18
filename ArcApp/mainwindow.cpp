@@ -911,6 +911,8 @@ double MainWindow::calcRefund(QDate old, QDate n){
 
 bool MainWindow::checkNumber(QString num){
     int l = num.length();
+    if(l > 8)
+        return false;
     int period = 0;
     char copy[l];
     strcpy(copy, num.toStdString().c_str());
