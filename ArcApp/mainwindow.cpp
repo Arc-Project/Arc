@@ -67,6 +67,8 @@ MainWindow::MainWindow(QWidget *parent) :
         SLOT(updateMonthlyReportUi(QStringList)));
     connect(dbManager, SIGNAL(noDatabaseConnection(QSqlDatabase*)), this,
         SLOT(on_noDatabaseConnection(QSqlDatabase*)), Qt::DirectConnection);
+    connect(dbManager, SIGNAL(reconnectedToDatabase()), this,
+        SLOT(on_reconnectedToDatabase()));
 
     curClient = 0;
     curBook = 0;
@@ -3604,9 +3606,19 @@ void MainWindow::on_noDatabaseConnection(QSqlDatabase* database)
         statusBar()->showMessage(tr("No database connection"));
     }
 }
+
+void MainWindow::on_reconnectedToDatabase()
+{
+    statusBar()->showMessage(tr("Database conenction established"), 3000);
+}
 /*==============================================================================
 REPORTS (END)
 ==============================================================================*/
+void MainWindow::on_actionReconnect_to_Database_triggered()
+{
+    statusBar()->showMessage(tr("Re-connecting"));
+    dbManager->reconnectToDatabase();
+}
 
 void MainWindow::on_actionBack_triggered()
 {
@@ -4729,6 +4741,7 @@ void MainWindow::on_actionLogout_triggered()
 
     close();
 }
+
 
 
 void MainWindow::on_editProgramDrop_currentIndexChanged(const QString &arg1)

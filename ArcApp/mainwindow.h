@@ -191,7 +191,7 @@ private slots:
     void on_restrictionRefresh_btn_clicked();
     void on_noDatabaseConnection(QSqlDatabase* database);
     
-    
+    void on_reconnectedToDatabase();
     
     void resizeEvent();
 
@@ -512,6 +512,8 @@ private slots:
     void on_btn_payNew_clicked();
 
     void on_actionLogout_triggered();
+
+    void on_actionReconnect_to_Database_triggered();
 
     void setValue(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
 

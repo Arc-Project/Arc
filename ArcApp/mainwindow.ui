@@ -4651,8 +4651,8 @@ QHeaderView {
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>1186</width>
-                 <height>1294</height>
+                 <width>1111</width>
+                 <height>1381</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -6981,8 +6981,6 @@ QHeaderView {
              </layout>
             </item>
            </layout>
-           <zorder>verticalLayoutWidget</zorder>
-           <zorder>label_casefile_trans_total_num</zorder>
           </widget>
          </widget>
         </item>
@@ -13364,7 +13362,7 @@ QHeaderView {
      <x>0</x>
      <y>0</y>
      <width>1542</width>
-     <height>23</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="font">
@@ -13390,6 +13388,7 @@ QHeaderView {
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionReconnect_to_Database"/>
     <addaction name="actionLogout"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -13611,6 +13610,11 @@ QHeaderView {
     <font>
      <pointsize>10</pointsize>
     </font>
+   </property>
+  </action>
+  <action name="actionReconnect_to_Database">
+   <property name="text">
+    <string>Reconnect to Database</string>
    </property>
   </action>
  </widget>

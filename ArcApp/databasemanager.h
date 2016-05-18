@@ -98,6 +98,7 @@ public:
     bool getYellowRestrictionQuery(QSqlQuery* queryResults);
     bool getRedRestrictionQuery(QSqlQuery* queryResults);
     bool getDoubleFromQuery(QString queryString, double* result);
+    void reconnectToDatabase();
     void reconnectToDatabase(QSqlDatabase* database);
 
     //COLIN STUFF/////////////////////////////////////////////////////////////

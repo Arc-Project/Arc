@@ -119,11 +119,24 @@ QSqlQuery DatabaseManager::selectAll(QString tableName)
     return query;
 }
 
+void DatabaseManager::reconnectToDatabase()
+{
+    if (!db.open())
+    {
+        emit noDatabaseConnection(&db);
+    }
+    else
+    {
+        qDebug() << "reconnection successful";
+        emit reconnectedToDatabase();
+    }
+}
+
 void DatabaseManager::reconnectToDatabase(QSqlDatabase* database)
 {
     if (!database->open())
     {
-        emit noDatabaseConnection(&db);
+        emit noDatabaseConnection(database);
     }
     else
     {
