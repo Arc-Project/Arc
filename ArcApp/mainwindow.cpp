@@ -1425,6 +1425,13 @@ void MainWindow::clear_client_register_form(){
     ui->dateEdit_cl_dob->setDate(defaultDob);
     ui->dateEdit_cl_rulesign->setDate(QDate::currentDate());
 
+    QPalette pal;
+    pal.setColor(QPalette::Normal, QPalette::WindowText, Qt::black);
+    ui->label_cl_fName->setPalette(pal);
+    ui->label_cl_mName->setPalette(pal);
+    ui->label_cl_lName->setPalette(pal);
+
+
     on_button_cl_delPic_clicked();
 }
 
@@ -1619,6 +1626,7 @@ void MainWindow::on_checkBox_search_anonymous_clicked(bool checked)
         qDebug()<<"anonymous check not";
         initClientLookupInfo();
     }
+    ui->pushButton_search_client->setEnabled(!checked);
 }
 
 void MainWindow::initClientLookupTable(){
@@ -1698,6 +1706,7 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
 //get client information after searching
 void MainWindow::selected_client_info(int nRow, int nCol)
 {
+    Q_UNUSED(nCol)
     curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
     getClientInfo();
 }
