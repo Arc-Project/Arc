@@ -8,7 +8,7 @@ MyCalendar::MyCalendar(QWidget *parent) :
 {
     ui->setupUi(this);
 }
-MyCalendar::MyCalendar(QWidget *parent,  QDate start, QDate end, Client *client, int mode) :
+MyCalendar::MyCalendar(QWidget *parent,  QDate start, QDate end, Client *client, int mode, QString room) :
     QDialog(parent),
     ui(new Ui::MyCalendar)
 {
@@ -16,6 +16,7 @@ MyCalendar::MyCalendar(QWidget *parent,  QDate start, QDate end, Client *client,
     curClient = client;
     sDate = start;
     eDate = end;
+    roomId = room;
     oneL = QColor(220,20,190);
     twoL = QColor(15,40,225);
     noL = QColor(255,255,255);
@@ -135,7 +136,7 @@ void MyCalendar::on_calendarTable_cellClicked(int row, int column)
             wakeFlag[clicked] = 0;
         }
         else{
-            ui->calendarTable->item(row,column)->setText(ui->calendarTable->item(row,column)->text() + " " + ui->calendarTime->time().toString());
+            ui->calendarTable->item(row,column)->setText(ui->calendarTable->item(row,column)->text() + " " + ui->calendarTime->time().toString("h:mm ap"));
             wakeUps[clicked] = ui->calendarTime->time();
              wakeFlag[clicked]++;
         }
@@ -161,7 +162,7 @@ void MyCalendar::on_buttonBox_accepted()
                     continue;
                 if(!oldLunch[i]){
 
-                    dbManager->setLunches(insDate, lunchDays[i], curClient->clientId);
+                    dbManager->setLunches(insDate, lunchDays[i], curClient->clientId, roomId);
                     qDebug() << insDate;
                 }
                 else{
@@ -189,7 +190,7 @@ void MyCalendar::on_buttonBox_accepted()
                         dbManager->updateWakeups(insDate, wakeUps[i].toString(), curClient->clientId);
                     }
                 }else{
-                    dbManager->setWakeup(insDate, wakeUps[i].toString(), curClient->clientId);
+                    dbManager->setWakeup(insDate, wakeUps[i].toString(), curClient->clientId, roomId);
                 }
 
             }
@@ -239,6 +240,10 @@ void MyCalendar::loadPrevious(){
             pull = QDate::fromString(result.value("WakeDate").toString(), "yyyy-MM-dd");
             ins = pull.toJulianDay() - calStart.toJulianDay();
             ins += offset;
+            if(ins > maxIns)
+                continue;
+            if(ins < 0)
+                continue;
             qDebug() << ins;
             oldWakeUps[ins] = QTime::fromString(result.value("WakeTime").toString(), "hh:mm:ss");
             wakeUps[ins] = QTime::fromString(result.value("WakeTime").toString(), "hh:mm:ss");
@@ -247,7 +252,7 @@ void MyCalendar::loadPrevious(){
             qDebug() << oldWakeUps[ins].toString();
             row = ins / 7;
             col = ins % 7;
-            addTime(row, col, oldWakeUps[ins].toString());
+            addTime(row, col, oldWakeUps[ins].toString("h:mm ap"));
         }
     }
 }

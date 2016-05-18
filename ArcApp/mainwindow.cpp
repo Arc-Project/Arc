@@ -329,7 +329,7 @@ void MainWindow::on_lunchCheck_clicked()
   //curClient = new Client();
    //curClient->clientId = "1";
 
-   MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,1);
+   MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,1, curBook->room);
    mc->exec();
 }
 
@@ -350,6 +350,9 @@ void MainWindow::on_paymentButton_2_clicked()
 void MainWindow::on_startDateEdit_dateChanged()
 {
 
+    if(ui->startDateEdit->date() < QDate::currentDate()){
+        ui->startDateEdit->setDate(QDate::currentDate());
+    }
     if(ui->startDateEdit->date() > ui->endDateEdit->date()){
         QDate newD = ui->startDateEdit->date().addDays(1);
         ui->endDateEdit->setDate(newD);
@@ -360,7 +363,7 @@ void MainWindow::on_startDateEdit_dateChanged()
 
 void MainWindow::on_wakeupCheck_clicked()
 {
-    MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,2);
+    MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,2, curBook->room);
     mc->exec();
 }
 
@@ -372,6 +375,11 @@ void MainWindow::on_endDateEdit_dateChanged()
     else{
         editOverLap = false;
         ui->monthCheck->setChecked(false);
+    }
+    if(ui->endDateEdit->date() < ui->startDateEdit->date()){
+        QDate newDate = ui->startDateEdit->date().addDays(1);
+        ui->endDateEdit->setDate(newDate);
+
     }
     clearTable(ui->bookingTable);
     ui->makeBookingButton->hide();
@@ -401,7 +409,7 @@ void MainWindow::bookingSetup(){
 
     ui->bookingTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->bookingTable->verticalHeader()->hide();
-    ui->bookingTable->horizontalHeader()->setStretchLastSection(true);
+   // ui->bookingTable->horizontalHeader()->setStretchLastSection(true);
     ui->bookingTable->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->bookingTable->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->bookingTable->setHorizontalHeaderLabels(QStringList() << "Room #" << "Location" << "Program" << "Description" << "Daily Cost" << "Monthly Cost");
@@ -414,6 +422,7 @@ void MainWindow::clearTable(QTableWidget * table){
 
 void MainWindow::on_editButton_clicked()
 {
+    setup = true;
     int row = ui->editLookupTable->selectionModel()->currentIndex().row();
     if(row == - 1){
         return;
@@ -424,8 +433,11 @@ void MainWindow::on_editButton_clicked()
     popBookFromRow();
     popClientFromId(curBook->clientId);
     ui->stackedWidget->setCurrentIndex(EDITPAGE);
+    ui->editUpdate->setEnabled(false);
     popEditPage();
     setBookSummary();
+    ui->editUpdate->setEnabled(false);
+    setup = false;
 }
 void MainWindow::popClientFromId(QString id){
     QSqlQuery result;
@@ -449,11 +461,21 @@ void MainWindow::popEditPage(){
     QSqlQuery result;
     result = dbManager->getPrograms();
     QString curProgram;
+    QStringList programs;
     QString compProgram;
-//    int index = 0;
+    int index = 0;
+    int x = 0;
     ui->editOC->setText(QString::number(curBook->cost,'f',2));
     curProgram = curBook->program;
-
+    while(result.next()){
+        QString compProgram = result.value("ProgramCode").toString();
+        if(curProgram == compProgram)
+            index =x;
+        programs << compProgram;
+        x++;
+    }
+    ui->editProgramDrop->addItems(programs);
+    ui->editProgramDrop->setCurrentIndex(index);
     ui->editRoomLabel->setText(curBook->room);
     ui->editDate->setDate(curBook->endDate);
     ui->editCost->setText(QString::number(curBook->cost));
@@ -783,6 +805,10 @@ void MainWindow::getProgramCodes(){
 void MainWindow::setBookSummary(){
     ui->editStartDate->setText(curBook->stringStart);
     ui->editEndDate->setText(curBook->stringEnd);
+    QDate end = QDate::fromString(curBook->stringEnd, "yyyy-MM-dd");
+    int length = end.toJulianDay() - curBook->startDate.toJulianDay();
+    curBook->endDate = end;
+    curBook->stayLength = length;
     ui->editCostLabel->setText(QString::number(curBook->cost, 'f', 2));
     curBook->monthly == true ? ui->editMonthly->setText("Yes") : ui->editMonthly->setText("No");
     ui->editProgramLabel->setText(curBook->program);
@@ -795,6 +821,7 @@ void MainWindow::setBookSummary(){
 
 void MainWindow::on_editUpdate_clicked()
 {
+    ui->editUpdate->setEnabled(false);
     double updateBalance;
     if(!checkNumber(ui->editCost->text()))
         return;
@@ -822,7 +849,7 @@ void MainWindow::on_editUpdate_clicked()
     curClient->balance = updateBalance;
     curBook->endDate = ui->editDate->date();
     curBook->stringEnd = curBook->endDate.toString(Qt::ISODate);
-
+    curBook->program = ui->editProgramDrop->currentText();
     updateBooking(*curBook);
     setBookSummary();
     dbManager->removeLunchesMulti(curBook->endDate, curClient->clientId);
@@ -917,7 +944,13 @@ void MainWindow::on_btn_payDelete_clicked()
         int index = ui->mpTable->selectionModel()->currentIndex().row();
         if(index == -1)
             return;
-        updateCheque(index);
+        transaction * t = new transaction();
+        t->chequeNo = "";
+        AddMSD * amd = new AddMSD(this,t);
+        amd->exec();
+        if(t->chequeNo == "NO")
+            return;
+        updateCheque(index, t->chequeNo);
     }
     else if(ui->btn_payDelete->text() == "Delete"){
         int index = ui->mpTable->selectionModel()->currentIndex().row();
@@ -947,14 +980,14 @@ void MainWindow::handleNewPayment(int row){
     ui->mpTable->removeRow(row);
 }
 
-void MainWindow::updateCheque(int row){
+void MainWindow::updateCheque(int row, QString chequeNo){
     QString transId = ui->mpTable->item(row, 6)->text();
     double retAmt = ui->mpTable->item(row, 3)->text().toDouble();
     QString clientId = ui->mpTable->item(row, 5)->text();
     curClient = new Client();
     popClientFromId(clientId);
     double curBal = curClient->balance + retAmt;
-    if(dbManager->setPaid(transId)){
+    if(dbManager->setPaid(transId, chequeNo )){
         if(!dbManager->updateBalance(curBal, clientId)){
                 qDebug() << "BIG ERROR - removed transacton but not update balance";
                 return;
@@ -1006,9 +1039,12 @@ void MainWindow::on_btn_payOutstanding_clicked()
 
 void MainWindow::on_editDate_dateChanged(const QDate &date)
 {
-    ui->editLunches->setEnabled(false);
-    ui->editWakeup->setEnabled(false);
+    if(!setup){
+        ui->editLunches->setEnabled(false);
+        ui->editWakeup->setEnabled(false);
+        ui->editUpdate->setEnabled(true);
 
+    }
     ui->editRoom->setEnabled(false);
     QDate nextStart = date;
 
@@ -1070,11 +1106,11 @@ void MainWindow::on_editManagePayment_clicked()
 
 void MainWindow::on_editCost_textChanged()
 {
+    ui->editUpdate->setEnabled(true);
     double newCost = ui->editCost->text().toDouble();
     double refund = ui->editCancel->text().toDouble();
     double origCost = ui->editOC->text().toDouble();
 
-    qDebug() << "Original Cost " << ui->editOC->text() << " " <<  origCost;
     if(newCost < origCost){
         ui->editRefundLabel->setText("Refund");
         double realRefund = newCost - origCost + refund;
@@ -1111,11 +1147,15 @@ void MainWindow::on_editCancel_textChanged()
 
 void MainWindow::on_editRoom_clicked()
 {
-    ui->editDate->setEnabled(false);
    // swapper * swap = new Swapper();
     EditRooms * edit = new EditRooms(this, curBook, userLoggedIn, QString::number(currentshiftid), curClient);
     edit->exec();
     setBookSummary();
+    ui->editOC->setText(QString::number(curBook->cost,'f',2));
+    ui->editRefundAmt->setText("0");
+    ui->editUpdate->setEnabled(false);
+    ui->editRoomLabel->setText(curBook->room);
+
 }
 
 void MainWindow::on_pushButton_bookRoom_clicked()
@@ -1159,6 +1199,9 @@ void MainWindow::on_pushButton_bookRoom_clicked()
 void MainWindow::on_makeBookingButton_2_clicked()
 {
 
+    if(!checkNumber(ui->costInput->text()))
+        return;
+
     backStack.clear();
     if(!doMessageBox("Finalize booking and add to database?")){
         return;
@@ -1196,15 +1239,6 @@ void MainWindow::on_makeBookingButton_2_clicked()
     if(!dbManager->insertIntoBookingHistory(curClient->fullName, curBook->room, curBook->program, curBook->stringStart, curBook->stringEnd, "NEW", userLoggedIn, QString::number(currentshiftid), curClient->clientId)){
         qDebug() << "ERROR INSERTING INTO BOOKING HISTORY";
     }
-    /*for(int i = 1; i < curBook->stayLength; i++){
-        QDate n = next.addDays(i);
-        values = "'" + today.toString(Qt::ISODate) + "','" + n.toString(Qt::ISODate) + "','" + curBook->room + "','" +
-                 curBook->clientId + "','" + curBook->program + "','" + QString::number(cost) + "','" + curBook->stringStart
-                 + "','" + curBook->stringEnd + "','" + curBook->lunch + "','" + curBook->wakeTime + "'," + "'NO'" + ",'" + month + "','" + "Eunwon'";
-        if(!dbManager->insertBookingTable(values)){
-            qDebug() << "ERROR INSERTING BOOKING";
-        }
-    }*/
 
     ui->stackedWidget->setCurrentIndex(CONFIRMBOOKING);
     populateConfirm();
@@ -4099,38 +4133,41 @@ void MainWindow::on_programDropdown_currentIndexChanged()
 
 void MainWindow::on_confirmAddLunch_clicked()
 {
-    MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,1);
+    MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,1, curBook->room);
        mc->exec();
 }
 
 void MainWindow::on_confirmAddWake_clicked()
 {
-    MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,2);
+    MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,2, curBook->room);
         mc->exec();
 }
 
 void MainWindow::on_editLunches_clicked()
 {
+
+    ui->editUpdate->setEnabled(true);
     MyCalendar* mc;
     if(QDate::currentDate() < curBook->startDate){
-        mc = new MyCalendar(this, curBook->startDate, curBook->endDate, curClient,1);
+        mc = new MyCalendar(this, curBook->startDate, curBook->endDate, curClient,1, curBook->room);
 
 
     }else{
-       mc = new MyCalendar(this, QDate::currentDate(), curBook->endDate, curClient,1);
+       mc = new MyCalendar(this, QDate::currentDate(), curBook->endDate, curClient,1, curBook->room);
     }
        mc->exec();
 }
 
 void MainWindow::on_editWakeup_clicked()
 {
+    ui->editUpdate->setEnabled(true);
     MyCalendar* mc;
     if(QDate::currentDate() < curBook->startDate){
 
-        mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,2);
+        mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,2, curBook->room);
     }else{
 
-        mc = new MyCalendar(this, QDate::currentDate(),curBook->endDate, curClient,2);
+        mc = new MyCalendar(this, QDate::currentDate(),curBook->endDate, curClient,2,  curBook->room);
     }
         mc->exec();
 }
@@ -4650,6 +4687,11 @@ void MainWindow::on_actionLogout_triggered()
     close();
 }
 
+
+void MainWindow::on_editProgramDrop_currentIndexChanged(const QString &arg1)
+{
+    ui->editUpdate->setEnabled(true);
+}
 void MainWindow::on_comboBox_3_currentTextChanged(const QString &arg1)
 {
     if (arg1 == "1") {
