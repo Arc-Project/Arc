@@ -30,7 +30,7 @@ private slots:
     void doRefund();
     void on_paymentRadio_clicked();
     bool doMessageBox(QString message);
-
+    bool checkQuote(QString text);
     void on_refundRadio_clicked();
 
     void on_btn_ok_clicked();
