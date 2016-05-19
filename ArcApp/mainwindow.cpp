@@ -4697,6 +4697,12 @@ void MainWindow::on_actionExport_to_PDF_triggered()
                             << otherReport->model.rows;
     } else
 
+    // reports: float count
+    if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == FLOATCOUNT){
+        rptTemplate = ":/templates/pdf/float.xml";
+        report->recordCount << 1;
+    }
+
     // case files pcp
     if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == 0){
         rptTemplate = ":/templates/pdf/pcp.xml";
@@ -4724,6 +4730,11 @@ void MainWindow::setValue(const int recNo, const QString paramName, QVariant &pa
     if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == SHIFTREPORT){
         printShiftReport(recNo, paramName, paramValue, reportPage);
     } else
+
+    // reports: float count
+    if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == FLOATCOUNT){
+        printFloatReport(recNo, paramName, paramValue, reportPage);
+    }
 
     // case files pcp
     if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == 0){
@@ -4862,6 +4873,39 @@ void MainWindow::printShiftReport(const int recNo, const QString paramName, QVar
         } else if (paramName == "log") {
             paramValue = otherReport->model.tableData->at(recNo * otherReport->model.cols + 2);
         }
+    }
+}
+
+void MainWindow::printFloatReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage){
+    Q_UNUSED(reportPage);
+    if (paramName == "nickel") {
+        paramValue = ui->sbox_nickels->text();
+    } else if (paramName == "dime") {
+        paramValue = ui->sbox_dimes->text();
+    } else if (paramName == "quarter") {
+        paramValue = ui->sbox_quarters->text();
+    } else if (paramName == "loonie") {
+        paramValue = ui->sbox_loonies->text();
+    } else if (paramName == "toonies") {
+        paramValue = ui->sbox_toonies->text();
+    } else if (paramName == "five") {
+        paramValue = ui->sbox_fives->text();
+    } else if (paramName == "ten") {
+        paramValue = ui->sbox_tens->text();
+    } else if (paramName == "twenty") {
+        paramValue = ui->sbox_twenties->text();
+    } else if (paramName == "fifty") {
+        paramValue = ui->sbox_fifties->text();
+    } else if (paramName == "hundred") {
+        paramValue = ui->sbox_hundreds->text();
+    } else if (paramName == "total") {
+        paramValue = ui->lbl_floatAmt->text();
+    } else if (paramName == "date") {
+        paramValue = ui->cashFloatDate_lbl->text();
+    } else if (paramName == "shift") {
+        paramValue = ui->cashFloatShift_lbl->text();
+    } else if (paramName == "comment") {
+        paramValue = ui->pte_floatMemo->document()->toPlainText();
     }
 }
 
@@ -5378,139 +5422,150 @@ void MainWindow::on_comboBox_3_currentTextChanged(const QString &arg1)
 }
 
 void MainWindow::setShift() {
-    qDebug() << "Setting shift now";
-    currentshiftid = -1;
-    // current time
-    QDateTime curtime = QDateTime::currentDateTime();
-    QTime curactualtime = QTime::currentTime();
-    int dayofweek = curtime.date().dayOfWeek();
-    //qDebug() << "today is: " + dayofweek;
 
-    if (dayofweek == 1) {
-        QSqlQuery getshifts = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='Monday'");
+   QString connName = "leshiftname";
+   {
+       QSqlDatabase tempDb = QSqlDatabase::database();
+       if (dbManager->createDatabase(&tempDb, connName))
+       {
+           QSqlQuery query(tempDb);
 
-        getshifts.next();
-        int numberofshifts = getshifts.value(11).toInt();
+           qDebug() << "Setting shift now";
+           currentshiftid = -1;
+           // current time
+           QDateTime curtime = QDateTime::currentDateTime();
+           QTime curactualtime = QTime::currentTime();
+           int dayofweek = curtime.date().dayOfWeek();
+           //qDebug() << "today is: " + dayofweek;
 
-        for (int i = 1; i < (numberofshifts + 1); i++) {
-            QTime starttime = getshifts.value((i*2)-1).toTime();
-            QTime endtime = getshifts.value(i*2).toTime();
+           if (dayofweek == 1) {
+               query.exec("SELECT * FROM Shift WHERE DayOfWeek='Monday'");
 
-            if ((curactualtime < endtime) && (curactualtime >= starttime)) {
-                // change the shiftnum
-                currentshiftid = i;
-                break;
-            }
-        }
-    } else if (dayofweek == 2) {
-        QSqlQuery getshifts = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='Tuesday'");
+               query.next();
+               int numberofshifts = query.value(11).toInt();
 
-        getshifts.next();
-        int numberofshifts = getshifts.value(11).toInt();
+               for (int i = 1; i < (numberofshifts + 1); i++) {
+                   QTime starttime = query.value((i*2)-1).toTime();
+                   QTime endtime = query.value(i*2).toTime();
 
-        for (int i = 1; i < (numberofshifts + 1); i++) {
-            QTime starttime = getshifts.value((i*2)-1).toTime();
-            QTime endtime = getshifts.value(i*2).toTime();
+                   if ((curactualtime < endtime) && (curactualtime >= starttime)) {
+                       // change the shiftnum
+                       currentshiftid = i;
+                       break;
+                   }
+               }
+           } else if (dayofweek == 2) {
+               query.exec("SELECT * FROM Shift WHERE DayOfWeek='Tuesday'");
 
-            if ((curactualtime < endtime) && (curactualtime >= starttime)) {
-                // change the shiftnum
-                currentshiftid = i;
-                break;
-            } else {
-                qDebug() << "not the right shift";
-            }
-        }
-    } else if (dayofweek == 3) {
-        QSqlQuery getshifts = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='Wednesday'");
+               query.next();
+               int numberofshifts = query.value(11).toInt();
 
-        getshifts.next();
-        int numberofshifts = getshifts.value(11).toInt();
+               for (int i = 1; i < (numberofshifts + 1); i++) {
+                   QTime starttime = query.value((i*2)-1).toTime();
+                   QTime endtime = query.value(i*2).toTime();
 
-        for (int i = 1; i < (numberofshifts + 1); i++) {
-            QTime starttime = getshifts.value((i*2)-1).toTime();
-            QTime endtime = getshifts.value(i*2).toTime();
+                   if ((curactualtime < endtime) && (curactualtime >= starttime)) {
+                       // change the shiftnum
+                       currentshiftid = i;
+                       break;
+                   }
+               }
+           } else if (dayofweek == 3) {
+               query.exec("SELECT * FROM Shift WHERE DayOfWeek='Wednesday'");
 
-            if ((curactualtime < endtime) && (curactualtime >= starttime)) {
-                // change the shiftnum
-                currentshiftid = i;
-                break;
-            } else {
-                qDebug() << "not the right shift";
-            }
-        }
-    } else if (dayofweek == 4) {
-        QSqlQuery getshifts = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='Thursday'");
+               query.next();
+               int numberofshifts = query.value(11).toInt();
 
-        getshifts.next();
-        int numberofshifts = getshifts.value(11).toInt();
+               for (int i = 1; i < (numberofshifts + 1); i++) {
+                   QTime starttime = query.value((i*2)-1).toTime();
+                   QTime endtime = query.value(i*2).toTime();
 
-        for (int i = 1; i < (numberofshifts + 1); i++) {
-            QTime starttime = getshifts.value((i*2)-1).toTime();
-            QTime endtime = getshifts.value(i*2).toTime();
+                   if ((curactualtime < endtime) && (curactualtime >= starttime)) {
+                       // change the shiftnum
+                       currentshiftid = i;
+                       break;
+                   }
+               }
+           } else if (dayofweek == 4) {
+               query.exec("SELECT * FROM Shift WHERE DayOfWeek='Thursday'");
 
-            if ((curactualtime < endtime) && (curactualtime >= starttime)) {
-                // change the shiftnum
-                currentshiftid = i;
-                break;
-            } else {
-                qDebug() << "not the right shift";
-            }
-        }
-    } else if (dayofweek == 5) {
-        QSqlQuery getshifts = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='Friday'");
+               query.next();
+               int numberofshifts = query.value(11).toInt();
 
-        getshifts.next();
-        int numberofshifts = getshifts.value(11).toInt();
+               for (int i = 1; i < (numberofshifts + 1); i++) {
+                   QTime starttime = query.value((i*2)-1).toTime();
+                   QTime endtime = query.value(i*2).toTime();
 
-        for (int i = 1; i < (numberofshifts + 1); i++) {
-            QTime starttime = getshifts.value((i*2)-1).toTime();
-            QTime endtime = getshifts.value(i*2).toTime();
+                   if ((curactualtime < endtime) && (curactualtime >= starttime)) {
+                       // change the shiftnum
+                       currentshiftid = i;
+                       break;
+                   }
+               }
+           } else if (dayofweek == 5) {
+               query.exec("SELECT * FROM Shift WHERE DayOfWeek='Friday'");
 
-            if ((curactualtime < endtime) && (curactualtime >= starttime)) {
-                // change the shiftnum
-                currentshiftid = i;
-                break;
-            } else {
-                qDebug() << "not the right shift";
-            }
-        }
-    } else if (dayofweek == 6) {
-        QSqlQuery getshifts = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='Saturday'");
+               query.next();
+               int numberofshifts = query.value(11).toInt();
 
-        getshifts.next();
-        int numberofshifts = getshifts.value(11).toInt();
+               for (int i = 1; i < (numberofshifts + 1); i++) {
+                   QTime starttime = query.value((i*2)-1).toTime();
+                   QTime endtime = query.value(i*2).toTime();
 
-        for (int i = 1; i < (numberofshifts + 1); i++) {
-            QTime starttime = getshifts.value((i*2)-1).toTime();
-            QTime endtime = getshifts.value(i*2).toTime();
+                   if ((curactualtime < endtime) && (curactualtime >= starttime)) {
+                       // change the shiftnum
+                       currentshiftid = i;
+                       break;
+                   }
+               }
+           } else if (dayofweek == 6) {
+               query.exec("SELECT * FROM Shift WHERE DayOfWeek='Saturday'");
 
-            if ((curactualtime < endtime) && (curactualtime >= starttime)) {
-                // change the shiftnum
-                currentshiftid = i;
-                break;
-            } else {
-                qDebug() << "not the right shift";
-            }
-        }
-    } else if (dayofweek == 7) {
-        QSqlQuery getshifts = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='Sunday'");
+               query.next();
+               int numberofshifts = query.value(11).toInt();
 
-        getshifts.next();
-        int numberofshifts = getshifts.value(11).toInt();
+               for (int i = 1; i < (numberofshifts + 1); i++) {
+                   QTime starttime = query.value((i*2)-1).toTime();
+                   QTime endtime = query.value(i*2).toTime();
 
-        for (int i = 1; i < (numberofshifts + 1); i++) {
-            QTime starttime = getshifts.value((i*2)-1).toTime();
-            QTime endtime = getshifts.value(i*2).toTime();
+                   if ((curactualtime < endtime) && (curactualtime >= starttime)) {
+                       // change the shiftnum
+                       currentshiftid = i;
+                       break;
+                   }
+               }
+           } else if (dayofweek == 7) {
+               query.exec("SELECT * FROM Shift WHERE DayOfWeek='Sunday'");
 
-            if ((curactualtime < endtime) && (curactualtime >= starttime)) {
-                // change the shiftnum
-                currentshiftid = i;
-                break;
-            } else {
-                qDebug() << "not the right shift";
-            }
-        }
-    }
+               query.next();
+               int numberofshifts = query.value(11).toInt();
+
+               for (int i = 1; i < (numberofshifts + 1); i++) {
+                   QTime starttime = query.value((i*2)-1).toTime();
+                   QTime endtime = query.value(i*2).toTime();
+
+                   if ((curactualtime < endtime) && (curactualtime >= starttime)) {
+                       // change the shiftnum
+                       currentshiftid = i;
+                       break;
+                   }
+               }
+           }
+
+//               QSqlQuery query(tempDb);
+//               if (!query.exec("SELECT ProfilePic FROM Client WHERE ClientId =" + ClientId))
+//               {
+//                   qDebug() << "downloadProfilePic query failed";
+//                   return false;
+//               }
+//               query.next();
+//               QByteArray data = query.value(0).toByteArray();
+//               *img = QImage::fromData(data, "PNG");
+
+       }
+       tempDb.close();
+   } // Necessary braces: tempDb and query are destroyed because out of scope
+   QSqlDatabase::removeDatabase(connName);
 
 //    statusBar()->removeWidget(lbl_curShift);
 //    statusBar()->removeWidget(lbl_curUser);
