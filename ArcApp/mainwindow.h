@@ -264,6 +264,8 @@ private slots:
 
     void addPic(QImage pict);
 
+    void getCaseWorkerList();
+
     void defaultRegisterOptions();
 
 
@@ -542,6 +544,8 @@ private slots:
     void printPCP(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
 
     void printDailyReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
+
+    void printShiftReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
 
     void on_comboBox_3_currentTextChanged(const QString &arg1);
 

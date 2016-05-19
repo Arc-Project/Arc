@@ -88,6 +88,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QLabel *lbl_curShift = new QLabel("Shift Number: ");
     statusBar()->addPermanentWidget(lbl_curUser);
     statusBar()->addPermanentWidget(lbl_curShift);
+    lbl_curShift->setText("fda");
 
     dialog = new QProgressDialog();
     dialog->close();
@@ -119,6 +120,7 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case CLIENTLOOKUP:  //WIDGET 1
             initClientLookupInfo();
+            getCaseWorkerList();
             ui->tabWidget_cl_info->setCurrentIndex(0);
             if(registerType == EDITCLIENT)
                 getClientInfo();
@@ -1651,6 +1653,15 @@ bool MainWindow::check_client_register_form(){
     return true;
 }
 
+void MainWindow::getCaseWorkerList(){
+    QString caseWorkerquery = "SELECT Username, EmpId FROM Employee WHERE Role = 'CASE WORKER' ORDER BY Username";
+    QSqlQuery caseWorkers = dbManager->execQuery(caseWorkerquery);
+    //dbManager->printAll(caseWorkers);
+    while(caseWorkers.next()){
+        qDebug()<<"CASEWORKER: " <<caseWorkers.value(0).toString() << caseWorkers.value(1).toString();
+        caseWorkerList.insert(caseWorkers.value(0).toString(), caseWorkers.value(1).toInt());
+    }
+}
 
 void MainWindow::defaultRegisterOptions(){
     //add caseWorker Name
@@ -1660,15 +1671,15 @@ void MainWindow::defaultRegisterOptions(){
     }
 
     if(caseWorkerUpdated){
-        QString caseWorkerquery = "SELECT Username, EmpId FROM Employee WHERE Role = 'CASE WORKER' ORDER BY Username";
-        QSqlQuery caseWorkers = dbManager->execQuery(caseWorkerquery);
-        //dbManager->printAll(caseWorkers);
-        while(caseWorkers.next()){
-         //   qDebug()<<"CASEWORKER: " <<caseWorkers.value(0).toString() << caseWorkers.value(1).toString();
-            caseWorkerList.insert(caseWorkers.value(0).toString(), caseWorkers.value(1).toInt());
-            if(ui->comboBox_cl_caseWorker->findText(caseWorkers.value(0).toString())==-1){
-                ui->comboBox_cl_caseWorker->addItem(caseWorkers.value(0).toString());
+      if(ui->comboBox_cl_caseWorker->count() != caseWorkerList.count()+1){
+          QMap<QString, int>::const_iterator it = caseWorkerList.constBegin();
+          while(it != caseWorkerList.constEnd()){
+            if(ui->comboBox_cl_caseWorker->findText(it.key())== -1){
+                ui->comboBox_cl_caseWorker->addItem(it.key());
+               qDebug()<<"key is : " + it.key();
             }
+            ++it;
+          }
         }
         caseWorkerUpdated = false;
     }
@@ -2027,7 +2038,8 @@ void MainWindow::searchTransaction(QString clientId){
     initClTransactionTable();
     displayTransaction(transQuery, ui->tableWidget_transaction);
 
-    QString totalNum= (transacTotal == 0)? "-" : QString::number(transacTotal);
+    QString totalNum= (transacTotal == 0)? "-" :
+                     (QString::number(ui->tableWidget_transaction->rowCount()) + " / " + QString::number(transacTotal));
     ui->label_cl_trans_total_num->setText(totalNum + " Transaction");
 
 
@@ -2066,7 +2078,7 @@ void MainWindow::displayTransaction(QSqlQuery results){
     if(row == 0)
         row = 5;
     if (row > 25){
-        ui->tableWidget_transaction->setMaximumHeight(30*26 -1);
+       // ui->tableWidget_transaction->setMaximumHeight(30*26 -1);
         return;
     }
     ui->tableWidget_transaction->setMinimumHeight(30*(row+1) -1);
@@ -2097,7 +2109,8 @@ void MainWindow::displayTransaction(QSqlQuery results, QTableWidget* table){
         table->setRowCount(transacTotal);
     }
     if (row > 25){
-        table->setMaximumHeight(30*26 -1);
+        table->setMinimumHeight(30*26-1);
+        //table->setMaximumHeight(30*26 -1);
         return;
     }
     else if(row >5)
@@ -2121,7 +2134,9 @@ void MainWindow::searchBookHistory(QString clientId){
     QSqlQuery bookingQuery = dbManager->searchBookList(bookingNum, clientId, CLIENTLOOKUP);
     displayBookHistory(bookingQuery, ui->tableWidget_booking);
    // dbManager->printAll(bookingQuery);
-    QString totalNum = (bookingTotal == 0)? "-" : QString::number(bookingTotal);
+
+    QString totalNum = (bookingTotal == 0)? "-" :
+                        QString::number(ui->tableWidget_booking->rowCount()) + " / " + QString::number(bookingTotal);
     ui->label_cl_booking_total_num->setText(totalNum + " Booking");
 }
 void MainWindow::initClBookHistoryTable(){
@@ -2153,7 +2168,7 @@ void MainWindow::displayBookHistory(QSqlQuery results){
     if (row == 0)
         row = 5;
     if (row > 25){
-        ui->tableWidget_booking->setMaximumHeight(30*26 -1);
+        ui->tableWidget_booking->setMinimumHeight(30*26 -1);
         return;
     }
     ui->tableWidget_booking->setMinimumHeight(30*(row+1) -1);
@@ -2182,7 +2197,7 @@ void MainWindow::displayBookHistory(QSqlQuery results, QTableWidget * table){
     }
     */
     if (row > 25){
-        table->setMaximumHeight(30*26 -1);
+        table->setMinimumHeight(30*26 -1);
         return;
     }
     if(row >5)
@@ -4042,12 +4057,7 @@ void MainWindow::on_actionPcptables_triggered()
 //    for (int i = 0; i < checkoutReport->model.tableData->size(); ++i)
 //         qDebug() << checkoutReport->model.tableData->at(i);
 
-    qDebug() << checkoutReport->model.tableData->at(0 * 6 + 0);
-    qDebug() << checkoutReport->model.tableData->at(0 * 6 + 1);
-    qDebug() << checkoutReport->model.tableData->at(0 * 6 + 2);
-    qDebug() << checkoutReport->model.tableData->at(1 * 6 + 0);
-    qDebug() << checkoutReport->model.tableData->at(1 * 6 + 1);
-    qDebug() << checkoutReport->model.tableData->at(1 * 6 + 2);
+    qDebug() << ui->stackedWidget->currentIndex() << " " << ui->dailyReport_tabWidget->currentIndex();
 
 }
 
@@ -4611,13 +4621,22 @@ void MainWindow::on_actionExport_to_PDF_triggered()
     QtRPT *report = new QtRPT(this);
 
     // reports: daily
-    if (ui->stackedWidget->currentIndex() == REPORTS && ui->dailyReport_tabWidget->currentIndex() == 0){
+    if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == DAILYREPORT){
         rptTemplate = ":/templates/pdf/daily.xml";
         report->recordCount << checkoutReport->model.rows
                             << vacancyReport->model.rows
                             << lunchReport->model.rows
                             << wakeupReport->model.rows;
-    }
+    } else
+
+    // reports: shift
+    if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == SHIFTREPORT){
+        rptTemplate = ":/templates/pdf/shift.xml";
+        report->recordCount << bookingReport->model.rows
+                            << transactionReport->model.rows
+                            << clientLogReport->model.rows
+                            << otherReport->model.rows;
+    } else
 
     // case files pcp
     if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == 0){
@@ -4638,9 +4657,14 @@ void MainWindow::on_actionExport_to_PDF_triggered()
 void MainWindow::setValue(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
 
     // reports: daily
-    if (ui->stackedWidget->currentIndex() == REPORTS && ui->dailyReport_tabWidget->currentIndex() == 0){
+    if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == DAILYREPORT){
         printDailyReport(recNo, paramName, paramValue, reportPage);
-    }
+    } else
+
+    // reports: shift
+    if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == SHIFTREPORT){
+        printShiftReport(recNo, paramName, paramValue, reportPage);
+    } else
 
     // case files pcp
     if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == 0){
@@ -4698,6 +4722,86 @@ void MainWindow::printDailyReport(const int recNo, const QString paramName, QVar
             paramValue = wakeupReport->model.tableData->at(recNo * wakeupReport->model.cols + 1);
         } else if (paramName == "time") {
             paramValue = wakeupReport->model.tableData->at(recNo * wakeupReport->model.cols + 2);
+        }
+    }
+}
+
+void MainWindow::printShiftReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage){
+    if (reportPage == 0){
+        if (paramName == "client") {
+            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 0);
+        } else if (paramName == "space") {
+            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 1);
+        } else if (paramName == "program") {
+            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 2);
+        } else if (paramName == "start") {
+            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 3);
+        } else if (paramName == "end") {
+            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 4);
+        } else if (paramName == "action") {
+            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 5);
+        } else if (paramName == "staff") {
+            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 6);
+        } else if (paramName == "time") {
+            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 7);
+        } else if (paramName == "sname") {
+            paramValue = userLoggedIn;
+        } else if (paramName == "date") {
+            paramValue = ui->lbl_shiftReportDateVal->text();
+        } else if (paramName == "shiftNo") {
+            paramValue = ui->lbl_shiftReportShiftVal->text();
+        } else if (paramName == "cash") {
+            paramValue = ui->lbl_cashAmt->text();
+        } else if (paramName == "elec") {
+            paramValue = ui->lbl_debitAmt->text();
+        } else if (paramName == "depo") {
+            paramValue = ui->lbl_chequeAmt->text();
+        } else if (paramName == "cheque") {
+            paramValue = ui->lbl_depoAmt->text();
+        } else if (paramName == "total") {
+            paramValue = ui->lbl_shiftAmt->text();
+        }
+    } else if (reportPage == 1) {
+        if (paramName == "client") {
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 0);
+        } else if (paramName == "trans") {
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 1);
+        } else if (paramName == "type") {
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 2);
+        } else if (paramName == "msdd") {
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 4);
+        } else if (paramName == "cno") {
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 5);
+        } else if (paramName == "cdate") {
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 6);
+        } else if (paramName == "status") {
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 7);
+        } else if (paramName == "deleted") {
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 8);
+        } else if (paramName == "employee") {
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 9);
+        } else if (paramName == "time") {
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 10);
+        } else if (paramName == "amt") {
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 3);
+        }
+    } else if (reportPage == 2) {
+        if (paramName == "client") {
+            paramValue = clientLogReport->model.tableData->at(recNo * clientLogReport->model.cols + 0);
+        } else if (paramName == "action") {
+            paramValue = clientLogReport->model.tableData->at(recNo * clientLogReport->model.cols + 1);
+        } else if (paramName == "employee") {
+            paramValue = clientLogReport->model.tableData->at(recNo * clientLogReport->model.cols + 2);
+        } else if (paramName == "time") {
+            paramValue = clientLogReport->model.tableData->at(recNo * clientLogReport->model.cols + 2);
+        }
+    } else if (reportPage == 3) {
+        if (paramName == "time") {
+            paramValue = otherReport->model.tableData->at(recNo * otherReport->model.cols + 0);
+        } else if (paramName == "employee") {
+            paramValue = otherReport->model.tableData->at(recNo * otherReport->model.cols + 1);
+        } else if (paramName == "log") {
+            paramValue = otherReport->model.tableData->at(recNo * otherReport->model.cols + 2);
         }
     }
 }
