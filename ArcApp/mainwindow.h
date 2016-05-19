@@ -209,7 +209,7 @@ private slots:
     
     void on_reconnectedToDatabase();
     
-    void resizeEvent();
+    void resizeEvent(QResizeEvent* event);
 
 
 
