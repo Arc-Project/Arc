@@ -36,8 +36,8 @@ public:
     void updateModelThread();
     void updateModelThread(QDate date);
     void updateModelThread(QDate date, int shiftNo);
-private:
     MyModel model;
+private:
     int reportType;
     void setTransactionData(QSqlQuery* query);
     void setData(QSqlQuery* query);

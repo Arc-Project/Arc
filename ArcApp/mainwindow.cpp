@@ -3822,10 +3822,17 @@ void MainWindow::on_actionPcptables_triggered()
 //    connect(report, SIGNAL(setValue(const int, const QString, const QString, const QString, const QString)),
 //           this, SLOT(setValue(const int, const QString, const QString, const QString, const QString)));
 //    report->printExec();
-    QTableWidget *tw = pcp_tables.at(0);
-    qDebug() << tw->item(0,0)->text();
-    qDebug() << tw->item(0,1)->text();
-    qDebug() << tw->item(0,2)->text();
+
+//    for (int i = 0; i < checkoutReport->model.tableData->size(); ++i)
+//         qDebug() << checkoutReport->model.tableData->at(i);
+
+    qDebug() << checkoutReport->model.tableData->at(0 * 6 + 0);
+    qDebug() << checkoutReport->model.tableData->at(0 * 6 + 1);
+    qDebug() << checkoutReport->model.tableData->at(0 * 6 + 2);
+    qDebug() << checkoutReport->model.tableData->at(1 * 6 + 0);
+    qDebug() << checkoutReport->model.tableData->at(1 * 6 + 1);
+    qDebug() << checkoutReport->model.tableData->at(1 * 6 + 2);
+
 }
 
 void MainWindow::on_btn_pcpRelaUndo_clicked()
@@ -4385,26 +4392,97 @@ void MainWindow::on_lineEdit_search_clientName_returnPressed()
 void MainWindow::on_actionExport_to_PDF_triggered()
 {
     QString rptTemplate;
+    QtRPT *report = new QtRPT(this);
+
+    // reports: daily
+    if (ui->stackedWidget->currentIndex() == REPORTS && ui->dailyReport_tabWidget->currentIndex() == 0){
+        rptTemplate = ":/templates/pdf/daily.xml";
+        report->recordCount << checkoutReport->model.rows
+                            << vacancyReport->model.rows
+                            << lunchReport->model.rows
+                            << wakeupReport->model.rows;
+    }
 
     // case files pcp
     if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == 0){
         rptTemplate = ":/templates/pdf/pcp.xml";
+        for (auto x: pcp_tables) {
+            report->recordCount << x->rowCount();
+        }
     }
 
-    QtRPT *report = new QtRPT(this);
     report->loadReport(rptTemplate);
-    for (auto x: pcp_tables) {
-        report->recordCount << x->rowCount();
-    }
 
     connect(report, SIGNAL(setValue(const int, const QString, QVariant&, const int)),
            this, SLOT(setValue(const int, const QString, QVariant&, const int)));
+
     report->printExec();
 }
 
 void MainWindow::setValue(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
+
+    // reports: daily
+    if (ui->stackedWidget->currentIndex() == REPORTS && ui->dailyReport_tabWidget->currentIndex() == 0){
+        printDailyReport(recNo, paramName, paramValue, reportPage);
+    }
+
+    // case files pcp
     if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == 0){
         printPCP(recNo, paramName, paramValue, reportPage);
+    }
+}
+
+void MainWindow::printDailyReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage){
+    if (reportPage == 0){
+        if (paramName == "client") {
+            paramValue = checkoutReport->model.tableData->at(recNo * checkoutReport->model.cols + 0);
+        } else if (paramName == "space") {
+            paramValue = checkoutReport->model.tableData->at(recNo * checkoutReport->model.cols + 1);
+        } else if (paramName == "start") {
+            paramValue = checkoutReport->model.tableData->at(recNo * checkoutReport->model.cols + 2);
+        } else if (paramName == "end") {
+            paramValue = checkoutReport->model.tableData->at(recNo * checkoutReport->model.cols + 3);
+        } else if (paramName == "program") {
+            paramValue = checkoutReport->model.tableData->at(recNo * checkoutReport->model.cols + 4);
+        } else if (paramName == "balance") {
+            paramValue = checkoutReport->model.tableData->at(recNo * checkoutReport->model.cols + 5);
+        } else if (paramName == "date") {
+            paramValue = ui->dailyReport_dateEdit->text();
+        } else if (paramName == "espout") {
+            if (ui->lbl_espCheckouts->text().isEmpty()) return;
+            paramValue = ui->lbl_espCheckouts->text();
+        } else if (paramName == "espvac") {
+            if (ui->lbl_espVacancies->text().isEmpty()) return;
+            paramValue = ui->lbl_espVacancies->text();
+        } else if (paramName == "totalout") {
+            if (ui->lbl_totalCheckouts->text().isEmpty()) return;
+            paramValue = ui->lbl_totalCheckouts->text();
+        } else if (paramName == "totalvac") {
+            if (ui->lbl_totalVacancies->text().isEmpty()) return;
+            paramValue = ui->lbl_totalVacancies->text();
+        }
+    } else if (reportPage == 1) {
+        if (paramName == "space"){
+            paramValue = vacancyReport->model.tableData->at(recNo * vacancyReport->model.cols + 0);
+        } else if (paramName == "prog"){
+            paramValue = vacancyReport->model.tableData->at(recNo * vacancyReport->model.cols + 1);
+        }
+    } else if (reportPage == 2) {
+        if (paramName == "client") {
+            paramValue = lunchReport->model.tableData->at(recNo * lunchReport->model.cols + 0);
+        } else if (paramName == "space") {
+            paramValue = lunchReport->model.tableData->at(recNo * lunchReport->model.cols + 1);
+        } else if (paramName == "lunches") {
+            paramValue = lunchReport->model.tableData->at(recNo * lunchReport->model.cols + 2);
+        }
+    } else if (reportPage == 3) {
+        if (paramName == "client") {
+            paramValue = wakeupReport->model.tableData->at(recNo * wakeupReport->model.cols + 0);
+        } else if (paramName == "space") {
+            paramValue = wakeupReport->model.tableData->at(recNo * wakeupReport->model.cols + 1);
+        } else if (paramName == "time") {
+            paramValue = wakeupReport->model.tableData->at(recNo * wakeupReport->model.cols + 2);
+        }
     }
 }
 
