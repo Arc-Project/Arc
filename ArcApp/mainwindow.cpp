@@ -4392,6 +4392,9 @@ void MainWindow::on_EditShiftsButton_clicked()
             }
         }
     }
+
+    ui->comboBox_2->setCurrentIndex(1);
+    ui->comboBox_2->setCurrentIndex(0);
 }
 
 void MainWindow::on_cbox_roomLoc_currentTextChanged(const QString &arg1)
@@ -5622,6 +5625,16 @@ void MainWindow::on_btn_saveShift_clicked()
     on_EditShiftsButton_clicked();
 }
 
+void MainWindow::on_comboBox_2_currentTextChanged(const QString &arg1)
+{
+    QSqlQuery existcheck = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='" + arg1 + "'");
+
+    if (existcheck.next()) {
+        int numshifts = existcheck.value(11).toInt();
+        ui->comboBox_3->setCurrentIndex(numshifts-1);
+    }
+}
+
 void MainWindow::updatemenuforuser() {
     QSqlQuery roleq = dbManager->execQuery("SELECT Role FROM Employee WHERE Username='" + userLoggedIn + "'");
 
@@ -5737,5 +5750,3 @@ void MainWindow::on_storageDelete_clicked()
     if(!dbManager->removeStorage(storeId))
         qDebug() << "Error removing storage";
 }
-
-
