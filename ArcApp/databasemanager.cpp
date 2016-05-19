@@ -442,7 +442,7 @@ QSqlQuery DatabaseManager::searchClientInfo(QString ClientId){
                       + QString("SinNo, GaNo, EmpId, DateRulesSigned, status, ")
                       + QString("NokName, NokRelationship, NokLocation, NokContactNo, PhysName, ")
                       + QString("PhysContactNo, SuppWorker1Name, SuppWorker1ContactNo, SuppWorker2Name, SuppWorker2ContactNo, ")
-                      + QString("Comments ")//, ProfilePic ")
+                      + QString("Comments ")
                       + QString("FROM Client WHERE ClientId =" + ClientId));
 
 
@@ -478,12 +478,27 @@ bool DatabaseManager::searchClientInfoPic(QImage * img, QString ClientId){
     return true;
 }
 
-QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId){
+QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId, int type = 0){
     QSqlQuery clientTransQuery;
-    clientTransQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) )
+    QString queryStart;
+    if(type == 1){
+        queryStart = "SELECT TOP "+ QString::number(maxNum)
+                   + QString("Date, Time, Amount, Type, ChequeNo, MSQ, ChequeDate, TransType, EmpName ");
+    }else{
+        queryStart = "SELECT "
+                   + QString("Date, Time, Amount, Type, ChequeNo, MSQ, ChequeDate, TransType, Deleted, Outstanding, EmpName, Notes ");
+    }
+  /*
+    clientTransQuery.prepare(queryStart
                            + QString(" t.Date, t.Amount, t.Type, e.Username, t.ChequeNo, t.ChequeDate, t.Deleted ")
                            + QString("FROM Transac t INNER JOIN Employee e ON t.EmpId = e.EmpId ")
                            + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC"));
+*/
+
+    clientTransQuery.prepare(queryStart
+                           + QString("FROM Transac ")
+                           + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC, Time DESC"));
+
     clientTransQuery.exec();
     return clientTransQuery;
 }
@@ -495,9 +510,35 @@ QSqlQuery DatabaseManager::searchBookList(int maxNum, QString clientId){
                            + QString("SpaceId, FirstBook ")
                            + QString("FROM Booking ")
                            + QString("WHERE ClientId = " + clientId + " ORDER BY EndDate DESC, DateCreated DESC"));
+
     clientBookingQuery.exec();
     return clientBookingQuery;
 }
+
+QSqlQuery DatabaseManager::searchBookList(int maxNum, QString clientId, int type){
+    QSqlQuery clientBookingQuery;
+    /*
+    clientBookingQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) )
+                           + QString(" DateCreated, ProgramCode, StartDate, EndDate, Cost, ")
+                           + QString("SpaceId, FirstBook ")
+                           + QString("FROM Booking ")
+                           + QString("WHERE ClientId = " + clientId + " ORDER BY EndDate DESC, DateCreated DESC"));
+    */
+    QString queryStart;
+    if(type == 1){
+        queryStart = "SELECT TOP "+ QString::number(maxNum)
+                   + QString("DateCreated, ProgramCode, StartDate, EndDate, Cost, SpaceId ");
+    }else{
+        queryStart = "SELECT "
+                   + QString("DateCreated, ProgramCode, StartDate, EndDate, Cost, SpaceId, FirstBook, Monthly ");
+    }
+    clientBookingQuery.prepare(queryStart
+                           + QString("FROM Booking ")
+                           + QString("WHERE ClientId = " + clientId + " ORDER BY EndDate DESC, DateCreated DESC"));
+    clientBookingQuery.exec();
+    return clientBookingQuery;
+}
+
 
 int DatabaseManager::countInformationPerClient(QString tableName, QString ClientId){
     QSqlQuery countQuery;
@@ -1644,10 +1685,10 @@ QSqlQuery DatabaseManager::getActiveBooking(QString user, bool userLook){
     QString date = QDate::currentDate().toString(Qt::ISODate);
     QString q;
     if(!userLook){
-         q = "SELECT * FROM BOOKING JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '" + date + "'";
+         q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '" + date + "'";
     }
     else{
-         q = "SELECT * FROM BOOKING JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '" + date + "' AND ClientName LIKE '%" + user + "%'";
+         q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '" + date + "' AND ClientName LIKE '%" + user + "%'";
 
     }
     qDebug() << q;
