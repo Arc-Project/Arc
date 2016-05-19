@@ -125,7 +125,7 @@ QHeaderView {
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>10</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -4704,8 +4704,8 @@ QHeaderView {
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>718</width>
-                 <height>1381</height>
+                 <width>1186</width>
+                 <height>1294</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -7256,7 +7256,7 @@ QHeaderView {
                </property>
                <property name="font">
                 <font>
-                 <pointsize>10</pointsize>
+                 <pointsize>11</pointsize>
                 </font>
                </property>
                <property name="text">
@@ -7272,6 +7272,11 @@ QHeaderView {
                  <height>28</height>
                 </size>
                </property>
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
+               </property>
               </widget>
              </item>
              <item row="1" column="0">
@@ -7284,7 +7289,7 @@ QHeaderView {
                </property>
                <property name="font">
                 <font>
-                 <pointsize>10</pointsize>
+                 <pointsize>11</pointsize>
                 </font>
                </property>
                <property name="text">
@@ -7300,6 +7305,11 @@ QHeaderView {
                  <height>28</height>
                 </size>
                </property>
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
+               </property>
               </widget>
              </item>
              <item row="2" column="0">
@@ -7312,7 +7322,7 @@ QHeaderView {
                </property>
                <property name="font">
                 <font>
-                 <pointsize>10</pointsize>
+                 <pointsize>11</pointsize>
                 </font>
                </property>
                <property name="text">
@@ -7328,6 +7338,11 @@ QHeaderView {
                  <height>28</height>
                 </size>
                </property>
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
+               </property>
               </widget>
              </item>
              <item row="3" column="0">
@@ -7340,7 +7355,7 @@ QHeaderView {
                </property>
                <property name="font">
                 <font>
-                 <pointsize>10</pointsize>
+                 <pointsize>11</pointsize>
                 </font>
                </property>
                <property name="text">
@@ -7349,35 +7364,63 @@ QHeaderView {
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="QDateEdit" name="dateEdit_cl_dob">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>28</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                </font>
-               </property>
-               <property name="focusPolicy">
-                <enum>Qt::ClickFocus</enum>
-               </property>
-               <property name="displayFormat">
-                <string>yyyy-MM-dd</string>
-               </property>
-               <property name="calendarPopup">
-                <bool>true</bool>
-               </property>
-               <property name="date">
-                <date>
-                 <year>1990</year>
-                 <month>1</month>
-                 <day>1</day>
-                </date>
-               </property>
-              </widget>
+              <layout class="QHBoxLayout" name="horizontalLayout_103">
+               <item>
+                <widget class="QDateEdit" name="dateEdit_cl_dob">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>28</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
+                 </property>
+                 <property name="focusPolicy">
+                  <enum>Qt::ClickFocus</enum>
+                 </property>
+                 <property name="displayFormat">
+                  <string>yyyy-MM-dd</string>
+                 </property>
+                 <property name="calendarPopup">
+                  <bool>true</bool>
+                 </property>
+                 <property name="date">
+                  <date>
+                   <year>1990</year>
+                   <month>1</month>
+                   <day>1</day>
+                  </date>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="checkBox_cl_dob_no">
+                 <property name="minimumSize">
+                  <size>
+                   <width>90</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>No Date</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
              <item row="4" column="0">
               <widget class="QLabel" name="label_cl_SIN">
@@ -7389,7 +7432,7 @@ QHeaderView {
                </property>
                <property name="font">
                 <font>
-                 <pointsize>10</pointsize>
+                 <pointsize>11</pointsize>
                 </font>
                </property>
                <property name="text">
@@ -7404,6 +7447,11 @@ QHeaderView {
                  <width>0</width>
                  <height>28</height>
                 </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
                </property>
                <property name="inputMethodHints">
                 <set>Qt::ImhNone</set>
@@ -7420,7 +7468,7 @@ QHeaderView {
                </property>
                <property name="font">
                 <font>
-                 <pointsize>10</pointsize>
+                 <pointsize>11</pointsize>
                 </font>
                </property>
                <property name="text">
@@ -7435,6 +7483,11 @@ QHeaderView {
                  <width>0</width>
                  <height>28</height>
                 </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
                </property>
                <property name="text">
                 <string/>
@@ -7451,7 +7504,7 @@ QHeaderView {
                </property>
                <property name="font">
                 <font>
-                 <pointsize>10</pointsize>
+                 <pointsize>11</pointsize>
                 </font>
                </property>
                <property name="text">
@@ -7467,6 +7520,11 @@ QHeaderView {
                  <height>28</height>
                 </size>
                </property>
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
+               </property>
               </widget>
              </item>
              <item row="7" column="0">
@@ -7479,7 +7537,7 @@ QHeaderView {
                </property>
                <property name="font">
                 <font>
-                 <pointsize>10</pointsize>
+                 <pointsize>11</pointsize>
                 </font>
                </property>
                <property name="text">
@@ -7497,7 +7555,7 @@ QHeaderView {
                </property>
                <property name="font">
                 <font>
-                 <pointsize>10</pointsize>
+                 <pointsize>11</pointsize>
                 </font>
                </property>
                <property name="focusPolicy">
@@ -7630,7 +7688,7 @@ QHeaderView {
                   </property>
                   <property name="font">
                    <font>
-                    <pointsize>10</pointsize>
+                    <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -7646,6 +7704,11 @@ QHeaderView {
                     <height>28</height>
                    </size>
                   </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
                  </widget>
                 </item>
                 <item row="1" column="0">
@@ -7658,7 +7721,7 @@ QHeaderView {
                   </property>
                   <property name="font">
                    <font>
-                    <pointsize>10</pointsize>
+                    <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -7673,6 +7736,11 @@ QHeaderView {
                     <width>0</width>
                     <height>28</height>
                    </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>11</pointsize>
+                   </font>
                   </property>
                  </widget>
                 </item>
@@ -7713,7 +7781,7 @@ QHeaderView {
                   </property>
                   <property name="font">
                    <font>
-                    <pointsize>10</pointsize>
+                    <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -7731,7 +7799,7 @@ QHeaderView {
                   </property>
                   <property name="font">
                    <font>
-                    <pointsize>10</pointsize>
+                    <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -7747,6 +7815,11 @@ QHeaderView {
                     <height>28</height>
                    </size>
                   </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
                  </widget>
                 </item>
                 <item row="1" column="1">
@@ -7756,6 +7829,11 @@ QHeaderView {
                     <width>0</width>
                     <height>28</height>
                    </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>11</pointsize>
+                   </font>
                   </property>
                  </widget>
                 </item>
@@ -7793,7 +7871,7 @@ QHeaderView {
                   </property>
                   <property name="font">
                    <font>
-                    <pointsize>10</pointsize>
+                    <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -7809,6 +7887,11 @@ QHeaderView {
                     <height>28</height>
                    </size>
                   </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
                  </widget>
                 </item>
                 <item row="1" column="0">
@@ -7821,7 +7904,7 @@ QHeaderView {
                   </property>
                   <property name="font">
                    <font>
-                    <pointsize>10</pointsize>
+                    <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -7837,6 +7920,11 @@ QHeaderView {
                     <height>28</height>
                    </size>
                   </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
                  </widget>
                 </item>
                 <item row="2" column="0">
@@ -7849,7 +7937,7 @@ QHeaderView {
                   </property>
                   <property name="font">
                    <font>
-                    <pointsize>10</pointsize>
+                    <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -7865,6 +7953,11 @@ QHeaderView {
                     <height>28</height>
                    </size>
                   </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
                  </widget>
                 </item>
                 <item row="3" column="0">
@@ -7877,7 +7970,7 @@ QHeaderView {
                   </property>
                   <property name="font">
                    <font>
-                    <pointsize>10</pointsize>
+                    <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -7892,6 +7985,11 @@ QHeaderView {
                     <width>0</width>
                     <height>28</height>
                    </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>11</pointsize>
+                   </font>
                   </property>
                  </widget>
                 </item>
@@ -7948,7 +8046,7 @@ QHeaderView {
                   </property>
                   <property name="font">
                    <font>
-                    <pointsize>10</pointsize>
+                    <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -7966,7 +8064,7 @@ QHeaderView {
                   </property>
                   <property name="font">
                    <font>
-                    <pointsize>10</pointsize>
+                    <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -7982,6 +8080,11 @@ QHeaderView {
                     <height>28</height>
                    </size>
                   </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
                  </widget>
                 </item>
                 <item row="1" column="1">
@@ -7991,6 +8094,11 @@ QHeaderView {
                     <width>0</width>
                     <height>28</height>
                    </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>11</pointsize>
+                   </font>
                   </property>
                  </widget>
                 </item>
@@ -8029,7 +8137,7 @@ QHeaderView {
             <widget class="QLabel" name="label_cl_status">
              <property name="font">
               <font>
-               <pointsize>10</pointsize>
+               <pointsize>11</pointsize>
               </font>
              </property>
              <property name="text">
@@ -8038,7 +8146,13 @@ QHeaderView {
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QComboBox" name="comboBox_cl_status"/>
+            <widget class="QComboBox" name="comboBox_cl_status">
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
+            </widget>
            </item>
            <item row="1" column="0" colspan="2">
             <widget class="QLabel" name="label_cl_status_2">
@@ -8074,7 +8188,7 @@ QHeaderView {
              </property>
              <property name="font">
               <font>
-               <pointsize>10</pointsize>
+               <pointsize>11</pointsize>
               </font>
              </property>
             </widget>
@@ -8113,9 +8227,15 @@ QHeaderView {
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>25</height>
+              </size>
+             </property>
              <property name="font">
               <font>
-               <pointsize>10</pointsize>
+               <pointsize>11</pointsize>
               </font>
              </property>
              <property name="text">
@@ -8150,9 +8270,15 @@ QHeaderView {
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>25</height>
+              </size>
+             </property>
              <property name="font">
               <font>
-               <pointsize>10</pointsize>
+               <pointsize>11</pointsize>
               </font>
              </property>
              <property name="text">

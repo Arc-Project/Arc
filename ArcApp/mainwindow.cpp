@@ -1445,6 +1445,10 @@ void MainWindow::on_button_clear_client_regForm_clicked()
 {
     clear_client_register_form();
 }
+void MainWindow::on_checkBox_cl_dob_no_clicked(bool checked)
+{
+        ui->dateEdit_cl_dob->setEnabled(!checked);
+}
 
 void MainWindow::getListRegisterFields(QStringList* fieldList)
 {
@@ -1463,10 +1467,11 @@ void MainWindow::getListRegisterFields(QStringList* fieldList)
     if (!lastName.isEmpty())
         lastName[0].toUpper();
 
+
     *fieldList << firstName
                << middleName
                << lastName
-               << ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd")
+               << (ui->checkBox_cl_dob_no->isChecked()? "" : ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd"))
                << ui->lineEdit_cl_SIN->text()
                << ui->lineEdit_cl_GANum->text()
                << caseWorkerId   //QString::number(caseWorkerList.value(ui->comboBox_cl_caseWorker->currentText())) //grab value from case worker dropdown I don't know how to do it
@@ -1526,6 +1531,8 @@ void MainWindow::clear_client_register_form(){
     ui->plainTextEdit_cl_comments->clear();
     QDate defaultDob= QDate::fromString("1990-01-01","yyyy-MM-dd");
     ui->dateEdit_cl_dob->setDate(defaultDob);
+    ui->checkBox_cl_dob_no->setChecked(false);
+    ui->dateEdit_cl_dob->setEnabled(true);
     ui->dateEdit_cl_rulesign->setDate(QDate::currentDate());
 
     QPalette pal;
@@ -1556,7 +1563,13 @@ void MainWindow::read_curClient_Information(QString ClientId){
 
     ui->lineEdit_cl_mName->setText(clientInfo.value(2).toString());
     ui->lineEdit_cl_lName->setText(clientInfo.value(3).toString());
-    ui->dateEdit_cl_dob->setDate(QDate::fromString(clientInfo.value(4).toString(),"yyyy-MM-dd"));
+
+    if(clientInfo.value(4).toString() == "")
+        ui->checkBox_cl_dob_no->setChecked(true);
+    else{
+        ui->checkBox_cl_dob_no->setChecked(false);
+        ui->dateEdit_cl_dob->setDate(QDate::fromString(clientInfo.value(4).toString(),"yyyy-MM-dd"));
+    }
     //balnace?
     QString caseWorkerName = caseWorkerList.key(clientInfo.value(21).toInt());
     ui->comboBox_cl_caseWorker->setCurrentText(caseWorkerName);
@@ -5809,3 +5822,4 @@ void MainWindow::on_addStorageClient_clicked()
     sto->exec();
     delete(sto);
 }
+
