@@ -264,6 +264,8 @@ private slots:
 
     void addPic(QImage pict);
 
+    void getCaseWorkerList();
+
     void defaultRegisterOptions();
 
 
