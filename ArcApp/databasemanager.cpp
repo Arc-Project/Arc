@@ -503,9 +503,35 @@ QSqlQuery DatabaseManager::searchBookList(int maxNum, QString clientId){
                            + QString("SpaceId, FirstBook ")
                            + QString("FROM Booking ")
                            + QString("WHERE ClientId = " + clientId + " ORDER BY EndDate DESC, DateCreated DESC"));
+
     clientBookingQuery.exec();
     return clientBookingQuery;
 }
+
+QSqlQuery DatabaseManager::searchBookList(int maxNum, QString clientId, int type){
+    QSqlQuery clientBookingQuery;
+    /*
+    clientBookingQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) )
+                           + QString(" DateCreated, ProgramCode, StartDate, EndDate, Cost, ")
+                           + QString("SpaceId, FirstBook ")
+                           + QString("FROM Booking ")
+                           + QString("WHERE ClientId = " + clientId + " ORDER BY EndDate DESC, DateCreated DESC"));
+    */
+    QString queryStart;
+    if(type == 1){
+        queryStart = "SELECT TOP "+ QString::number(maxNum)
+                   + QString("DateCreated, ProgramCode, StartDate, EndDate, Cost, SpaceId ");
+    }else{
+        queryStart = "SELECT "
+                   + QString("DateCreated, ProgramCode, StartDate, EndDate, Cost, SpaceId, FirstBook, Monthly ");
+    }
+    clientBookingQuery.prepare(queryStart
+                           + QString("FROM Booking ")
+                           + QString("WHERE ClientId = " + clientId + " ORDER BY EndDate DESC, DateCreated DESC"));
+    clientBookingQuery.exec();
+    return clientBookingQuery;
+}
+
 
 int DatabaseManager::countInformationPerClient(QString tableName, QString ClientId){
     QSqlQuery countQuery;

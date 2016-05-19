@@ -159,7 +159,7 @@ void MainWindow::initCurrentWidget(int idx){
             //initcode
             break;
         case CASEFILE: //WIDGET 8
-            ui->tabw_casefiles->setCurrentIndex(PERSIONACASEPLAN);
+            ui->tabWidget_cl_info->setCurrentIndex(0);
             qDebug()<<"Client INFO";
             if(curClient != NULL){
                 qDebug()<<"ID: " << curClientID << curClient->clientId;
@@ -1934,7 +1934,7 @@ void MainWindow::setSelectedClientInfo(){
 
 
     */
-    //transacTotal
+    //
     curClient = new Client();
     int nRow = ui->tableWidget_search_client->currentRow();
     if (nRow <=0){
@@ -1992,7 +1992,6 @@ void MainWindow::initClTransactionTable(){
     ui->tableWidget_transaction->clear();
 
     ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Amount"<<"Payment Type"<<"ChequeNo"<<"MSQ"<<"ChequeDate"<<"TransType"<<"Employee");
-    ui->tableWidget_transaction->setMinimumHeight(30*6-1);
 
 }
 
@@ -2018,7 +2017,7 @@ void MainWindow::displayTransaction(QSqlQuery results){
     if(row == 0)
         row = 5;
     if (row > 25){
-        ui->tableWidget_transaction->setMaximumHeight(30*26 -1);
+        ui->tableWidget_booking->setMaximumHeight(30*26 -1);
         return;
     }
     ui->tableWidget_transaction->setMinimumHeight(30*(row+1) -1);
@@ -2070,7 +2069,7 @@ void MainWindow::on_pushButton_cl_trans_more_clicked()
 void MainWindow::searchBookHistory(QString clientId){
     qDebug()<<"search booking";
 
-    QSqlQuery bookingQuery = dbManager->searchBookList(bookingNum, clientId, CLIENTLOOKUP);
+    QSqlQuery bookingQuery = dbManager->searchBookList(bookingNum, clientId);
     displayBookHistory(bookingQuery, ui->tableWidget_booking);
    // dbManager->printAll(bookingQuery);
     QString totalNum = (bookingTotal == 0)? "-" : QString::number(bookingTotal);
@@ -2080,8 +2079,7 @@ void MainWindow::initClBookHistoryTable(){
     ui->tableWidget_booking->setRowCount(0);
     ui->tableWidget_booking->setColumnCount(6);
     ui->tableWidget_booking->clear();
-    ui->tableWidget_booking->setHorizontalHeaderLabels(QStringList()<<"Reserved Date"<<"Program Code"<<"Start Date"<< "End Date"<<"Cost"<<"Bed Number");
-    ui->tableWidget_booking->setMinimumHeight(30*6-1);
+    ui->tableWidget_booking->setHorizontalHeaderLabels(QStringList()<<"Reserved Date"<<"Program Code"<<"Start Date"<< "End Date"<<"Cost"<<"Bed Number"<<"FirstBook ");
 }
 
 //display booking history in the table view
@@ -2114,7 +2112,7 @@ void MainWindow::displayBookHistory(QSqlQuery results){
 //display booking history in the table view
 void MainWindow::displayBookHistory(QSqlQuery results, QTableWidget * table){
     initClBookHistoryTable();
-    int colCnt = results.record().count();
+    int colCnt = results.record().count() -1;
     int row =table->rowCount();
     while(results.next()){
         table->insertRow(row);
@@ -2124,21 +2122,18 @@ void MainWindow::displayBookHistory(QSqlQuery results, QTableWidget * table){
         }
         row++;
     }
-    if(table == ui->tableWidget_casefile_booking)
-        return;
-    if(row > bookingTotal)
-        table->setRowCount(bookingTotal);
     /*
     if(row > bookingTotal || row == bookingTotal){
         ui->pushButton_cl_book_more->setEnabled(false);
     }
     */
+    if (row == 0)
+        row = 5;
     if (row > 25){
         table->setMaximumHeight(30*26 -1);
         return;
     }
-    if(row >5)
-        table->setMinimumHeight(30*(row+1) -1);
+    table->setMinimumHeight(30*(row+1) -1);
 }
 
 //click more client button
@@ -2552,50 +2547,23 @@ void MainWindow::on_tabw_casefiles_currentChanged(int index)
         case RUNNINGNOTE:
             break;
         case BOOKINGHISTORY:
-            if(!newHistory)
-                break;
-            initCasefileBookHistoryTable();
-            useProgressDialog("Search Transaction...",QtConcurrent::run(this, &searchCasefileBookHistory, curClientID));
-            bookingTotal = ui->tableWidget_casefile_booking->rowCount();
-            ui->label_casefile_booking_total_num->setText(QString::number(bookingTotal) + " Booking");
-            newHistory = false;
             break;
-
         case TRANSACTIONHISTORY:
             if(!newTrans)
-                break;
+                return;
             initCasefileTransactionTable();
             useProgressDialog("Search Transaction...",QtConcurrent::run(this, &searchCasefileTransaction, curClientID));
-            transacTotal = ui->tableWidget_casefile_transaction->rowCount();
-            ui->label_casefile_trans_total_num->setText(QString::number(transacTotal) + " Transaction");
-            newTrans = false;
+            QString totalNum = QString::number(ui->tableWidget_casefile_transaction->rowCount());
+            ui->label_casefile_trans_total_num->setText(totalNum + " Transaction");
+            newTrans=false;
             break;
     }
 }
 
-/*--------------------------------------------------
-        CASEFILE BOOKING HISTORY(EUNWON)
-----------------------------------------------------*/
-//search booking history when click booking history tab
-void MainWindow::initCasefileBookHistoryTable(){
-    ui->tableWidget_casefile_booking->setRowCount(0);
-    ui->tableWidget_casefile_booking->setColumnCount(8);
-    ui->tableWidget_casefile_booking->clear();
-    ui->tableWidget_casefile_booking->setHorizontalHeaderLabels(QStringList()<<"Reserved Date"<<"Program Code"<<"Start Date"<<"End Date"<<"Cost"<<"Bed Number"<<"FirstBook"<<"Monthly");
-}
-
-void MainWindow::searchCasefileBookHistory(QString clientId){
-    qDebug()<<"search booking";
-
-    QSqlQuery bookingQuery = dbManager->searchBookList(bookingNum, clientId, CASEFILE);
-    displayBookHistory(bookingQuery, ui->tableWidget_casefile_booking);
+//CASEFILE BOOKING HISTROY(EUNWON)
 
 
-}
-
-/*-----------------------------------------------
-        CASEFILE TRANSACTION(EUNWON)
--------------------------------------------------*/
+//CASEFILE TRANSACTION(EUNWON)
 void MainWindow::initCasefileTransactionTable(){
     ui->tableWidget_casefile_transaction->setRowCount(0);
 
@@ -2614,7 +2582,7 @@ void MainWindow::searchCasefileTransaction(QString clientId){
     displayTransaction(transQuery, ui->tableWidget_casefile_transaction);
 }
 
-/*-------------------CASEFILE END-----------------------------------*/
+
 
 
 

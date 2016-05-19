@@ -475,6 +475,8 @@ private slots:
     void initCasefileTransactionTable();
     void searchCasefileTransaction(QString clientId);
 
+    void initCasefileBookHistoryTable();
+    void searchCasefileBookHistory(QString clientId);
     //CASEFILE BOOKING HISTORY TABLE
 
     void on_tabWidget_cl_info_currentChanged(int index);
