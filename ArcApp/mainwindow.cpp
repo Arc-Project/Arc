@@ -117,8 +117,8 @@ void MainWindow::initCurrentWidget(int idx){
     switch(idx){
         case MAINMENU:  //WIDGET 0
             curClientID = "";
-
             registerType = NOREGISTER;
+            ui->actionExport_to_PDF->setEnabled(false);
             break;
         case CLIENTLOOKUP:  //WIDGET 1
             initClientLookupInfo();
@@ -133,6 +133,7 @@ void MainWindow::initCurrentWidget(int idx){
             ui->checkBox_search_anonymous->setChecked(false);
             ui->pushButton_search_client->setEnabled(true);
             //initimageview
+            ui->actionExport_to_PDF->setEnabled(false);
             break;
         case BOOKINGLOOKUP: //WIDGET 2
             qDebug()<<"Client INFO";
@@ -182,6 +183,7 @@ void MainWindow::initCurrentWidget(int idx){
             newHistory = true;
             initCasefileTransactionTable();
             initPcp();
+            ui->actionExport_to_PDF->setEnabled(true);
             break;
         case EDITBOOKING: //WIDGET 9
             ui->editLookupTable->clear();
@@ -204,6 +206,7 @@ void MainWindow::initCurrentWidget(int idx){
             MainWindow::getCashFloat(QDate::currentDate(), currentshiftid);
             MainWindow::getMonthlyReport(QDate::currentDate().month(), QDate::currentDate().year());
             MainWindow::updateRestrictionTables();
+            ui->actionExport_to_PDF->setEnabled(true);
             break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
@@ -3628,6 +3631,7 @@ void MainWindow::updateShiftReportTables(QDate date, int shiftNo)
     ui->lbl_shiftReportDateVal->setText(date.toString(Qt::ISODate));
     ui->lbl_shiftReportShiftVal->setText(QString::number(shiftNo));
     ui->shiftReport_dateEdit->setDate(date);
+    ui->shiftReport_spinBox->setValue(currentshiftid);
 }
 
 void MainWindow::on_dailyReportGo_btn_clicked()
@@ -3763,6 +3767,8 @@ void MainWindow::updateCashFloat(QDate date, int shiftNo, QStringList list, bool
 
         ui->cashFloatDate_lbl->setText(date.toString(Qt::ISODate));
         ui->cashFloatShift_lbl->setText(QString::number(shiftNo));
+        ui->cashFloat_dateEdit->setDate(date);
+        ui->cashFloat_spinBox->setValue(shiftNo);
     }
 }
 
@@ -4405,6 +4411,9 @@ void MainWindow::on_EditShiftsButton_clicked()
             }
         }
     }
+
+    ui->comboBox_2->setCurrentIndex(1);
+    ui->comboBox_2->setCurrentIndex(0);
 }
 
 void MainWindow::on_cbox_roomLoc_currentTextChanged(const QString &arg1)
@@ -5635,6 +5644,16 @@ void MainWindow::on_btn_saveShift_clicked()
     on_EditShiftsButton_clicked();
 }
 
+void MainWindow::on_comboBox_2_currentTextChanged(const QString &arg1)
+{
+    QSqlQuery existcheck = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='" + arg1 + "'");
+
+    if (existcheck.next()) {
+        int numshifts = existcheck.value(11).toInt();
+        ui->comboBox_3->setCurrentIndex(numshifts-1);
+    }
+}
+
 void MainWindow::updatemenuforuser() {
     QSqlQuery roleq = dbManager->execQuery("SELECT Role FROM Employee WHERE Username='" + userLoggedIn + "'");
 
@@ -5753,9 +5772,12 @@ void MainWindow::on_storageDelete_clicked()
 
 
 
+
 void MainWindow::on_addStorageClient_clicked()
 {
     QSqlQuery result;
+    if(ui->tableWidget_search_client->selectionModel()->currentIndex().row() == -1)
+        return;
     result = dbManager->pullClient(curClientID);
     if(!result.next())
         return;

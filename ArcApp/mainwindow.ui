@@ -8400,7 +8400,7 @@ QHeaderView {
              <item row="0" column="1">
               <widget class="QStackedWidget" name="swdg_reports">
                <property name="currentIndex">
-                <number>0</number>
+                <number>1</number>
                </property>
                <widget class="QWidget" name="page_3">
                 <layout class="QGridLayout" name="gridLayout_34">
@@ -14370,6 +14370,9 @@ QHeaderView {
    </property>
   </action>
   <action name="actionExport_to_PDF">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Export to PDF</string>
    </property>

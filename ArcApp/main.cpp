@@ -6,7 +6,6 @@
 #include <worker.h>
 
 DatabaseManager* dbManager;
-
 // QThread* thread = new QThread;
 
 int main(int argc, char *argv[])
@@ -14,6 +13,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     dbManager = new DatabaseManager();
     LoginPrompt w;
+
     // MainWindow mw;
 
     // mw.hide();
