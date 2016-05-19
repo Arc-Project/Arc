@@ -1473,8 +1473,8 @@ int DatabaseManager::getMonthlyUniqueClients(int month, int year)
             + QString("EndDate > '" + firstDay.toString(Qt::ISODate) + "') OR ")
             + QString("(StartDate >= '" + firstDay.toString(Qt::ISODate) + "' AND ")
             + QString("StartDate <= '" + lastDay.toString(Qt::ISODate) + "')) ")
-            + QString("AND ClientId <> 68 ")
-            + QString("AND ClientId <> 69 AND Action <> 'DELETED'");
+            + QString("AND ClientId <> 1 ") // Anonymous id = 1
+            + QString("AND Action <> 'DELETE'");
     int numUniqueNamed = DatabaseManager::getIntFromQuery(queryString);
 
     queryString =
@@ -1484,8 +1484,8 @@ int DatabaseManager::getMonthlyUniqueClients(int month, int year)
         + QString("EndDate > '" + firstDay.toString(Qt::ISODate) + "') OR ")
         + QString("(StartDate >= '" + firstDay.toString(Qt::ISODate) + "' AND ")
         + QString("StartDate <= '" + lastDay.toString(Qt::ISODate) + "')) ")
-        + QString("AND (ClientId = 68 ")
-        + QString("OR ClientId = 69) AND Action <> 'DELETED'");
+        + QString("AND ClientId = 1 ") // Anonymous id = 1
+        + QString("AND Action <> 'DELETE'");
     int numAnonymous = DatabaseManager::getIntFromQuery(queryString);
     // qDebug() << queryString;
     // qDebug() << "numAnonymous " + QString::number(numAnonymous);
