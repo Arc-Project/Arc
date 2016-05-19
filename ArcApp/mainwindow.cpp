@@ -472,7 +472,10 @@ void MainWindow::popClientFromId(QString id){
     curClient->lName = result.record().value("LastName").toString();
     curClient->fullName = curClient->fName + " " +  curClient->mName + " "
             + curClient->lName;
-    curClient->balance = result.record().value("Balance").toString().toDouble();
+    QString balanceString = result.record().value("Balance").toString();
+    balanceString.replace("$", "");
+    curClient->balance =  balanceString.toDouble();
+    // curClient->balance = result.record().value("Balance").toString().toDouble();
 
 
 }
@@ -1000,7 +1003,10 @@ void MainWindow::handleNewPayment(int row){
     curClient = new Client();
     trans = new transaction();
     curClient->clientId = ui->mpTable->item(row,4)->text();
-    double balance = ui->mpTable->item(row, 3)->text().toDouble();
+    QString balanceString = ui->mpTable->item(row, 3)->text();
+    balanceString.replace("$", "");
+    double balance = balanceString.toDouble();
+    // double balance = ui->mpTable->item(row, 3)->text().toDouble();
     curClient->balance = balance;
     QString note = "Paying Outstanding Balance";
 
@@ -1204,9 +1210,11 @@ void MainWindow::on_pushButton_bookRoom_clicked()
             curClient->fName = ui->label_cl_info_fName_val->text();
             curClient->mName = ui->label_cl_info_mName_val->text();
             curClient->lName =  ui->label_cl_info_lName_val->text();
-            curClient->balance =  ui->label_cl_info_balance_amt->text().toFloat();
-
-            curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
+            QString balanceString = ui->label_cl_info_balance_amt->text();
+            balanceString.replace("$", "");
+            curClient->balance =  balanceString.toFloat();
+            curClient->fullName = QString(curClient->lName + ", " + curClient->fName + " " + curClient->mName);
+            // curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
         }
     }
     else{
@@ -1214,17 +1222,19 @@ void MainWindow::on_pushButton_bookRoom_clicked()
         curClient->fName =  ui->tableWidget_search_client->item(nRow, 1)->text();
         curClient->mName =  ui->tableWidget_search_client->item(nRow, 2)->text();
         curClient->lName =  ui->tableWidget_search_client->item(nRow, 3)->text();
-        curClient->balance =  ui->tableWidget_search_client->item(nRow, 5)->text().toFloat();
-
-        curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
+        QString balanceString = ui->tableWidget_search_client->item(nRow, 5)->text();
+        balanceString.replace("$", "");
+        curClient->balance =  balanceString.toFloat();
+        curClient->fullName = QString(curClient->lName + ", " + curClient->fName + " " + curClient->mName);
+        // curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
     }
 
 
-/*
-    qDebug()<<"ID: " << curClientID << curClient->clientId;
-    qDebug()<<"NAME: " << curClient->fullName;
-    qDebug()<<"Balance: " << curClient->balance;
-*/
+
+    // qDebug()<<"ID: " << curClientID << curClient->clientId;
+    // qDebug()<<"NAME: " << curClient->fullName;
+    // qDebug()<<"Balance: " << curClient->balance;
+
     ui->stackedWidget->setCurrentIndex(BOOKINGLOOKUP);
 
 }
@@ -1430,9 +1440,21 @@ void MainWindow::getListRegisterFields(QStringList* fieldList)
     QString caseWorkerId = QString::number(caseWorkerList.value(ui->comboBox_cl_caseWorker->currentText()));
     if(caseWorkerId == "0")
         caseWorkerId = "";
-    *fieldList << ui->lineEdit_cl_fName->text()
-               << ui->lineEdit_cl_mName->text()
-               << ui->lineEdit_cl_lName->text()
+
+    QString firstName = ui->lineEdit_cl_fName->text();
+    QString middleName = ui->lineEdit_cl_mName->text();
+    QString lastName = ui->lineEdit_cl_lName->text();
+
+    if (!firstName.isEmpty())
+        firstName[0].toUpper();
+    if (!middleName.isEmpty())
+        middleName[0].toUpper();
+    if (!lastName.isEmpty())
+        lastName[0].toUpper();
+
+    *fieldList << firstName
+               << middleName
+               << lastName
                << ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd")
                << ui->lineEdit_cl_SIN->text()
                << ui->lineEdit_cl_GANum->text()
@@ -1976,7 +1998,10 @@ void MainWindow::setSelectedClientInfo(){
             curClient->fName = ui->label_cl_info_fName_val->text();
             curClient->mName = ui->label_cl_info_mName_val->text();
             curClient->lName =  ui->label_cl_info_lName_val->text();
-            curClient->balance =  ui->label_cl_info_balance_amt->text().toFloat();
+            QString balanceString = ui->label_cl_info_balance_amt->text();
+            balanceString.replace("$", "");
+            curClient->balance =  balanceString.toFloat();
+            // curClient->balance =  ui->label_cl_info_balance_amt->text().toFloat();
 
             curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
         }
@@ -1986,17 +2011,20 @@ void MainWindow::setSelectedClientInfo(){
         curClient->fName =  ui->tableWidget_search_client->item(nRow, 1)->text();
         curClient->mName =  ui->tableWidget_search_client->item(nRow, 2)->text();
         curClient->lName =  ui->tableWidget_search_client->item(nRow, 3)->text();
-        curClient->balance =  ui->tableWidget_search_client->item(nRow, 5)->text().toFloat();
+        QString balanceString = ui->tableWidget_search_client->item(nRow, 5)->text();
+        balanceString.replace("$", "");
+        curClient->balance =  balanceString.toFloat();
+        // curClient->balance =  ui->tableWidget_search_client->item(nRow, 5)->text().toFloat();
 
         curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
     }
 
 
-/*
+
     qDebug()<<"ID: " << curClientID << curClient->clientId;
     qDebug()<<"NAME: " << curClient->fullName;
     qDebug()<<"Balance: " << curClient->balance;
-*/
+
     ui->stackedWidget->setCurrentIndex(BOOKINGLOOKUP);
 
 
@@ -3918,7 +3946,10 @@ void MainWindow::on_pushButton_processPaymeent_clicked()
     curClient->fName =  ui->tableWidget_search_client->item(nRow, 1)->text();
     curClient->mName =  ui->tableWidget_search_client->item(nRow, 2)->text();
     curClient->lName =  ui->tableWidget_search_client->item(nRow, 3)->text();
-    curClient->balance =  ui->tableWidget_search_client->item(nRow, 5)->text().toFloat();
+    QString balanceString = ui->tableWidget_search_client->item(nRow, 5)->text();
+    balanceString.replace("$", "");
+    curClient->balance =  balanceString.toFloat();
+    // curClient->balance =  ui->tableWidget_search_client->item(nRow, 5)->text().toFloat();
     curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
 
     trans = new transaction();
