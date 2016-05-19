@@ -1538,7 +1538,8 @@ void MainWindow::clear_client_register_form(){
 void MainWindow::read_curClient_Information(QString ClientId){
 //    QString searchClientQ = "SELECT * FROM Client WHERE ClientId = "+ ClientId;
 //    qDebug()<<"SEARCH QUERY: " + searchClientQ;
-    QSqlQuery clientInfo = dbManager->execQuery("SELECT * FROM Client WHERE ClientId = "+ ClientId);
+   // QSqlQuery clientInfo = dbManager->execQuery("SELECT * FROM Client WHERE ClientId = "+ ClientId);
+    QSqlQuery clientInfo = dbManager->searchTableClientInfo("Client", ClientId);
 //    dbManager->printAll(clientInfo);
     clientInfo.next();
 

@@ -63,6 +63,7 @@ public:
 
 
     QSqlQuery searchClientList(QString ClientName);
+    QSqlQuery searchTableClientInfo(QString tableName, QString ClientId);
     QSqlQuery searchClientInfo(QString ClientId);
     bool searchClientInfoPic(QImage * img, QString ClientId);
     QSqlQuery searchClientTransList(int maxNum, QString ClientId, int type);

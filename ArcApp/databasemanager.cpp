@@ -436,6 +436,16 @@ QSqlQuery DatabaseManager::searchClientList(QString ClientName){
 
 }
 
+QSqlQuery DatabaseManager::searchTableClientInfo(QString tableName, QString ClientId){
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery selectquery(db);
+    selectquery.prepare(QString("SELECT * FROM ")+ tableName
+                      + QString(" WHERE ClientId = ") + ClientId);
+    selectquery.exec();
+    return selectquery;
+
+}
+
 QSqlQuery DatabaseManager::searchClientInfo(QString ClientId){
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery selectquery(db);
