@@ -5649,6 +5649,8 @@ void MainWindow::on_storageDelete_clicked()
     int row = ui->storageTable->selectionModel()->currentIndex().row();
     if(row == -1)
         return;
+    if(!doMesageBox("Delete?"))
+        return;
     QString storeId;
     storeId = ui->storageTable->item(row, 4)->text();
     if(!dbManager->removeStorage(storeId))
