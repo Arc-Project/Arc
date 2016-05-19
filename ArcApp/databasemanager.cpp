@@ -112,13 +112,38 @@ QSqlQuery DatabaseManager::selectAll(QString tableName)
 {
     if (!db.open())
     {
-        emit noDatabaseConnection();
+        emit noDatabaseConnection(&db);
     }
     QSqlQuery query(db);
     query.exec("SELECT * FROM " + tableName);
     return query;
 }
 
+void DatabaseManager::reconnectToDatabase()
+{
+    if (!db.open())
+    {
+        emit noDatabaseConnection(&db);
+    }
+    else
+    {
+        qDebug() << "reconnection successful";
+        emit reconnectedToDatabase();
+    }
+}
+
+void DatabaseManager::reconnectToDatabase(QSqlDatabase* database)
+{
+    if (!database->open())
+    {
+        emit noDatabaseConnection(database);
+    }
+    else
+    {
+        qDebug() << "reconnection successful";
+        emit reconnectedToDatabase();
+    }
+}
 /*
  * Prints all the results of QSqlQuery object.
  *
@@ -146,7 +171,7 @@ QSqlQuery DatabaseManager::execQuery(QString queryString)
     qDebug()<<"execQuery. ";
     if (!db.open())
     {
-        emit noDatabaseConnection();
+        emit noDatabaseConnection(&db);
     }
     QSqlQuery query(db);
     query.exec(queryString);
@@ -156,6 +181,14 @@ QSqlQuery DatabaseManager::execQuery(QString queryString)
 bool DatabaseManager::execQuery(QSqlQuery* query, QString queryString)
 {
     return query->exec(queryString);
+}
+
+void DatabaseManager::checkDatabaseConnection(QSqlDatabase* database)
+{
+    if (!database->open())
+    {
+        emit noDatabaseConnection(database);
+    }
 }
 /*==============================================================================
 GENERAL QUERYS (END)
@@ -438,12 +471,27 @@ bool DatabaseManager::searchClientInfoPic(QImage * img, QString ClientId){
     return true;
 }
 
-QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId){
+QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId, int type = 0){
     QSqlQuery clientTransQuery;
-    clientTransQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) )
+    QString queryStart;
+    if(type == 1){
+        queryStart = "SELECT TOP "+ QString::number(maxNum)
+                   + QString("Date, Amount, Type, ChequeNo, MSQ, ChequeDate, TransType, EmpName ");
+    }else{
+        queryStart = "SELECT "
+                   + QString("Date, Amount, Type, ChequeNo, MSQ, ChequeDate, TransType, Deleted, Outstanding, EmpName, Notes ");
+    }
+  /*
+    clientTransQuery.prepare(queryStart
                            + QString(" t.Date, t.Amount, t.Type, e.Username, t.ChequeNo, t.ChequeDate, t.Deleted ")
                            + QString("FROM Transac t INNER JOIN Employee e ON t.EmpId = e.EmpId ")
                            + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC"));
+*/
+
+    clientTransQuery.prepare(queryStart
+                           + QString("FROM Transac ")
+                           + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC"));
+
     clientTransQuery.exec();
     return clientTransQuery;
 }
@@ -1412,6 +1460,31 @@ bool DatabaseManager::setPaid(QString id, QString chequeNo){
         return true;
     return false;
 }
+bool DatabaseManager::escapePayment(QString clientId, QString curDate, QString amount, QString type, QString notes, QString chequeNo, QString msd, QString issued,
+                                    QString transtype, QString outstanding, QString empId, QString shiftNo, QString time){
+
+    QSqlQuery query(db);
+    query.prepare("INSERT INTO Transac VALUES(:clientId, :curDate, :amount, :type, :notes, :chequeNo, :msd, :issued, :transtype, :deleted, :outstanding, :empId, :shiftNo, :time)");
+
+    query.bindValue(":clientId", clientId);
+    query.bindValue(":curdate", QDate::currentDate());
+    query.bindValue(":amount",amount );
+    query.bindValue(":type", type );
+    query.bindValue(":notes",notes );
+    query.bindValue(":chequeNo", chequeNo);
+    query.bindValue(":msd",msd );
+    query.bindValue(":issued",issued );
+    query.bindValue(":transtype",transtype );
+    query.bindValue(":deleted", "0");
+    query.bindValue(":outstanding",outstanding );
+    query.bindValue(":empId",empId );
+    query.bindValue(":shiftNo",shiftNo );
+    query.bindValue(":time",QTime::currentTime() );
+    return query.exec();
+
+
+}
+
 QSqlQuery DatabaseManager::getOutstanding(){
     QSqlQuery query(db);
     QString q = "SELECT * FROM Transac JOIN Client on Transac.ClientId = Client.ClientId WHERE Outstanding = 1";
@@ -1546,10 +1619,10 @@ QSqlQuery DatabaseManager::getActiveBooking(QString user, bool userLook){
     QString date = QDate::currentDate().toString(Qt::ISODate);
     QString q;
     if(!userLook){
-         q = "SELECT * FROM BOOKING JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '" + date + "'";
+         q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '" + date + "'";
     }
     else{
-         q = "SELECT * FROM BOOKING JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '" + date + "' AND ClientName LIKE '%" + user + "%'";
+         q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '" + date + "' AND ClientName LIKE '%" + user + "%'";
 
     }
     qDebug() << q;

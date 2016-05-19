@@ -252,6 +252,8 @@ void EditRooms::on_editRoom_itemSelectionChanged()
 bool EditRooms::checkNumber(QString num){
     int l = num.length();
     int period = 0;
+    if(l > 8)
+        return false;
     char copy[l];
     strcpy(copy, num.toStdString().c_str());
     for(int i = 0; i < num.length(); i++){
@@ -380,6 +382,7 @@ void EditRooms::on_editOkButton_clicked()
         double costDiff;
         costDiff = ui->curCost->text().toDouble() - curBook->cost;
         dbManager->updateBalance(curClient->balance + costDiff, curClient->clientId);
+        curClient->balance+= costDiff;
         QString q = "UPDATE Booking SET Cost='" + QString::number(curBook->cost) +"', SpaceId ='" + curBook->roomId +
                 "' WHERE BookingId='" + curBook->bookID + "'";
         dbManager->updateBooking(q);

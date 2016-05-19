@@ -44,6 +44,9 @@
         <file>img/radio_unchecked.png</file>
         <file>img/pause-circle.png</file>
         <file>img/play-circle.png</file>
+        <file>img/rewind.png</file>
+        <file>img/stop.png</file>
+        <file>img/jump_to_live.png</file>
     </qresource>
     <qresource prefix="/arcstyle">
         <file>style.qss</file>
@@ -53,5 +56,8 @@
         <file>pdf/daily.xml</file>
         <file>pdf/shift.xml</file>
         <file>pdf/float.xml</file>
+        <file>pdf/pcp.xml</file>
+        <file>pdf/restriction.xml</file>
+        <file>pdf/monthly.xml</file>
     </qresource>
 </RCC>

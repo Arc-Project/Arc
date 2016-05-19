@@ -33,6 +33,7 @@ public:
     void printAll(QSqlQuery queryResults);
     QSqlQuery execQuery(QString queryString);
     bool execQuery(QSqlQuery* query, QString queryString);
+    void checkDatabaseConnection(QSqlDatabase* database);
 
     /*==========================================================================
     FILE DOWNLOAD AND UPLOAD RELATED FUNCTIONS
@@ -63,7 +64,7 @@ public:
     QSqlQuery searchClientList(QString ClientName);
     QSqlQuery searchClientInfo(QString ClientId);
     bool searchClientInfoPic(QImage * img, QString ClientId);
-    QSqlQuery searchClientTransList(int maxNum, QString ClientId);
+    QSqlQuery searchClientTransList(int maxNum, QString ClientId, int type);
     QSqlQuery searchBookList(int maxNum, QString clientId);
     int countInformationPerClient(QString tableName, QString ClientId);
 
@@ -97,6 +98,8 @@ public:
     bool getYellowRestrictionQuery(QSqlQuery* queryResults);
     bool getRedRestrictionQuery(QSqlQuery* queryResults);
     bool getDoubleFromQuery(QString queryString, double* result);
+    void reconnectToDatabase();
+    void reconnectToDatabase(QSqlDatabase* database);
 
     //COLIN STUFF/////////////////////////////////////////////////////////////
     QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);
@@ -132,6 +135,8 @@ public:
     bool updateLunchRoom(QDate startDate, QDate endDate, QString clientId, QString rooomId);
     bool updateWakeupRoom(QDate startDate, QDate endDate, QString clientId, QString rooomId);
     QSqlQuery getBooking(QString bId);
+    bool escapePayment(QString clientId, QString curDate, QString amount, QString type, QString notes, QString chequeNo, QString msd, QString issued,
+                                        QString transtype, QString outstanding, QString empId, QString shiftNo, QString time);
 
     //END COLIN STUFF///////////////////////////////////////////////////////
     void print();
@@ -164,8 +169,9 @@ signals:
     void cashFloatInserted(QString empName, QString currentDateStr, 
         QString currentTimeStr);
     void monthlyReportChanged(QStringList list);
-    void noDatabaseConnection();
-;
+    void noDatabaseConnection(QSqlDatabase* database);
+    void reconnectedToDatabase();
+
 private:
     QSqlDatabase db = QSqlDatabase::database();
     static QMutex mutex;

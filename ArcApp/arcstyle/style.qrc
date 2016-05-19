@@ -56,5 +56,8 @@
         <file>pdf/daily.xml</file>
         <file>pdf/shift.xml</file>
         <file>pdf/float.xml</file>
+        <file>pdf/pcp.xml</file>
+        <file>pdf/restriction.xml</file>
+        <file>pdf/monthly.xml</file>
     </qresource>
 </RCC>
