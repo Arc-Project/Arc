@@ -2577,10 +2577,13 @@ void MainWindow::on_tabw_casefiles_currentChanged(int index)
     switch(index)
     {
         case PERSIONACASEPLAN:
+            ui->actionExport_to_PDF->setEnabled(true);
             break;
         case RUNNINGNOTE:
+            ui->actionExport_to_PDF->setEnabled(true);
             break;
-        case BOOKINGHISTORY:            
+        case BOOKINGHISTORY:
+            ui->actionExport_to_PDF->setEnabled(false);
             if(!newHistory)
                 break;
             on_pushButton_casefile_book_reload_clicked();
@@ -2594,6 +2597,7 @@ void MainWindow::on_tabw_casefiles_currentChanged(int index)
             break;
 
         case TRANSACTIONHISTORY:
+            ui->actionExport_to_PDF->setEnabled(false);
             if(!newTrans)
                 break;
             on_pushButton_casefile_trans_reload_clicked();
@@ -4706,11 +4710,18 @@ void MainWindow::on_actionExport_to_PDF_triggered()
     } else
 
     // case files pcp
-    if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == 0){
+    if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == PERSIONACASEPLAN){
         rptTemplate = ":/templates/pdf/pcp.xml";
         for (auto x: pcp_tables) {
             report->recordCount << x->rowCount();
         }
+    }
+
+    // case files pcp
+    if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == RUNNINGNOTE){
+        rptTemplate = ":/templates/pdf/running.xml";
+        report->recordCount << 1;
+
     }
 
     report->loadReport(rptTemplate);
@@ -4749,8 +4760,13 @@ void MainWindow::setValue(const int recNo, const QString paramName, QVariant &pa
     } else
 
     // case files pcp
-    if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == 0){
+    if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == PERSIONACASEPLAN){
         printPCP(recNo, paramName, paramValue, reportPage);
+    }
+
+    // case files running notes
+    if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == RUNNINGNOTE){
+        printRunningNotes(recNo, paramName, paramValue, reportPage);
     }
 }
 
@@ -4976,7 +4992,14 @@ void MainWindow::printPCP(const int recNo, const QString paramName, QVariant &pa
     }
 }
 
-
+void MainWindow::printRunningNotes(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
+    Q_UNUSED(reportPage);
+    Q_UNUSED(recNo);
+    if (paramName == "notes") {
+        if (ui->te_notes->document()->toPlainText().isEmpty()) return;
+            paramValue = ui->te_notes->document()->toPlainText();
+    }
+}
 
 void MainWindow::on_btn_createNewUser_3_clicked()
 {
