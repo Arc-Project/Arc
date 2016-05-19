@@ -686,7 +686,7 @@ QHeaderView {
            </font>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_cl_general">
            <attribute name="title">
@@ -703,7 +703,7 @@ QHeaderView {
                    <enum>Qt::Horizontal</enum>
                   </property>
                   <property name="sizeType">
-                   <enum>QSizePolicy::MinimumExpanding</enum>
+                   <enum>QSizePolicy::Minimum</enum>
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
@@ -741,7 +741,7 @@ QHeaderView {
                    <enum>Qt::Horizontal</enum>
                   </property>
                   <property name="sizeType">
-                   <enum>QSizePolicy::MinimumExpanding</enum>
+                   <enum>QSizePolicy::Minimum</enum>
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
@@ -4633,7 +4633,7 @@ QHeaderView {
            </font>
           </property>
           <property name="currentIndex">
-           <number>3</number>
+           <number>2</number>
           </property>
           <property name="movable">
            <bool>true</bool>
@@ -6723,6 +6723,24 @@ QHeaderView {
                   </property>
                  </spacer>
                 </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_casefile_book_reload">
+                  <property name="minimumSize">
+                   <size>
+                    <width>70</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>10</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Reload</string>
+                  </property>
+                 </widget>
+                </item>
                </layout>
               </item>
               <item>
@@ -6777,6 +6795,9 @@ QHeaderView {
                 </property>
                 <property name="selectionBehavior">
                  <enum>QAbstractItemView::SelectRows</enum>
+                </property>
+                <property name="sortingEnabled">
+                 <bool>true</bool>
                 </property>
                 <attribute name="verticalHeaderVisible">
                  <bool>false</bool>
@@ -6895,6 +6916,24 @@ QHeaderView {
                   </property>
                  </spacer>
                 </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_casefile_trans_reload">
+                  <property name="minimumSize">
+                   <size>
+                    <width>70</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>10</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Reload</string>
+                  </property>
+                 </widget>
+                </item>
                </layout>
               </item>
               <item>
@@ -6946,6 +6985,9 @@ QHeaderView {
                 </property>
                 <property name="selectionBehavior">
                  <enum>QAbstractItemView::SelectRows</enum>
+                </property>
+                <property name="sortingEnabled">
+                 <bool>true</bool>
                 </property>
                 <attribute name="horizontalHeaderStretchLastSection">
                  <bool>true</bool>
