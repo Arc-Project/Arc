@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     mycalendar.cpp \
     editrooms.cpp \
     swapper.cpp \
-    addmsd.cpp
+    addmsd.cpp \
+    worker.cpp
 
 HEADERS  += mainwindow.h \
     databasemanager.h \
@@ -52,7 +53,8 @@ HEADERS  += mainwindow.h \
     mycalendar.h \
     editrooms.h \
     swapper.h \
-    addmsd.h
+    addmsd.h \
+    worker.h
 
 FORMS    += mainwindow.ui \
     loginprompt.ui \

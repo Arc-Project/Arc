@@ -34,6 +34,7 @@ public:
     QSqlQuery execQuery(QString queryString);
     bool execQuery(QSqlQuery* query, QString queryString);
     void checkDatabaseConnection(QSqlDatabase* database);
+    bool checkDatabaseConnection();
 
     /*==========================================================================
     FILE DOWNLOAD AND UPLOAD RELATED FUNCTIONS
@@ -64,8 +65,9 @@ public:
     QSqlQuery searchClientList(QString ClientName);
     QSqlQuery searchClientInfo(QString ClientId);
     bool searchClientInfoPic(QImage * img, QString ClientId);
-    QSqlQuery searchClientTransList(int maxNum, QString ClientId);
+    QSqlQuery searchClientTransList(int maxNum, QString ClientId, int type);
     QSqlQuery searchBookList(int maxNum, QString clientId);
+    QSqlQuery searchBookList(int maxNum, QString clientId, int type);
     int countInformationPerClient(QString tableName, QString ClientId);
 
     /*==========================================================================
@@ -83,7 +85,7 @@ public:
     int getIntFromQuery(QString queryString);
     bool getShiftReportBookingQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
     bool getShiftReportTransactionQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
-    int getShiftReportTotal(QDate date, int shiftNo, QString payType, double* result);
+    bool getShiftReportTotal(QDate date, int shiftNo, QString payType, double* result);
     void getShiftReportStatsThread(QDate date, int shiftNo);
     bool getShiftReportClientLogQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
     bool getShiftReportOtherQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
@@ -163,13 +165,14 @@ public:
     QSqlQuery readNote(QString clientId);
 
 signals:
-    void dailyReportStatsChanged(QList<int> list);
-    void shiftReportStatsChanged(QStringList list);
-    void cashFloatChanged(QDate date, int shiftNo, QStringList list);
+    void dailyReportStatsChanged(QList<int> list, bool conn);
+    void shiftReportStatsChanged(QStringList list, bool conn);
+    void cashFloatChanged(QDate date, int shiftNo, QStringList list, bool conn);
     void cashFloatInserted(QString empName, QString currentDateStr, 
         QString currentTimeStr);
-    void monthlyReportChanged(QStringList list);
+    void monthlyReportChanged(QStringList list, bool conn);
     void noDatabaseConnection(QSqlDatabase* database);
+    void noDatabaseConnection();
     void reconnectedToDatabase();
 
 private:

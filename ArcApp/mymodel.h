@@ -18,11 +18,11 @@ public:
     bool setData(QStringList* data, int rowCount, int colCount);
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     void setTitle(QStringList* title);
-private:
-    QStringList* tableTitle = NULL;
     QStringList* tableData = NULL;
     int rows = 0;
     int cols = 0;
+private:
+    QStringList* tableTitle = NULL;
 
 };
 

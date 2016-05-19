@@ -66,10 +66,13 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    static QThread* thread;
+
     QString userLoggedIn = "SOMEUSER";
     int currentshiftid = 0;
 
     bookingManager book;
+    void searchClientListThread();
     void setup_searchClientTable(QSqlQuery results);
     void displayClientInfoThread(QString val);
     void addInfoPic(QImage img);
@@ -78,7 +81,6 @@ public:
     void setSelectedClientInfo();
     void initClBookHistoryTable();
     void initClTransactionTable();
-    void initClTransactionTable(QTableWidget* table);
 
     void getRegisterLogFields(QStringList* fieldList);
     void getCurrentClientId();   //get client id from client list table
@@ -109,14 +111,19 @@ public:
 
     //COLIN END//////
 
+    void updatemenuforuser();
+
     /*==========================================================================
     DEV TESTING AUXILIARY FUNCTIONS
     ==========================================================================*/
     QString browse();
 
+public slots:
+    void setShift(int shiftno);
 
 signals:
     void displayPic(QByteArray a);
+    void shiftnochanged(int shiftno);
 
 private slots:
     //COLIN SLOTS ////////////////////////////////////////
@@ -179,13 +186,13 @@ private slots:
     ==========================================================================*/
     void on_dailyReportGo_btn_clicked();
     void on_dailyReportCurrent_btn_clicked();
-    void updateDailyReportStats(QList<int> list);
+    void updateDailyReportStats(QList<int> list, bool conn);
     void on_shiftReportGo_btn_clicked();
     void on_shiftReportCurrent_btn_clicked();
-    void updateShiftReportStats(QStringList list);
+    void updateShiftReportStats(QStringList list, bool conn);
     void on_saveOther_btn_clicked();
     void on_other_lineEdit_textEdited(const QString &text);
-    void updateCashFloat(QDate date, int shiftNo, QStringList list);
+    void updateCashFloat(QDate date, int shiftNo, QStringList list, bool conn);
     void updateCashFloatLastEditedLabels(QString empName, 
         QString currentDateStr, QString currentTimeStr);
     void on_saveFloat_btn_clicked();
@@ -193,8 +200,9 @@ private slots:
     void on_cashFloatGo_btn_clicked();
     void on_cashFloatCurrent_btn_clicked();
     void on_monthlyReportGo_btn_clicked();
-    void updateMonthlyReportUi(QStringList list);
+    void updateMonthlyReportUi(QStringList list, bool conn);
     void on_restrictionRefresh_btn_clicked();
+    void on_noDatabaseConnection();
     void on_noDatabaseConnection(QSqlDatabase* database);
     
     void on_reconnectedToDatabase();
@@ -227,9 +235,9 @@ private slots:
     void searchTransaction(QString clientId);
 
     void displayTransaction(QSqlQuery results);
-
+    void displayTransaction(QSqlQuery results, QTableWidget* table);
     void displayBookHistory(QSqlQuery results);
-
+    void displayBookHistory(QSqlQuery results, QTableWidget* table);
     void searchBookHistory(QString clientId);
 
     /*==========================================================================
@@ -255,6 +263,8 @@ private slots:
     void on_button_cl_delPic_clicked();
 
     void addPic(QImage pict);
+
+    void getCaseWorkerList();
 
     void defaultRegisterOptions();
 
@@ -471,6 +481,14 @@ private slots:
 
     void on_cbox_roomType_currentTextChanged(const QString &arg1);
 
+    //CASEFILE TRANSACTION TABLE
+    void initCasefileTransactionTable();
+    void searchCasefileTransaction(QString clientId);
+
+    void initCasefileBookHistoryTable();
+    void searchCasefileBookHistory(QString clientId);
+    //CASEFILE BOOKING HISTORY TABLE
+
     void on_tabWidget_cl_info_currentChanged(int index);
 
     void on_tableWidget_search_client_itemClicked();
@@ -524,6 +542,10 @@ private slots:
     void setValue(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
 
     void printPCP(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
+
+    void printDailyReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
+
+    void printShiftReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
 
     void on_comboBox_3_currentTextChanged(const QString &arg1);
 
