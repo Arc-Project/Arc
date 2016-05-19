@@ -4724,21 +4724,21 @@ void MainWindow::printShiftReport(const int recNo, const QString paramName, QVar
         } else if (paramName == "type") {
             paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 2);
         } else if (paramName == "msdd") {
-            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 3);
-        } else if (paramName == "cno") {
             paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 4);
-        } else if (paramName == "cdate") {
+        } else if (paramName == "cno") {
             paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 5);
-        } else if (paramName == "status") {
+        } else if (paramName == "cdate") {
             paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 6);
-        } else if (paramName == "deleted") {
+        } else if (paramName == "status") {
             paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 7);
-        } else if (paramName == "employee") {
+        } else if (paramName == "deleted") {
             paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 8);
-        } else if (paramName == "time") {
+        } else if (paramName == "employee") {
             paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 9);
-        } else if (paramName == "notes") {
+        } else if (paramName == "time") {
             paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 10);
+        } else if (paramName == "amt") {
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 3);
         }
     } else if (reportPage == 2) {
         if (paramName == "client") {
