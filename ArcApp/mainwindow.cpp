@@ -505,6 +505,7 @@ void MainWindow::popEditPage(){
         programs << compProgram;
         x++;
     }
+    ui->editProgramDrop->clear();
     ui->editProgramDrop->addItems(programs);
     ui->editProgramDrop->setCurrentIndex(index);
     ui->editRoomLabel->setText(curBook->room);
@@ -1538,7 +1539,8 @@ void MainWindow::clear_client_register_form(){
 void MainWindow::read_curClient_Information(QString ClientId){
 //    QString searchClientQ = "SELECT * FROM Client WHERE ClientId = "+ ClientId;
 //    qDebug()<<"SEARCH QUERY: " + searchClientQ;
-    QSqlQuery clientInfo = dbManager->execQuery("SELECT * FROM Client WHERE ClientId = "+ ClientId);
+   // QSqlQuery clientInfo = dbManager->execQuery("SELECT * FROM Client WHERE ClientId = "+ ClientId);
+    QSqlQuery clientInfo = dbManager->searchTableClientInfo("Client", ClientId);
 //    dbManager->printAll(clientInfo);
     clientInfo.next();
 
@@ -2217,7 +2219,7 @@ void MainWindow::on_pushButton_cl_book_more_clicked()
     bookingNum +=5;
     searchBookHistory(curClientID);
     if(ui->tableWidget_booking->rowCount() >= bookingTotal )
-        ui->pushButton_cl_trans_more->setEnabled(false);
+        ui->pushButton_cl_book_more->setEnabled(false);
 }
 
 
@@ -2267,9 +2269,16 @@ void MainWindow::initClientLookupInfo(){
     //initialize transaction
     initClTransactionTable();
 
+    //initialize transaction total count
+    transacTotal = 0;
+    ui->label_cl_trans_total_num->setText("");
+
     //initialize booking history table
+    bookingTotal = 0;
     initClBookHistoryTable();
 
+    //initialize booking total count
+    ui->label_cl_booking_total_num->setText("");
 
     //disable buttons that need a clientId
     if(curClientID == NULL){
@@ -5634,3 +5643,68 @@ void MainWindow::on_editRemoveCheque_clicked()
     ui->mpTable->removeRow(row);
 }
 
+
+void MainWindow::on_storage_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(STORAGEPAGE);
+}
+
+void MainWindow::on_storesearch_clicked()
+{
+    QSqlQuery result;
+    result = dbManager->getFullStorage();
+    QStringList header, cols;
+    header << "Name" << "Date" << "Items" << "" << "";
+    cols   << "StorageUserName" << "StorageDate" << "StorageItems" << "ClientId" << "StorageId";
+    populateATable(ui->storageTable,header,cols, result, true);
+    ui->storageTable->setColumnHidden(3, true);
+    ui->storageTable->setColumnHidden(4, true);
+
+}
+
+void MainWindow::on_confirmStorage_clicked()
+{
+    Storage * store = new Storage(this, curClient->clientId, curClient->fullName, "", "");
+    store->exec();
+
+
+    delete(store);
+}
+
+void MainWindow::on_storageEdit_clicked()
+{
+    int row = ui->storageTable->selectionModel()->currentIndex().row();
+    if(row == -1)
+        return;
+    QString client, storeId, items, name;
+    client = ui->storageTable->item(row, 3)->text();
+    storeId = ui->storageTable->item(row, 4)->text();
+    items = ui->storageTable->item(row, 2)->text();
+    name = ui->storageTable->item(row, 0)->text();
+    Storage * store = new Storage(this, client, name, items, storeId);
+    store->exec();
+    delete(store);
+    on_storesearch_clicked();
+}
+
+void MainWindow::on_storageTable_itemClicked(QTableWidgetItem *item)
+{
+    int row = item->row();
+    QString items = ui->storageTable->item(row, 2)->text();
+    ui->storageInfo->clear();
+    ui->storageInfo->setEnabled(false);
+    ui->storageInfo->insertPlainText(items);
+}
+
+void MainWindow::on_storageDelete_clicked()
+{
+    int row = ui->storageTable->selectionModel()->currentIndex().row();
+    if(row == -1)
+        return;
+    if(!doMessageBox("Are you sure you want to delete?"))
+        return;
+    QString storeId;
+    storeId = ui->storageTable->item(row, 4)->text();
+    if(!dbManager->removeStorage(storeId))
+        qDebug() << "Error removing storage";
+}

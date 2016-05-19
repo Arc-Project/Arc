@@ -17,6 +17,7 @@
 #define CONFIRMBOOKING      13
 #define EDITPAGE            14
 #define EDITSHIFT           15
+#define STORAGEPAGE         16
 #define DAILYREPORT         0
 #define SHIFTREPORT         1
 #define FLOATCOUNT          2
@@ -52,6 +53,7 @@
 #include "editrooms.h"
 #include "addmsd.h"
 #include "mycalendar.h"
+#include "storage.h"
 #include <QPointer>
 #include "worker.h"
 
@@ -558,6 +560,18 @@ private slots:
     void on_editRemoveCheque_clicked();
     void on_tabw_casefiles_currentChanged(int index);
 
+
+    void on_storage_clicked();
+
+    void on_storesearch_clicked();
+
+    void on_confirmStorage_clicked();
+
+    void on_storageEdit_clicked();
+
+    void on_storageTable_itemClicked(QTableWidgetItem *item);
+
+    void on_storageDelete_clicked();
 
 private:
 
