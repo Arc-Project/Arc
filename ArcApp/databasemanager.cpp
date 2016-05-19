@@ -580,6 +580,11 @@ QSqlQuery DatabaseManager::searchBookList(int maxNum, QString clientId, int type
     return clientBookingQuery;
 }
 
+/*-------------------------------------------------------
+ * COUNT HOW MANY INFO A CLIENT HAVE IN THE TABLE
+ - tableName : the table name want to search
+ - ClientId  : the client id to search
+  -------------------------------------------------------*/
 int DatabaseManager::countInformationPerClient(QString tableName, QString ClientId){
     QSqlQuery countQuery;
     countQuery.prepare(QString("SELECT COUNT(*) FROM " + tableName )
@@ -616,6 +621,9 @@ bool DatabaseManager::uploadProfilePic(QSqlDatabase* tempDbPtr, QString connName
     }
     return false;
 }
+
+
+
 bool DatabaseManager::insertIntoBookingHistory(QString clientName, QString spaceId, QString program, QString start, QString end, QString action, QString emp, QString shift, QString clientId){
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
@@ -775,7 +783,9 @@ bool DatabaseManager::insertClientLog(QStringList* registerFieldList)
     }
     return false;
 }
-
+/* .............................................................
+         CLIENT REGISTER FINISHED
+  ==============================================================*/
 
 QSqlQuery DatabaseManager::getBooking(QString bId){
     DatabaseManager::checkDatabaseConnection(&db);

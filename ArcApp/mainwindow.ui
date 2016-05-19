@@ -125,7 +125,7 @@ QHeaderView {
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -686,7 +686,7 @@ QHeaderView {
            </font>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="tab_cl_general">
            <attribute name="title">
@@ -2029,7 +2029,7 @@ QHeaderView {
                 </property>
                 <property name="font">
                  <font>
-                  <pointsize>10</pointsize>
+                  <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="contextMenuPolicy">
@@ -2219,7 +2219,7 @@ QHeaderView {
                 </property>
                 <property name="font">
                  <font>
-                  <pointsize>10</pointsize>
+                  <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="contextMenuPolicy">
@@ -6681,7 +6681,7 @@ QHeaderView {
                  <widget class="QLabel" name="label_casefile_booking_total">
                   <property name="font">
                    <font>
-                    <pointsize>10</pointsize>
+                    <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -6693,13 +6693,13 @@ QHeaderView {
                  <widget class="QLabel" name="label_casefile_booking_total_num">
                   <property name="minimumSize">
                    <size>
-                    <width>40</width>
+                    <width>100</width>
                     <height>0</height>
                    </size>
                   </property>
                   <property name="font">
                    <font>
-                    <pointsize>10</pointsize>
+                    <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -6763,7 +6763,7 @@ QHeaderView {
                 </property>
                 <property name="font">
                  <font>
-                  <pointsize>10</pointsize>
+                  <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="contextMenuPolicy">
@@ -6929,7 +6929,7 @@ QHeaderView {
                 </property>
                 <property name="font">
                  <font>
-                  <pointsize>10</pointsize>
+                  <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="contextMenuPolicy">
