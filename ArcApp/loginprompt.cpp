@@ -31,7 +31,7 @@ void LoginPrompt::on_btn_login_clicked()
 
         int numrows = queryResults.numRowsAffected();
 
-        if (numrows != 0) {
+        if (numrows > 0) {
             validLogin = true;
             qDebug("valid login");
         } else {
