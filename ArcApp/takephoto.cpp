@@ -13,13 +13,14 @@ TakePhoto::TakePhoto(QWidget *parent) :
 
 TakePhoto::~TakePhoto()
 {
-    cam->stop();
+
     delete ui;
 }
 
 
 void TakePhoto::processImage(int i, QImage img)
 {
+    Q_UNUSED(i);
     qDebug()<<"processImg";
     QImage scaledImg = img.scaledToWidth(300);
     emit showPic(scaledImg);
@@ -31,7 +32,7 @@ void TakePhoto::processImage(int i, QImage img)
 
 //BLOCK TO STORE IMAGE(delete right after taking a picture)
 void TakePhoto::deleteImage(int id, QString fileName){
-
+    Q_UNUSED(id);
     qDebug()<<"\nsavedimage : "<<fileName;
     QFile file(fileName);
       QFileInfo fi(file);
@@ -133,6 +134,8 @@ void TakePhoto::on_pushButtons_camstart_clicked()
 void TakePhoto::checkCam(QCamera::Error error){
     QString msg;
     switch(error){
+        case QCamera::NoError:
+            break;
         case QCamera::CameraError:
             qDebug()<<"Camera ERROR OCCURED";
             msg = "Camera ERROR OCCURED";
@@ -168,4 +171,10 @@ void TakePhoto::on_pushButton_piccapture_clicked()
 {
     cam->searchAndLock();
     cic->capture();
+}
+
+void TakePhoto::closeEvent(QCloseEvent *end){
+    cam->stop();
+    QWidget::closeEvent(end);
+
 }

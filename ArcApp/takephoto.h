@@ -52,6 +52,7 @@ private slots:
 
 private:
     Ui::TakePhoto *ui;
+    void closeEvent(QCloseEvent *end);
 };
 
 #endif // TAKEPHOTO_H
