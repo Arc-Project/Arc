@@ -3648,6 +3648,7 @@ void MainWindow::updateShiftReportTables(QDate date, int shiftNo)
     ui->lbl_shiftReportDateVal->setText(date.toString(Qt::ISODate));
     ui->lbl_shiftReportShiftVal->setText(QString::number(shiftNo));
     ui->shiftReport_dateEdit->setDate(date);
+    ui->shiftReport_spinBox->setValue(currentshiftid);
 }
 
 void MainWindow::on_dailyReportGo_btn_clicked()
@@ -3783,6 +3784,8 @@ void MainWindow::updateCashFloat(QDate date, int shiftNo, QStringList list, bool
 
         ui->cashFloatDate_lbl->setText(date.toString(Qt::ISODate));
         ui->cashFloatShift_lbl->setText(QString::number(shiftNo));
+        ui->cashFloat_dateEdit->setDate(date);
+        ui->cashFloat_spinBox->setValue(shiftNo);
     }
 }
 
