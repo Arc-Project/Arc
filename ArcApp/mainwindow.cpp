@@ -505,6 +505,7 @@ void MainWindow::popEditPage(){
         programs << compProgram;
         x++;
     }
+    ui->editProgramDrop->clear();
     ui->editProgramDrop->addItems(programs);
     ui->editProgramDrop->setCurrentIndex(index);
     ui->editRoomLabel->setText(curBook->room);
@@ -1538,7 +1539,8 @@ void MainWindow::clear_client_register_form(){
 void MainWindow::read_curClient_Information(QString ClientId){
 //    QString searchClientQ = "SELECT * FROM Client WHERE ClientId = "+ ClientId;
 //    qDebug()<<"SEARCH QUERY: " + searchClientQ;
-    QSqlQuery clientInfo = dbManager->execQuery("SELECT * FROM Client WHERE ClientId = "+ ClientId);
+   // QSqlQuery clientInfo = dbManager->execQuery("SELECT * FROM Client WHERE ClientId = "+ ClientId);
+    QSqlQuery clientInfo = dbManager->searchTableClientInfo("Client", ClientId);
 //    dbManager->printAll(clientInfo);
     clientInfo.next();
 
@@ -2217,7 +2219,7 @@ void MainWindow::on_pushButton_cl_book_more_clicked()
     bookingNum +=5;
     searchBookHistory(curClientID);
     if(ui->tableWidget_booking->rowCount() >= bookingTotal )
-        ui->pushButton_cl_trans_more->setEnabled(false);
+        ui->pushButton_cl_book_more->setEnabled(false);
 }
 
 
@@ -2267,9 +2269,16 @@ void MainWindow::initClientLookupInfo(){
     //initialize transaction
     initClTransactionTable();
 
+    //initialize transaction total count
+    transacTotal = 0;
+    ui->label_cl_trans_total_num->setText("");
+
     //initialize booking history table
+    bookingTotal = 0;
     initClBookHistoryTable();
 
+    //initialize booking total count
+    ui->label_cl_booking_total_num->setText("");
 
     //disable buttons that need a clientId
     if(curClientID == NULL){
@@ -4688,6 +4697,12 @@ void MainWindow::on_actionExport_to_PDF_triggered()
                             << otherReport->model.rows;
     } else
 
+    // reports: float count
+    if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == FLOATCOUNT){
+        rptTemplate = ":/templates/pdf/float.xml";
+        report->recordCount << 1;
+    }
+
     // case files pcp
     if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == 0){
         rptTemplate = ":/templates/pdf/pcp.xml";
@@ -4715,6 +4730,11 @@ void MainWindow::setValue(const int recNo, const QString paramName, QVariant &pa
     if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == SHIFTREPORT){
         printShiftReport(recNo, paramName, paramValue, reportPage);
     } else
+
+    // reports: float count
+    if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == FLOATCOUNT){
+        printFloatReport(recNo, paramName, paramValue, reportPage);
+    }
 
     // case files pcp
     if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == 0){
@@ -4853,6 +4873,39 @@ void MainWindow::printShiftReport(const int recNo, const QString paramName, QVar
         } else if (paramName == "log") {
             paramValue = otherReport->model.tableData->at(recNo * otherReport->model.cols + 2);
         }
+    }
+}
+
+void MainWindow::printFloatReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage){
+    Q_UNUSED(reportPage);
+    if (paramName == "nickel") {
+        paramValue = ui->sbox_nickels->text();
+    } else if (paramName == "dime") {
+        paramValue = ui->sbox_dimes->text();
+    } else if (paramName == "quarter") {
+        paramValue = ui->sbox_quarters->text();
+    } else if (paramName == "loonie") {
+        paramValue = ui->sbox_loonies->text();
+    } else if (paramName == "toonies") {
+        paramValue = ui->sbox_toonies->text();
+    } else if (paramName == "five") {
+        paramValue = ui->sbox_fives->text();
+    } else if (paramName == "ten") {
+        paramValue = ui->sbox_tens->text();
+    } else if (paramName == "twenty") {
+        paramValue = ui->sbox_twenties->text();
+    } else if (paramName == "fifty") {
+        paramValue = ui->sbox_fifties->text();
+    } else if (paramName == "hundred") {
+        paramValue = ui->sbox_hundreds->text();
+    } else if (paramName == "total") {
+        paramValue = ui->lbl_floatAmt->text();
+    } else if (paramName == "date") {
+        paramValue = ui->cashFloatDate_lbl->text();
+    } else if (paramName == "shift") {
+        paramValue = ui->cashFloatShift_lbl->text();
+    } else if (paramName == "comment") {
+        paramValue = ui->pte_floatMemo->document()->toPlainText();
     }
 }
 
@@ -5601,3 +5654,68 @@ void MainWindow::on_editRemoveCheque_clicked()
     ui->mpTable->removeRow(row);
 }
 
+
+void MainWindow::on_storage_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(STORAGEPAGE);
+}
+
+void MainWindow::on_storesearch_clicked()
+{
+    QSqlQuery result;
+    result = dbManager->getFullStorage();
+    QStringList header, cols;
+    header << "Name" << "Date" << "Items" << "" << "";
+    cols   << "StorageUserName" << "StorageDate" << "StorageItems" << "ClientId" << "StorageId";
+    populateATable(ui->storageTable,header,cols, result, true);
+    ui->storageTable->setColumnHidden(3, true);
+    ui->storageTable->setColumnHidden(4, true);
+
+}
+
+void MainWindow::on_confirmStorage_clicked()
+{
+    Storage * store = new Storage(this, curClient->clientId, curClient->fullName, "", "");
+    store->exec();
+
+
+    delete(store);
+}
+
+void MainWindow::on_storageEdit_clicked()
+{
+    int row = ui->storageTable->selectionModel()->currentIndex().row();
+    if(row == -1)
+        return;
+    QString client, storeId, items, name;
+    client = ui->storageTable->item(row, 3)->text();
+    storeId = ui->storageTable->item(row, 4)->text();
+    items = ui->storageTable->item(row, 2)->text();
+    name = ui->storageTable->item(row, 0)->text();
+    Storage * store = new Storage(this, client, name, items, storeId);
+    store->exec();
+    delete(store);
+    on_storesearch_clicked();
+}
+
+void MainWindow::on_storageTable_itemClicked(QTableWidgetItem *item)
+{
+    int row = item->row();
+    QString items = ui->storageTable->item(row, 2)->text();
+    ui->storageInfo->clear();
+    ui->storageInfo->setEnabled(false);
+    ui->storageInfo->insertPlainText(items);
+}
+
+void MainWindow::on_storageDelete_clicked()
+{
+    int row = ui->storageTable->selectionModel()->currentIndex().row();
+    if(row == -1)
+        return;
+    if(!doMessageBox("Are you sure you want to delete?"))
+        return;
+    QString storeId;
+    storeId = ui->storageTable->item(row, 4)->text();
+    if(!dbManager->removeStorage(storeId))
+        qDebug() << "Error removing storage";
+}

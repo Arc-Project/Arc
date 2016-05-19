@@ -63,6 +63,7 @@ public:
 
 
     QSqlQuery searchClientList(QString ClientName);
+    QSqlQuery searchTableClientInfo(QString tableName, QString ClientId);
     QSqlQuery searchClientInfo(QString ClientId);
     bool searchClientInfoPic(QImage * img, QString ClientId);
     QSqlQuery searchClientTransList(int maxNum, QString ClientId, int type);
@@ -139,6 +140,13 @@ public:
     QSqlQuery getBooking(QString bId);
     bool escapePayment(QString clientId, QString curDate, QString amount, QString type, QString notes, QString chequeNo, QString msd, QString issued,
                                         QString transtype, QString outstanding, QString empId, QString shiftNo, QString time);
+    QSqlQuery loadStorage(QString id);
+    bool addStorage(QString id, QString name, QString data);
+    bool updateStore(QString storeId, QString data);
+    bool updateStoreDate(QString storeId);
+    QSqlQuery getFullStorage();
+    bool removeStorage(QString storeId);
+
 
     //END COLIN STUFF///////////////////////////////////////////////////////
     void print();
