@@ -2217,7 +2217,7 @@ void MainWindow::on_pushButton_cl_book_more_clicked()
     bookingNum +=5;
     searchBookHistory(curClientID);
     if(ui->tableWidget_booking->rowCount() >= bookingTotal )
-        ui->pushButton_cl_trans_more->setEnabled(false);
+        ui->pushButton_cl_book_more->setEnabled(false);
 }
 
 
