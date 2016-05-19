@@ -17,6 +17,10 @@ Worker::~Worker() {
 // Start processing data.
 void Worker::process() {    
     // allocate resources using new here
+    while (true) {
+
+
+        QThread::sleep(1);
     while (cont) {
         // qDebug("Updating Shift No");
         emit this->shiftnochanged();
@@ -24,4 +28,5 @@ void Worker::process() {
     }
 
     //emit finished();
+    }
 }
