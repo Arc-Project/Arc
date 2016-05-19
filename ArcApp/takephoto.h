@@ -27,12 +27,15 @@ public:
     explicit TakePhoto(QWidget *parent = 0);
     ~TakePhoto();
     bool cameraon = false;
-
+    bool initialize = true;
+    QList<QCameraInfo> cameras;
     QCameraViewfinder * vf;
     QCameraImageCapture * cic;
     QCamera * cam;
 
-
+    void check_available_camera();
+    void initTable();
+    void errorMsg(QString msg = "");
 signals:
      void showPic(QImage img);
 
@@ -49,6 +52,7 @@ private slots:
 
 private:
     Ui::TakePhoto *ui;
+    void closeEvent(QCloseEvent *end);
 };
 
 #endif // TAKEPHOTO_H

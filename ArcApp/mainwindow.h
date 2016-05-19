@@ -209,7 +209,7 @@ private slots:
     
     void on_reconnectedToDatabase();
     
-    void resizeEvent();
+    void resizeEvent(QResizeEvent* event);
 
 
 
@@ -236,9 +236,8 @@ private slots:
 
     void searchTransaction(QString clientId);
 
-    void displayTransaction(QSqlQuery results);
     void displayTransaction(QSqlQuery results, QTableWidget* table);
-    void displayBookHistory(QSqlQuery results);
+
     void displayBookHistory(QSqlQuery results, QTableWidget* table);
     void searchBookHistory(QString clientId);
 
@@ -551,6 +550,10 @@ private slots:
 
     void printFloatReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
 
+    void printMonthlyReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
+
+    void printRestrictionReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
+
     void on_comboBox_3_currentTextChanged(const QString &arg1);
 
     void on_btn_saveShift_clicked();
@@ -572,6 +575,12 @@ private slots:
     void on_storageTable_itemClicked(QTableWidgetItem *item);
 
     void on_storageDelete_clicked();
+
+    void on_pushButton_casefile_trans_reload_clicked();
+
+    void on_pushButton_casefile_book_reload_clicked();
+
+    void on_comboBox_2_currentTextChanged(const QString &arg1);
 
 private:
 

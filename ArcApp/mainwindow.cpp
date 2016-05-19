@@ -117,8 +117,8 @@ void MainWindow::initCurrentWidget(int idx){
     switch(idx){
         case MAINMENU:  //WIDGET 0
             curClientID = "";
-
             registerType = NOREGISTER;
+            ui->actionExport_to_PDF->setEnabled(false);
             break;
         case CLIENTLOOKUP:  //WIDGET 1
             initClientLookupInfo();
@@ -133,6 +133,7 @@ void MainWindow::initCurrentWidget(int idx){
             ui->checkBox_search_anonymous->setChecked(false);
             ui->pushButton_search_client->setEnabled(true);
             //initimageview
+            ui->actionExport_to_PDF->setEnabled(false);
             break;
         case BOOKINGLOOKUP: //WIDGET 2
             qDebug()<<"Client INFO";
@@ -182,6 +183,7 @@ void MainWindow::initCurrentWidget(int idx){
             newHistory = true;
             initCasefileTransactionTable();
             initPcp();
+            ui->actionExport_to_PDF->setEnabled(true);
             break;
         case EDITBOOKING: //WIDGET 9
             ui->editLookupTable->clear();
@@ -204,6 +206,7 @@ void MainWindow::initCurrentWidget(int idx){
             MainWindow::getCashFloat(QDate::currentDate(), currentshiftid);
             MainWindow::getMonthlyReport(QDate::currentDate().month(), QDate::currentDate().year());
             MainWindow::updateRestrictionTables();
+            ui->actionExport_to_PDF->setEnabled(true);
             break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
@@ -1842,6 +1845,7 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
 
 
 //get client information after searching
+//double click client information
 void MainWindow::selected_client_info(int nRow, int nCol)
 {
     Q_UNUSED(nCol)
@@ -1979,28 +1983,14 @@ void MainWindow::addInfoPic(QImage img){
 
 //create new client for booking
 void MainWindow::setSelectedClientInfo(){
-    /*
-    curClient = new Client();
-    int nRow = ui->tableWidget_search_client->currentRow();
-    if (nRow <0)
-        return;
-
-    curClientID = curClient->clientId = ui->tableWidget_search_client->item(nRow, 0)->text();
-    curClient->fName =  ui->tableWidget_search_client->item(nRow, 1)->text();
-    curClient->mName =  ui->tableWidget_search_client->item(nRow, 2)->text();
-    curClient->lName =  ui->tableWidget_search_client->item(nRow, 3)->text();
-    curClient->balance =  ui->tableWidget_search_client->item(nRow, 4)->text().toFloat();
-
-    curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
-
-
-    */
     //transacTotal
     curClient = new Client();
     int nRow = ui->tableWidget_search_client->currentRow();
     if (nRow <=0){
-        if(curClientID == NULL)
+        if(curClientID == NULL){
+            statusBar()->showMessage(tr("Please search and select Client"), 5000);
             return;
+        }
         else{
             curClient->clientId = curClientID;
             curClient->fName = ui->label_cl_info_fName_val->text();
@@ -2066,34 +2056,6 @@ void MainWindow::initClTransactionTable(){
 
 
 //search transaction list when click transaction list
-void MainWindow::displayTransaction(QSqlQuery results){
-//    initClTransactionTable();
-    int row = 0;
-    int colCnt = results.record().count();
-    while(results.next()){
-        ui->tableWidget_transaction->insertRow(row);
-        for(int i =0; i<colCnt; i++){
-            ui->tableWidget_transaction->setItem(row, i, new QTableWidgetItem(results.value(i).toString()));
-            //qDebug() <<"row : "<<row << ", col: " << i << "item" << results.value(i).toString();
-        }
-        row++;
-    }
-    /*
-    if(row > transacTotal || row == transacTotal){
-        ui->pushButton_cl_trans_more->setEnabled(false);
-    }
-    */
-    if(row == 0)
-        row = 5;
-    if (row > 25){
-       // ui->tableWidget_transaction->setMaximumHeight(30*26 -1);
-        return;
-    }
-    ui->tableWidget_transaction->setMinimumHeight(30*(row+1) -1);
-    ui->tableWidget_transaction->show();
-}
-
-
 void MainWindow::displayTransaction(QSqlQuery results, QTableWidget* table){
 
     int row = 0;
@@ -2101,35 +2063,32 @@ void MainWindow::displayTransaction(QSqlQuery results, QTableWidget* table){
     while(results.next()){
         table->insertRow(row);
         for(int i =0; i<colCnt; i++){
-            table->setItem(row, i, new QTableWidgetItem(results.value(i).toString()));
+            if(i == 2){
+                QString balance = QString("%1%2").arg(results.value(i).toDouble() >= 0 ? "$" : "-$").
+                    arg(QString::number(fabs(results.value(i).toDouble()), 'f', 2));
+                table->setItem(row, i, new QTableWidgetItem(balance));
+            }
+            else
+                table->setItem(row, i, new QTableWidgetItem(results.value(i).toString()));
             //qDebug() <<"row : "<<row << ", col: " << i << "item" << results.value(i).toString();
         }
+
         row++;
     }
-    /*
-    if(row > transacTotal || row == transacTotal){
-        ui->pushButton_cl_trans_more->setEnabled(false);
-    }
-    */
+
     if( table == ui->tableWidget_casefile_transaction)
         return;
     while(row > transacTotal){
         table->setRowCount(transacTotal);
     }
     if (row > 25){
-        table->setMinimumHeight(30*26-1);
-        //table->setMaximumHeight(30*26 -1);
         return;
     }
-    else if(row >5)
-        table->setMinimumHeight(30*(row+1) -1);
-   // table->show();
-
+    table->setMinimumHeight(30*(row+1) -1);
 }
-//get more transaction list
+//get more transaction list for client info tab
 void MainWindow::on_pushButton_cl_trans_more_clicked()
 {
-
     transacNum +=5;
     searchTransaction(curClientID);
     if(ui->tableWidget_transaction->rowCount() >= transacTotal)
@@ -2148,6 +2107,8 @@ void MainWindow::searchBookHistory(QString clientId){
                         QString::number(ui->tableWidget_booking->rowCount()) + " / " + QString::number(bookingTotal);
     ui->label_cl_booking_total_num->setText(totalNum + " Booking");
 }
+
+//initialize client booking history table in client info tab
 void MainWindow::initClBookHistoryTable(){
     ui->tableWidget_booking->setRowCount(0);
     ui->tableWidget_booking->setColumnCount(6);
@@ -2156,32 +2117,6 @@ void MainWindow::initClBookHistoryTable(){
     ui->tableWidget_booking->setMinimumHeight(30*6-1);
 }
 
-//display booking history in the table view
-void MainWindow::displayBookHistory(QSqlQuery results){
-    initClBookHistoryTable();
-    int colCnt = results.record().count() -1;
-    int row =ui->tableWidget_booking->rowCount();
-    while(results.next()){
-        ui->tableWidget_booking->insertRow(row);
-        for(int i =0; i<colCnt; i++){
-            ui->tableWidget_booking->setItem(row, i, new QTableWidgetItem(results.value(i).toString()));
-            //qDebug() <<"row : "<<row << ", col: " << i << "item" << results.value(i).toString();
-        }
-        row++;
-    }
-    /*
-    if(row > bookingTotal || row == bookingTotal){
-        ui->pushButton_cl_book_more->setEnabled(false);
-    }
-    */
-    if (row == 0)
-        row = 5;
-    if (row > 25){
-        ui->tableWidget_booking->setMinimumHeight(30*26 -1);
-        return;
-    }
-    ui->tableWidget_booking->setMinimumHeight(30*(row+1) -1);
-}
 
 //display booking history in the table view
 void MainWindow::displayBookHistory(QSqlQuery results, QTableWidget * table){
@@ -2191,7 +2126,13 @@ void MainWindow::displayBookHistory(QSqlQuery results, QTableWidget * table){
     while(results.next()){
         table->insertRow(row);
         for(int i =0; i<colCnt; i++){
-            table->setItem(row, i, new QTableWidgetItem(results.value(i).toString()));
+            if(i == 4){
+                QString balance = QString("%1%2").arg(results.value(i).toDouble() >= 0 ? "$" : "-$").
+                    arg(QString::number(fabs(results.value(i).toDouble()), 'f', 2));
+                table->setItem(row, i, new QTableWidgetItem(balance));
+            }
+            else
+                table->setItem(row, i, new QTableWidgetItem(results.value(i).toString()));
             //qDebug() <<"row : "<<row << ", col: " << i << "item" << results.value(i).toString();
         }
         row++;
@@ -2200,11 +2141,7 @@ void MainWindow::displayBookHistory(QSqlQuery results, QTableWidget * table){
         return;
     if(row > bookingTotal)
         table->setRowCount(bookingTotal);
-    /*
-    if(row > bookingTotal || row == bookingTotal){
-        ui->pushButton_cl_book_more->setEnabled(false);
-    }
-    */
+
     if (row > 25){
         table->setMinimumHeight(30*26 -1);
         return;
@@ -2213,7 +2150,7 @@ void MainWindow::displayBookHistory(QSqlQuery results, QTableWidget * table){
         table->setMinimumHeight(30*(row+1) -1);
 }
 
-//click more client button
+//click more client button fore booking history
 void MainWindow::on_pushButton_cl_book_more_clicked()
 {
     bookingNum +=5;
@@ -2222,7 +2159,7 @@ void MainWindow::on_pushButton_cl_book_more_clicked()
         ui->pushButton_cl_book_more->setEnabled(false);
 }
 
-
+//DELETE CLIENT INFORMATION FIELDS
 void MainWindow::initClientLookupInfo(){
     //init client search table
     if(ui->tableWidget_search_client->columnCount()>0){
@@ -2633,21 +2570,26 @@ void MainWindow::on_tabw_casefiles_currentChanged(int index)
         case BOOKINGHISTORY:            
             if(!newHistory)
                 break;
-
+            on_pushButton_casefile_book_reload_clicked();
+            /*
             initCasefileBookHistoryTable();
             useProgressDialog("Search Transaction...",QtConcurrent::run(this, &searchCasefileBookHistory, curClientID));
             bookingTotal = ui->tableWidget_casefile_booking->rowCount();
             ui->label_casefile_booking_total_num->setText(QString::number(bookingTotal) + " Booking");
+            */
             newHistory = false;
             break;
 
         case TRANSACTIONHISTORY:
             if(!newTrans)
                 break;
+            on_pushButton_casefile_trans_reload_clicked();
+            /*
             initCasefileTransactionTable();
             useProgressDialog("Search Transaction...",QtConcurrent::run(this, &searchCasefileTransaction, curClientID));
             transacTotal = ui->tableWidget_casefile_transaction->rowCount();
             ui->label_casefile_trans_total_num->setText(QString::number(transacTotal) + " Transaction");
+            */
             newTrans = false;
             break;
     }
@@ -2673,6 +2615,18 @@ void MainWindow::searchCasefileBookHistory(QString clientId){
 
 }
 
+void MainWindow::on_pushButton_casefile_book_reload_clicked()
+{
+    initCasefileBookHistoryTable();
+    ui->tableWidget_casefile_booking->setSortingEnabled(false);
+    useProgressDialog("Search Transaction...",QtConcurrent::run(this, &searchCasefileBookHistory, curClientID));
+    bookingTotal = ui->tableWidget_casefile_booking->rowCount();
+    ui->label_casefile_booking_total_num->setText(QString::number(bookingTotal) + " Booking");
+    ui->tableWidget_casefile_booking->sortByColumn(3, Qt::DescendingOrder);
+    ui->tableWidget_casefile_booking->setSortingEnabled(true);
+}
+
+
 /*-----------------------------------------------
         CASEFILE TRANSACTION(EUNWON)
 -------------------------------------------------*/
@@ -2693,6 +2647,19 @@ void MainWindow::searchCasefileTransaction(QString clientId){
     QSqlQuery transQuery = dbManager->searchClientTransList(transacNum, clientId, CASEFILE);
     displayTransaction(transQuery, ui->tableWidget_casefile_transaction);
 }
+
+//reload client transaction history
+void MainWindow::on_pushButton_casefile_trans_reload_clicked()
+{
+    initCasefileTransactionTable();
+    ui->tableWidget_casefile_transaction->setSortingEnabled(false);
+    useProgressDialog("Search Transaction...",QtConcurrent::run(this, &searchCasefileTransaction, curClientID));
+    transacTotal = ui->tableWidget_casefile_transaction->rowCount();
+    ui->label_casefile_trans_total_num->setText(QString::number(transacTotal) + " Transaction");
+    ui->tableWidget_casefile_transaction->sortByColumn(0, Qt::DescendingOrder);
+    ui->tableWidget_casefile_transaction->setSortingEnabled(true);
+}
+
 
 /*-------------------CASEFILE END-----------------------------------*/
 
@@ -3138,13 +3105,16 @@ void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
 // set case files directory
 void MainWindow::on_pushButton_3_clicked()
 {
+    const QString DEFAULT_DIR_KEY("default_dir");
+    QSettings mruDir;
     QString tempDir = QFileDialog::getExistingDirectory(
                     this,
                     tr("Select Directory"),
-                    "C://"
+                    mruDir.value(DEFAULT_DIR_KEY).toString()
                 );
     if (!tempDir.isEmpty()) {
         dir = tempDir;
+        mruDir.setValue(DEFAULT_DIR_KEY, tempDir);
         int nRow = ui->tableWidget_search_client->currentRow();
 
         QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 3)->text() + ", " +
@@ -3276,8 +3246,8 @@ void MainWindow::on_pushButton_24_clicked()
     }
 }
 
-
-void MainWindow::resizeEvent() {
+void MainWindow::resizeEvent(QResizeEvent* event) {
+    Q_UNUSED(event);
     double width = ui->tw_pcpRela->size().width();
     for (auto x: pcp_tables){
         x->resizeRowsToContents();
@@ -4428,6 +4398,9 @@ void MainWindow::on_EditShiftsButton_clicked()
             }
         }
     }
+
+    ui->comboBox_2->setCurrentIndex(1);
+    ui->comboBox_2->setCurrentIndex(0);
 }
 
 void MainWindow::on_cbox_roomLoc_currentTextChanged(const QString &arg1)
@@ -4704,7 +4677,20 @@ void MainWindow::on_actionExport_to_PDF_triggered()
     if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == FLOATCOUNT){
         rptTemplate = ":/templates/pdf/float.xml";
         report->recordCount << 1;
-    }
+    } else
+
+    // reports: monthly
+    if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == MONTHLYREPORT){
+        rptTemplate = ":/templates/pdf/monthly.xml";
+        report->recordCount << 1;
+    } else
+
+    // reports: restrictions
+    if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == RESTRICTIONS){
+        rptTemplate = ":/templates/pdf/restriction.xml";
+        report->recordCount << yellowReport->model.rows
+                            << redReport->model.rows;
+    } else
 
     // case files pcp
     if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == 0){
@@ -4737,7 +4723,17 @@ void MainWindow::setValue(const int recNo, const QString paramName, QVariant &pa
     // reports: float count
     if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == FLOATCOUNT){
         printFloatReport(recNo, paramName, paramValue, reportPage);
-    }
+    } else
+
+    // reports: monthly count
+    if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == MONTHLYREPORT){
+        printMonthlyReport(recNo, paramName, paramValue, reportPage);
+    } else
+
+    // reports: restrictions
+    if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == RESTRICTIONS){
+        printRestrictionReport(recNo, paramName, paramValue, reportPage);
+    } else
 
     // case files pcp
     if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == 0){
@@ -4881,6 +4877,7 @@ void MainWindow::printShiftReport(const int recNo, const QString paramName, QVar
 
 void MainWindow::printFloatReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage){
     Q_UNUSED(reportPage);
+    Q_UNUSED(recNo);
     if (paramName == "nickel") {
         paramValue = ui->sbox_nickels->text();
     } else if (paramName == "dime") {
@@ -4912,6 +4909,32 @@ void MainWindow::printFloatReport(const int recNo, const QString paramName, QVar
     }
 }
 
+void MainWindow::printMonthlyReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage){
+    Q_UNUSED(reportPage);
+    Q_UNUSED(recNo);
+    if (paramName == "bedsUsed") {
+        paramValue = ui->numBedsUsed_lbl->text();
+    } else if (paramName == "bedsEmpty") {
+        paramValue = ui->numEmptyBeds_lbl->text();
+    } else if (paramName == "newClients") {
+        paramValue = ui->numNewClients_lbl->text();
+    } else if (paramName == "uniqueClients") {
+        paramValue = ui->numUniqueClients_lbl->text();
+    } else if (paramName == "date") {
+        paramValue = ui->monthlyReportMonth_lbl->text();
+    }
+}
+
+
+void MainWindow::printRestrictionReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage){
+    Q_UNUSED(paramName);
+    if (reportPage == 0) {
+        paramValue = yellowReport->model.tableData->at(recNo * yellowReport->model.cols);
+    } else if (reportPage == 1) {
+        paramValue = redReport->model.tableData->at(recNo * redReport->model.cols);
+    }
+}
+
 void MainWindow::printPCP(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
     qDebug() << "report page: " << reportPage;
 
@@ -4939,6 +4962,7 @@ void MainWindow::printPCP(const int recNo, const QString paramName, QVariant &pa
          qDebug() << "report page: " << reportPage << " recNp: " << recNo << " value: " << tw_pcp->item(recNo, 1)->text();
     }
 }
+
 
 
 void MainWindow::on_btn_createNewUser_3_clicked()
@@ -5605,6 +5629,16 @@ void MainWindow::on_btn_saveShift_clicked()
     dbManager->execQuery("UPDATE Shift SET NumShifts=" + ui->comboBox_3->currentText() + " WHERE DayOfWeek = '" + day + "'");
 
     on_EditShiftsButton_clicked();
+}
+
+void MainWindow::on_comboBox_2_currentTextChanged(const QString &arg1)
+{
+    QSqlQuery existcheck = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='" + arg1 + "'");
+
+    if (existcheck.next()) {
+        int numshifts = existcheck.value(11).toInt();
+        ui->comboBox_3->setCurrentIndex(numshifts-1);
+    }
 }
 
 void MainWindow::updatemenuforuser() {
