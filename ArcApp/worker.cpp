@@ -17,7 +17,6 @@ void Worker::process() {
     // allocate resources using new here
     while (true) {
 
-        qDebug("Updating Shift No");
 
         QThread::sleep(1);
     }

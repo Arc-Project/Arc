@@ -174,6 +174,44 @@ QSqlQuery DatabaseManager::execQuery(QString queryString)
     query.exec(queryString);
     return query;
 }
+QSqlQuery DatabaseManager::loadStorage(QString id){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Storage WHERE ClientId ='" + id + "' AND Deleted = 0";
+    query.exec(q);
+    return query;
+}
+bool DatabaseManager::addStorage(QString id, QString name, QString data){
+    QSqlQuery query(db);
+    QString q = "INSERT INTO Storage VALUES ('" + QDate::currentDate().toString(Qt::ISODate) + "',' " + id + "','" + name +"', '', '0' )";
+    return query.exec(q);
+
+}
+bool DatabaseManager::removeStorage(QString storeId){
+    QSqlQuery query(db);
+    QString q = "UPDATE Storage SET Deleted = '1' WHERE StorageId = '" + storeId + "'";
+    return query.exec(q);
+}
+
+bool DatabaseManager::updateStoreDate(QString storeId){
+    QSqlQuery query(db);
+    QString q = "UPDATE Storage SET StorageDate ='" + QDate::currentDate().toString(Qt::ISODate) + "'";
+    return query.exec(q);
+}
+QSqlQuery DatabaseManager::getFullStorage(){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Storage WHERE Deleted = 0";
+    query.exec(q);
+    return query;
+
+}
+
+bool DatabaseManager::updateStore(QString storeId, QString data){
+    QSqlQuery query(db);
+    query.prepare("UPDATE Storage SET StorageItems = :store WHERE StorageId = :storeId");
+    query.bindValue(":store", data);
+    query.bindValue(":storeId", storeId);
+    return query.exec();
+}
 
 bool DatabaseManager::execQuery(QSqlQuery* query, QString queryString)
 {

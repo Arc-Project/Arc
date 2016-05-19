@@ -183,6 +183,100 @@ QHeaderView {
              </property>
             </widget>
            </item>
+           <item row="0" column="6">
+            <widget class="QPushButton" name="adminButton">
+             <property name="minimumSize">
+              <size>
+               <width>290</width>
+               <height>151</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>437</width>
+               <height>264</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>18</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Admin</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Minimum</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="2" column="2">
+            <widget class="QPushButton" name="reportsButton">
+             <property name="minimumSize">
+              <size>
+               <width>290</width>
+               <height>151</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>437</width>
+               <height>264</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>18</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Reports</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="4">
+            <widget class="QPushButton" name="caseButton">
+             <property name="minimumSize">
+              <size>
+               <width>290</width>
+               <height>151</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>437</width>
+               <height>264</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>18</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Case Files</string>
+             </property>
+            </widget>
+           </item>
            <item row="2" column="0">
             <widget class="QPushButton" name="editbookButton">
              <property name="minimumSize">
@@ -288,100 +382,6 @@ QHeaderView {
               </size>
              </property>
             </spacer>
-           </item>
-           <item row="1" column="2">
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Minimum</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="2" column="2">
-            <widget class="QPushButton" name="reportsButton">
-             <property name="minimumSize">
-              <size>
-               <width>290</width>
-               <height>151</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>437</width>
-               <height>264</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>18</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Reports</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="4">
-            <widget class="QPushButton" name="caseButton">
-             <property name="minimumSize">
-              <size>
-               <width>290</width>
-               <height>151</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>437</width>
-               <height>264</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>18</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Case Files</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="6">
-            <widget class="QPushButton" name="adminButton">
-             <property name="minimumSize">
-              <size>
-               <width>290</width>
-               <height>151</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>437</width>
-               <height>264</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>18</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Admin</string>
-             </property>
-            </widget>
            </item>
           </layout>
          </widget>
@@ -2234,7 +2234,7 @@ QHeaderView {
                  <enum>QAbstractItemView::SelectRows</enum>
                 </property>
                 <attribute name="verticalHeaderVisible">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </attribute>
                 <attribute name="verticalHeaderMinimumSectionSize">
                  <number>30</number>
@@ -6983,7 +6983,7 @@ QHeaderView {
       </widget>
       <widget class="QWidget" name="editBooking">
        <layout class="QGridLayout" name="gridLayout_60">
-        <item row="1" column="0" colspan="5">
+        <item row="1" column="0" colspan="7">
          <widget class="QTableWidget" name="editLookupTable">
           <property name="sizeAdjustPolicy">
            <enum>QAbstractScrollArea::AdjustToContents</enum>
@@ -7036,7 +7036,7 @@ QHeaderView {
           </property>
          </widget>
         </item>
-        <item row="2" column="4">
+        <item row="2" column="6">
          <widget class="QPushButton" name="editButton">
           <property name="minimumSize">
            <size>
@@ -7054,7 +7054,7 @@ QHeaderView {
           </property>
          </widget>
         </item>
-        <item row="2" column="3">
+        <item row="2" column="5">
          <spacer name="horizontalSpacer_65">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -7082,6 +7082,13 @@ QHeaderView {
           </property>
           <property name="text">
            <string>Display Bookings</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3" colspan="2">
+         <widget class="QPushButton" name="storage">
+          <property name="text">
+           <string>View Storage</string>
           </property>
          </widget>
         </item>
@@ -11602,7 +11609,15 @@ QHeaderView {
            </spacer>
           </item>
           <item row="15" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_44"/>
+           <layout class="QHBoxLayout" name="horizontalLayout_44">
+            <item>
+             <widget class="QPushButton" name="confirmStorage">
+              <property name="text">
+               <string>Add Storage</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="16" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_40">
@@ -13533,6 +13548,80 @@ QHeaderView {
         </property>
         <property name="text">
          <string>Save</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="storagePage">
+       <widget class="QPushButton" name="storesearch">
+        <property name="geometry">
+         <rect>
+          <x>860</x>
+          <y>0</y>
+          <width>93</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Search</string>
+        </property>
+       </widget>
+       <widget class="QTableWidget" name="storageTable">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>811</width>
+          <height>911</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QPlainTextEdit" name="storageInfo">
+        <property name="geometry">
+         <rect>
+          <x>840</x>
+          <y>170</y>
+          <width>471</width>
+          <height>191</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_19">
+        <property name="geometry">
+         <rect>
+          <x>840</x>
+          <y>140</y>
+          <width>111</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Items In Storage</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="storageEdit">
+        <property name="geometry">
+         <rect>
+          <x>1050</x>
+          <y>130</y>
+          <width>93</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Edit</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="storageDelete">
+        <property name="geometry">
+         <rect>
+          <x>1180</x>
+          <y>130</y>
+          <width>93</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Delete</string>
         </property>
        </widget>
       </widget>
