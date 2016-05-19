@@ -580,6 +580,8 @@ private slots:
 
     void on_pushButton_casefile_book_reload_clicked();
 
+    void on_addStorageClient_clicked();
+
 private:
 
     Ui::MainWindow *ui;
