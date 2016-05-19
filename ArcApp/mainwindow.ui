@@ -685,7 +685,7 @@ QHeaderView {
            </font>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_cl_general">
            <attribute name="title">
@@ -702,12 +702,12 @@ QHeaderView {
                    <enum>Qt::Horizontal</enum>
                   </property>
                   <property name="sizeType">
-                   <enum>QSizePolicy::Expanding</enum>
+                   <enum>QSizePolicy::MinimumExpanding</enum>
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
                     <width>40</width>
-                    <height>20</height>
+                    <height>25</height>
                    </size>
                   </property>
                  </spacer>
@@ -740,12 +740,12 @@ QHeaderView {
                    <enum>Qt::Horizontal</enum>
                   </property>
                   <property name="sizeType">
-                   <enum>QSizePolicy::Expanding</enum>
+                   <enum>QSizePolicy::MinimumExpanding</enum>
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
                     <width>40</width>
-                    <height>20</height>
+                    <height>25</height>
                    </size>
                   </property>
                  </spacer>
@@ -2047,7 +2047,7 @@ QHeaderView {
                  <enum>QAbstractItemView::SelectRows</enum>
                 </property>
                 <attribute name="verticalHeaderVisible">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </attribute>
                 <attribute name="verticalHeaderMinimumSectionSize">
                  <number>30</number>
@@ -2234,7 +2234,7 @@ QHeaderView {
                  <enum>QAbstractItemView::SelectRows</enum>
                 </property>
                 <attribute name="verticalHeaderVisible">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </attribute>
                 <attribute name="verticalHeaderMinimumSectionSize">
                  <number>30</number>
@@ -6778,7 +6778,7 @@ QHeaderView {
                  <enum>QAbstractItemView::SelectRows</enum>
                 </property>
                 <attribute name="verticalHeaderVisible">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </attribute>
                 <attribute name="verticalHeaderMinimumSectionSize">
                  <number>30</number>
