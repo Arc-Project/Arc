@@ -53,6 +53,7 @@
 #include "addmsd.h"
 #include "mycalendar.h"
 #include <QPointer>
+#include "worker.h"
 
 namespace Ui {
 class MainWindow;
@@ -66,7 +67,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    static QThread* thread;
+    QThread* thread = new QThread();
+    Worker* work = new Worker();
 
     QString userLoggedIn = "SOMEUSER";
     int currentshiftid = 0;
@@ -86,8 +88,6 @@ public:
     void getCurrentClientId();   //get client id from client list table
     void getClientInfo();
     void statusColor();
-    
-
 
     //COLIN STUFF////
     void getProgramCodes();
@@ -119,11 +119,11 @@ public:
     QString browse();
 
 public slots:
-    void setShift(int shiftno);
+    void setShift();
 
 signals:
     void displayPic(QByteArray a);
-    void shiftnochanged(int shiftno);
+    void shiftnochanged();
 
 private slots:
     //COLIN SLOTS ////////////////////////////////////////
