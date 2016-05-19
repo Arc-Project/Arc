@@ -236,9 +236,8 @@ private slots:
 
     void searchTransaction(QString clientId);
 
-    void displayTransaction(QSqlQuery results);
     void displayTransaction(QSqlQuery results, QTableWidget* table);
-    void displayBookHistory(QSqlQuery results);
+
     void displayBookHistory(QSqlQuery results, QTableWidget* table);
     void searchBookHistory(QString clientId);
 
@@ -576,6 +575,10 @@ private slots:
     void on_storageTable_itemClicked(QTableWidgetItem *item);
 
     void on_storageDelete_clicked();
+
+    void on_pushButton_casefile_trans_reload_clicked();
+
+    void on_pushButton_casefile_book_reload_clicked();
 
 private:
 
