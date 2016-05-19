@@ -1539,7 +1539,8 @@ void MainWindow::clear_client_register_form(){
 void MainWindow::read_curClient_Information(QString ClientId){
 //    QString searchClientQ = "SELECT * FROM Client WHERE ClientId = "+ ClientId;
 //    qDebug()<<"SEARCH QUERY: " + searchClientQ;
-    QSqlQuery clientInfo = dbManager->execQuery("SELECT * FROM Client WHERE ClientId = "+ ClientId);
+   // QSqlQuery clientInfo = dbManager->execQuery("SELECT * FROM Client WHERE ClientId = "+ ClientId);
+    QSqlQuery clientInfo = dbManager->searchTableClientInfo("Client", ClientId);
 //    dbManager->printAll(clientInfo);
     clientInfo.next();
 
@@ -2218,7 +2219,7 @@ void MainWindow::on_pushButton_cl_book_more_clicked()
     bookingNum +=5;
     searchBookHistory(curClientID);
     if(ui->tableWidget_booking->rowCount() >= bookingTotal )
-        ui->pushButton_cl_trans_more->setEnabled(false);
+        ui->pushButton_cl_book_more->setEnabled(false);
 }
 
 
@@ -2268,9 +2269,16 @@ void MainWindow::initClientLookupInfo(){
     //initialize transaction
     initClTransactionTable();
 
+    //initialize transaction total count
+    transacTotal = 0;
+    ui->label_cl_trans_total_num->setText("");
+
     //initialize booking history table
+    bookingTotal = 0;
     initClBookHistoryTable();
 
+    //initialize booking total count
+    ui->label_cl_booking_total_num->setText("");
 
     //disable buttons that need a clientId
     if(curClientID == NULL){

@@ -4656,7 +4656,7 @@ QHeaderView {
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>620</width>
+                 <width>1186</width>
                  <height>1294</height>
                 </rect>
                </property>
@@ -6853,7 +6853,7 @@ QHeaderView {
                  <widget class="QLabel" name="label_casefile_trans_total">
                   <property name="font">
                    <font>
-                    <pointsize>10</pointsize>
+                    <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -6865,13 +6865,13 @@ QHeaderView {
                  <widget class="QLabel" name="label_casefile_trans_total_num">
                   <property name="minimumSize">
                    <size>
-                    <width>40</width>
+                    <width>100</width>
                     <height>0</height>
                    </size>
                   </property>
                   <property name="font">
                    <font>
-                    <pointsize>10</pointsize>
+                    <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -13335,9 +13335,6 @@ QHeaderView {
            <font>
             <pointsize>10</pointsize>
            </font>
-          </property>
-          <property name="editTriggers">
-           <set>QAbstractItemView::NoEditTriggers</set>
           </property>
           <property name="selectionMode">
            <enum>QAbstractItemView::NoSelection</enum>
