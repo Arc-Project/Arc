@@ -227,9 +227,9 @@ private slots:
     void searchTransaction(QString clientId);
 
     void displayTransaction(QSqlQuery results);
-
+    void displayTransaction(QSqlQuery results, QTableWidget* table);
     void displayBookHistory(QSqlQuery results);
-
+    void displayBookHistory(QSqlQuery results, QTableWidget* table);
     void searchBookHistory(QString clientId);
 
     /*==========================================================================
