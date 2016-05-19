@@ -8,10 +8,12 @@ TakePhoto::TakePhoto(QWidget *parent) :
     ui(new Ui::TakePhoto)
 {
     ui->setupUi(this);
+    on_pushButtons_camstart_clicked();
 }
 
 TakePhoto::~TakePhoto()
 {
+    cam->stop();
     delete ui;
 }
 
@@ -48,33 +50,70 @@ void TakePhoto::deleteImage(int id, QString fileName){
       return;
 }
 
+void TakePhoto::check_available_camera(){
+   initTable();
+   cameras = QCameraInfo::availableCameras();
+   if(cameras.count() == 0)
+       errorMsg("No available Camera");
+   int row =0;
+   foreach (const QCameraInfo &cameraInfo, cameras) {
+       qDebug()<< "CAMERA: "<<cameraInfo.deviceName() <<cameraInfo.description();
+       ui->tableWidget_cam_list->insertRow(row);
+       ui->tableWidget_cam_list->setItem(row, 0, new QTableWidgetItem(cameraInfo.description()));
+       row++;
+   }
+
+}
+
+void TakePhoto::initTable(){
+    errorMsg();
+    ui->tableWidget_cam_list->setRowCount(0);
+    ui->tableWidget_cam_list->setColumnCount(1);
+    ui->tableWidget_cam_list->clear();
+    ui->tableWidget_cam_list->setHorizontalHeaderLabels(QStringList()<<"CAMERA NAME");
+
+
+}
+
 void TakePhoto::on_pushButtons_camstart_clicked()
 {
+    errorMsg();
     if(!cameraon){
+        ui->tableWidget_cam_list->hide();
         vf = new QCameraViewfinder(ui->verticalLayoutWidget);
         ui->verticalLayout->addWidget(vf);
-
-        foreach(QCameraInfo info, QCameraInfo::availableCameras())
-        {
-                cam = new QCamera(info);
+        if(initialize){
+             cam = new QCamera(QCameraInfo::defaultCamera());
+             initialize = false;
         }
-        qDebug()<<"CAMERA STATUS 1: " <<cam->status();
+        else{
+            int idx = ui->tableWidget_cam_list->currentRow();
+            if(idx <0){
+                errorMsg("Please Select Camera");
+                ui->tableWidget_cam_list->show();
+                return;
+            }
+
+            qDebug() <<"CAMERA INFO CHECK : " << cameras.at(idx).description();
+            if(cameras.at(idx).isNull()){
+                errorMsg("camera is unavailable.");
+                return;
+            }
+            cam = new QCamera(cameras.at(idx));
+        }
         cam->setViewfinder(vf);
-        qDebug()<<"CAMERA STATUS 2: " <<cam->status();
         cic = new QCameraImageCapture(cam);
 
         connect(cic,SIGNAL(imageCaptured(int,QImage)),this,SLOT(processImage(int,QImage)));
         connect(cic, SIGNAL(imageSaved(int,QString)),this, SLOT(deleteImage(int, QString)));
         connect(cic, SIGNAL(readyForCaptureChanged(bool)), this, SLOT(readyForCapture(bool)));
-
         connect(cam, SIGNAL(error(QCamera::Error)), this, SLOT(checkCam(QCamera::Error)));
         cam->setCaptureMode(QCamera::CaptureStillImage);
-        qDebug()<<"CAMERA STATUS 3: " <<cam->status();
+
 
         cam->start();
         cameraon = true;
-        ui->pushButtons_camstart->setText("Cam OFF");
-  //      ui->pushButton_piccapture->setEnabled(true);
+        ui->pushButtons_camstart->setText("Change Cam");
     }
     else{
         ui->verticalLayout->removeWidget(vf);
@@ -83,48 +122,46 @@ void TakePhoto::on_pushButtons_camstart_clicked()
         cam->stop();
         cam->destroyed();
         cameraon = false;
-        ui->pushButtons_camstart->setText("Cam ON");
-   //     ui->pushButton_piccapture->setEnabled(false);
+        ui->tableWidget_cam_list->show();
+        ui->pushButtons_camstart->setText("Select Cam");
+        check_available_camera();
     }
 
 }
 
 //need to fix;;;
 void TakePhoto::checkCam(QCamera::Error error){
-    /*
-    switch(status){
-        case QCamera::ActiveState:
-        case QCamera::LoadedState:
-            qDebug()<<"CAMERA READY ";
-            ui->pushButtons_camstart->setEnabled(true);
-            break;
-        case QCamera::UnavailableStatus:
-            qDebug()<<"Camera Unavailable";
-            ui->pushButtons_camstart->setEnabled(false);
-            break;
-        default:
-            qDebug()<<"ERROR RETRY";
-            ui->pushButtons_camstart->setEnabled(false);
-    }
-*/
+    QString msg;
     switch(error){
         case QCamera::CameraError:
             qDebug()<<"Camera ERROR OCCURED";
+            msg = "Camera ERROR OCCURED";
             break;
         case QCamera::InvalidRequestError:
             qDebug()<<"System resource doesn't support requested functionality.";
+            msg = "functionality is not supported.";
             break;
         case QCamera::ServiceMissingError:
             qDebug()<<"No camera service available.";
+            msg = "No camera service available.";
             break;
         case QCamera::NotSupportedFeatureError:
             qDebug()<<"The feature is not supported.";
+            msg = "The feature is not supported.";
             break;
     }
+    errorMsg(msg);
+}
+
+void TakePhoto::errorMsg(QString msg){
+    ui->label_cam_message->setText(msg);
 }
 
 void TakePhoto::readyForCapture(bool available){
     ui->pushButton_piccapture->setEnabled(available);
+    if(!available){
+        errorMsg("Camara is not available.");
+    }
 }
 
 void TakePhoto::on_pushButton_piccapture_clicked()
