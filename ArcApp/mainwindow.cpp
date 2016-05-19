@@ -1980,28 +1980,14 @@ void MainWindow::addInfoPic(QImage img){
 
 //create new client for booking
 void MainWindow::setSelectedClientInfo(){
-    /*
-    curClient = new Client();
-    int nRow = ui->tableWidget_search_client->currentRow();
-    if (nRow <0)
-        return;
-
-    curClientID = curClient->clientId = ui->tableWidget_search_client->item(nRow, 0)->text();
-    curClient->fName =  ui->tableWidget_search_client->item(nRow, 1)->text();
-    curClient->mName =  ui->tableWidget_search_client->item(nRow, 2)->text();
-    curClient->lName =  ui->tableWidget_search_client->item(nRow, 3)->text();
-    curClient->balance =  ui->tableWidget_search_client->item(nRow, 4)->text().toFloat();
-
-    curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
-
-
-    */
     //transacTotal
     curClient = new Client();
     int nRow = ui->tableWidget_search_client->currentRow();
     if (nRow <=0){
-        if(curClientID == NULL)
+        if(curClientID == NULL){
+            statusBar()->showMessage(tr("Please search and select Client"), 5000);
             return;
+        }
         else{
             curClient->clientId = curClientID;
             curClient->fName = ui->label_cl_info_fName_val->text();
