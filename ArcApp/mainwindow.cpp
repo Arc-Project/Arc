@@ -482,6 +482,7 @@ void MainWindow::popEditPage(){
         programs << compProgram;
         x++;
     }
+    ui->editProgramDrop->clear();
     ui->editProgramDrop->addItems(programs);
     ui->editProgramDrop->setCurrentIndex(index);
     ui->editRoomLabel->setText(curBook->room);
