@@ -170,6 +170,7 @@ QSqlQuery DatabaseManager::execQuery(QString queryString)
     {
         emit noDatabaseConnection(&db);
     }
+
     QSqlQuery query(db);
     query.exec(queryString);
     return query;
@@ -427,8 +428,7 @@ FILE DOWLOAD AND UPLOAD RELATED FUNCTIONS (END)
 /*==============================================================================
 SEARCH CLIENT LIST FUNCTION(START)
 ==============================================================================*/
-
-
+//get client list
 QSqlQuery DatabaseManager::searchClientList(QString ClientName){
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
@@ -474,6 +474,7 @@ QSqlQuery DatabaseManager::searchClientList(QString ClientName){
 
 }
 
+//search all information in the a table for 1 client
 QSqlQuery DatabaseManager::searchTableClientInfo(QString tableName, QString ClientId){
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery selectquery(db);
@@ -484,6 +485,7 @@ QSqlQuery DatabaseManager::searchTableClientInfo(QString tableName, QString Clie
 
 }
 
+//get client information (without picture
 QSqlQuery DatabaseManager::searchClientInfo(QString ClientId){
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery selectquery(db);
@@ -502,7 +504,7 @@ QSqlQuery DatabaseManager::searchClientInfo(QString ClientId){
     return selectquery;
 }
 
-
+//get client profile picture(NEW CONNECTION USE)
 bool DatabaseManager::searchClientInfoPic(QImage * img, QString ClientId){
     QString connName = QString::number(DatabaseManager::getDbCounter());
     {
@@ -528,23 +530,17 @@ bool DatabaseManager::searchClientInfoPic(QImage * img, QString ClientId){
     return true;
 }
 
+//SEARCH CLIENT TRANSACTION LIST (CLIENT INFO , CASEFILE TRANSACTION LIST)
 QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId, int type = 0){
     QSqlQuery clientTransQuery;
     QString queryStart;
-    if(type == 1){
+    if(type == 1){   //CLIENT INFO PAGE
         queryStart = "SELECT TOP "+ QString::number(maxNum)
                    + QString("Date, Time, Amount, Type, ChequeNo, MSQ, ChequeDate, TransType, EmpName ");
-    }else{
+    }else{          //CASEFILE PAGE
         queryStart = "SELECT "
                    + QString("Date, Time, Amount, Type, ChequeNo, MSQ, ChequeDate, TransType, Deleted, Outstanding, EmpName, Notes ");
     }
-  /*
-    clientTransQuery.prepare(queryStart
-                           + QString(" t.Date, t.Amount, t.Type, e.Username, t.ChequeNo, t.ChequeDate, t.Deleted ")
-                           + QString("FROM Transac t INNER JOIN Employee e ON t.EmpId = e.EmpId ")
-                           + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC"));
-*/
-
     clientTransQuery.prepare(queryStart
                            + QString("FROM Transac ")
                            + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC, Time DESC"));
@@ -552,7 +548,7 @@ QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId, i
     clientTransQuery.exec();
     return clientTransQuery;
 }
-
+/* PLZDELETE
 QSqlQuery DatabaseManager::searchBookList(int maxNum, QString clientId){
     QSqlQuery clientBookingQuery;
     clientBookingQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) )
@@ -564,21 +560,16 @@ QSqlQuery DatabaseManager::searchBookList(int maxNum, QString clientId){
     clientBookingQuery.exec();
     return clientBookingQuery;
 }
+*/
 
 QSqlQuery DatabaseManager::searchBookList(int maxNum, QString clientId, int type){
     QSqlQuery clientBookingQuery;
-    /*
-    clientBookingQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) )
-                           + QString(" DateCreated, ProgramCode, StartDate, EndDate, Cost, ")
-                           + QString("SpaceId, FirstBook ")
-                           + QString("FROM Booking ")
-                           + QString("WHERE ClientId = " + clientId + " ORDER BY EndDate DESC, DateCreated DESC"));
-    */
     QString queryStart;
-    if(type == 1){
+    if(type == 1){  //CLIENT INFORMATION PAGE
         queryStart = "SELECT TOP "+ QString::number(maxNum)
                    + QString("b.DateCreated, b.programCode, b.StartDate, b.EndDate, b.Cost, s.SpaceCode ");
-    }else{
+    }
+    else{          //CASEFILE PAGE
         queryStart = "SELECT "
                    + QString("b.DateCreated, b.ProgramCode, b.StartDate, b.EndDate, b.Cost, s.SpaceCode, b.FirstBook, b.Monthly ");
     }
@@ -672,6 +663,11 @@ QSqlQuery DatabaseManager::getRoomCosts(QString roomId){
     return query;
 }
 
+
+/*================================================================
+    CLIENT REGISTER
+=================================================================*/
+//NEW CLIENT
 bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage* profilePic)//QObject sth, QImage profilePic)
 {
     QByteArray ba;
@@ -710,35 +706,7 @@ bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage
     return false;
 }
 
-
-bool DatabaseManager::insertClientLog(QStringList* registerFieldList)
-{
-    DatabaseManager::checkDatabaseConnection(&db);
-    QSqlQuery query(db);
-
-    query.prepare(QString("INSERT INTO ClientLog ")
-        + QString("(ClientName, Action, Date, ShiftNo, Time, EmpName) ")
-        + QString("VALUES(?, ?, ?, ?, ?, ?)"));
-
-    for (int i = 0; i < registerFieldList->size(); ++i)
-    {
-        if (registerFieldList->at(i) != NULL)
-        {
-           // qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
-            query.addBindValue(registerFieldList->at(i));
-        }
-        else
-        {
-            query.addBindValue(QVariant(QVariant::String));
-        }
-    }
-    if (query.exec())
-    {
-        return true;
-    }
-    return false;
-}
-
+//UPDATE CLIENT INFORMATION (EDIT CLIENT INFO)
 bool DatabaseManager::updateClientWithPic(QStringList* registerFieldList, QString clientId, QImage* profilePic)//QObject sth, QImage profilePic)
 {
     QByteArray ba;
@@ -777,6 +745,38 @@ bool DatabaseManager::updateClientWithPic(QStringList* registerFieldList, QStrin
     }
     return false;
 }
+
+
+//INSERT CLIENT REGISTER OR UPDATE HISTORY TO LOG
+bool DatabaseManager::insertClientLog(QStringList* registerFieldList)
+{
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+
+    query.prepare(QString("INSERT INTO ClientLog ")
+        + QString("(ClientName, Action, Date, ShiftNo, Time, EmpName) ")
+        + QString("VALUES(?, ?, ?, ?, ?, ?)"));
+
+    for (int i = 0; i < registerFieldList->size(); ++i)
+    {
+        if (registerFieldList->at(i) != NULL)
+        {
+           // qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
+            query.addBindValue(registerFieldList->at(i));
+        }
+        else
+        {
+            query.addBindValue(QVariant(QVariant::String));
+        }
+    }
+    if (query.exec())
+    {
+        return true;
+    }
+    return false;
+}
+
+
 QSqlQuery DatabaseManager::getBooking(QString bId){
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
