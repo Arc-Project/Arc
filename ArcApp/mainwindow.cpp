@@ -183,7 +183,7 @@ void MainWindow::initCurrentWidget(int idx){
             newHistory = true;
             initCasefileTransactionTable();
             initPcp();
-            ui->actionExport_to_PDF->setEnabled(true);
+            ui->actionExport_to_PDF->setEnabled(false);
             break;
         case EDITBOOKING: //WIDGET 9
             ui->editLookupTable->clear();
@@ -1564,9 +1564,10 @@ void MainWindow::read_curClient_Information(QString ClientId){
     ui->lineEdit_cl_mName->setText(clientInfo.value(2).toString());
     ui->lineEdit_cl_lName->setText(clientInfo.value(3).toString());
 
-    if(clientInfo.value(4).toString() == "")
+    if(clientInfo.value(4).toString() == "") {
         ui->checkBox_cl_dob_no->setChecked(true);
         ui->dateEdit_cl_dob->setEnabled(false);
+    }
     else{
         ui->checkBox_cl_dob_no->setChecked(false);
         ui->dateEdit_cl_dob->setEnabled(true);

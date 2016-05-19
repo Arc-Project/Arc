@@ -27,8 +27,9 @@ DatabaseManager::DatabaseManager(QObject *parent) :
    qRegisterMetaType< IntList >( "IntList" );
 
    //ini file stuff
-   QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+   QSettings settings(QSettings::IniFormat, QSettings::SystemScope,
                       "The Salvation Army", "ARCWay");
+
    qDebug() << "ini path" << settings.fileName();
    settings.beginGroup("database");
    qDebug() << "server name: " << settings.value("SERVER_NAME").toString();
