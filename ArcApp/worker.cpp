@@ -1,9 +1,11 @@
 #include "worker.h"
 #include <QThread>
+#include "mainwindow.h"
 
 // --- CONSTRUCTOR ---
 Worker::Worker() {
     // you could copy data from constructor arguments to internal variables here.
+
 }
 
 // --- DECONSTRUCTOR ---
@@ -13,13 +15,12 @@ Worker::~Worker() {
 
 // --- PROCESS ---
 // Start processing data.
-void Worker::process() {
+void Worker::process() {    
     // allocate resources using new here
-    while (true) {
-
-        qDebug("Updating Shift No");
-
-        QThread::sleep(1);
+    while (cont) {
+        // qDebug("Updating Shift No");
+        QThread::sleep(10);
+        emit this->shiftnochanged();
     }
 
     //emit finished();

@@ -10,6 +10,8 @@
 #include <qtrpt.h>
 #include "worker.h"
 
+QLabel *lbl_curUser;
+QLabel *lbl_curShift;
 
 //MyModel* checkoutModel;
 Report *checkoutReport, *vacancyReport, *lunchReport, *wakeupReport,
@@ -79,16 +81,16 @@ MainWindow::MainWindow(QWidget *parent) :
     curClient = 0;
     curBook = 0;
     trans = 0;
-    currentshiftid = 1; // should change this. Set to 1 for testing;
+//    currentshiftid = 1; // should change this. Set to 1 for testing;
 
     MainWindow::setupReportsScreen();
 
-    //display logged in user and current shift in status bar
-    QLabel *lbl_curUser = new QLabel("Logged in as: " + userLoggedIn + "  ");
-    QLabel *lbl_curShift = new QLabel("Shift Number: ");
-    statusBar()->addPermanentWidget(lbl_curUser);
-    statusBar()->addPermanentWidget(lbl_curShift);
-    lbl_curShift->setText("fda");
+//    //display logged in user and current shift in status bar
+//    QLabel *lbl_curUser = new QLabel("Logged in as: " + userLoggedIn + "  ");
+//    QLabel *lbl_curShift = new QLabel("Shift Number: ");
+//    statusBar()->addPermanentWidget(lbl_curUser);
+//    statusBar()->addPermanentWidget(lbl_curShift);
+//    lbl_curShift->setText("fda");
 
     dialog = new QProgressDialog();
     dialog->close();
@@ -2686,8 +2688,6 @@ void MainWindow::searchCasefileTransaction(QString clientId){
 /*-------------------CASEFILE END-----------------------------------*/
 
 
-
-// HANK
 void MainWindow::on_EditRoomsButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(EDITROOM);
@@ -4365,6 +4365,7 @@ void MainWindow::on_btn_modRoomType_clicked()
     // this shouldn't be modifiable... - there are only ever beds and mats.
 }
 
+// HANK
 void MainWindow::on_EditShiftsButton_clicked()
 {
     addHistory(ADMINPAGE);
@@ -4372,6 +4373,53 @@ void MainWindow::on_EditShiftsButton_clicked()
     ui->comboBox_4->clear();
     ui->comboBox_4->addItem("1");
     ui->comboBox_3->setCurrentIndex(0);
+
+    ui->tableWidget_6->clearContents();
+
+    // populate table
+    // ui->tableWidget_6
+
+    QSqlQuery shifts = dbManager->execQuery("SELECT * FROM Shift");
+    while (shifts.next()) {
+        int numberofshifts = shifts.value(11).toInt();
+        QString day = shifts.value(0).toString();
+        int dayrow = 0;
+        if (day == "Monday") {
+            dayrow = 0;
+        } else if (day == "Tuesday") {
+            dayrow = 1;
+        } else if (day == "Wednesday") {
+            dayrow = 2;
+        } else if (day == "Thursday") {
+            dayrow = 3;
+        } else if (day == "Friday") {
+            dayrow = 4;
+        } else if (day == "Saturday") {
+            dayrow = 5;
+        } else if (day == "Sunday") {
+            dayrow = 6;
+        }
+
+        for (int i = 1; i < (numberofshifts + 1); i++) {
+            QTime starttime = shifts.value((i*2)-1).toTime();
+            QTime endtime = shifts.value(i*2).toTime();
+
+            int starthr = starttime.hour();
+            int endhr = endtime.hour();
+
+            for (int j = starthr; j <= endhr; j++) {
+                QTableWidgetItem* item = new QTableWidgetItem();
+                QTableWidgetItem* temp = ui->tableWidget_6->item(dayrow, j);
+                QString newtxt = "";
+                if (temp != 0) {
+                    newtxt += temp->text();
+                }
+                newtxt += " " + QString::fromStdString(std::to_string(i)) + " ";
+                item->setText(newtxt);
+                ui->tableWidget_6->setItem(dayrow, j, item);
+            }
+        }
+    }
 }
 
 void MainWindow::on_cbox_roomLoc_currentTextChanged(const QString &arg1)
@@ -5279,6 +5327,9 @@ void MainWindow::on_actionLogout_triggered()
 
     w->show();
 
+    // kill the current thread
+    work->cont = false;
+
     close();
 }
 
@@ -5288,6 +5339,7 @@ void MainWindow::on_editProgramDrop_currentIndexChanged(const QString &arg1)
 {
     ui->editUpdate->setEnabled(true);
 }
+
 void MainWindow::on_comboBox_3_currentTextChanged(const QString &arg1)
 {
     if (arg1 == "1") {
@@ -5316,11 +5368,152 @@ void MainWindow::on_comboBox_3_currentTextChanged(const QString &arg1)
         ui->comboBox_4->addItem("4");
         ui->comboBox_4->addItem("5");
     }
+
+    qDebug() << currentshiftid;
 }
 
-void MainWindow::setShift(int shiftno) {
-    currentshiftid = shiftno;
-    emit shiftnochanged(shiftno);
+void MainWindow::setShift() {
+    qDebug() << "Setting shift now";
+    currentshiftid = -1;
+    // current time
+    QDateTime curtime = QDateTime::currentDateTime();
+    QTime curactualtime = QTime::currentTime();
+    int dayofweek = curtime.date().dayOfWeek();
+    //qDebug() << "today is: " + dayofweek;
+
+    if (dayofweek == 1) {
+        QSqlQuery getshifts = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='Monday'");
+
+        getshifts.next();
+        int numberofshifts = getshifts.value(11).toInt();
+
+        for (int i = 1; i < (numberofshifts + 1); i++) {
+            QTime starttime = getshifts.value((i*2)-1).toTime();
+            QTime endtime = getshifts.value(i*2).toTime();
+
+            if ((curactualtime < endtime) && (curactualtime >= starttime)) {
+                // change the shiftnum
+                currentshiftid = i;
+                break;
+            }
+        }
+    } else if (dayofweek == 2) {
+        QSqlQuery getshifts = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='Tuesday'");
+
+        getshifts.next();
+        int numberofshifts = getshifts.value(11).toInt();
+
+        for (int i = 1; i < (numberofshifts + 1); i++) {
+            QTime starttime = getshifts.value((i*2)-1).toTime();
+            QTime endtime = getshifts.value(i*2).toTime();
+
+            if ((curactualtime < endtime) && (curactualtime >= starttime)) {
+                // change the shiftnum
+                currentshiftid = i;
+                break;
+            } else {
+                qDebug() << "not the right shift";
+            }
+        }
+    } else if (dayofweek == 3) {
+        QSqlQuery getshifts = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='Wednesday'");
+
+        getshifts.next();
+        int numberofshifts = getshifts.value(11).toInt();
+
+        for (int i = 1; i < (numberofshifts + 1); i++) {
+            QTime starttime = getshifts.value((i*2)-1).toTime();
+            QTime endtime = getshifts.value(i*2).toTime();
+
+            if ((curactualtime < endtime) && (curactualtime >= starttime)) {
+                // change the shiftnum
+                currentshiftid = i;
+                break;
+            } else {
+                qDebug() << "not the right shift";
+            }
+        }
+    } else if (dayofweek == 4) {
+        QSqlQuery getshifts = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='Thursday'");
+
+        getshifts.next();
+        int numberofshifts = getshifts.value(11).toInt();
+
+        for (int i = 1; i < (numberofshifts + 1); i++) {
+            QTime starttime = getshifts.value((i*2)-1).toTime();
+            QTime endtime = getshifts.value(i*2).toTime();
+
+            if ((curactualtime < endtime) && (curactualtime >= starttime)) {
+                // change the shiftnum
+                currentshiftid = i;
+                break;
+            } else {
+                qDebug() << "not the right shift";
+            }
+        }
+    } else if (dayofweek == 5) {
+        QSqlQuery getshifts = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='Friday'");
+
+        getshifts.next();
+        int numberofshifts = getshifts.value(11).toInt();
+
+        for (int i = 1; i < (numberofshifts + 1); i++) {
+            QTime starttime = getshifts.value((i*2)-1).toTime();
+            QTime endtime = getshifts.value(i*2).toTime();
+
+            if ((curactualtime < endtime) && (curactualtime >= starttime)) {
+                // change the shiftnum
+                currentshiftid = i;
+                break;
+            } else {
+                qDebug() << "not the right shift";
+            }
+        }
+    } else if (dayofweek == 6) {
+        QSqlQuery getshifts = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='Saturday'");
+
+        getshifts.next();
+        int numberofshifts = getshifts.value(11).toInt();
+
+        for (int i = 1; i < (numberofshifts + 1); i++) {
+            QTime starttime = getshifts.value((i*2)-1).toTime();
+            QTime endtime = getshifts.value(i*2).toTime();
+
+            if ((curactualtime < endtime) && (curactualtime >= starttime)) {
+                // change the shiftnum
+                currentshiftid = i;
+                break;
+            } else {
+                qDebug() << "not the right shift";
+            }
+        }
+    } else if (dayofweek == 7) {
+        QSqlQuery getshifts = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='Sunday'");
+
+        getshifts.next();
+        int numberofshifts = getshifts.value(11).toInt();
+
+        for (int i = 1; i < (numberofshifts + 1); i++) {
+            QTime starttime = getshifts.value((i*2)-1).toTime();
+            QTime endtime = getshifts.value(i*2).toTime();
+
+            if ((curactualtime < endtime) && (curactualtime >= starttime)) {
+                // change the shiftnum
+                currentshiftid = i;
+                break;
+            } else {
+                qDebug() << "not the right shift";
+            }
+        }
+    }
+
+//    statusBar()->removeWidget(lbl_curShift);
+//    statusBar()->removeWidget(lbl_curUser);
+//    statusBar()->addPermanentWidget(lbl_curUser);
+//    lbl_curShift = new QLabel();
+//    lbl_curShift->setText("Shift Number: " + currentshiftid);
+//    statusBar()->addPermanentWidget(lbl_curShift);
+    qDebug() << "Updated Shift";
 }
 
 void MainWindow::on_btn_saveShift_clicked()
@@ -5338,7 +5531,7 @@ void MainWindow::on_btn_saveShift_clicked()
         qDebug() << "Doesn't exist";
         // insert
         QSqlQuery insert = dbManager->execQuery("INSERT INTO Shift VALUES('" + day + "'"
-                                                ", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1)");
+                                                ", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, " + ui->comboBox_3->currentText() + ")");
     }
 
     // update
@@ -5346,7 +5539,9 @@ void MainWindow::on_btn_saveShift_clicked()
                                             "='" + starttime + "' WHERE DayOfWeek = '" + day + "'");
     QSqlQuery update2 = dbManager->execQuery("UPDATE Shift SET EndTimeShift" + shiftno +
                                             "='" + endtime + "' WHERE DayOfWeek = '" + day + "'");
+    dbManager->execQuery("UPDATE Shift SET NumShifts=" + ui->comboBox_3->currentText() + " WHERE DayOfWeek = '" + day + "'");
 
+    on_EditShiftsButton_clicked();
 }
 
 void MainWindow::updatemenuforuser() {
@@ -5373,6 +5568,12 @@ void MainWindow::updatemenuforuser() {
         ui->adminButton->setSizePolicy(sp_retain);
         ui->adminButton->hide();
     }
+
+    //display logged in user and current shift in status bar
+    lbl_curUser = new QLabel("Logged in as: " + userLoggedIn + "  ");
+    // lbl_curShift = new QLabel("Shift Number: " + currentshiftid);
+    statusBar()->addPermanentWidget(lbl_curUser);
+    // statusBar()->addPermanentWidget(lbl_curShift);
 }
 
 void MainWindow::on_editRemoveCheque_clicked()
