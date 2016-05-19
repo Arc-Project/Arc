@@ -585,6 +585,8 @@ private slots:
     void on_addStorageClient_clicked();
     void on_comboBox_2_currentTextChanged(const QString &arg1);
 
+    void on_checkBox_cl_dob_no_clicked(bool checked);
+
 private:
 
     Ui::MainWindow *ui;
