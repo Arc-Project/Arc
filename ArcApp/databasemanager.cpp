@@ -435,7 +435,7 @@ QSqlQuery DatabaseManager::searchClientInfo(QString ClientId){
                       + QString("SinNo, GaNo, EmpId, DateRulesSigned, status, ")
                       + QString("NokName, NokRelationship, NokLocation, NokContactNo, PhysName, ")
                       + QString("PhysContactNo, SuppWorker1Name, SuppWorker1ContactNo, SuppWorker2Name, SuppWorker2ContactNo, ")
-                      + QString("Comments ")//, ProfilePic ")
+                      + QString("Comments ")
                       + QString("FROM Client WHERE ClientId =" + ClientId));
 
 
@@ -476,10 +476,10 @@ QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId, i
     QString queryStart;
     if(type == 1){
         queryStart = "SELECT TOP "+ QString::number(maxNum)
-                   + QString("Date, Amount, Type, ChequeNo, MSQ, ChequeDate, TransType, EmpName ");
+                   + QString("Date, Time, Amount, Type, ChequeNo, MSQ, ChequeDate, TransType, EmpName ");
     }else{
         queryStart = "SELECT "
-                   + QString("Date, Amount, Type, ChequeNo, MSQ, ChequeDate, TransType, Deleted, Outstanding, EmpName, Notes ");
+                   + QString("Date, Time, Amount, Type, ChequeNo, MSQ, ChequeDate, TransType, Deleted, Outstanding, EmpName, Notes ");
     }
   /*
     clientTransQuery.prepare(queryStart
@@ -490,7 +490,7 @@ QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId, i
 
     clientTransQuery.prepare(queryStart
                            + QString("FROM Transac ")
-                           + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC"));
+                           + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC, Time DESC"));
 
     clientTransQuery.exec();
     return clientTransQuery;

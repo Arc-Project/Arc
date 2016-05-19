@@ -1991,7 +1991,7 @@ void MainWindow::initClTransactionTable(){
     ui->tableWidget_transaction->setColumnCount(8);
     ui->tableWidget_transaction->clear();
 
-    ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Amount"<<"Payment Type"<<"ChequeNo"<<"MSQ"<<"ChequeDate"<<"TransType"<<"Employee");
+    ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Time"<<"Amount"<<"Payment Type"<<"ChequeNo"<<"MSQ"<<"ChequeDate"<<"TransType"<<"Employee");
     ui->tableWidget_transaction->setMinimumHeight(30*6-1);
 
 }
@@ -2601,7 +2601,7 @@ void MainWindow::initCasefileTransactionTable(){
 
     ui->tableWidget_casefile_transaction->setColumnCount(11);
     ui->tableWidget_casefile_transaction->clear();
-    ui->tableWidget_casefile_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Amount"<<"Payment Type"<<"ChequeNo"<<"MSQ"<<"ChequeDate"<<"TransType"
+    ui->tableWidget_casefile_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Time"<<"Amount"<<"Payment Type"<<"ChequeNo"<<"MSQ"<<"ChequeDate"<<"TransType"
                                                            <<"Deleted"<<"Outstanding"<<"Employee"<<"Notes");
 
 }
