@@ -20,6 +20,8 @@ class DatabaseManager : public QObject
 {
     Q_OBJECT
 public:
+
+    static QString staticError;
     /*==========================================================================
     DATABASE MANAGER SETUP
     ==========================================================================*/
