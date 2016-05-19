@@ -527,18 +527,17 @@ QSqlQuery DatabaseManager::searchBookList(int maxNum, QString clientId, int type
     QString queryStart;
     if(type == 1){
         queryStart = "SELECT TOP "+ QString::number(maxNum)
-                   + QString("DateCreated, ProgramCode, StartDate, EndDate, Cost, SpaceId ");
+                   + QString("b.DateCreated, b.programCode, b.StartDate, b.EndDate, b.Cost, s.SpaceCode ");
     }else{
         queryStart = "SELECT "
-                   + QString("DateCreated, ProgramCode, StartDate, EndDate, Cost, SpaceId, FirstBook, Monthly ");
+                   + QString("b.DateCreated, b.ProgramCode, b.StartDate, b.EndDate, b.Cost, s.SpaceCode, b.FirstBook, b.Monthly ");
     }
     clientBookingQuery.prepare(queryStart
-                           + QString("FROM Booking ")
+                           + QString("FROM Booking b INNER JOIN Space s ON b.SpaceId = s.SpaceId ")
                            + QString("WHERE ClientId = " + clientId + " ORDER BY EndDate DESC, DateCreated DESC"));
     clientBookingQuery.exec();
     return clientBookingQuery;
 }
-
 
 int DatabaseManager::countInformationPerClient(QString tableName, QString ClientId){
     QSqlQuery countQuery;
