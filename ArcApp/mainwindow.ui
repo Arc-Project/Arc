@@ -2234,7 +2234,7 @@ QHeaderView {
                  <enum>QAbstractItemView::SelectRows</enum>
                 </property>
                 <attribute name="verticalHeaderVisible">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </attribute>
                 <attribute name="verticalHeaderMinimumSectionSize">
                  <number>30</number>

@@ -117,6 +117,7 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case CLIENTLOOKUP:  //WIDGET 1
             initClientLookupInfo();
+            getCaseWorkerList();
             ui->tabWidget_cl_info->setCurrentIndex(0);
             if(registerType == EDITCLIENT)
                 getClientInfo();
@@ -1624,6 +1625,15 @@ bool MainWindow::check_client_register_form(){
     return true;
 }
 
+void MainWindow::getCaseWorkerList(){
+    QString caseWorkerquery = "SELECT Username, EmpId FROM Employee WHERE Role = 'CASE WORKER' ORDER BY Username";
+    QSqlQuery caseWorkers = dbManager->execQuery(caseWorkerquery);
+    //dbManager->printAll(caseWorkers);
+    while(caseWorkers.next()){
+        qDebug()<<"CASEWORKER: " <<caseWorkers.value(0).toString() << caseWorkers.value(1).toString();
+        caseWorkerList.insert(caseWorkers.value(0).toString(), caseWorkers.value(1).toInt());
+    }
+}
 
 void MainWindow::defaultRegisterOptions(){
     //add caseWorker Name
@@ -1633,15 +1643,15 @@ void MainWindow::defaultRegisterOptions(){
     }
 
     if(caseWorkerUpdated){
-        QString caseWorkerquery = "SELECT Username, EmpId FROM Employee WHERE Role = 'CASE WORKER' ORDER BY Username";
-        QSqlQuery caseWorkers = dbManager->execQuery(caseWorkerquery);
-        //dbManager->printAll(caseWorkers);
-        while(caseWorkers.next()){
-         //   qDebug()<<"CASEWORKER: " <<caseWorkers.value(0).toString() << caseWorkers.value(1).toString();
-            caseWorkerList.insert(caseWorkers.value(0).toString(), caseWorkers.value(1).toInt());
-            if(ui->comboBox_cl_caseWorker->findText(caseWorkers.value(0).toString())==-1){
-                ui->comboBox_cl_caseWorker->addItem(caseWorkers.value(0).toString());
+      if(ui->comboBox_cl_caseWorker->count() != caseWorkerList.count()+1){
+          QMap<QString, int>::const_iterator it = caseWorkerList.constBegin();
+          while(it != caseWorkerList.constEnd()){
+            if(ui->comboBox_cl_caseWorker->findText(it.key())== -1){
+                ui->comboBox_cl_caseWorker->addItem(it.key());
+               qDebug()<<"key is : " + it.key();
             }
+            ++it;
+          }
         }
         caseWorkerUpdated = false;
     }
@@ -1980,7 +1990,8 @@ void MainWindow::searchTransaction(QString clientId){
     initClTransactionTable();
     displayTransaction(transQuery, ui->tableWidget_transaction);
 
-    QString totalNum= (transacTotal == 0)? "-" : QString::number(transacTotal);
+    QString totalNum= (transacTotal == 0)? "-" :
+                     (QString::number(ui->tableWidget_transaction->rowCount()) + " / " + QString::number(transacTotal));
     ui->label_cl_trans_total_num->setText(totalNum + " Transaction");
 
 
@@ -2019,7 +2030,7 @@ void MainWindow::displayTransaction(QSqlQuery results){
     if(row == 0)
         row = 5;
     if (row > 25){
-        ui->tableWidget_transaction->setMaximumHeight(30*26 -1);
+       // ui->tableWidget_transaction->setMaximumHeight(30*26 -1);
         return;
     }
     ui->tableWidget_transaction->setMinimumHeight(30*(row+1) -1);
@@ -2050,7 +2061,8 @@ void MainWindow::displayTransaction(QSqlQuery results, QTableWidget* table){
         table->setRowCount(transacTotal);
     }
     if (row > 25){
-        table->setMaximumHeight(30*26 -1);
+        table->setMinimumHeight(30*26-1);
+        //table->setMaximumHeight(30*26 -1);
         return;
     }
     else if(row >5)
@@ -2074,7 +2086,9 @@ void MainWindow::searchBookHistory(QString clientId){
     QSqlQuery bookingQuery = dbManager->searchBookList(bookingNum, clientId, CLIENTLOOKUP);
     displayBookHistory(bookingQuery, ui->tableWidget_booking);
    // dbManager->printAll(bookingQuery);
-    QString totalNum = (bookingTotal == 0)? "-" : QString::number(bookingTotal);
+
+    QString totalNum = (bookingTotal == 0)? "-" :
+                        QString::number(ui->tableWidget_booking->rowCount()) + " / " + QString::number(bookingTotal);
     ui->label_cl_booking_total_num->setText(totalNum + " Booking");
 }
 void MainWindow::initClBookHistoryTable(){
@@ -2106,7 +2120,7 @@ void MainWindow::displayBookHistory(QSqlQuery results){
     if (row == 0)
         row = 5;
     if (row > 25){
-        ui->tableWidget_booking->setMaximumHeight(30*26 -1);
+        ui->tableWidget_booking->setMinimumHeight(30*26 -1);
         return;
     }
     ui->tableWidget_booking->setMinimumHeight(30*(row+1) -1);
@@ -2135,7 +2149,7 @@ void MainWindow::displayBookHistory(QSqlQuery results, QTableWidget * table){
     }
     */
     if (row > 25){
-        table->setMaximumHeight(30*26 -1);
+        table->setMinimumHeight(30*26 -1);
         return;
     }
     if(row >5)
