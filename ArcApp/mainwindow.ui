@@ -125,7 +125,7 @@ QHeaderView {
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>8</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -4656,7 +4656,7 @@ QHeaderView {
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>620</width>
+                 <width>1186</width>
                  <height>1294</height>
                 </rect>
                </property>
@@ -6853,7 +6853,7 @@ QHeaderView {
                  <widget class="QLabel" name="label_casefile_trans_total">
                   <property name="font">
                    <font>
-                    <pointsize>10</pointsize>
+                    <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -6865,13 +6865,13 @@ QHeaderView {
                  <widget class="QLabel" name="label_casefile_trans_total_num">
                   <property name="minimumSize">
                    <size>
-                    <width>40</width>
+                    <width>100</width>
                     <height>0</height>
                    </size>
                   </property>
                   <property name="font">
                    <font>
-                    <pointsize>10</pointsize>
+                    <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
@@ -10586,17 +10586,10 @@ QHeaderView {
                   </spacer>
                  </item>
                 </layout>
-                <zorder>month_comboBox</zorder>
-                <zorder>year_comboBox</zorder>
-                <zorder>monthlyReportGo_btn</zorder>
-                <zorder>label_76</zorder>
-                <zorder>monthlyReportMonth_lbl</zorder>
                 <zorder>wdg_emptyBeds</zorder>
                 <zorder>wdg_bedsUsed</zorder>
                 <zorder>wdg_uniqueClients</zorder>
                 <zorder>wdg_newClients</zorder>
-                <zorder>label_71</zorder>
-                <zorder>lbl_pastShiftReports_3</zorder>
                 <zorder>horizontalSpacer_99</zorder>
                 <zorder>horizontalSpacer_100</zorder>
                 <zorder>verticalSpacer_53</zorder>
@@ -14014,15 +14007,10 @@ QHeaderView {
          </spacer>
         </item>
        </layout>
-       <zorder>layoutWidget</zorder>
        <zorder>tableWidget_6</zorder>
-       <zorder>layoutWidget</zorder>
        <zorder>btn_saveShift</zorder>
-       <zorder>label_62</zorder>
        <zorder>horizontalSpacer_46</zorder>
        <zorder>horizontalSpacer_47</zorder>
-       <zorder>label_65</zorder>
-       <zorder>layoutWidget</zorder>
        <zorder>horizontalSpacer_49</zorder>
        <zorder>verticalSpacer_57</zorder>
        <zorder>verticalSpacer_58</zorder>

@@ -2265,9 +2265,16 @@ void MainWindow::initClientLookupInfo(){
     //initialize transaction
     initClTransactionTable();
 
+    //initialize transaction total count
+    transacTotal = 0;
+    ui->label_cl_trans_total_num->setText("");
+
     //initialize booking history table
+    bookingTotal = 0;
     initClBookHistoryTable();
 
+    //initialize booking total count
+    ui->label_cl_booking_total_num->setText("");
 
     //disable buttons that need a clientId
     if(curClientID == NULL){
