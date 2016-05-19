@@ -3102,13 +3102,16 @@ void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
 // set case files directory
 void MainWindow::on_pushButton_3_clicked()
 {
+    const QString DEFAULT_DIR_KEY("default_dir");
+    QSettings mruDir;
     QString tempDir = QFileDialog::getExistingDirectory(
                     this,
                     tr("Select Directory"),
-                    "C://"
+                    mruDir.value(DEFAULT_DIR_KEY).toString()
                 );
     if (!tempDir.isEmpty()) {
         dir = tempDir;
+        mruDir.setValue(DEFAULT_DIR_KEY, tempDir);
         int nRow = ui->tableWidget_search_client->currentRow();
 
         QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 3)->text() + ", " +
@@ -3240,8 +3243,8 @@ void MainWindow::on_pushButton_24_clicked()
     }
 }
 
-
-void MainWindow::resizeEvent() {
+void MainWindow::resizeEvent(QResizeEvent* event) {
+    Q_UNUSED(event);
     double width = ui->tw_pcpRela->size().width();
     for (auto x: pcp_tables){
         x->resizeRowsToContents();
@@ -4915,6 +4918,7 @@ void MainWindow::printMonthlyReport(const int recNo, const QString paramName, QV
 
 
 void MainWindow::printRestrictionReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage){
+    Q_UNUSED(paramName);
     if (reportPage == 0) {
         paramValue = yellowReport->model.tableData->at(recNo * yellowReport->model.cols);
     } else if (reportPage == 1) {
