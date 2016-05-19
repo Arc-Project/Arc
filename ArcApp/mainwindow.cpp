@@ -3401,6 +3401,14 @@ void MainWindow::on_addbedtoprogram_clicked()
     // add program tag to bed
     QString pcode = ui->le_userName_2->text();
 
+    if (pcode== "") {
+        return;
+    }
+
+    if ((ui->availablebedslist->selectedItems().size()) == 0) {
+        return;
+    }
+
     // QModelIndexList qil = ui->availablebedslist->selectedIndexes();
 
     // get selected bed
@@ -3483,6 +3491,14 @@ void MainWindow::on_removebedfromprogram_clicked()
 {
     // remove program tag from bed
     QString pcode = ui->le_userName_2->text();
+
+    if (pcode== "") {
+        return;
+    }
+
+    if ((ui->assignedbedslist->selectedItems().size()) == 0) {
+        return;
+    }
 
     // get selected bed
     qDebug() << ui->assignedbedslist->currentItem()->text();
@@ -5065,12 +5081,11 @@ void MainWindow::on_btn_createNewUser_3_clicked()
         // update spacecodes
         dbManager->updateAllSpacecodes();
         // clear everything
-        ui->cbox_roomLoc->clear();
-        ui->cbox_roomFloor->clear();
-        ui->cbox_roomRoom->clear();
+//        ui->cbox_roomLoc->clear();
+//        ui->cbox_roomFloor->clear();
+//        ui->cbox_roomRoom->clear();
         ui->le_roomNo->clear();
-        ui->cbox_roomType->clear();
-        ui->le_roomNo->clear();
+        // ui->cbox_roomType->clear();
         ui->doubleSpinBox->setValue(0.0);
         ui->doubleSpinBox_2->setValue(0.0);
         ui->tableWidget_5->clear();
@@ -5079,8 +5094,10 @@ void MainWindow::on_btn_createNewUser_3_clicked()
         // set horizontal headers
         ui->tableWidget_5->setColumnCount(8);
         ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly");
-        populate_modRoom_cboxes();
+        // populate_modRoom_cboxes();
         ui->lbl_editUserWarning_3->setText("Vacancy created");
+        // list all
+        on_btn_listAllUsers_3_clicked();
     } else {
         ui->lbl_editUserWarning_3->setText("This vacancy already exists. Please change the bed number.");
     }
