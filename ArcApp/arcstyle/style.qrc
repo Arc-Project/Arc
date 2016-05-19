@@ -59,5 +59,6 @@
         <file>pdf/pcp.xml</file>
         <file>pdf/restriction.xml</file>
         <file>pdf/monthly.xml</file>
+        <file>pdf/running.xml</file>
     </qresource>
 </RCC>
