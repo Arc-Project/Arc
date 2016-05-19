@@ -4709,6 +4709,13 @@ void MainWindow::on_actionExport_to_PDF_triggered()
         report->recordCount << 1;
     } else
 
+    // reports: restrictions
+    if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == RESTRICTIONS){
+        rptTemplate = ":/templates/pdf/restriction.xml";
+        report->recordCount << yellowReport->model.rows
+                            << redReport->model.rows;
+    } else
+
     // case files pcp
     if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == 0){
         rptTemplate = ":/templates/pdf/pcp.xml";
@@ -4745,6 +4752,11 @@ void MainWindow::setValue(const int recNo, const QString paramName, QVariant &pa
     // reports: monthly count
     if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == MONTHLYREPORT){
         printMonthlyReport(recNo, paramName, paramValue, reportPage);
+    } else
+
+    // reports: restrictions
+    if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == RESTRICTIONS){
+        printRestrictionReport(recNo, paramName, paramValue, reportPage);
     } else
 
     // case files pcp
@@ -4937,6 +4949,15 @@ void MainWindow::printMonthlyReport(const int recNo, const QString paramName, QV
     }
 }
 
+
+void MainWindow::printRestrictionReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage){
+    if (reportPage == 0) {
+        paramValue = yellowReport->model.tableData->at(recNo * yellowReport->model.cols);
+    } else if (reportPage == 1) {
+        paramValue = redReport->model.tableData->at(recNo * redReport->model.cols);
+    }
+}
+
 void MainWindow::printPCP(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
     qDebug() << "report page: " << reportPage;
 
@@ -4964,6 +4985,7 @@ void MainWindow::printPCP(const int recNo, const QString paramName, QVariant &pa
          qDebug() << "report page: " << reportPage << " recNp: " << recNo << " value: " << tw_pcp->item(recNo, 1)->text();
     }
 }
+
 
 
 void MainWindow::on_btn_createNewUser_3_clicked()
