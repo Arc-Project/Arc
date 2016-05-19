@@ -3388,6 +3388,14 @@ void MainWindow::on_addbedtoprogram_clicked()
     // add program tag to bed
     QString pcode = ui->le_userName_2->text();
 
+    if (pcode== "") {
+        return;
+    }
+
+    if ((ui->availablebedslist->selectedItems().size()) == 0) {
+        return;
+    }
+
     // QModelIndexList qil = ui->availablebedslist->selectedIndexes();
 
     // get selected bed
@@ -3470,6 +3478,14 @@ void MainWindow::on_removebedfromprogram_clicked()
 {
     // remove program tag from bed
     QString pcode = ui->le_userName_2->text();
+
+    if (pcode== "") {
+        return;
+    }
+
+    if ((ui->assignedbedslist->selectedItems().size()) == 0) {
+        return;
+    }
 
     // get selected bed
     qDebug() << ui->assignedbedslist->currentItem()->text();
