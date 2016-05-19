@@ -21,7 +21,9 @@ int workFlow;
 
 //client search info
 int transacNum, transacTotal;
+bool newTrans;
 int bookingNum, bookingTotal;
+bool newHistory;
 int maxClient;
 QFuture<void> displayFuture ;
 QFuture<void> displayPicFuture;
@@ -162,6 +164,8 @@ void MainWindow::initCurrentWidget(int idx){
                 qDebug()<<"NAME: " << curClient->fullName;
                 qDebug()<<"Balance: " << curClient->balance;
             }
+            newTrans = true;
+            newHistory = true;
             initPcp();
             break;
         case EDITBOOKING: //WIDGET 9
@@ -1741,7 +1745,7 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
             break;
 
         case 1:
-            if(curClientID == NULL)
+            if(curClientID == NULL || !newTrans)
                 break;
             if(transacFuture.isRunning()|| !transacFuture.isFinished()){
                 qDebug()<<"TransactionHistory Is RUNNING";
@@ -1749,14 +1753,16 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
             }
             ui->pushButton_cl_trans_more->setEnabled(true);
             transacFuture = QtConcurrent::run(this, &searchTransaction, curClientID);
+            useProgressDialog("Read recent transaction...", transacFuture);
             //transacFuture.waitForFinished();
             if(ui->tableWidget_transaction->rowCount()>= transacTotal)
                 ui->pushButton_cl_trans_more->setEnabled(false);
             qDebug()<<"client Transaction list";
+            newTrans = false;
             break;
 
        case 2:
-            if(curClientID == NULL)
+            if(curClientID == NULL || !newHistory)
                 break;
              if(bookHistoryFuture.isRunning()|| !bookHistoryFuture.isFinished()){
                  qDebug()<<"BookingHistory Is RUNNING";
@@ -1764,9 +1770,12 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
              }
              ui->pushButton_cl_book_more->setEnabled(true);
              bookHistoryFuture = QtConcurrent::run(this, &searchBookHistory, curClientID);
-             bookHistoryFuture.waitForFinished();
+             useProgressDialog("Read recent booking...", bookHistoryFuture);
+             //bookHistoryFuture.waitForFinished();
              if(ui->tableWidget_booking->rowCount() >= bookingTotal)
                  ui->pushButton_cl_book_more->setEnabled(false);
+             newHistory = false;
+             break;
     }
 }
 
@@ -1776,6 +1785,8 @@ void MainWindow::selected_client_info(int nRow, int nCol)
 {
     Q_UNUSED(nCol)
     curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
+    newTrans = true;
+    newHistory = true;
     getClientInfo();
     initClTransactionTable();
     initClBookHistoryTable();
@@ -1962,7 +1973,7 @@ void MainWindow::searchTransaction(QString clientId){
     qDebug()<<"search transaction STaRt";
 
     QSqlQuery transQuery = dbManager->searchClientTransList(transacNum, clientId, CLIENTLOOKUP);
-    displayTransaction(transQuery);
+    displayTransaction(transQuery, ui->tableWidget_transaction);
 
     QString totalNum= (transacTotal == 0)? "-" : QString::number(transacTotal);
     ui->label_cl_trans_total_num->setText(totalNum + " Transaction");
@@ -1984,7 +1995,7 @@ void MainWindow::initClTransactionTable(){
 //search transaction list when click transaction list
 void MainWindow::displayTransaction(QSqlQuery results){
     initClTransactionTable();
-    int row =ui->tableWidget_transaction->rowCount();
+    int row = 0;
     int colCnt = results.record().count();
     while(results.next()){
         ui->tableWidget_transaction->insertRow(row);
@@ -2002,13 +2013,42 @@ void MainWindow::displayTransaction(QSqlQuery results){
     if(row == 0)
         row = 5;
     if (row > 25){
-        ui->tableWidget_booking->setMaximumHeight(30*26);
+        ui->tableWidget_booking->setMaximumHeight(30*26 -1);
         return;
     }
-    ui->tableWidget_transaction->setMinimumHeight(30*(row+1));
-
+    ui->tableWidget_transaction->setMinimumHeight(30*(row+1) -1);
+    ui->tableWidget_transaction->show();
 }
 
+
+void MainWindow::displayTransaction(QSqlQuery results, QTableWidget* table){
+    initClTransactionTable();
+    int row = 0;
+    int colCnt = results.record().count();
+    while(results.next()){
+        table->insertRow(row);
+        for(int i =0; i<colCnt; i++){
+            table->setItem(row, i, new QTableWidgetItem(results.value(i).toString()));
+            //qDebug() <<"row : "<<row << ", col: " << i << "item" << results.value(i).toString();
+        }
+        row++;
+    }
+    /*
+    if(row > transacTotal || row == transacTotal){
+        ui->pushButton_cl_trans_more->setEnabled(false);
+    }
+    */
+    if( table == ui->tableWidget_casefile_transaction)
+        return;
+    if (row > 25){
+        table->setMaximumHeight(30*26 -1);
+        return;
+    }
+    else if(row >5)
+        table->setMinimumHeight(30*(row+1) -1);
+   // table->show();
+
+}
 //get more transaction list
 void MainWindow::on_pushButton_cl_trans_more_clicked()
 {
@@ -2023,7 +2063,7 @@ void MainWindow::searchBookHistory(QString clientId){
     qDebug()<<"search booking";
 
     QSqlQuery bookingQuery = dbManager->searchBookList(bookingNum, clientId);
-    displayBookHistory(bookingQuery);
+    displayBookHistory(bookingQuery, ui->tableWidget_booking);
    // dbManager->printAll(bookingQuery);
     QString totalNum = (bookingTotal == 0)? "-" : QString::number(bookingTotal);
     ui->label_cl_booking_total_num->setText(totalNum + " Booking");
@@ -2032,7 +2072,6 @@ void MainWindow::initClBookHistoryTable(){
     ui->tableWidget_booking->setRowCount(0);
     ui->tableWidget_booking->setColumnCount(6);
     ui->tableWidget_booking->clear();
-
     ui->tableWidget_booking->setHorizontalHeaderLabels(QStringList()<<"Reserved Date"<<"Program Code"<<"Start Date"<< "End Date"<<"Cost"<<"Bed Number"<<"FirstBook ");
 }
 
@@ -2057,10 +2096,37 @@ void MainWindow::displayBookHistory(QSqlQuery results){
     if (row == 0)
         row = 5;
     if (row > 25){
-        ui->tableWidget_booking->setMaximumHeight(30*26);
+        ui->tableWidget_booking->setMaximumHeight(30*26 -1);
         return;
     }
-    ui->tableWidget_booking->setMinimumHeight(30*(row+1));
+    ui->tableWidget_booking->setMinimumHeight(30*(row+1) -1);
+}
+
+//display booking history in the table view
+void MainWindow::displayBookHistory(QSqlQuery results, QTableWidget * table){
+    initClBookHistoryTable();
+    int colCnt = results.record().count() -1;
+    int row =table->rowCount();
+    while(results.next()){
+        table->insertRow(row);
+        for(int i =0; i<colCnt; i++){
+            table->setItem(row, i, new QTableWidgetItem(results.value(i).toString()));
+            //qDebug() <<"row : "<<row << ", col: " << i << "item" << results.value(i).toString();
+        }
+        row++;
+    }
+    /*
+    if(row > bookingTotal || row == bookingTotal){
+        ui->pushButton_cl_book_more->setEnabled(false);
+    }
+    */
+    if (row == 0)
+        row = 5;
+    if (row > 25){
+        table->setMaximumHeight(30*26 -1);
+        return;
+    }
+    table->setMinimumHeight(30*(row+1) -1);
 }
 
 //click more client button
@@ -2474,15 +2540,46 @@ void MainWindow::on_tabw_casefiles_currentChanged(int index)
         case RUNNINGNOTE:
             break;
         case BOOKINGHISTORY:
-
             break;
         case TRANSACTIONHISTORY:
+            if(!newTrans)
+                return;
+            useProgressDialog("Search Transaction...",QtConcurrent::run(this, &searchCasefileTransaction, curClientID));
+            QString totalNum = QString::number(ui->tableWidget_casefile_transaction->rowCount());
+            ui->label_casefile_trans_total_num->setText(totalNum + " Transaction");
+            newTrans=false;
             break;
     }
 }
 
+//CASEFILE BOOKING HISTROY(EUNWON)
 
-//CASEFILE TRANSACTION
+
+//CASEFILE TRANSACTION(EUNWON)
+void MainWindow::initCasefileTransactionTable(){
+    ui->tableWidget_casefile_transaction->setRowCount(0);
+
+    ui->tableWidget_casefile_transaction->setColumnCount(11);
+    ui->tableWidget_casefile_transaction->clear();
+    ui->tableWidget_casefile_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Amount"<<"Payment Type"<<"ChequeNo"<<"MSQ"<<"ChequeDate"<<"TransType"
+                                                           <<"Deleted"<<"Outstanding"<<"Employee"<<"Notes");
+
+}
+
+//search transaction list when click transaction list
+void MainWindow::searchCasefileTransaction(QString clientId){
+    qDebug()<<"search transaction STaRt";
+    initCasefileTransactionTable();
+
+    QSqlQuery transQuery = dbManager->searchClientTransList(transacNum, clientId, CASEFILE);
+    displayTransaction(transQuery, ui->tableWidget_casefile_transaction);
+
+
+
+
+
+}
+
 
 
 

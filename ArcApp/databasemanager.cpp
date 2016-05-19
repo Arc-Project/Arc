@@ -479,7 +479,7 @@ QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId, i
                    + QString("Date, Amount, Type, ChequeNo, MSQ, ChequeDate, TransType, EmpName ");
     }else{
         queryStart = "SELECT "
-                   + QString("Date, Amount, Type, ChequeNo, MSQ, ChequeDate, TransType, Deleted, Outstanding, EmpName, Notes");
+                   + QString("Date, Amount, Type, ChequeNo, MSQ, ChequeDate, TransType, Deleted, Outstanding, EmpName, Notes ");
     }
   /*
     clientTransQuery.prepare(queryStart

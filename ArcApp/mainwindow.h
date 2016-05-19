@@ -227,9 +227,9 @@ private slots:
     void searchTransaction(QString clientId);
 
     void displayTransaction(QSqlQuery results);
-
+    void displayTransaction(QSqlQuery results, QTableWidget* table);
     void displayBookHistory(QSqlQuery results);
-
+    void displayBookHistory(QSqlQuery results, QTableWidget* table);
     void searchBookHistory(QString clientId);
 
     /*==========================================================================
@@ -470,6 +470,12 @@ private slots:
     void on_cbox_roomType_currentIndexChanged(int index);
 
     void on_cbox_roomType_currentTextChanged(const QString &arg1);
+
+    //CASEFILE TRANSACTION TABLE
+    void initCasefileTransactionTable();
+    void searchCasefileTransaction(QString clientId);
+
+    //CASEFILE BOOKING HISTORY TABLE
 
     void on_tabWidget_cl_info_currentChanged(int index);
 
