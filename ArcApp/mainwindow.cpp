@@ -81,16 +81,16 @@ MainWindow::MainWindow(QWidget *parent) :
     curClient = 0;
     curBook = 0;
     trans = 0;
-    currentshiftid = 1; // should change this. Set to 1 for testing;
+//    currentshiftid = 1; // should change this. Set to 1 for testing;
 
     MainWindow::setupReportsScreen();
 
-    //display logged in user and current shift in status bar
-    QLabel *lbl_curUser = new QLabel("Logged in as: " + userLoggedIn + "  ");
-    QLabel *lbl_curShift = new QLabel("Shift Number: ");
-    statusBar()->addPermanentWidget(lbl_curUser);
-    statusBar()->addPermanentWidget(lbl_curShift);
-    lbl_curShift->setText("fda");
+//    //display logged in user and current shift in status bar
+//    QLabel *lbl_curUser = new QLabel("Logged in as: " + userLoggedIn + "  ");
+//    QLabel *lbl_curShift = new QLabel("Shift Number: ");
+//    statusBar()->addPermanentWidget(lbl_curUser);
+//    statusBar()->addPermanentWidget(lbl_curShift);
+//    lbl_curShift->setText("fda");
 
     dialog = new QProgressDialog();
     dialog->close();
@@ -2682,8 +2682,6 @@ void MainWindow::searchCasefileTransaction(QString clientId){
 /*-------------------CASEFILE END-----------------------------------*/
 
 
-
-// HANK
 void MainWindow::on_EditRoomsButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(EDITROOM);
@@ -4361,6 +4359,7 @@ void MainWindow::on_btn_modRoomType_clicked()
     // this shouldn't be modifiable... - there are only ever beds and mats.
 }
 
+// HANK
 void MainWindow::on_EditShiftsButton_clicked()
 {
     addHistory(ADMINPAGE);
@@ -4368,6 +4367,53 @@ void MainWindow::on_EditShiftsButton_clicked()
     ui->comboBox_4->clear();
     ui->comboBox_4->addItem("1");
     ui->comboBox_3->setCurrentIndex(0);
+
+    ui->tableWidget_6->clearContents();
+
+    // populate table
+    // ui->tableWidget_6
+
+    QSqlQuery shifts = dbManager->execQuery("SELECT * FROM Shift");
+    while (shifts.next()) {
+        int numberofshifts = shifts.value(11).toInt();
+        QString day = shifts.value(0).toString();
+        int dayrow = 0;
+        if (day == "Monday") {
+            dayrow = 0;
+        } else if (day == "Tuesday") {
+            dayrow = 1;
+        } else if (day == "Wednesday") {
+            dayrow = 2;
+        } else if (day == "Thursday") {
+            dayrow = 3;
+        } else if (day == "Friday") {
+            dayrow = 4;
+        } else if (day == "Saturday") {
+            dayrow = 5;
+        } else if (day == "Sunday") {
+            dayrow = 6;
+        }
+
+        for (int i = 1; i < (numberofshifts + 1); i++) {
+            QTime starttime = shifts.value((i*2)-1).toTime();
+            QTime endtime = shifts.value(i*2).toTime();
+
+            int starthr = starttime.hour();
+            int endhr = endtime.hour();
+
+            for (int j = starthr; j <= endhr; j++) {
+                QTableWidgetItem* item = new QTableWidgetItem();
+                QTableWidgetItem* temp = ui->tableWidget_6->item(dayrow, j);
+                QString newtxt = "";
+                if (temp != 0) {
+                    newtxt += temp->text();
+                }
+                newtxt += " " + QString::fromStdString(std::to_string(i)) + " ";
+                item->setText(newtxt);
+                ui->tableWidget_6->setItem(dayrow, j, item);
+            }
+        }
+    }
 }
 
 void MainWindow::on_cbox_roomLoc_currentTextChanged(const QString &arg1)
@@ -5489,6 +5535,7 @@ void MainWindow::on_btn_saveShift_clicked()
                                             "='" + endtime + "' WHERE DayOfWeek = '" + day + "'");
     dbManager->execQuery("UPDATE Shift SET NumShifts=" + ui->comboBox_3->currentText() + " WHERE DayOfWeek = '" + day + "'");
 
+    on_EditShiftsButton_clicked();
 }
 
 void MainWindow::updatemenuforuser() {
