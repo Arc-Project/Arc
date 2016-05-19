@@ -168,6 +168,8 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case CASEFILE: //WIDGET 8
             ui->tabw_casefiles->setCurrentIndex(PERSIONACASEPLAN);
+            ui->tableWidget_casefile_booking->verticalHeader()->show();
+            ui->tableWidget_casefile_transaction->verticalHeader()->show();
             qDebug()<<"Client INFO";
             if(curClient != NULL){
                 qDebug()<<"ID: " << curClientID << curClient->clientId;
@@ -1679,7 +1681,6 @@ void MainWindow::defaultRegisterOptions(){
           while(it != caseWorkerList.constEnd()){
             if(ui->comboBox_cl_caseWorker->findText(it.key())== -1){
                 ui->comboBox_cl_caseWorker->addItem(it.key());
-               qDebug()<<"key is : " + it.key();
             }
             ++it;
           }
@@ -2618,9 +2619,10 @@ void MainWindow::on_tabw_casefiles_currentChanged(int index)
             break;
         case RUNNINGNOTE:
             break;
-        case BOOKINGHISTORY:
+        case BOOKINGHISTORY:            
             if(!newHistory)
                 break;
+
             initCasefileBookHistoryTable();
             useProgressDialog("Search Transaction...",QtConcurrent::run(this, &searchCasefileBookHistory, curClientID));
             bookingTotal = ui->tableWidget_casefile_booking->rowCount();
