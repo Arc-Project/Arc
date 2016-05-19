@@ -186,13 +186,13 @@ private slots:
     ==========================================================================*/
     void on_dailyReportGo_btn_clicked();
     void on_dailyReportCurrent_btn_clicked();
-    void updateDailyReportStats(QList<int> list);
+    void updateDailyReportStats(QList<int> list, bool conn);
     void on_shiftReportGo_btn_clicked();
     void on_shiftReportCurrent_btn_clicked();
-    void updateShiftReportStats(QStringList list);
+    void updateShiftReportStats(QStringList list, bool conn);
     void on_saveOther_btn_clicked();
     void on_other_lineEdit_textEdited(const QString &text);
-    void updateCashFloat(QDate date, int shiftNo, QStringList list);
+    void updateCashFloat(QDate date, int shiftNo, QStringList list, bool conn);
     void updateCashFloatLastEditedLabels(QString empName, 
         QString currentDateStr, QString currentTimeStr);
     void on_saveFloat_btn_clicked();
@@ -200,8 +200,9 @@ private slots:
     void on_cashFloatGo_btn_clicked();
     void on_cashFloatCurrent_btn_clicked();
     void on_monthlyReportGo_btn_clicked();
-    void updateMonthlyReportUi(QStringList list);
+    void updateMonthlyReportUi(QStringList list, bool conn);
     void on_restrictionRefresh_btn_clicked();
+    void on_noDatabaseConnection();
     void on_noDatabaseConnection(QSqlDatabase* database);
     
     void on_reconnectedToDatabase();
@@ -543,6 +544,8 @@ private slots:
     void printPCP(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
 
     void printDailyReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
+
+    void printShiftReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
 
     void on_comboBox_3_currentTextChanged(const QString &arg1);
 
