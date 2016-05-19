@@ -2234,7 +2234,7 @@ QHeaderView {
                  <enum>QAbstractItemView::SelectRows</enum>
                 </property>
                 <attribute name="verticalHeaderVisible">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </attribute>
                 <attribute name="verticalHeaderMinimumSectionSize">
                  <number>30</number>
@@ -8291,7 +8291,7 @@ QHeaderView {
              <item row="0" column="1">
               <widget class="QStackedWidget" name="swdg_reports">
                <property name="currentIndex">
-                <number>1</number>
+                <number>0</number>
                </property>
                <widget class="QWidget" name="page_3">
                 <layout class="QGridLayout" name="gridLayout_34">
@@ -13546,7 +13546,7 @@ QHeaderView {
      <x>0</x>
      <y>0</y>
      <width>1542</width>
-     <height>23</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="font">
