@@ -4370,10 +4370,6 @@ void MainWindow::on_EditShiftsButton_clicked()
 {
     addHistory(ADMINPAGE);
     ui->stackedWidget->setCurrentIndex(EDITSHIFT);
-    ui->comboBox_4->clear();
-    ui->comboBox_4->addItem("1");
-    ui->comboBox_3->setCurrentIndex(0);
-
     ui->tableWidget_6->clearContents();
 
     // populate table
