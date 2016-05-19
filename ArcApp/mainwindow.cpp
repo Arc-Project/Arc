@@ -183,7 +183,7 @@ void MainWindow::initCurrentWidget(int idx){
             newHistory = true;
             initCasefileTransactionTable();
             initPcp();
-            ui->actionExport_to_PDF->setEnabled(true);
+            ui->actionExport_to_PDF->setEnabled(false);
             break;
         case EDITBOOKING: //WIDGET 9
             ui->editLookupTable->clear();
@@ -2599,10 +2599,10 @@ void MainWindow::on_tabw_casefiles_currentChanged(int index)
     switch(index)
     {
         case PERSIONACASEPLAN:
-            ui->actionExport_to_PDF->setEnabled(true);
+            ui->actionExport_to_PDF->setEnabled(false);
             break;
         case RUNNINGNOTE:
-            ui->actionExport_to_PDF->setEnabled(true);
+            ui->actionExport_to_PDF->setEnabled(false);
             break;
         case BOOKINGHISTORY:
             ui->actionExport_to_PDF->setEnabled(false);
