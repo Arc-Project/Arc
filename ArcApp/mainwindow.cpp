@@ -1564,9 +1564,10 @@ void MainWindow::read_curClient_Information(QString ClientId){
     ui->lineEdit_cl_mName->setText(clientInfo.value(2).toString());
     ui->lineEdit_cl_lName->setText(clientInfo.value(3).toString());
 
-    if(clientInfo.value(4).toString() == "")
+    if(clientInfo.value(4).toString() == ""){
         ui->checkBox_cl_dob_no->setChecked(true);
         ui->dateEdit_cl_dob->setEnabled(false);
+    }
     else{
         ui->checkBox_cl_dob_no->setChecked(false);
         ui->dateEdit_cl_dob->setEnabled(true);
@@ -1684,9 +1685,13 @@ void MainWindow::getCaseWorkerList(){
     QString caseWorkerquery = "SELECT Username, EmpId FROM Employee WHERE Role = 'CASE WORKER' ORDER BY Username";
     QSqlQuery caseWorkers = dbManager->execQuery(caseWorkerquery);
     //dbManager->printAll(caseWorkers);
+    caseWorkerList.empty();
     while(caseWorkers.next()){
         qDebug()<<"CASEWORKER: " <<caseWorkers.value(0).toString() << caseWorkers.value(1).toString();
-        caseWorkerList.insert(caseWorkers.value(0).toString(), caseWorkers.value(1).toInt());
+        if(!caseWorkerList.contains(caseWorkers.value(0).toString())){
+            qDebug()<<"no info of "<<caseWorkers.value(0).toString();
+            caseWorkerList.insert(caseWorkers.value(0).toString(), caseWorkers.value(1).toInt());
+       }
     }
 }
 
@@ -2305,6 +2310,7 @@ void MainWindow::on_btn_createNewUser_clicked()
     QString uname = ui->le_userName->text();
     QString pw = ui->le_password->text();
 
+    caseWorkerUpdated = true;
     if (uname.length() == 0) {
         ui->lbl_editUserWarning->setText("Enter a Username");
         return;
@@ -2344,6 +2350,7 @@ void MainWindow::on_btn_createNewUser_clicked()
             ui->lbl_editUserWarning->setText("Something went wrong - please try again");
         }
     }
+
 }
 
 
@@ -2713,7 +2720,7 @@ void MainWindow::on_pushButton_4_clicked()
     // obtain username and pw and role from UI
     QString uname = ui->le_userName->text();
     QString pw = ui->le_password->text();
-
+    caseWorkerUpdated = true;
     if (uname.length() == 0) {
         ui->lbl_editUserWarning->setText("Enter a Username");
         return;
