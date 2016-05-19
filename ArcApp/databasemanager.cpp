@@ -4,7 +4,7 @@
 
 int DatabaseManager::dbCounter = 0;
 QMutex DatabaseManager::mutex;
-QString DatabaseManager::staticError = "No error";
+QString DatabaseManager::staticError = "";
 
 //ini file stuff
 QSettings settings;
