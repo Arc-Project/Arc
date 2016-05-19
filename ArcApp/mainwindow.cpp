@@ -1566,8 +1566,10 @@ void MainWindow::read_curClient_Information(QString ClientId){
 
     if(clientInfo.value(4).toString() == "")
         ui->checkBox_cl_dob_no->setChecked(true);
+        ui->dateEdit_cl_dob->setEnabled(false);
     else{
         ui->checkBox_cl_dob_no->setChecked(false);
+        ui->dateEdit_cl_dob->setEnabled(true);
         ui->dateEdit_cl_dob->setDate(QDate::fromString(clientInfo.value(4).toString(),"yyyy-MM-dd"));
     }
     //balnace?
