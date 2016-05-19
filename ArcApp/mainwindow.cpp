@@ -3853,7 +3853,7 @@ void MainWindow::updateMonthlyReportUi(QStringList list, bool conn)
         ui->numUniqueClients_lbl->setText(list.at(4));
         QString month = ui->month_comboBox->currentText();
         QString year = ui->year_comboBox->currentText();
-        ui->monthlyReportMonth_lbl->setText(QString(month + "-" + year));
+        ui->monthlyReportMonth_lbl->setText(QString(month + " " + year));
     }
 }
 
@@ -3897,7 +3897,7 @@ void MainWindow::on_noDatabaseConnection(QSqlDatabase* database)
 
 void MainWindow::on_reconnectedToDatabase()
 {
-    statusBar()->showMessage(tr("Database conenction established"), 3000);
+    statusBar()->showMessage(tr("Database connection established"), 3000);
 }
 /*==============================================================================
 REPORTS (END)
