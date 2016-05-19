@@ -15,6 +15,7 @@ public slots:
 signals:
     void finished();
     void error(QString err);
+    void shiftnochanged();
 
 private:
     // add your variables here

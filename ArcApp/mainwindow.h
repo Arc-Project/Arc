@@ -119,11 +119,11 @@ public:
     QString browse();
 
 public slots:
-    void setShift(int shiftno);
+    void setShift();
 
 signals:
     void displayPic(QByteArray a);
-    void shiftnochanged(int shiftno);
+    void shiftnochanged();
 
 private slots:
     //COLIN SLOTS ////////////////////////////////////////

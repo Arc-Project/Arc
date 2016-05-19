@@ -1,5 +1,6 @@
 #include "worker.h"
 #include <QThread>
+#include "mainwindow.h"
 
 // --- CONSTRUCTOR ---
 Worker::Worker() {
@@ -13,12 +14,11 @@ Worker::~Worker() {
 
 // --- PROCESS ---
 // Start processing data.
-void Worker::process() {
+void Worker::process() {    
     // allocate resources using new here
     while (true) {
-
-        qDebug("Updating Shift No");
-
+        // qDebug("Updating Shift No");
+        emit this->shiftnochanged();
         QThread::sleep(1);
     }
 

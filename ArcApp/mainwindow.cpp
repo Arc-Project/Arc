@@ -5033,9 +5033,9 @@ void MainWindow::on_comboBox_3_currentTextChanged(const QString &arg1)
     }
 }
 
-void MainWindow::setShift(int shiftno) {
-    currentshiftid = shiftno;
-    emit shiftnochanged(shiftno);
+void MainWindow::setShift() {
+    currentshiftid = 2;
+    qDebug() << "Updated Shift";
 }
 
 void MainWindow::on_btn_saveShift_clicked()
