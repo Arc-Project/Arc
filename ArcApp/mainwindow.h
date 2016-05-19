@@ -60,6 +60,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    static QThread* thread;
+
     QString userLoggedIn = "SOMEUSER";
     int currentshiftid = 0;
 
@@ -103,14 +105,19 @@ public:
 
     //COLIN END//////
 
+    void updatemenuforuser();
+
     /*==========================================================================
     DEV TESTING AUXILIARY FUNCTIONS
     ==========================================================================*/
     QString browse();
 
+public slots:
+    void setShift(int shiftno);
 
 signals:
     void displayPic(QByteArray a);
+    void shiftnochanged(int shiftno);
 
 private slots:
     //COLIN SLOTS ////////////////////////////////////////

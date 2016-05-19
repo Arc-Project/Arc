@@ -8,7 +8,6 @@
 #include <QPrinter>
 #include <QProgressDialog>
 #include <qtrpt.h>
-#include "worker.h"
 
 
 //MyModel* checkoutModel;
@@ -4352,19 +4351,12 @@ void MainWindow::on_btn_createNewUser_3_clicked()
         // INSERT INTO Space
         // VALUES (7, 25, '', 'Mat', 0, 0, NULL);
 
-        // get building id
-        QSqlQuery bid = dbManager->execQuery("SELECT BuildingId FROM Building WHERE BuildingNo=" + building);
-        bid.next();
-
-        // get floor id
-        QSqlQuery fid = dbManager->execQuery("SELECT FloorId FROM Floor WHERE FloorNo=" + floor + " AND BuildingId=" + bid.value(0).toString());
-        fid.next();
-
         // get room id
-        QSqlQuery rid = dbManager->execQuery("SELECT RoomId FROM Room WHERE FloorId=" + fid.value(0).toString() + " AND RoomNo=" + room);
-        rid.next();
+        QSqlQuery idinfo = dbManager->searchIDInformation(building, floor, room);
 
-        QString roomid = rid.value(0).toString();
+        idinfo.next();
+
+        QString roomid = idinfo.value(0).toString();
         qDebug() << roomid;
         QSqlQuery insertres = dbManager->execQuery("INSERT INTO Space "
                                                    "VALUES (" + bednumber +
@@ -4808,11 +4800,6 @@ void MainWindow::on_comboBox_3_currentTextChanged(const QString &arg1)
     }
 }
 
-void MainWindow::setShift(int shiftno) {
-    currentshiftid = shiftno;
-    emit shiftnochanged(shiftno);
-}
-
 void MainWindow::on_btn_saveShift_clicked()
 {
     QString day = ui->comboBox_2->currentText();
@@ -4837,30 +4824,4 @@ void MainWindow::on_btn_saveShift_clicked()
     QSqlQuery update2 = dbManager->execQuery("UPDATE Shift SET EndTimeShift" + shiftno +
                                             "='" + endtime + "' WHERE DayOfWeek = '" + day + "'");
 
-}
-
-void MainWindow::updatemenuforuser() {
-    QSqlQuery roleq = dbManager->execQuery("SELECT Role FROM Employee WHERE Username='" + userLoggedIn + "'");
-
-    roleq.next();
-
-    qDebug() << "ROLE: " << roleq.value(0).toString();
-    qDebug() << "USER: " << userLoggedIn;
-
-    if (roleq.value(0).toString() == "STANDARD") {
-        QSizePolicy sp_retain = ui->caseButton->sizePolicy();
-        sp_retain.setRetainSizeWhenHidden(true);
-        ui->caseButton->setSizePolicy(sp_retain);
-        ui->caseButton->hide();
-
-        QSizePolicy sp_retain2 = ui->caseButton->sizePolicy();
-        sp_retain2.setRetainSizeWhenHidden(true);
-        ui->adminButton->setSizePolicy(sp_retain2);
-        ui->adminButton->hide();
-    } else if (roleq.value(0).toString() == "CASE WORKER") {
-        QSizePolicy sp_retain = ui->caseButton->sizePolicy();
-        sp_retain.setRetainSizeWhenHidden(true);
-        ui->adminButton->setSizePolicy(sp_retain);
-        ui->adminButton->hide();
-    }
 }
