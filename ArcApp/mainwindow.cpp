@@ -1840,6 +1840,19 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
                  ui->pushButton_cl_book_more->setEnabled(false);
              newHistory = false;
              break;
+    case 3:
+        if(ui->tableWidget_search_client->selectionModel()->currentIndex().row() == -1)
+            return;
+        if(curClientID == "" || curClientID == NULL)
+            return;
+        QSqlQuery result = dbManager->loadStorage(curClientID);
+        if(result.next()){
+            QString res = result.value("StorageItems").toString();
+            ui->clientStorage->setPlainText(res);
+        }
+        ui->clientStorage->setEnabled(false);
+
+        break;
     }
 }
 
@@ -5778,4 +5791,21 @@ void MainWindow::on_storageDelete_clicked()
     storeId = ui->storageTable->item(row, 4)->text();
     if(!dbManager->removeStorage(storeId))
         qDebug() << "Error removing storage";
+}
+
+
+
+
+void MainWindow::on_addStorageClient_clicked()
+{
+    QSqlQuery result;
+    if(ui->tableWidget_search_client->selectionModel()->currentIndex().row() == -1)
+        return;
+    result = dbManager->pullClient(curClientID);
+    if(!result.next())
+        return;
+    QString name = result.value("FullName").toString();
+    Storage * sto = new Storage(this, curClientID, name, "", "");
+    sto->exec();
+    delete(sto);
 }
