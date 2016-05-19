@@ -1,7 +1,7 @@
 #include "loginprompt.h"
 #include "mainwindow.h"
 #include "ui_loginprompt.h"
-
+#include "worker.h"
 LoginPrompt::LoginPrompt(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::LoginPrompt)
@@ -44,7 +44,9 @@ void LoginPrompt::on_btn_login_clicked()
     if (validLogin) {
         MainWindow* w = new MainWindow();
         w->show();
+
         w->userLoggedIn = username;
+        w->updatemenuforuser();
         close();
     }
 }

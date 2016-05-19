@@ -685,7 +685,7 @@ QHeaderView {
            </font>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_cl_general">
            <attribute name="title">
@@ -702,12 +702,12 @@ QHeaderView {
                    <enum>Qt::Horizontal</enum>
                   </property>
                   <property name="sizeType">
-                   <enum>QSizePolicy::Expanding</enum>
+                   <enum>QSizePolicy::MinimumExpanding</enum>
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
                     <width>40</width>
-                    <height>20</height>
+                    <height>25</height>
                    </size>
                   </property>
                  </spacer>
@@ -740,12 +740,12 @@ QHeaderView {
                    <enum>Qt::Horizontal</enum>
                   </property>
                   <property name="sizeType">
-                   <enum>QSizePolicy::Expanding</enum>
+                   <enum>QSizePolicy::MinimumExpanding</enum>
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
                     <width>40</width>
-                    <height>20</height>
+                    <height>25</height>
                    </size>
                   </property>
                  </spacer>
@@ -2047,7 +2047,7 @@ QHeaderView {
                  <enum>QAbstractItemView::SelectRows</enum>
                 </property>
                 <attribute name="verticalHeaderVisible">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </attribute>
                 <attribute name="verticalHeaderMinimumSectionSize">
                  <number>30</number>
@@ -4632,7 +4632,7 @@ QHeaderView {
            </font>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>3</number>
           </property>
           <property name="movable">
            <bool>true</bool>
@@ -4655,8 +4655,8 @@ QHeaderView {
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>1111</width>
-                 <height>1381</height>
+                 <width>620</width>
+                 <height>1294</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -6778,7 +6778,7 @@ QHeaderView {
                  <enum>QAbstractItemView::SelectRows</enum>
                 </property>
                 <attribute name="verticalHeaderVisible">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </attribute>
                 <attribute name="verticalHeaderMinimumSectionSize">
                  <number>30</number>
@@ -6946,23 +6946,14 @@ QHeaderView {
                 <property name="selectionBehavior">
                  <enum>QAbstractItemView::SelectRows</enum>
                 </property>
-                <property name="sortingEnabled">
+                <attribute name="horizontalHeaderStretchLastSection">
                  <bool>true</bool>
-                </property>
-                <attribute name="horizontalHeaderDefaultSectionSize">
-                 <number>100</number>
-                </attribute>
-                <attribute name="horizontalHeaderMinimumSectionSize">
-                 <number>45</number>
                 </attribute>
                 <attribute name="verticalHeaderVisible">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </attribute>
                 <attribute name="verticalHeaderMinimumSectionSize">
                  <number>30</number>
-                </attribute>
-                <attribute name="verticalHeaderShowSortIndicator" stdset="0">
-                 <bool>true</bool>
                 </attribute>
                </widget>
               </item>
