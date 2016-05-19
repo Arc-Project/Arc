@@ -444,7 +444,7 @@ QSqlQuery DatabaseManager::searchClientList(QString ClientName){
     QStringList clientNames;
     if(ClientName.toLower() == "anonymous"){
             qDebug()<<"case: " + ClientName.toLower();
-            searchQuery += QString("WHERE FirstName Like '"+ ClientName.toLower() + "' ")
+            searchQuery += QString("WHERE LastName Like '"+ ClientName.toLower() + "' ")
                          + QString("ORDER BY FirstName ASC, LastName ASC");
     }
     else if(ClientName != ""){
