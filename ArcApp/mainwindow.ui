@@ -14329,6 +14329,9 @@ QHeaderView {
    </property>
   </action>
   <action name="actionExport_to_PDF">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Export to PDF</string>
    </property>
