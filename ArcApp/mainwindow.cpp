@@ -117,8 +117,8 @@ void MainWindow::initCurrentWidget(int idx){
     switch(idx){
         case MAINMENU:  //WIDGET 0
             curClientID = "";
-
             registerType = NOREGISTER;
+            ui->actionExport_to_PDF->setEnabled(false);
             break;
         case CLIENTLOOKUP:  //WIDGET 1
             initClientLookupInfo();
@@ -133,6 +133,7 @@ void MainWindow::initCurrentWidget(int idx){
             ui->checkBox_search_anonymous->setChecked(false);
             ui->pushButton_search_client->setEnabled(true);
             //initimageview
+            ui->actionExport_to_PDF->setEnabled(false);
             break;
         case BOOKINGLOOKUP: //WIDGET 2
             qDebug()<<"Client INFO";
@@ -182,6 +183,7 @@ void MainWindow::initCurrentWidget(int idx){
             newHistory = true;
             initCasefileTransactionTable();
             initPcp();
+            ui->actionExport_to_PDF->setEnabled(true);
             break;
         case EDITBOOKING: //WIDGET 9
             ui->editLookupTable->clear();
@@ -204,6 +206,7 @@ void MainWindow::initCurrentWidget(int idx){
             MainWindow::getCashFloat(QDate::currentDate(), currentshiftid);
             MainWindow::getMonthlyReport(QDate::currentDate().month(), QDate::currentDate().year());
             MainWindow::updateRestrictionTables();
+            ui->actionExport_to_PDF->setEnabled(true);
             break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
