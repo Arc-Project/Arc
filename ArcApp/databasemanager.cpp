@@ -996,7 +996,7 @@ bool DatabaseManager::getShiftReportTransactionQuery(QSqlQuery* queryResults,
 {
     QString queryString =
         QString("SELECT c.FirstName, c.MiddleName, c.LastName, t.TransType, ")
-        + QString("t.Type, t.MSQ, t.ChequeNo, t.ChequeDate, ")
+        + QString("t.Type, t.Amount, t.MSQ, t.ChequeNo, t.ChequeDate, ")
         + QString("CAST(t.Outstanding AS INT), CAST(t.Deleted AS INT), ")
         + QString("t.EmpName, CONVERT(VARCHAR(15), t.Time, 100), t.Notes " )
         + QString("FROM Client c INNER JOIN Transac t ON c.ClientId = t.ClientId ")
@@ -1055,6 +1055,8 @@ int DatabaseManager::getDailyReportTotalVacancies(QDate date)
             + QString("ON s.SpaceId = b.SpaceId ")
             + QString("WHERE b.Date IS NULL");
     qDebug() << queryString;
+    int test = DatabaseManager::getIntFromQuery(queryString);
+    qDebug() << "totalVacancies" << QString::number(test);
     return DatabaseManager::getIntFromQuery(queryString);
 }
 
@@ -1069,7 +1071,7 @@ void DatabaseManager::getDailyReportStatsThread(QDate date)
         {
             if ((numEspVacancies = DatabaseManager::getDailyReportEspVacancies(date)) != -1)
             {
-                if ((numTotalVacancies = DatabaseManager::getDailyReportTotalVacancies(date)) = -1)
+                if ((numTotalVacancies = DatabaseManager::getDailyReportTotalVacancies(date)) != -1)
                 {
                     list << numEspCheckouts << numTotalCheckouts << numEspVacancies
                          << numTotalVacancies;

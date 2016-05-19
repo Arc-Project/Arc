@@ -49,7 +49,7 @@ void Report::setTitle()
              << "End Date" << "Action" << "Employee" << "Time";
       break;
     case TRANSACTION_REPORT:
-      *title << "Client" << "Transaction" << "Type" << "MSDD" << "Cheque #" 
+      *title << "Client" << "Transaction" << "Type" << "Amount" << "MSDD" << "Cheque #" 
              << "Cheque Date" << "Status" << "Deleted" << "Employee" << "Time"
              << "Notes";
       break;
@@ -191,6 +191,7 @@ void Report::setTransactionData(QSqlQuery* query)
     return;
   }
   int numQueryCols = query->record().count();
+  qDebug() << "numQuerycols" << numQueryCols;
   int numRows = 0;
 
   QStringList* data = new QStringList();
@@ -209,18 +210,24 @@ void Report::setTransactionData(QSqlQuery* query)
 
     for (int i = 3; i < numQueryCols; i++)
     {
-      if (i == 8 || i == 9)
+      if (i == 5)
+      {
+        QString balance = QString("%1%2").arg(query->value(i).toDouble() >= 0 ? "$" : "-$").
+                    arg(QString::number(fabs(query->value(i).toDouble()), 'f', 2));
+        *data << balance;
+      }
+      else if (i == 9 || i == 10)
       {
         if (query->value(i).toString() == "0")
         {
-          if (i == 8)
+          if (i == 9)
             *data << "Completed";
           else
             *data << "";
         }
         else
         {
-          if (i == 8)
+          if (i == 9)
             *data << "Pending";  
           else
             *data << "Yes";

@@ -1732,7 +1732,18 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
     while(results.next()){
         ui->tableWidget_search_client->insertRow(row);
         for(int i =0; i<colCnt; i++){
-            ui->tableWidget_search_client->setItem(row, i, new QTableWidgetItem(results.value(i).toString()));
+            if (i == colCnt - 1)
+            {
+                QString balance = QString("%1%2").arg(results.value(i).toDouble() >= 0 ? "$" : "-$").
+                    arg(QString::number(fabs(results.value(i).toDouble()), 'f', 2));
+                ui->tableWidget_search_client->
+                    setItem(row, i, new QTableWidgetItem(balance));                
+            }
+            else
+            {
+                ui->tableWidget_search_client->setItem(row, i, new QTableWidgetItem(results.value(i).toString()));
+
+            }
             //qDebug() <<"row : "<<row << ", col: " << i << "item" << results.value(i).toString();
         }
         row++;
@@ -1870,11 +1881,14 @@ void MainWindow::displayClientInfoThread(QString val){
 
    clientInfo.next();
 
+   QString balance = QString("%1%2").arg(clientInfo.value(4).toDouble() >= 0 ? "$" : "-$").
+                    arg(QString::number(fabs(clientInfo.value(4).toDouble()), 'f', 2));
+
    ui->label_cl_info_fName_val->setText(clientInfo.value(0).toString());
    ui->label_cl_info_mName_val->setText(clientInfo.value(1).toString());
    ui->label_cl_info_lName_val->setText(clientInfo.value(2).toString());
    ui->label_cl_info_dob_val->setText(clientInfo.value(3).toString());
-   ui->label_cl_info_balance_amt->setText(clientInfo.value(4).toString());
+   ui->label_cl_info_balance_amt->setText(balance);
    ui->label_cl_info_sin_val->setText(clientInfo.value(5).toString());
    ui->label_cl_info_gaNum_val->setText(clientInfo.value(6).toString());
    QString caseWorkerName = caseWorkerList.key(clientInfo.value(7).toInt());
