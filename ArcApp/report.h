@@ -24,7 +24,7 @@
 #define YELLOW_REPORT         8
 #define RED_REPORT            9
 
-#define NUMCOLS_TRANSACTION   11
+#define NUMCOLS_TRANSACTION   12
             
 class Report
 {
@@ -36,8 +36,8 @@ public:
     void updateModelThread();
     void updateModelThread(QDate date);
     void updateModelThread(QDate date, int shiftNo);
-private:
     MyModel model;
+private:
     int reportType;
     void setTransactionData(QSqlQuery* query);
     void setData(QSqlQuery* query);
