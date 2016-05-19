@@ -5649,7 +5649,7 @@ void MainWindow::on_storageDelete_clicked()
     int row = ui->storageTable->selectionModel()->currentIndex().row();
     if(row == -1)
         return;
-    if(!doMesageBox("Delete?"))
+    if(!doMessageBox("Are you sure you want to delete?"))
         return;
     QString storeId;
     storeId = ui->storageTable->item(row, 4)->text();

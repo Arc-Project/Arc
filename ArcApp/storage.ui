@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>PushButton</string>
+    <string>Ok</string>
    </property>
   </widget>
   <widget class="QPushButton" name="storageCancel">
@@ -36,7 +36,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>PushButton</string>
+    <string>Cancel</string>
    </property>
   </widget>
   <widget class="QPlainTextEdit" name="storageInput">
