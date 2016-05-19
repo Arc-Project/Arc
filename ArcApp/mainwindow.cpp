@@ -164,6 +164,8 @@ void MainWindow::initCurrentWidget(int idx){
                 qDebug()<<"NAME: " << curClient->fullName;
                 qDebug()<<"Balance: " << curClient->balance;
             }
+            newTrans = true;
+            newHistory = true;
             initPcp();
             break;
         case EDITBOOKING: //WIDGET 9
@@ -2036,14 +2038,16 @@ void MainWindow::displayTransaction(QSqlQuery results, QTableWidget* table){
         ui->pushButton_cl_trans_more->setEnabled(false);
     }
     */
-    if(row == 0)
-        row = 5;
+    if( table == ui->tableWidget_casefile_transaction)
+        return;
     if (row > 25){
         table->setMaximumHeight(30*26 -1);
         return;
     }
-    table->setMinimumHeight(30*(row+1) -1);
-    table->show();
+    else if(row >5)
+        table->setMinimumHeight(30*(row+1) -1);
+   // table->show();
+
 }
 //get more transaction list
 void MainWindow::on_pushButton_cl_trans_more_clicked()
@@ -2536,15 +2540,46 @@ void MainWindow::on_tabw_casefiles_currentChanged(int index)
         case RUNNINGNOTE:
             break;
         case BOOKINGHISTORY:
-
             break;
         case TRANSACTIONHISTORY:
+            if(!newTrans)
+                return;
+            useProgressDialog("Search Transaction...",QtConcurrent::run(this, &searchCasefileTransaction, curClientID));
+            QString totalNum = QString::number(ui->tableWidget_casefile_transaction->rowCount());
+            ui->label_casefile_trans_total_num->setText(totalNum + " Transaction");
+            newTrans=false;
             break;
     }
 }
 
+//CASEFILE BOOKING HISTROY(EUNWON)
 
-//CASEFILE TRANSACTION
+
+//CASEFILE TRANSACTION(EUNWON)
+void MainWindow::initCasefileTransactionTable(){
+    ui->tableWidget_casefile_transaction->setRowCount(0);
+
+    ui->tableWidget_casefile_transaction->setColumnCount(11);
+    ui->tableWidget_casefile_transaction->clear();
+    ui->tableWidget_casefile_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Amount"<<"Payment Type"<<"ChequeNo"<<"MSQ"<<"ChequeDate"<<"TransType"
+                                                           <<"Deleted"<<"Outstanding"<<"Employee"<<"Notes");
+
+}
+
+//search transaction list when click transaction list
+void MainWindow::searchCasefileTransaction(QString clientId){
+    qDebug()<<"search transaction STaRt";
+    initCasefileTransactionTable();
+
+    QSqlQuery transQuery = dbManager->searchClientTransList(transacNum, clientId, CASEFILE);
+    displayTransaction(transQuery, ui->tableWidget_casefile_transaction);
+
+
+
+
+
+}
+
 
 
 

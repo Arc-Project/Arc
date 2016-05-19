@@ -471,6 +471,12 @@ private slots:
 
     void on_cbox_roomType_currentTextChanged(const QString &arg1);
 
+    //CASEFILE TRANSACTION TABLE
+    void initCasefileTransactionTable();
+    void searchCasefileTransaction(QString clientId);
+
+    //CASEFILE BOOKING HISTORY TABLE
+
     void on_tabWidget_cl_info_currentChanged(int index);
 
     void on_tableWidget_search_client_itemClicked();
