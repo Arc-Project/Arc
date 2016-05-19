@@ -4,6 +4,7 @@
 
 int DatabaseManager::dbCounter = 0;
 QMutex DatabaseManager::mutex;
+QString DatabaseManager::staticError = "No error";
 
 //ini file stuff
 QSettings settings;
@@ -88,9 +89,9 @@ bool DatabaseManager::createDatabase(QSqlDatabase* tempDbPtr, QString connName)
 
     if (!tempDbPtr->open())
     {
-        QString error = tempDbPtr->lastError().text();
-        qDebug() << error.toLocal8Bit().data();
-        //emit noDatabaseConnection(tempDbPtr);
+        QString error = tempDbPtr->lastError().text().toLocal8Bit().data();
+        qDebug() << error;
+        staticError = error;
         return false;
     }
 

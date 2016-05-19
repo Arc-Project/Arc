@@ -7,6 +7,8 @@ LoginPrompt::LoginPrompt(QWidget *parent) :
     ui(new Ui::LoginPrompt)
 {
     ui->setupUi(this);
+    
+    ui->label_LoginError->setText(DatabaseManager::staticError);
 }
 
 LoginPrompt::~LoginPrompt()
