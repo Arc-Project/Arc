@@ -1566,8 +1566,10 @@ void MainWindow::read_curClient_Information(QString ClientId){
 
     if(clientInfo.value(4).toString() == "")
         ui->checkBox_cl_dob_no->setChecked(true);
+        ui->dateEdit_cl_dob->setEnabled(false);
     else{
         ui->checkBox_cl_dob_no->setChecked(false);
+        ui->dateEdit_cl_dob->setEnabled(true);
         ui->dateEdit_cl_dob->setDate(QDate::fromString(clientInfo.value(4).toString(),"yyyy-MM-dd"));
     }
     //balnace?
@@ -3009,8 +3011,8 @@ void MainWindow::on_pushButton_25_clicked()
 
 // program clicked + selected
 void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
-{
-    if (lastprogramclicked != index) {
+{    
+    //if (lastprogramclicked != index) {
         ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
         ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
         ui->lbl_editProgWarning->setText("Please hold while we set your beds");
@@ -3128,7 +3130,7 @@ void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
 
         // ui->assignedbedslist->setModel(assignedmodel);
           lastprogramclicked = index;
-    }
+    //}
 
 }
 
@@ -3442,12 +3444,14 @@ void MainWindow::on_addbedtoprogram_clicked()
     // update tag value
     dbManager->updateSpaceProgram(spaceid, currenttag);
 
-    ui->availablebedslist->clear();
-    ui->availablebedslist->setRowCount(0);
-    ui->assignedbedslist->clear();
-    ui->assignedbedslist->setRowCount(0);
-    ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
-    ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+    on_tableWidget_2_clicked(lastprogramclicked);
+
+    // ui->availablebedslist->clear();
+    // ui->availablebedslist->setRowCount(0);
+    // ui->assignedbedslist->clear();
+    // ui->assignedbedslist->setRowCount(0);
+    //ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+    //ui ->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
     ui->lbl_editProgWarning->setText("Bed Added to Program");
 
 //    const auto selectedIdxs = ui->availablebedslist->selectedIndexes();
@@ -3540,12 +3544,13 @@ void MainWindow::on_removebedfromprogram_clicked()
 
     // update tag value
     dbManager->updateSpaceProgram(spaceid, newtag);
-    ui->availablebedslist->clear();
-    ui->availablebedslist->setRowCount(0);
-    ui->assignedbedslist->clear();
-    ui->assignedbedslist->setRowCount(0);
-    ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
-    ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+//    ui->availablebedslist->clear();
+//    ui->availablebedslist->setRowCount(0);
+//    ui->assignedbedslist->clear();
+//    ui->assignedbedslist->setRowCount(0);
+//    ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+//    ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+    on_tableWidget_2_clicked(lastprogramclicked);
     ui->lbl_editProgWarning->setText("Bed Removed from Program");
 }
 
