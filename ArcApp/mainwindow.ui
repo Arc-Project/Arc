@@ -125,7 +125,7 @@ QHeaderView {
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -4633,7 +4633,7 @@ QHeaderView {
            </font>
           </property>
           <property name="currentIndex">
-           <number>3</number>
+           <number>0</number>
           </property>
           <property name="movable">
            <bool>true</bool>
@@ -4656,8 +4656,8 @@ QHeaderView {
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>1186</width>
-                 <height>1294</height>
+                 <width>1111</width>
+                 <height>1381</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -7088,6 +7088,17 @@ QHeaderView {
         </item>
         <item row="0" column="3" colspan="2">
          <widget class="QPushButton" name="storage">
+          <property name="minimumSize">
+           <size>
+            <width>130</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string>View Storage</string>
           </property>
@@ -14117,7 +14128,7 @@ QHeaderView {
      <x>0</x>
      <y>0</y>
      <width>1542</width>
-     <height>23</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="font">
