@@ -9,6 +9,8 @@ public:
     Worker();
     ~Worker();
 
+    bool cont = true;
+
 public slots:
     void process();
 

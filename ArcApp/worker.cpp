@@ -5,6 +5,7 @@
 // --- CONSTRUCTOR ---
 Worker::Worker() {
     // you could copy data from constructor arguments to internal variables here.
+
 }
 
 // --- DECONSTRUCTOR ---
@@ -16,10 +17,10 @@ Worker::~Worker() {
 // Start processing data.
 void Worker::process() {    
     // allocate resources using new here
-    while (true) {
+    while (cont) {
         // qDebug("Updating Shift No");
+        QThread::sleep(10);
         emit this->shiftnochanged();
-        QThread::sleep(1);
     }
 
     //emit finished();
