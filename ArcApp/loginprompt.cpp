@@ -47,6 +47,18 @@ void LoginPrompt::on_btn_login_clicked()
 
         w->userLoggedIn = username;
         w->updatemenuforuser();
+
+        // thread for updating shift no every minute
+        w->work = new Worker();
+        w->thread = new QThread;
+        w->work->moveToThread(w->thread);
+        QObject::connect(w->thread, SIGNAL(started()), w->work, SLOT(process()));
+        QObject::connect(w->work, SIGNAL(shiftnochanged()), w, SLOT(setShift()));
+        QObject::connect(w->work, SIGNAL(finished()), w->thread, SLOT(quit()));
+        QObject::connect(w->work, SIGNAL(finished()), w->work, SLOT(deleteLater()));
+        QObject::connect(w->thread, SIGNAL(finished()), w->thread, SLOT(deleteLater()));
+        w->thread->start();
+
         close();
     }
 }

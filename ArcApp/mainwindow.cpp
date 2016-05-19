@@ -10,6 +10,8 @@
 #include <qtrpt.h>
 #include "worker.h"
 
+QLabel *lbl_curUser;
+QLabel *lbl_curShift;
 
 //MyModel* checkoutModel;
 Report *checkoutReport, *vacancyReport, *lunchReport, *wakeupReport,
@@ -79,16 +81,16 @@ MainWindow::MainWindow(QWidget *parent) :
     curClient = 0;
     curBook = 0;
     trans = 0;
-    currentshiftid = 1; // should change this. Set to 1 for testing;
+//    currentshiftid = 1; // should change this. Set to 1 for testing;
 
     MainWindow::setupReportsScreen();
 
-    //display logged in user and current shift in status bar
-    QLabel *lbl_curUser = new QLabel("Logged in as: " + userLoggedIn + "  ");
-    QLabel *lbl_curShift = new QLabel("Shift Number: ");
-    statusBar()->addPermanentWidget(lbl_curUser);
-    statusBar()->addPermanentWidget(lbl_curShift);
-    lbl_curShift->setText("fda");
+//    //display logged in user and current shift in status bar
+//    QLabel *lbl_curUser = new QLabel("Logged in as: " + userLoggedIn + "  ");
+//    QLabel *lbl_curShift = new QLabel("Shift Number: ");
+//    statusBar()->addPermanentWidget(lbl_curUser);
+//    statusBar()->addPermanentWidget(lbl_curShift);
+//    lbl_curShift->setText("fda");
 
     dialog = new QProgressDialog();
     dialog->close();
@@ -120,7 +122,10 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case CLIENTLOOKUP:  //WIDGET 1
             initClientLookupInfo();
-            getCaseWorkerList();
+            if(caseWorkerUpdated){
+                getCaseWorkerList();
+                defaultRegisterOptions();
+            }
             ui->tabWidget_cl_info->setCurrentIndex(0);
             if(registerType == EDITCLIENT)
                 getClientInfo();
@@ -165,6 +170,8 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case CASEFILE: //WIDGET 8
             ui->tabw_casefiles->setCurrentIndex(PERSIONACASEPLAN);
+            ui->tableWidget_casefile_booking->verticalHeader()->show();
+            ui->tableWidget_casefile_transaction->verticalHeader()->show();
             qDebug()<<"Client INFO";
             if(curClient != NULL){
                 qDebug()<<"ID: " << curClientID << curClient->clientId;
@@ -472,7 +479,10 @@ void MainWindow::popClientFromId(QString id){
     curClient->lName = result.record().value("LastName").toString();
     curClient->fullName = curClient->fName + " " +  curClient->mName + " "
             + curClient->lName;
-    curClient->balance = result.record().value("Balance").toString().toDouble();
+    QString balanceString = result.record().value("Balance").toString();
+    balanceString.replace("$", "");
+    curClient->balance =  balanceString.toDouble();
+    // curClient->balance = result.record().value("Balance").toString().toDouble();
 
 
 }
@@ -1001,7 +1011,10 @@ void MainWindow::handleNewPayment(int row){
     curClient = new Client();
     trans = new transaction();
     curClient->clientId = ui->mpTable->item(row,4)->text();
-    double balance = ui->mpTable->item(row, 3)->text().toDouble();
+    QString balanceString = ui->mpTable->item(row, 3)->text();
+    balanceString.replace("$", "");
+    double balance = balanceString.toDouble();
+    // double balance = ui->mpTable->item(row, 3)->text().toDouble();
     curClient->balance = balance;
     QString note = "Paying Outstanding Balance";
 
@@ -1205,9 +1218,11 @@ void MainWindow::on_pushButton_bookRoom_clicked()
             curClient->fName = ui->label_cl_info_fName_val->text();
             curClient->mName = ui->label_cl_info_mName_val->text();
             curClient->lName =  ui->label_cl_info_lName_val->text();
-            curClient->balance =  ui->label_cl_info_balance_amt->text().toFloat();
-
-            curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
+            QString balanceString = ui->label_cl_info_balance_amt->text();
+            balanceString.replace("$", "");
+            curClient->balance =  balanceString.toFloat();
+            curClient->fullName = QString(curClient->lName + ", " + curClient->fName + " " + curClient->mName);
+            // curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
         }
     }
     else{
@@ -1215,17 +1230,19 @@ void MainWindow::on_pushButton_bookRoom_clicked()
         curClient->fName =  ui->tableWidget_search_client->item(nRow, 1)->text();
         curClient->mName =  ui->tableWidget_search_client->item(nRow, 2)->text();
         curClient->lName =  ui->tableWidget_search_client->item(nRow, 3)->text();
-        curClient->balance =  ui->tableWidget_search_client->item(nRow, 5)->text().toFloat();
-
-        curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
+        QString balanceString = ui->tableWidget_search_client->item(nRow, 5)->text();
+        balanceString.replace("$", "");
+        curClient->balance =  balanceString.toFloat();
+        curClient->fullName = QString(curClient->lName + ", " + curClient->fName + " " + curClient->mName);
+        // curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
     }
 
 
-/*
-    qDebug()<<"ID: " << curClientID << curClient->clientId;
-    qDebug()<<"NAME: " << curClient->fullName;
-    qDebug()<<"Balance: " << curClient->balance;
-*/
+
+    // qDebug()<<"ID: " << curClientID << curClient->clientId;
+    // qDebug()<<"NAME: " << curClient->fullName;
+    // qDebug()<<"Balance: " << curClient->balance;
+
     ui->stackedWidget->setCurrentIndex(BOOKINGLOOKUP);
 
 }
@@ -1263,7 +1280,7 @@ void MainWindow::on_makeBookingButton_2_clicked()
     //QDate::fromString(ui->startLabel->text(), "yyyy-MM-dd");
     curBook->cost = cost;
    // insertIntoBookingHistory(QString clientName, QString spaceId, QString program, QDate start, QDate end, QString action, QString emp, QString shift){
-
+    qDebug()<<"check booking"<<curBook->roomId;
     if(!dbManager->insertBookingTable(values)){
         qDebug() << "ERROR INSERTING BOOKING";
     }
@@ -1431,9 +1448,21 @@ void MainWindow::getListRegisterFields(QStringList* fieldList)
     QString caseWorkerId = QString::number(caseWorkerList.value(ui->comboBox_cl_caseWorker->currentText()));
     if(caseWorkerId == "0")
         caseWorkerId = "";
-    *fieldList << ui->lineEdit_cl_fName->text()
-               << ui->lineEdit_cl_mName->text()
-               << ui->lineEdit_cl_lName->text()
+
+    QString firstName = ui->lineEdit_cl_fName->text();
+    QString middleName = ui->lineEdit_cl_mName->text();
+    QString lastName = ui->lineEdit_cl_lName->text();
+
+    if (!firstName.isEmpty())
+        firstName[0].toUpper();
+    if (!middleName.isEmpty())
+        middleName[0].toUpper();
+    if (!lastName.isEmpty())
+        lastName[0].toUpper();
+
+    *fieldList << firstName
+               << middleName
+               << lastName
                << ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd")
                << ui->lineEdit_cl_SIN->text()
                << ui->lineEdit_cl_GANum->text()
@@ -1655,7 +1684,6 @@ void MainWindow::defaultRegisterOptions(){
           while(it != caseWorkerList.constEnd()){
             if(ui->comboBox_cl_caseWorker->findText(it.key())== -1){
                 ui->comboBox_cl_caseWorker->addItem(it.key());
-               qDebug()<<"key is : " + it.key();
             }
             ++it;
           }
@@ -1977,7 +2005,10 @@ void MainWindow::setSelectedClientInfo(){
             curClient->fName = ui->label_cl_info_fName_val->text();
             curClient->mName = ui->label_cl_info_mName_val->text();
             curClient->lName =  ui->label_cl_info_lName_val->text();
-            curClient->balance =  ui->label_cl_info_balance_amt->text().toFloat();
+            QString balanceString = ui->label_cl_info_balance_amt->text();
+            balanceString.replace("$", "");
+            curClient->balance =  balanceString.toFloat();
+            // curClient->balance =  ui->label_cl_info_balance_amt->text().toFloat();
 
             curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
         }
@@ -1987,17 +2018,20 @@ void MainWindow::setSelectedClientInfo(){
         curClient->fName =  ui->tableWidget_search_client->item(nRow, 1)->text();
         curClient->mName =  ui->tableWidget_search_client->item(nRow, 2)->text();
         curClient->lName =  ui->tableWidget_search_client->item(nRow, 3)->text();
-        curClient->balance =  ui->tableWidget_search_client->item(nRow, 5)->text().toFloat();
+        QString balanceString = ui->tableWidget_search_client->item(nRow, 5)->text();
+        balanceString.replace("$", "");
+        curClient->balance =  balanceString.toFloat();
+        // curClient->balance =  ui->tableWidget_search_client->item(nRow, 5)->text().toFloat();
 
         curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
     }
 
 
-/*
+
     qDebug()<<"ID: " << curClientID << curClient->clientId;
     qDebug()<<"NAME: " << curClient->fullName;
     qDebug()<<"Balance: " << curClient->balance;
-*/
+
     ui->stackedWidget->setCurrentIndex(BOOKINGLOOKUP);
 
 
@@ -2032,7 +2066,7 @@ void MainWindow::initClTransactionTable(){
 
 //search transaction list when click transaction list
 void MainWindow::displayTransaction(QSqlQuery results){
-    initClTransactionTable();
+//    initClTransactionTable();
     int row = 0;
     int colCnt = results.record().count();
     while(results.next()){
@@ -2094,6 +2128,7 @@ void MainWindow::displayTransaction(QSqlQuery results, QTableWidget* table){
 //get more transaction list
 void MainWindow::on_pushButton_cl_trans_more_clicked()
 {
+
     transacNum +=5;
     searchTransaction(curClientID);
     if(ui->tableWidget_transaction->rowCount() >= transacTotal)
@@ -2587,9 +2622,10 @@ void MainWindow::on_tabw_casefiles_currentChanged(int index)
             break;
         case RUNNINGNOTE:
             break;
-        case BOOKINGHISTORY:
+        case BOOKINGHISTORY:            
             if(!newHistory)
                 break;
+
             initCasefileBookHistoryTable();
             useProgressDialog("Search Transaction...",QtConcurrent::run(this, &searchCasefileBookHistory, curClientID));
             bookingTotal = ui->tableWidget_casefile_booking->rowCount();
@@ -2635,7 +2671,7 @@ void MainWindow::searchCasefileBookHistory(QString clientId){
 void MainWindow::initCasefileTransactionTable(){
     ui->tableWidget_casefile_transaction->setRowCount(0);
 
-    ui->tableWidget_casefile_transaction->setColumnCount(11);
+    ui->tableWidget_casefile_transaction->setColumnCount(12);
     ui->tableWidget_casefile_transaction->clear();
     ui->tableWidget_casefile_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Time"<<"Amount"<<"Payment Type"<<"ChequeNo"<<"MSQ"<<"ChequeDate"<<"TransType"
                                                            <<"Deleted"<<"Outstanding"<<"Employee"<<"Notes");
@@ -2645,7 +2681,7 @@ void MainWindow::initCasefileTransactionTable(){
 //search transaction list when click transaction list
 void MainWindow::searchCasefileTransaction(QString clientId){
     qDebug()<<"search transaction STaRt";
-
+    initCasefileTransactionTable();
     QSqlQuery transQuery = dbManager->searchClientTransList(transacNum, clientId, CASEFILE);
     displayTransaction(transQuery, ui->tableWidget_casefile_transaction);
 }
@@ -2653,8 +2689,6 @@ void MainWindow::searchCasefileTransaction(QString clientId){
 /*-------------------CASEFILE END-----------------------------------*/
 
 
-
-// HANK
 void MainWindow::on_EditRoomsButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(EDITROOM);
@@ -3826,7 +3860,7 @@ void MainWindow::updateMonthlyReportUi(QStringList list, bool conn)
         ui->numUniqueClients_lbl->setText(list.at(4));
         QString month = ui->month_comboBox->currentText();
         QString year = ui->year_comboBox->currentText();
-        ui->monthlyReportMonth_lbl->setText(QString(month + "-" + year));
+        ui->monthlyReportMonth_lbl->setText(QString(month + " " + year));
     }
 }
 
@@ -3870,7 +3904,7 @@ void MainWindow::on_noDatabaseConnection(QSqlDatabase* database)
 
 void MainWindow::on_reconnectedToDatabase()
 {
-    statusBar()->showMessage(tr("Database conenction established"), 3000);
+    statusBar()->showMessage(tr("Database connection established"), 3000);
 }
 /*==============================================================================
 REPORTS (END)
@@ -3919,7 +3953,10 @@ void MainWindow::on_pushButton_processPaymeent_clicked()
     curClient->fName =  ui->tableWidget_search_client->item(nRow, 1)->text();
     curClient->mName =  ui->tableWidget_search_client->item(nRow, 2)->text();
     curClient->lName =  ui->tableWidget_search_client->item(nRow, 3)->text();
-    curClient->balance =  ui->tableWidget_search_client->item(nRow, 5)->text().toFloat();
+    QString balanceString = ui->tableWidget_search_client->item(nRow, 5)->text();
+    balanceString.replace("$", "");
+    curClient->balance =  balanceString.toFloat();
+    // curClient->balance =  ui->tableWidget_search_client->item(nRow, 5)->text().toFloat();
     curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
 
     trans = new transaction();
@@ -4329,13 +4366,57 @@ void MainWindow::on_btn_modRoomType_clicked()
     // this shouldn't be modifiable... - there are only ever beds and mats.
 }
 
+// HANK
 void MainWindow::on_EditShiftsButton_clicked()
 {
     addHistory(ADMINPAGE);
     ui->stackedWidget->setCurrentIndex(EDITSHIFT);
-    ui->comboBox_4->clear();
-    ui->comboBox_4->addItem("1");
-    ui->comboBox_3->setCurrentIndex(0);
+    ui->tableWidget_6->clearContents();
+
+    // populate table
+    // ui->tableWidget_6
+
+    QSqlQuery shifts = dbManager->execQuery("SELECT * FROM Shift");
+    while (shifts.next()) {
+        int numberofshifts = shifts.value(11).toInt();
+        QString day = shifts.value(0).toString();
+        int dayrow = 0;
+        if (day == "Monday") {
+            dayrow = 0;
+        } else if (day == "Tuesday") {
+            dayrow = 1;
+        } else if (day == "Wednesday") {
+            dayrow = 2;
+        } else if (day == "Thursday") {
+            dayrow = 3;
+        } else if (day == "Friday") {
+            dayrow = 4;
+        } else if (day == "Saturday") {
+            dayrow = 5;
+        } else if (day == "Sunday") {
+            dayrow = 6;
+        }
+
+        for (int i = 1; i < (numberofshifts + 1); i++) {
+            QTime starttime = shifts.value((i*2)-1).toTime();
+            QTime endtime = shifts.value(i*2).toTime();
+
+            int starthr = starttime.hour();
+            int endhr = endtime.hour();
+
+            for (int j = starthr; j <= endhr; j++) {
+                QTableWidgetItem* item = new QTableWidgetItem();
+                QTableWidgetItem* temp = ui->tableWidget_6->item(dayrow, j);
+                QString newtxt = "";
+                if (temp != 0) {
+                    newtxt += temp->text();
+                }
+                newtxt += " " + QString::fromStdString(std::to_string(i)) + " ";
+                item->setText(newtxt);
+                ui->tableWidget_6->setItem(dayrow, j, item);
+            }
+        }
+    }
 }
 
 void MainWindow::on_cbox_roomLoc_currentTextChanged(const QString &arg1)
@@ -5243,6 +5324,9 @@ void MainWindow::on_actionLogout_triggered()
 
     w->show();
 
+    // kill the current thread
+    work->cont = false;
+
     close();
 }
 
@@ -5252,6 +5336,7 @@ void MainWindow::on_editProgramDrop_currentIndexChanged(const QString &arg1)
 {
     ui->editUpdate->setEnabled(true);
 }
+
 void MainWindow::on_comboBox_3_currentTextChanged(const QString &arg1)
 {
     if (arg1 == "1") {
@@ -5280,11 +5365,152 @@ void MainWindow::on_comboBox_3_currentTextChanged(const QString &arg1)
         ui->comboBox_4->addItem("4");
         ui->comboBox_4->addItem("5");
     }
+
+    qDebug() << currentshiftid;
 }
 
-void MainWindow::setShift(int shiftno) {
-    currentshiftid = shiftno;
-    emit shiftnochanged(shiftno);
+void MainWindow::setShift() {
+    qDebug() << "Setting shift now";
+    currentshiftid = -1;
+    // current time
+    QDateTime curtime = QDateTime::currentDateTime();
+    QTime curactualtime = QTime::currentTime();
+    int dayofweek = curtime.date().dayOfWeek();
+    //qDebug() << "today is: " + dayofweek;
+
+    if (dayofweek == 1) {
+        QSqlQuery getshifts = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='Monday'");
+
+        getshifts.next();
+        int numberofshifts = getshifts.value(11).toInt();
+
+        for (int i = 1; i < (numberofshifts + 1); i++) {
+            QTime starttime = getshifts.value((i*2)-1).toTime();
+            QTime endtime = getshifts.value(i*2).toTime();
+
+            if ((curactualtime < endtime) && (curactualtime >= starttime)) {
+                // change the shiftnum
+                currentshiftid = i;
+                break;
+            }
+        }
+    } else if (dayofweek == 2) {
+        QSqlQuery getshifts = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='Tuesday'");
+
+        getshifts.next();
+        int numberofshifts = getshifts.value(11).toInt();
+
+        for (int i = 1; i < (numberofshifts + 1); i++) {
+            QTime starttime = getshifts.value((i*2)-1).toTime();
+            QTime endtime = getshifts.value(i*2).toTime();
+
+            if ((curactualtime < endtime) && (curactualtime >= starttime)) {
+                // change the shiftnum
+                currentshiftid = i;
+                break;
+            } else {
+                qDebug() << "not the right shift";
+            }
+        }
+    } else if (dayofweek == 3) {
+        QSqlQuery getshifts = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='Wednesday'");
+
+        getshifts.next();
+        int numberofshifts = getshifts.value(11).toInt();
+
+        for (int i = 1; i < (numberofshifts + 1); i++) {
+            QTime starttime = getshifts.value((i*2)-1).toTime();
+            QTime endtime = getshifts.value(i*2).toTime();
+
+            if ((curactualtime < endtime) && (curactualtime >= starttime)) {
+                // change the shiftnum
+                currentshiftid = i;
+                break;
+            } else {
+                qDebug() << "not the right shift";
+            }
+        }
+    } else if (dayofweek == 4) {
+        QSqlQuery getshifts = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='Thursday'");
+
+        getshifts.next();
+        int numberofshifts = getshifts.value(11).toInt();
+
+        for (int i = 1; i < (numberofshifts + 1); i++) {
+            QTime starttime = getshifts.value((i*2)-1).toTime();
+            QTime endtime = getshifts.value(i*2).toTime();
+
+            if ((curactualtime < endtime) && (curactualtime >= starttime)) {
+                // change the shiftnum
+                currentshiftid = i;
+                break;
+            } else {
+                qDebug() << "not the right shift";
+            }
+        }
+    } else if (dayofweek == 5) {
+        QSqlQuery getshifts = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='Friday'");
+
+        getshifts.next();
+        int numberofshifts = getshifts.value(11).toInt();
+
+        for (int i = 1; i < (numberofshifts + 1); i++) {
+            QTime starttime = getshifts.value((i*2)-1).toTime();
+            QTime endtime = getshifts.value(i*2).toTime();
+
+            if ((curactualtime < endtime) && (curactualtime >= starttime)) {
+                // change the shiftnum
+                currentshiftid = i;
+                break;
+            } else {
+                qDebug() << "not the right shift";
+            }
+        }
+    } else if (dayofweek == 6) {
+        QSqlQuery getshifts = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='Saturday'");
+
+        getshifts.next();
+        int numberofshifts = getshifts.value(11).toInt();
+
+        for (int i = 1; i < (numberofshifts + 1); i++) {
+            QTime starttime = getshifts.value((i*2)-1).toTime();
+            QTime endtime = getshifts.value(i*2).toTime();
+
+            if ((curactualtime < endtime) && (curactualtime >= starttime)) {
+                // change the shiftnum
+                currentshiftid = i;
+                break;
+            } else {
+                qDebug() << "not the right shift";
+            }
+        }
+    } else if (dayofweek == 7) {
+        QSqlQuery getshifts = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='Sunday'");
+
+        getshifts.next();
+        int numberofshifts = getshifts.value(11).toInt();
+
+        for (int i = 1; i < (numberofshifts + 1); i++) {
+            QTime starttime = getshifts.value((i*2)-1).toTime();
+            QTime endtime = getshifts.value(i*2).toTime();
+
+            if ((curactualtime < endtime) && (curactualtime >= starttime)) {
+                // change the shiftnum
+                currentshiftid = i;
+                break;
+            } else {
+                qDebug() << "not the right shift";
+            }
+        }
+    }
+
+//    statusBar()->removeWidget(lbl_curShift);
+//    statusBar()->removeWidget(lbl_curUser);
+//    statusBar()->addPermanentWidget(lbl_curUser);
+//    lbl_curShift = new QLabel();
+//    lbl_curShift->setText("Shift Number: " + currentshiftid);
+//    statusBar()->addPermanentWidget(lbl_curShift);
+    qDebug() << "Updated Shift";
 }
 
 void MainWindow::on_btn_saveShift_clicked()
@@ -5302,7 +5528,7 @@ void MainWindow::on_btn_saveShift_clicked()
         qDebug() << "Doesn't exist";
         // insert
         QSqlQuery insert = dbManager->execQuery("INSERT INTO Shift VALUES('" + day + "'"
-                                                ", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1)");
+                                                ", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, " + ui->comboBox_3->currentText() + ")");
     }
 
     // update
@@ -5310,7 +5536,9 @@ void MainWindow::on_btn_saveShift_clicked()
                                             "='" + starttime + "' WHERE DayOfWeek = '" + day + "'");
     QSqlQuery update2 = dbManager->execQuery("UPDATE Shift SET EndTimeShift" + shiftno +
                                             "='" + endtime + "' WHERE DayOfWeek = '" + day + "'");
+    dbManager->execQuery("UPDATE Shift SET NumShifts=" + ui->comboBox_3->currentText() + " WHERE DayOfWeek = '" + day + "'");
 
+    on_EditShiftsButton_clicked();
 }
 
 void MainWindow::updatemenuforuser() {
@@ -5337,6 +5565,12 @@ void MainWindow::updatemenuforuser() {
         ui->adminButton->setSizePolicy(sp_retain);
         ui->adminButton->hide();
     }
+
+    //display logged in user and current shift in status bar
+    lbl_curUser = new QLabel("Logged in as: " + userLoggedIn + "  ");
+    // lbl_curShift = new QLabel("Shift Number: " + currentshiftid);
+    statusBar()->addPermanentWidget(lbl_curUser);
+    // statusBar()->addPermanentWidget(lbl_curShift);
 }
 
 void MainWindow::on_editRemoveCheque_clicked()
