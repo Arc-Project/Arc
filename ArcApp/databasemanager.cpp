@@ -11,6 +11,7 @@ QString SERVER_NAME;
 QString DB_NAME;
 QString DB_USERNAME;
 QString DB_PW;
+QString DB_DSN;
 
 /*==============================================================================
 DATABASE MANAGER SETUP (START)
@@ -49,6 +50,7 @@ DatabaseManager::DatabaseManager(QObject *parent) :
    DB_NAME = settings.value("DB_NAME").toString();
    DB_USERNAME = settings.value("DB_USERNAME").toString();
    DB_PW = settings.value("DB_PW").toString();
+   DB_DSN = settings.value("DB_DSN").toString();
 
    if (DatabaseManager::createDatabase(&db, DEFAULT_SQL_CONN_NAME))
    {
@@ -76,11 +78,13 @@ bool DatabaseManager::createDatabase(QSqlDatabase* tempDbPtr, QString connName)
 
     tempDbPtr->setConnectOptions();
 
-    QString dsn =
-            QString("DRIVER={SQL Server};SERVER=%1;DATABASE=%2;UID=%3;PWD=%4;").
-            arg(SERVER_NAME).arg(DB_NAME).arg(DB_USERNAME).arg(DB_PW);
+    QString dsn = DB_DSN;
+//    QString dsn =
+//            QString("DRIVER={SQL Server};SERVER=%1;DATABASE=%2;UID=%3;PWD=%4;").
+//            arg(SERVER_NAME).arg(DB_NAME).arg(DB_USERNAME).arg(DB_PW);
 
     tempDbPtr->setDatabaseName(dsn);
+
 
     if (!tempDbPtr->open())
     {
