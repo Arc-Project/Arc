@@ -122,7 +122,10 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case CLIENTLOOKUP:  //WIDGET 1
             initClientLookupInfo();
-            getCaseWorkerList();
+            if(caseWorkerUpdated){
+                getCaseWorkerList();
+                defaultRegisterOptions();
+            }
             ui->tabWidget_cl_info->setCurrentIndex(0);
             if(registerType == EDITCLIENT)
                 getClientInfo();
@@ -167,6 +170,8 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case CASEFILE: //WIDGET 8
             ui->tabw_casefiles->setCurrentIndex(PERSIONACASEPLAN);
+            ui->tableWidget_casefile_booking->verticalHeader()->show();
+            ui->tableWidget_casefile_transaction->verticalHeader()->show();
             qDebug()<<"Client INFO";
             if(curClient != NULL){
                 qDebug()<<"ID: " << curClientID << curClient->clientId;
@@ -1274,7 +1279,7 @@ void MainWindow::on_makeBookingButton_2_clicked()
     //QDate::fromString(ui->startLabel->text(), "yyyy-MM-dd");
     curBook->cost = cost;
    // insertIntoBookingHistory(QString clientName, QString spaceId, QString program, QDate start, QDate end, QString action, QString emp, QString shift){
-
+    qDebug()<<"check booking"<<curBook->roomId;
     if(!dbManager->insertBookingTable(values)){
         qDebug() << "ERROR INSERTING BOOKING";
     }
@@ -1678,7 +1683,6 @@ void MainWindow::defaultRegisterOptions(){
           while(it != caseWorkerList.constEnd()){
             if(ui->comboBox_cl_caseWorker->findText(it.key())== -1){
                 ui->comboBox_cl_caseWorker->addItem(it.key());
-               qDebug()<<"key is : " + it.key();
             }
             ++it;
           }
@@ -2061,7 +2065,7 @@ void MainWindow::initClTransactionTable(){
 
 //search transaction list when click transaction list
 void MainWindow::displayTransaction(QSqlQuery results){
-    initClTransactionTable();
+//    initClTransactionTable();
     int row = 0;
     int colCnt = results.record().count();
     while(results.next()){
@@ -2123,6 +2127,7 @@ void MainWindow::displayTransaction(QSqlQuery results, QTableWidget* table){
 //get more transaction list
 void MainWindow::on_pushButton_cl_trans_more_clicked()
 {
+
     transacNum +=5;
     searchTransaction(curClientID);
     if(ui->tableWidget_transaction->rowCount() >= transacTotal)
@@ -2616,9 +2621,10 @@ void MainWindow::on_tabw_casefiles_currentChanged(int index)
             break;
         case RUNNINGNOTE:
             break;
-        case BOOKINGHISTORY:
+        case BOOKINGHISTORY:            
             if(!newHistory)
                 break;
+
             initCasefileBookHistoryTable();
             useProgressDialog("Search Transaction...",QtConcurrent::run(this, &searchCasefileBookHistory, curClientID));
             bookingTotal = ui->tableWidget_casefile_booking->rowCount();
@@ -2664,7 +2670,7 @@ void MainWindow::searchCasefileBookHistory(QString clientId){
 void MainWindow::initCasefileTransactionTable(){
     ui->tableWidget_casefile_transaction->setRowCount(0);
 
-    ui->tableWidget_casefile_transaction->setColumnCount(11);
+    ui->tableWidget_casefile_transaction->setColumnCount(12);
     ui->tableWidget_casefile_transaction->clear();
     ui->tableWidget_casefile_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Time"<<"Amount"<<"Payment Type"<<"ChequeNo"<<"MSQ"<<"ChequeDate"<<"TransType"
                                                            <<"Deleted"<<"Outstanding"<<"Employee"<<"Notes");
@@ -2674,7 +2680,7 @@ void MainWindow::initCasefileTransactionTable(){
 //search transaction list when click transaction list
 void MainWindow::searchCasefileTransaction(QString clientId){
     qDebug()<<"search transaction STaRt";
-
+    initCasefileTransactionTable();
     QSqlQuery transQuery = dbManager->searchClientTransList(transacNum, clientId, CASEFILE);
     displayTransaction(transQuery, ui->tableWidget_casefile_transaction);
 }
