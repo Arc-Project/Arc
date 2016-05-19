@@ -551,6 +551,10 @@ private slots:
 
     void printFloatReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
 
+    void printMonthlyReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
+
+    void printRestrictionReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
+
     void on_comboBox_3_currentTextChanged(const QString &arg1);
 
     void on_btn_saveShift_clicked();
