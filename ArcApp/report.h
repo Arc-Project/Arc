@@ -24,7 +24,7 @@
 #define YELLOW_REPORT         8
 #define RED_REPORT            9
 
-#define NUMCOLS_TRANSACTION   11
+#define NUMCOLS_TRANSACTION   12
             
 class Report
 {
