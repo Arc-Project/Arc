@@ -57,20 +57,22 @@ MainWindow::MainWindow(QWidget *parent) :
     //default signal of stackedWidget
     //detect if the widget is changed
     connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SLOT(initCurrentWidget(int)));
-    connect(dbManager, SIGNAL(dailyReportStatsChanged(QList<int>)), this,
-        SLOT(updateDailyReportStats(QList<int>)));
-    connect(dbManager, SIGNAL(shiftReportStatsChanged(QStringList)), this,
-        SLOT(updateShiftReportStats(QStringList)));
-    connect(dbManager, SIGNAL(cashFloatChanged(QDate, int, QStringList)), this,
-        SLOT(updateCashFloat(QDate, int, QStringList)));
+    connect(dbManager, SIGNAL(dailyReportStatsChanged(QList<int>, bool)), this,
+        SLOT(updateDailyReportStats(QList<int>, bool)));
+    connect(dbManager, SIGNAL(shiftReportStatsChanged(QStringList, bool)), this,
+        SLOT(updateShiftReportStats(QStringList, bool)));
+    connect(dbManager, SIGNAL(cashFloatChanged(QDate, int, QStringList, bool)), this,
+        SLOT(updateCashFloat(QDate, int, QStringList, bool)));
     connect(dbManager, SIGNAL(cashFloatInserted(QString, QString, QString)), this,
         SLOT(updateCashFloatLastEditedLabels(QString, QString, QString)));
     connect(ui->other_lineEdit, SIGNAL(textEdited(const QString &)), this,
         SLOT(on_other_lineEdit_textEdited(const QString &)));
-    connect(dbManager, SIGNAL(monthlyReportChanged(QStringList)), this,
-        SLOT(updateMonthlyReportUi(QStringList)));
+    connect(dbManager, SIGNAL(monthlyReportChanged(QStringList, bool)), this,
+        SLOT(updateMonthlyReportUi(QStringList, bool)));
     connect(dbManager, SIGNAL(noDatabaseConnection(QSqlDatabase*)), this,
         SLOT(on_noDatabaseConnection(QSqlDatabase*)), Qt::DirectConnection);
+    connect(dbManager, SIGNAL(noDatabaseConnection()), this,
+        SLOT(on_noDatabaseConnection()));
     connect(dbManager, SIGNAL(reconnectedToDatabase()), this,
         SLOT(on_reconnectedToDatabase()));
 
@@ -1360,9 +1362,12 @@ void MainWindow::on_pushButton_editClientInfo_clicked()
 
 void MainWindow::on_reportsButton_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(REPORTS);
-    addHistory(MAINMENU);
-    qDebug() << "pushed page " << MAINMENU;
+    if (dbManager->checkDatabaseConnection())
+    {
+        ui->stackedWidget->setCurrentIndex(REPORTS);
+        addHistory(MAINMENU);
+        qDebug() << "pushed page " << MAINMENU;
+    }
 }
 
 
@@ -1727,7 +1732,18 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
     while(results.next()){
         ui->tableWidget_search_client->insertRow(row);
         for(int i =0; i<colCnt; i++){
-            ui->tableWidget_search_client->setItem(row, i, new QTableWidgetItem(results.value(i).toString()));
+            if (i == colCnt - 1)
+            {
+                QString balance = QString("%1%2").arg(results.value(i).toDouble() >= 0 ? "$" : "-$").
+                    arg(QString::number(fabs(results.value(i).toDouble()), 'f', 2));
+                ui->tableWidget_search_client->
+                    setItem(row, i, new QTableWidgetItem(balance));                
+            }
+            else
+            {
+                ui->tableWidget_search_client->setItem(row, i, new QTableWidgetItem(results.value(i).toString()));
+
+            }
             //qDebug() <<"row : "<<row << ", col: " << i << "item" << results.value(i).toString();
         }
         row++;
@@ -1865,11 +1881,14 @@ void MainWindow::displayClientInfoThread(QString val){
 
    clientInfo.next();
 
+   QString balance = QString("%1%2").arg(clientInfo.value(4).toDouble() >= 0 ? "$" : "-$").
+                    arg(QString::number(fabs(clientInfo.value(4).toDouble()), 'f', 2));
+
    ui->label_cl_info_fName_val->setText(clientInfo.value(0).toString());
    ui->label_cl_info_mName_val->setText(clientInfo.value(1).toString());
    ui->label_cl_info_lName_val->setText(clientInfo.value(2).toString());
    ui->label_cl_info_dob_val->setText(clientInfo.value(3).toString());
-   ui->label_cl_info_balance_amt->setText(clientInfo.value(4).toString());
+   ui->label_cl_info_balance_amt->setText(balance);
    ui->label_cl_info_sin_val->setText(clientInfo.value(5).toString());
    ui->label_cl_info_gaNum_val->setText(clientInfo.value(6).toString());
    QString caseWorkerName = caseWorkerList.key(clientInfo.value(7).toInt());
@@ -3537,7 +3556,7 @@ void MainWindow::setupReportsScreen()
 
 void MainWindow::updateDailyReportTables(QDate date)
 {
-    // useProgressDialog("Processing reports...", 
+    // useProgressDialog("Processing reports...",
     //     QtConcurrent::run(checkoutReport, &checkoutReport->updateModelThread, date));
     checkoutReport->updateModel(date);
     vacancyReport->updateModel(date);
@@ -3561,7 +3580,7 @@ void MainWindow::updateRestrictionTables()
 
 void MainWindow::updateShiftReportTables(QDate date, int shiftNo)
 {
-    // useProgressDialog("Processing reports...", 
+    // useProgressDialog("Processing reports...",
     //     QtConcurrent::run(bookingReport, &bookingReport->updateModelThread, date, shiftNo));
     bookingReport->updateModel(date, shiftNo);
     transactionReport->updateModel(date, shiftNo);
@@ -3629,71 +3648,84 @@ void MainWindow::on_saveOther_btn_clicked()
 
 void MainWindow::getDailyReportStats(QDate date)
 {
-    useProgressDialog("Processing reports...", 
+    useProgressDialog("Processing reports...",
         QtConcurrent::run(dbManager, &DatabaseManager::getDailyReportStatsThread, date));
 }
 
 void MainWindow::getShiftReportStats(QDate date, int shiftNo)
 {
-    useProgressDialog("Processing reports...", 
-        QtConcurrent::run(dbManager, &DatabaseManager::getShiftReportStatsThread, date, shiftNo));   
+    useProgressDialog("Processing reports...",
+        QtConcurrent::run(dbManager, &DatabaseManager::getShiftReportStatsThread, date, shiftNo));
 }
 
 void MainWindow::getCashFloat(QDate date, int shiftNo)
 {
-    useProgressDialog("Processing reports...", 
+    useProgressDialog("Processing reports...",
         QtConcurrent::run(dbManager, &DatabaseManager::getCashFloatThread, date, shiftNo));
 }
 
 void MainWindow::getMonthlyReport(int month, int year)
-{   
-    useProgressDialog("Processing reports...", 
+{
+    useProgressDialog("Processing reports...",
         QtConcurrent::run(dbManager, &DatabaseManager::getMonthlyReportThread, month, year));
 }
 
-void MainWindow::updateDailyReportStats(QList<int> list)
+void MainWindow::updateDailyReportStats(QList<int> list, bool conn)
 {
-    ui->lbl_espCheckouts->setText(QString::number(list.at(0)));
-    ui->lbl_totalCheckouts->setText(QString::number(list.at(1)));
-    ui->lbl_espVacancies->setText(QString::number(list.at(2)));
-    ui->lbl_totalVacancies->setText(QString::number(list.at(3)));
+    if (!conn)
+    {
+        MainWindow::on_noDatabaseConnection();
+    }
+    else
+    {
+        ui->lbl_espCheckouts->setText(QString::number(list.at(0)));
+        ui->lbl_totalCheckouts->setText(QString::number(list.at(1)));
+        ui->lbl_espVacancies->setText(QString::number(list.at(2)));
+        ui->lbl_totalVacancies->setText(QString::number(list.at(3)));
+    }
 }
 
-void MainWindow::updateShiftReportStats(QStringList list)
+void MainWindow::updateShiftReportStats(QStringList list, bool conn)
 {
-    if (list.size() != 0)
+    if (!conn)
+    {
+        MainWindow::on_noDatabaseConnection();
+    }
+    else
     {
         ui->lbl_cashAmt->setText(list.at(0));
         ui->lbl_debitAmt->setText(list.at(1));
         ui->lbl_chequeAmt->setText(list.at(2));
         ui->lbl_depoAmt->setText(list.at(3));
-        ui->lbl_shiftAmt->setText(list.at(4));
+        ui->lbl_shiftAmt->setText(list.at(4));    }
+}
+
+void MainWindow::updateCashFloat(QDate date, int shiftNo, QStringList list, bool conn)
+{
+    if (!conn)
+    {
+        MainWindow::on_noDatabaseConnection();
     }
     else
     {
-        statusBar()->showMessage(tr("Error Loading Shift Report Stats"), 3000);
+        ui->lastModifiedEmpName_lbl->setText(list.at(0));
+        ui->lastModifiedDateTime_lbl->setText(list.at(1));
+        ui->pte_floatMemo->document()->setPlainText(list.at(2));
+        ui->sbox_nickels->setValue(list.at(3).toInt());
+        ui->sbox_dimes->setValue(list.at(4).toInt());
+        ui->sbox_quarters->setValue(list.at(5).toInt());
+        ui->sbox_loonies->setValue(list.at(6).toInt());
+        ui->sbox_toonies->setValue(list.at(7).toInt());
+        ui->sbox_fives->setValue(list.at(8).toInt());
+        ui->sbox_tens->setValue(list.at(9).toInt());
+        ui->sbox_twenties->setValue(list.at(10).toInt());
+        ui->sbox_fifties->setValue(list.at(11).toInt());
+        ui->sbox_hundreds->setValue(list.at(12).toInt());
+        ui->lbl_floatAmt->setText(list.at(13));
+
+        ui->cashFloatDate_lbl->setText(date.toString(Qt::ISODate));
+        ui->cashFloatShift_lbl->setText(QString::number(shiftNo));
     }
-}
-
-void MainWindow::updateCashFloat(QDate date, int shiftNo, QStringList list)
-{
-    ui->lastModifiedEmpName_lbl->setText(list.at(0));
-    ui->lastModifiedDateTime_lbl->setText(list.at(1));
-    ui->pte_floatMemo->document()->setPlainText(list.at(2));
-    ui->sbox_nickels->setValue(list.at(3).toInt());
-    ui->sbox_dimes->setValue(list.at(4).toInt());
-    ui->sbox_quarters->setValue(list.at(5).toInt());
-    ui->sbox_loonies->setValue(list.at(6).toInt());
-    ui->sbox_toonies->setValue(list.at(7).toInt());
-    ui->sbox_fives->setValue(list.at(8).toInt());
-    ui->sbox_tens->setValue(list.at(9).toInt());
-    ui->sbox_twenties->setValue(list.at(10).toInt());
-    ui->sbox_fifties->setValue(list.at(11).toInt());
-    ui->sbox_hundreds->setValue(list.at(12).toInt());
-    ui->lbl_floatAmt->setText(list.at(13));
-
-    ui->cashFloatDate_lbl->setText(date.toString(Qt::ISODate));
-    ui->cashFloatShift_lbl->setText(QString::number(shiftNo));
 }
 
 void MainWindow::on_saveFloat_btn_clicked()
@@ -3749,7 +3781,7 @@ void MainWindow::on_cashFloatCurrent_btn_clicked()
     ui->cashFloat_spinBox->setValue(currentshiftid);
 }
 
-void MainWindow::updateCashFloatLastEditedLabels(QString empName, 
+void MainWindow::updateCashFloatLastEditedLabels(QString empName,
     QString currentDateStr, QString currentTimeStr)
 {
     ui->lastModifiedEmpName_lbl->setText(empName);
@@ -3764,16 +3796,37 @@ void MainWindow::on_monthlyReportGo_btn_clicked()
     MainWindow::getMonthlyReport(month, year);
 }
 
-void MainWindow::updateMonthlyReportUi(QStringList list)
+void MainWindow::updateMonthlyReportUi(QStringList list, bool conn)
 {
-    ui->numBedsUsed_lbl->setText(list.at(0) + "/" + list.at(2));
-    ui->numEmptyBeds_lbl->setText(list.at(1) + "/" + list.at(2));
-    ui->numNewClients_lbl->setText(list.at(3));
-    ui->numUniqueClients_lbl->setText(list.at(4));
-    QString month = ui->month_comboBox->currentText();
-    QString year = ui->year_comboBox->currentText();
-    ui->monthlyReportMonth_lbl->setText(QString(month + "-" + year));
+    if (!conn)
+    {
+        MainWindow::on_noDatabaseConnection();
+    }
+    else
+    {
+        ui->numBedsUsed_lbl->setText(list.at(0) + "/" + list.at(2));
+        ui->numEmptyBeds_lbl->setText(list.at(1) + "/" + list.at(2));
+        ui->numNewClients_lbl->setText(list.at(3));
+        ui->numUniqueClients_lbl->setText(list.at(4));
+        QString month = ui->month_comboBox->currentText();
+        QString year = ui->year_comboBox->currentText();
+        ui->monthlyReportMonth_lbl->setText(QString(month + "-" + year));
+    }
 }
+
+void MainWindow::on_noDatabaseConnection()
+{
+    statusBar()->showMessage(tr(""));
+    QString msg = QString("\nCould not connect to the database.\n")
+        + QString("\nPlease remember to save your changes when the connection to the database returns.\n")
+        + QString("\nSelect \"File\" followed by the \"Connect to Database\" menu item to attempt to connect to the database.\n");
+    QMessageBox msgBox(this);
+    msgBox.setWindowTitle("ArcWay");
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.setText(msg);
+    msgBox.exec();
+}
+
 
 void MainWindow::on_noDatabaseConnection(QSqlDatabase* database)
 {
@@ -4895,7 +4948,7 @@ void MainWindow::on_btn_newTypeLoc_clicked()
         break;
     }
     }
-    // clear everything    
+    // clear everything
     ui->doubleSpinBox->setValue(0.0);
     ui->doubleSpinBox_2->setValue(0.0);
     ui->tableWidget_5->clear();

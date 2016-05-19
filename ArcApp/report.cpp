@@ -49,7 +49,7 @@ void Report::setTitle()
              << "End Date" << "Action" << "Employee" << "Time";
       break;
     case TRANSACTION_REPORT:
-      *title << "Client" << "Transaction" << "Type" << "MSDD" << "Cheque #" 
+      *title << "Client" << "Transaction" << "Type" << "Amount" << "MSDD" << "Cheque #" 
              << "Cheque Date" << "Status" << "Deleted" << "Employee" << "Time"
              << "Notes";
       break;
@@ -73,7 +73,6 @@ void Report::updateModelThread()
   QString connName = QString::number(dbManager->getDbCounter());
   {
     QSqlDatabase tempDb = QSqlDatabase::database();
-
     if (dbManager->createDatabase(&tempDb, connName))
     {
       QSqlQuery query(tempDb);
@@ -92,6 +91,11 @@ void Report::updateModelThread()
         Report::setData(&query);
       }
       tempDb.close();
+    }
+    else
+    {
+      tempDb.close();
+      emit dbManager->noDatabaseConnection();
     }   
   } // Necessary braces: tempDb and query are destroyed because out of scope
   QSqlDatabase::removeDatabase(connName);
@@ -128,7 +132,12 @@ void Report::updateModelThread(QDate date)
         Report::setData(&query);
       }
       tempDb.close();
-    }   
+    }  
+    else
+    {
+      tempDb.close();
+      emit dbManager->noDatabaseConnection();
+    } 
   } // Necessary braces: tempDb and query are destroyed because out of scope
   QSqlDatabase::removeDatabase(connName);
 }
@@ -165,6 +174,11 @@ void Report::updateModelThread(QDate date, int shiftNo)
         Report::setData(&query);
       }
       tempDb.close();
+    }
+    else
+    {
+      tempDb.close();
+      emit dbManager->noDatabaseConnection();
     }   
   } // Necessary braces: tempDb and query are destroyed because out of scope
   QSqlDatabase::removeDatabase(connName);
@@ -172,7 +186,12 @@ void Report::updateModelThread(QDate date, int shiftNo)
 
 void Report::setTransactionData(QSqlQuery* query)
 {
+  if (!query->isActive())
+  {
+    return;
+  }
   int numQueryCols = query->record().count();
+  qDebug() << "numQuerycols" << numQueryCols;
   int numRows = 0;
 
   QStringList* data = new QStringList();
@@ -191,18 +210,24 @@ void Report::setTransactionData(QSqlQuery* query)
 
     for (int i = 3; i < numQueryCols; i++)
     {
-      if (i == 8 || i == 9)
+      if (i == 5)
+      {
+        QString balance = QString("%1%2").arg(query->value(i).toDouble() >= 0 ? "$" : "-$").
+                    arg(QString::number(fabs(query->value(i).toDouble()), 'f', 2));
+        *data << balance;
+      }
+      else if (i == 9 || i == 10)
       {
         if (query->value(i).toString() == "0")
         {
-          if (i == 8)
+          if (i == 9)
             *data << "Completed";
           else
             *data << "";
         }
         else
         {
-          if (i == 8)
+          if (i == 9)
             *data << "Pending";  
           else
             *data << "Yes";
@@ -217,18 +242,21 @@ void Report::setTransactionData(QSqlQuery* query)
 
 void Report::setData(QSqlQuery* query)
 {
-    qDebug() << reportType;
-    int numCols = query->record().count();
-    int numRows = 0;
-
-    QStringList *data = new QStringList();
-    while (query->next()) 
+    if (query->isActive())
     {
-      numRows++;
-      for (int i = 0; i < numCols; ++i)
-      {
-        *data << query->value(i).toString();
-      }
+        qDebug() << reportType;
+        int numCols = query->record().count();
+        int numRows = 0;
+
+        QStringList *data = new QStringList();
+        while (query->next()) 
+        {
+          numRows++;
+          for (int i = 0; i < numCols; ++i)
+          {
+            *data << query->value(i).toString();
+          }
+        }
+        model.setData(data, numRows, numCols);
     }
-    model.setData(data, numRows, numCols);
 }
