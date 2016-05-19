@@ -86,7 +86,7 @@ bool DatabaseManager::createDatabase(QSqlDatabase* tempDbPtr, QString connName)
     {
         QString error = tempDbPtr->lastError().text();
         qDebug() << error.toLocal8Bit().data();
-
+        //emit noDatabaseConnection(tempDbPtr);
         return false;
     }
 
@@ -110,10 +110,7 @@ GENERAL QUERYS (START)
  */
 QSqlQuery DatabaseManager::selectAll(QString tableName)
 {
-    if (!db.open())
-    {
-        emit noDatabaseConnection(&db);
-    }
+    DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
     query.exec("SELECT * FROM " + tableName);
     return query;
@@ -181,6 +178,16 @@ QSqlQuery DatabaseManager::execQuery(QString queryString)
 bool DatabaseManager::execQuery(QSqlQuery* query, QString queryString)
 {
     return query->exec(queryString);
+}
+
+bool DatabaseManager::checkDatabaseConnection()
+{
+    if(!db.open())
+    {
+        emit noDatabaseConnection();
+        return false;
+    }
+    return true;
 }
 
 void DatabaseManager::checkDatabaseConnection(QSqlDatabase* database)
@@ -1012,15 +1019,29 @@ int DatabaseManager::getDailyReportTotalVacancies(QDate date)
 
 void DatabaseManager::getDailyReportStatsThread(QDate date)
 {
+    bool conn = false;
     QList<int> list;
-    list << DatabaseManager::getDailyReportEspCheckouts(date)
-         << DatabaseManager::getDailyReportTotalCheckouts(date)
-         << DatabaseManager::getDailyReportEspVacancies(date)
-         << DatabaseManager::getDailyReportTotalVacancies(date);
-    emit DatabaseManager::dailyReportStatsChanged(list);
+    int numEspCheckouts, numTotalCheckouts, numEspVacancies, numTotalVacancies;
+    if ((numEspCheckouts = DatabaseManager::getDailyReportEspCheckouts(date)) != -1) 
+    {
+        if ((numTotalCheckouts = DatabaseManager::getDailyReportTotalCheckouts(date)) != -1)
+        {
+            if ((numEspVacancies = DatabaseManager::getDailyReportEspVacancies(date)) != -1)
+            {
+                if ((numTotalVacancies = DatabaseManager::getDailyReportTotalVacancies(date)) = -1)
+                {
+                    list << numEspCheckouts << numTotalCheckouts << numEspVacancies
+                         << numTotalVacancies;
+                    conn = true;
+                }        
+            }
+        }
+    }
+    
+    emit DatabaseManager::dailyReportStatsChanged(list, conn);
 }
 
-int DatabaseManager::getShiftReportTotal(QDate date, int shiftNo, QString payType,
+bool DatabaseManager::getShiftReportTotal(QDate date, int shiftNo, QString payType,
     double* result)
 {
     QString queryString = 
@@ -1049,6 +1070,7 @@ void DatabaseManager::getShiftReportStatsThread(QDate date, int shiftNo)
 {
     double cashTotal, electronicTotal, chequeTotal;
     QStringList list;
+    bool conn = false;
     if (DatabaseManager::getShiftReportTotal(date, shiftNo, PAY_CASH, &cashTotal))
     {
         if (DatabaseManager::getShiftReportTotal(date, shiftNo, PAY_ELECTRONIC, &electronicTotal))
@@ -1065,10 +1087,11 @@ void DatabaseManager::getShiftReportStatsThread(QDate date, int shiftNo)
                     arg(QString::number(fabs(cashTotal + chequeTotal), 'f', 2));
                 list << QString("%1%2").arg(cashTotal + electronicTotal + chequeTotal >= 0 ? "$" : "-$").
                     arg(QString::number(fabs(cashTotal + electronicTotal + chequeTotal), 'f', 2));
+                conn = true;
             }        
         }    
     }
-    emit DatabaseManager::shiftReportStatsChanged(list);
+    emit DatabaseManager::shiftReportStatsChanged(list, conn);
 }
 
 bool DatabaseManager::getShiftReportClientLogQuery(QSqlQuery* queryResults,
@@ -1131,6 +1154,7 @@ void DatabaseManager::getCashFloatThread(QDate date, int shiftNo)
     int nickels = 0, dimes = 0, quarters = 0, loonies = 0, toonies = 0,
         fives = 0, tens = 0, twenties = 0, fifties = 0, hundreds = 0;
     double total = 0;
+    bool conn = true;
     QString lastEditedEmpName("N/A");
     QString lastEditedDateTime("N/A");
     QString comments = "";
@@ -1172,19 +1196,23 @@ void DatabaseManager::getCashFloatThread(QDate date, int shiftNo)
                 }
             }
             tempDb.close();
+            list << lastEditedEmpName << lastEditedDateTime << comments
+                 << QString::number(nickels) << QString::number(dimes)
+                 << QString::number(quarters) << QString::number(loonies)
+                 << QString::number(toonies) << QString::number(fives)
+                 << QString::number(tens) << QString::number(twenties)
+                 << QString::number(fifties) << QString::number(hundreds)
+                 << QString("$" + QString::number(total, 'f', 2));
+        }
+        else
+        {
+            tempDb.close();
+            conn = false;
         }   
     } // Necessary braces: tempDb and query are destroyed because out of scope
     QSqlDatabase::removeDatabase(connName);
-  
-    list << lastEditedEmpName << lastEditedDateTime << comments
-         << QString::number(nickels) << QString::number(dimes)
-         << QString::number(quarters) << QString::number(loonies)
-         << QString::number(toonies) << QString::number(fives)
-         << QString::number(tens) << QString::number(twenties)
-         << QString::number(fifties) << QString::number(hundreds)
-         << QString("$" + QString::number(total, 'f', 2));
 
-    emit DatabaseManager::cashFloatChanged(date, shiftNo, list);
+    emit DatabaseManager::cashFloatChanged(date, shiftNo, list, conn);
 }
 
 bool DatabaseManager::insertCashFloat(QDate date, int shiftNo, QString empName,
@@ -1257,8 +1285,14 @@ bool DatabaseManager::insertCashFloat(QDate date, int shiftNo, QString empName,
                     qDebug() << "inserting and updating cashfloat failed";
                 } 
             }
+            tempDb.close();
         }
-        tempDb.close();
+        else
+        {
+            tempDb.close();
+            return false;
+        }
+        
     } // Necessary braces: tempDb and query are destroyed because out of scope
     QSqlDatabase::removeDatabase(connName);
     if (ret)
@@ -1331,6 +1365,7 @@ void DatabaseManager::getMonthlyReportThread(int month, int year)
 {
     QString connName = QString::number(dbManager->getDbCounter());
     QStringList list;
+    bool conn = true;
     {
         QSqlDatabase tempDb = QSqlDatabase::database();
 
@@ -1349,11 +1384,16 @@ void DatabaseManager::getMonthlyReportThread(int month, int year)
                 }
             }
             tempDb.close();
-        }   
+        }
+        else
+        {
+            tempDb.close();
+            conn = false;
+        } 
     } // Necessary braces: tempDb and query are destroyed because out of scope
     QSqlDatabase::removeDatabase(connName);
 
-    emit DatabaseManager::monthlyReportChanged(list);
+    emit DatabaseManager::monthlyReportChanged(list, conn);
 }
 
 int DatabaseManager::getIntFromQuery(QString queryString)
