@@ -4688,6 +4688,12 @@ void MainWindow::on_actionExport_to_PDF_triggered()
                             << otherReport->model.rows;
     } else
 
+    // reports: float count
+    if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == FLOATCOUNT){
+        rptTemplate = ":/templates/pdf/float.xml";
+        report->recordCount << 1;
+    }
+
     // case files pcp
     if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == 0){
         rptTemplate = ":/templates/pdf/pcp.xml";
@@ -4715,6 +4721,11 @@ void MainWindow::setValue(const int recNo, const QString paramName, QVariant &pa
     if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == SHIFTREPORT){
         printShiftReport(recNo, paramName, paramValue, reportPage);
     } else
+
+    // reports: float count
+    if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == FLOATCOUNT){
+        printFloatReport(recNo, paramName, paramValue, reportPage);
+    }
 
     // case files pcp
     if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == 0){
@@ -4853,6 +4864,39 @@ void MainWindow::printShiftReport(const int recNo, const QString paramName, QVar
         } else if (paramName == "log") {
             paramValue = otherReport->model.tableData->at(recNo * otherReport->model.cols + 2);
         }
+    }
+}
+
+void MainWindow::printFloatReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage){
+    Q_UNUSED(reportPage);
+    if (paramName == "nickel") {
+        paramValue = ui->sbox_nickels->text();
+    } else if (paramName == "dime") {
+        paramValue = ui->sbox_dimes->text();
+    } else if (paramName == "quarter") {
+        paramValue = ui->sbox_quarters->text();
+    } else if (paramName == "loonie") {
+        paramValue = ui->sbox_loonies->text();
+    } else if (paramName == "toonies") {
+        paramValue = ui->sbox_toonies->text();
+    } else if (paramName == "five") {
+        paramValue = ui->sbox_fives->text();
+    } else if (paramName == "ten") {
+        paramValue = ui->sbox_tens->text();
+    } else if (paramName == "twenty") {
+        paramValue = ui->sbox_twenties->text();
+    } else if (paramName == "fifty") {
+        paramValue = ui->sbox_fifties->text();
+    } else if (paramName == "hundred") {
+        paramValue = ui->sbox_hundreds->text();
+    } else if (paramName == "total") {
+        paramValue = ui->lbl_floatAmt->text();
+    } else if (paramName == "date") {
+        paramValue = ui->cashFloatDate_lbl->text();
+    } else if (paramName == "shift") {
+        paramValue = ui->cashFloatShift_lbl->text();
+    } else if (paramName == "comment") {
+        paramValue = ui->pte_floatMemo->document()->toPlainText();
     }
 }
 
