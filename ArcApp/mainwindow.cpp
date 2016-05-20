@@ -5314,16 +5314,25 @@ void MainWindow::on_btn_delTypeLoc_clicked()
         if (!q1.next()) {
             ui->lbl_editUserWarning_3->setText("No building with this number exists.");
         } else {
-            QSqlQuery q2 = dbManager->execQuery("DELETE FROM Building WHERE BuildingNo=" + ui->le_newTypeLoc->text());
-            ui->lbl_editUserWarning_3->setText("Building Deleted");
+            // check if floors exist in this building
+            QSqlQuery buildingidq = dbManager->execQuery("SELECT BuildingId FROM Building WHERE BuildingNo=" + ui->cbox_roomLoc->currentText());
+            buildingidq.next();
+            QSqlQuery check = dbManager->execQuery("SELECT * FROM Floor WHERE BuildingId=" + buildingidq.value(0).toString());
 
-            ui->cbox_roomLoc->clear();
-            ui->cbox_roomFloor->clear();
-            ui->cbox_roomRoom->clear();
-            ui->le_roomNo->clear();
-            ui->cbox_roomType->clear();
-            populate_modRoom_cboxes();
-            on_btn_modRoomBdlg_clicked();
+            if (check.next()) {
+                ui->lbl_editUserWarning_3->setText("Delete failed - There are still floors in this building");
+            } else {
+                QSqlQuery q2 = dbManager->execQuery("DELETE FROM Building WHERE BuildingNo=" + ui->le_newTypeLoc->text());
+                ui->lbl_editUserWarning_3->setText("Building Deleted");
+
+                ui->cbox_roomLoc->clear();
+                ui->cbox_roomFloor->clear();
+                ui->cbox_roomRoom->clear();
+                ui->le_roomNo->clear();
+                ui->cbox_roomType->clear();
+                populate_modRoom_cboxes();
+                on_btn_modRoomBdlg_clicked();
+            }
         }
         break;
     }
@@ -5336,20 +5345,26 @@ void MainWindow::on_btn_delTypeLoc_clicked()
         if (!q3.next()) {
             ui->lbl_editUserWarning_3->setText("No floor with this number exists.");
         } else {
-            QSqlQuery q4 = dbManager->execQuery("DELETE FROM Floor WHERE FloorNo=" + ui->le_newTypeLoc->text()
-                                                + " AND BuildingId=" + buildingidq.value(0).toString());
-            ui->lbl_editUserWarning_3->setText("Floor Deleted");
+            // check if rooms exist
+            QSqlQuery check = dbManager->execQuery("SELECT * FROM Room WHERE FloorId=" + q3.value(0).toString());
+            if (check.next()) {
+                ui->lbl_editUserWarning_3->setText("Delete failed - There are still rooms on this floor");
+            } else {
+                QSqlQuery q4 = dbManager->execQuery("DELETE FROM Floor WHERE FloorNo=" + ui->le_newTypeLoc->text()
+                                                    + " AND BuildingId=" + buildingidq.value(0).toString());
+                ui->lbl_editUserWarning_3->setText("Floor Deleted");
 
-            ui->cbox_roomFloor->clear();
-            ui->cbox_roomRoom->clear();
-            ui->le_roomNo->clear();
-            ui->cbox_roomType->clear();
+                ui->cbox_roomFloor->clear();
+                ui->cbox_roomRoom->clear();
+                ui->le_roomNo->clear();
+                ui->cbox_roomType->clear();
 
-            // fake an update to the building cbox to refresh the dropdown
-            int before = ui->cbox_roomLoc->currentIndex();
-            ui->cbox_roomLoc->setCurrentIndex(0);
-            ui->cbox_roomLoc->setCurrentIndex(before);
-            on_btn_modRoomFloor_clicked();
+                // fake an update to the building cbox to refresh the dropdown
+                int before = ui->cbox_roomLoc->currentIndex();
+                ui->cbox_roomLoc->setCurrentIndex(0);
+                ui->cbox_roomLoc->setCurrentIndex(before);
+                on_btn_modRoomFloor_clicked();
+            }
         }
 
         break;
@@ -5363,7 +5378,6 @@ void MainWindow::on_btn_delTypeLoc_clicked()
                                             " AND BuildingId = " + buildingidq.value(0).toString()); // room building floor
         q3.next();
 
-
         QString floorid = q3.value(0).toString();
 
         qDebug() << floorid;
@@ -5374,18 +5388,24 @@ void MainWindow::on_btn_delTypeLoc_clicked()
         if (!q4.next()) {
             ui->lbl_editUserWarning_3->setText("No room with this number exists.");
         } else {
-            dbManager->execQuery("DELETE FROM Room WHERE FloorId=" + floorid + " AND RoomNo=" + ui->le_newTypeLoc->text());
-            ui->lbl_editUserWarning_3->setText("Room Deleted");
+            QSqlQuery check = dbManager->execQuery("SELECT * FROM Space WHERE RoomId=" + q4.value(0).toString());
 
-            ui->cbox_roomRoom->clear();
-            ui->le_roomNo->clear();
-            ui->cbox_roomType->clear();
+            if (check.next()) {
+                ui->lbl_editUserWarning_3->setText("Delete failed - There are still beds in this room");
+            } else {
+                dbManager->execQuery("DELETE FROM Room WHERE FloorId=" + floorid + " AND RoomNo=" + ui->le_newTypeLoc->text());
+                ui->lbl_editUserWarning_3->setText("Room Deleted");
 
-            // fake an update to the floors cbox to refresh the dropdown
-            int before = ui->cbox_roomFloor->currentIndex();
-            ui->cbox_roomFloor->setCurrentIndex(0);
-            ui->cbox_roomFloor->setCurrentIndex(before);
-            on_btn_modRoomRoom_clicked();
+                ui->cbox_roomRoom->clear();
+                ui->le_roomNo->clear();
+                ui->cbox_roomType->clear();
+
+                // fake an update to the floors cbox to refresh the dropdown
+                int before = ui->cbox_roomFloor->currentIndex();
+                ui->cbox_roomFloor->setCurrentIndex(0);
+                ui->cbox_roomFloor->setCurrentIndex(before);
+                on_btn_modRoomRoom_clicked();
+            }
         }
         break;
     }
