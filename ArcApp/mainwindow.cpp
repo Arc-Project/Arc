@@ -5704,7 +5704,9 @@ void MainWindow::setShift() {
 void MainWindow::on_btn_saveShift_clicked()
 {
     QString day = ui->comboBox_2->currentText();
+    int dayindex = ui->comboBox_2->currentIndex();
     QString shiftno = ui->comboBox_4->currentText();
+    int shiftindex = ui->comboBox_4->currentIndex();
 
     QString starttime = ui->timeEdit->text();
     QString endtime = ui->timeEdit_2->text();
@@ -5727,6 +5729,8 @@ void MainWindow::on_btn_saveShift_clicked()
     dbManager->execQuery("UPDATE Shift SET NumShifts=" + ui->comboBox_3->currentText() + " WHERE DayOfWeek = '" + day + "'");
 
     on_EditShiftsButton_clicked();
+    ui->comboBox_2->setCurrentIndex(dayindex);
+    ui->comboBox_4->setCurrentIndex(shiftindex);
 }
 
 void MainWindow::on_comboBox_2_currentTextChanged(const QString &arg1)
