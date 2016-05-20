@@ -27,8 +27,9 @@ DatabaseManager::DatabaseManager(QObject *parent) :
    qRegisterMetaType< IntList >( "IntList" );
 
    //ini file stuff
-   QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+   QSettings settings(QSettings::IniFormat, QSettings::SystemScope,
                       "The Salvation Army", "ARCWay");
+
    qDebug() << "ini path" << settings.fileName();
    settings.beginGroup("database");
    qDebug() << "server name: " << settings.value("SERVER_NAME").toString();
@@ -444,7 +445,7 @@ QSqlQuery DatabaseManager::searchClientList(QString ClientName){
     QStringList clientNames;
     if(ClientName.toLower() == "anonymous"){
             qDebug()<<"case: " + ClientName.toLower();
-            searchQuery += QString("WHERE FirstName Like '"+ ClientName.toLower() + "' ")
+            searchQuery += QString("WHERE LastName Like '"+ ClientName.toLower() + "' ")
                          + QString("ORDER BY FirstName ASC, LastName ASC");
     }
     else if(ClientName != ""){
@@ -1473,8 +1474,8 @@ int DatabaseManager::getMonthlyUniqueClients(int month, int year)
             + QString("EndDate > '" + firstDay.toString(Qt::ISODate) + "') OR ")
             + QString("(StartDate >= '" + firstDay.toString(Qt::ISODate) + "' AND ")
             + QString("StartDate <= '" + lastDay.toString(Qt::ISODate) + "')) ")
-            + QString("AND ClientId <> 68 ")
-            + QString("AND ClientId <> 69 AND Action <> 'DELETED'");
+            + QString("AND ClientId <> 1 ") // Anonymous id = 1
+            + QString("AND Action <> 'DELETE'");
     int numUniqueNamed = DatabaseManager::getIntFromQuery(queryString);
 
     queryString =
@@ -1484,8 +1485,8 @@ int DatabaseManager::getMonthlyUniqueClients(int month, int year)
         + QString("EndDate > '" + firstDay.toString(Qt::ISODate) + "') OR ")
         + QString("(StartDate >= '" + firstDay.toString(Qt::ISODate) + "' AND ")
         + QString("StartDate <= '" + lastDay.toString(Qt::ISODate) + "')) ")
-        + QString("AND (ClientId = 68 ")
-        + QString("OR ClientId = 69) AND Action <> 'DELETED'");
+        + QString("AND ClientId = 1 ") // Anonymous id = 1
+        + QString("AND Action <> 'DELETE'");
     int numAnonymous = DatabaseManager::getIntFromQuery(queryString);
     // qDebug() << queryString;
     // qDebug() << "numAnonymous " + QString::number(numAnonymous);

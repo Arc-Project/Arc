@@ -183,7 +183,7 @@ void MainWindow::initCurrentWidget(int idx){
             newHistory = true;
             initCasefileTransactionTable();
             initPcp();
-            ui->actionExport_to_PDF->setEnabled(true);
+            ui->actionExport_to_PDF->setEnabled(false);
             break;
         case EDITBOOKING: //WIDGET 9
             ui->editLookupTable->clear();
@@ -1445,6 +1445,10 @@ void MainWindow::on_button_clear_client_regForm_clicked()
 {
     clear_client_register_form();
 }
+void MainWindow::on_checkBox_cl_dob_no_clicked(bool checked)
+{
+        ui->dateEdit_cl_dob->setEnabled(!checked);
+}
 
 void MainWindow::getListRegisterFields(QStringList* fieldList)
 {
@@ -1463,10 +1467,11 @@ void MainWindow::getListRegisterFields(QStringList* fieldList)
     if (!lastName.isEmpty())
         lastName[0].toUpper();
 
+
     *fieldList << firstName
                << middleName
                << lastName
-               << ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd")
+               << (ui->checkBox_cl_dob_no->isChecked()? "" : ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd"))
                << ui->lineEdit_cl_SIN->text()
                << ui->lineEdit_cl_GANum->text()
                << caseWorkerId   //QString::number(caseWorkerList.value(ui->comboBox_cl_caseWorker->currentText())) //grab value from case worker dropdown I don't know how to do it
@@ -1526,6 +1531,8 @@ void MainWindow::clear_client_register_form(){
     ui->plainTextEdit_cl_comments->clear();
     QDate defaultDob= QDate::fromString("1990-01-01","yyyy-MM-dd");
     ui->dateEdit_cl_dob->setDate(defaultDob);
+    ui->checkBox_cl_dob_no->setChecked(false);
+    ui->dateEdit_cl_dob->setEnabled(true);
     ui->dateEdit_cl_rulesign->setDate(QDate::currentDate());
 
     QPalette pal;
@@ -1556,7 +1563,16 @@ void MainWindow::read_curClient_Information(QString ClientId){
 
     ui->lineEdit_cl_mName->setText(clientInfo.value(2).toString());
     ui->lineEdit_cl_lName->setText(clientInfo.value(3).toString());
-    ui->dateEdit_cl_dob->setDate(QDate::fromString(clientInfo.value(4).toString(),"yyyy-MM-dd"));
+
+    if(clientInfo.value(4).toString() == ""){
+        ui->checkBox_cl_dob_no->setChecked(true);
+        ui->dateEdit_cl_dob->setEnabled(false);
+    }
+    else{
+        ui->checkBox_cl_dob_no->setChecked(false);
+        ui->dateEdit_cl_dob->setEnabled(true);
+        ui->dateEdit_cl_dob->setDate(QDate::fromString(clientInfo.value(4).toString(),"yyyy-MM-dd"));
+    }
     //balnace?
     QString caseWorkerName = caseWorkerList.key(clientInfo.value(21).toInt());
     ui->comboBox_cl_caseWorker->setCurrentText(caseWorkerName);
@@ -1669,9 +1685,13 @@ void MainWindow::getCaseWorkerList(){
     QString caseWorkerquery = "SELECT Username, EmpId FROM Employee WHERE Role = 'CASE WORKER' ORDER BY Username";
     QSqlQuery caseWorkers = dbManager->execQuery(caseWorkerquery);
     //dbManager->printAll(caseWorkers);
+    caseWorkerList.empty();
     while(caseWorkers.next()){
         qDebug()<<"CASEWORKER: " <<caseWorkers.value(0).toString() << caseWorkers.value(1).toString();
-        caseWorkerList.insert(caseWorkers.value(0).toString(), caseWorkers.value(1).toInt());
+        if(!caseWorkerList.contains(caseWorkers.value(0).toString())){
+            qDebug()<<"no info of "<<caseWorkers.value(0).toString();
+            caseWorkerList.insert(caseWorkers.value(0).toString(), caseWorkers.value(1).toInt());
+       }
     }
 }
 
@@ -2290,6 +2310,7 @@ void MainWindow::on_btn_createNewUser_clicked()
     QString uname = ui->le_userName->text();
     QString pw = ui->le_password->text();
 
+    caseWorkerUpdated = true;
     if (uname.length() == 0) {
         ui->lbl_editUserWarning->setText("Enter a Username");
         return;
@@ -2329,6 +2350,7 @@ void MainWindow::on_btn_createNewUser_clicked()
             ui->lbl_editUserWarning->setText("Something went wrong - please try again");
         }
     }
+
 }
 
 
@@ -2577,10 +2599,13 @@ void MainWindow::on_tabw_casefiles_currentChanged(int index)
     switch(index)
     {
         case PERSIONACASEPLAN:
+            ui->actionExport_to_PDF->setEnabled(false);
             break;
         case RUNNINGNOTE:
+            ui->actionExport_to_PDF->setEnabled(false);
             break;
-        case BOOKINGHISTORY:            
+        case BOOKINGHISTORY:
+            ui->actionExport_to_PDF->setEnabled(false);
             if(!newHistory)
                 break;
             on_pushButton_casefile_book_reload_clicked();
@@ -2594,6 +2619,7 @@ void MainWindow::on_tabw_casefiles_currentChanged(int index)
             break;
 
         case TRANSACTIONHISTORY:
+            ui->actionExport_to_PDF->setEnabled(false);
             if(!newTrans)
                 break;
             on_pushButton_casefile_trans_reload_clicked();
@@ -2694,7 +2720,7 @@ void MainWindow::on_pushButton_4_clicked()
     // obtain username and pw and role from UI
     QString uname = ui->le_userName->text();
     QString pw = ui->le_password->text();
-
+    caseWorkerUpdated = true;
     if (uname.length() == 0) {
         ui->lbl_editUserWarning->setText("Enter a Username");
         return;
@@ -2992,8 +3018,8 @@ void MainWindow::on_pushButton_25_clicked()
 
 // program clicked + selected
 void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
-{
-    if (lastprogramclicked != index) {
+{    
+    //if (lastprogramclicked != index) {
         ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
         ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
         ui->lbl_editProgWarning->setText("Please hold while we set your beds");
@@ -3111,7 +3137,7 @@ void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
 
         // ui->assignedbedslist->setModel(assignedmodel);
           lastprogramclicked = index;
-    }
+    //}
 
 }
 
@@ -3384,6 +3410,14 @@ void MainWindow::on_addbedtoprogram_clicked()
     // add program tag to bed
     QString pcode = ui->le_userName_2->text();
 
+    if (pcode== "") {
+        return;
+    }
+
+    if ((ui->availablebedslist->selectedItems().size()) == 0) {
+        return;
+    }
+
     // QModelIndexList qil = ui->availablebedslist->selectedIndexes();
 
     // get selected bed
@@ -3417,12 +3451,14 @@ void MainWindow::on_addbedtoprogram_clicked()
     // update tag value
     dbManager->updateSpaceProgram(spaceid, currenttag);
 
-    ui->availablebedslist->clear();
-    ui->availablebedslist->setRowCount(0);
-    ui->assignedbedslist->clear();
-    ui->assignedbedslist->setRowCount(0);
-    ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
-    ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+    on_tableWidget_2_clicked(lastprogramclicked);
+
+    // ui->availablebedslist->clear();
+    // ui->availablebedslist->setRowCount(0);
+    // ui->assignedbedslist->clear();
+    // ui->assignedbedslist->setRowCount(0);
+    //ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+    //ui ->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
     ui->lbl_editProgWarning->setText("Bed Added to Program");
 
 //    const auto selectedIdxs = ui->availablebedslist->selectedIndexes();
@@ -3467,6 +3503,14 @@ void MainWindow::on_removebedfromprogram_clicked()
     // remove program tag from bed
     QString pcode = ui->le_userName_2->text();
 
+    if (pcode== "") {
+        return;
+    }
+
+    if ((ui->assignedbedslist->selectedItems().size()) == 0) {
+        return;
+    }
+
     // get selected bed
     qDebug() << ui->assignedbedslist->currentItem()->text();
     std::string selectedtag = ui->assignedbedslist->currentItem()->text().toStdString();
@@ -3507,12 +3551,13 @@ void MainWindow::on_removebedfromprogram_clicked()
 
     // update tag value
     dbManager->updateSpaceProgram(spaceid, newtag);
-    ui->availablebedslist->clear();
-    ui->availablebedslist->setRowCount(0);
-    ui->assignedbedslist->clear();
-    ui->assignedbedslist->setRowCount(0);
-    ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
-    ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+//    ui->availablebedslist->clear();
+//    ui->availablebedslist->setRowCount(0);
+//    ui->assignedbedslist->clear();
+//    ui->assignedbedslist->setRowCount(0);
+//    ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+//    ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+    on_tableWidget_2_clicked(lastprogramclicked);
     ui->lbl_editProgWarning->setText("Bed Removed from Program");
 }
 
@@ -4706,11 +4751,18 @@ void MainWindow::on_actionExport_to_PDF_triggered()
     } else
 
     // case files pcp
-    if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == 0){
+    if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == PERSIONACASEPLAN){
         rptTemplate = ":/templates/pdf/pcp.xml";
         for (auto x: pcp_tables) {
             report->recordCount << x->rowCount();
         }
+    }
+
+    // case files pcp
+    if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == RUNNINGNOTE){
+        rptTemplate = ":/templates/pdf/running.xml";
+        report->recordCount << 1;
+
     }
 
     report->loadReport(rptTemplate);
@@ -4749,8 +4801,13 @@ void MainWindow::setValue(const int recNo, const QString paramName, QVariant &pa
     } else
 
     // case files pcp
-    if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == 0){
+    if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == PERSIONACASEPLAN){
         printPCP(recNo, paramName, paramValue, reportPage);
+    }
+
+    // case files running notes
+    if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == RUNNINGNOTE){
+        printRunningNotes(recNo, paramName, paramValue, reportPage);
     }
 }
 
@@ -4976,7 +5033,14 @@ void MainWindow::printPCP(const int recNo, const QString paramName, QVariant &pa
     }
 }
 
-
+void MainWindow::printRunningNotes(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
+    Q_UNUSED(reportPage);
+    Q_UNUSED(recNo);
+    if (paramName == "notes") {
+        if (ui->te_notes->document()->toPlainText().isEmpty()) return;
+            paramValue = ui->te_notes->document()->toPlainText();
+    }
+}
 
 void MainWindow::on_btn_createNewUser_3_clicked()
 {
@@ -5029,12 +5093,11 @@ void MainWindow::on_btn_createNewUser_3_clicked()
         // update spacecodes
         dbManager->updateAllSpacecodes();
         // clear everything
-        ui->cbox_roomLoc->clear();
-        ui->cbox_roomFloor->clear();
-        ui->cbox_roomRoom->clear();
+//        ui->cbox_roomLoc->clear();
+//        ui->cbox_roomFloor->clear();
+//        ui->cbox_roomRoom->clear();
         ui->le_roomNo->clear();
-        ui->cbox_roomType->clear();
-        ui->le_roomNo->clear();
+        // ui->cbox_roomType->clear();
         ui->doubleSpinBox->setValue(0.0);
         ui->doubleSpinBox_2->setValue(0.0);
         ui->tableWidget_5->clear();
@@ -5043,8 +5106,10 @@ void MainWindow::on_btn_createNewUser_3_clicked()
         // set horizontal headers
         ui->tableWidget_5->setColumnCount(8);
         ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly");
-        populate_modRoom_cboxes();
+        // populate_modRoom_cboxes();
         ui->lbl_editUserWarning_3->setText("Vacancy created");
+        // list all
+        on_btn_listAllUsers_3_clicked();
     } else {
         ui->lbl_editUserWarning_3->setText("This vacancy already exists. Please change the bed number.");
     }
@@ -5249,16 +5314,25 @@ void MainWindow::on_btn_delTypeLoc_clicked()
         if (!q1.next()) {
             ui->lbl_editUserWarning_3->setText("No building with this number exists.");
         } else {
-            QSqlQuery q2 = dbManager->execQuery("DELETE FROM Building WHERE BuildingNo=" + ui->le_newTypeLoc->text());
-            ui->lbl_editUserWarning_3->setText("Building Deleted");
+            // check if floors exist in this building
+            QSqlQuery buildingidq = dbManager->execQuery("SELECT BuildingId FROM Building WHERE BuildingNo=" + ui->cbox_roomLoc->currentText());
+            buildingidq.next();
+            QSqlQuery check = dbManager->execQuery("SELECT * FROM Floor WHERE BuildingId=" + buildingidq.value(0).toString());
 
-            ui->cbox_roomLoc->clear();
-            ui->cbox_roomFloor->clear();
-            ui->cbox_roomRoom->clear();
-            ui->le_roomNo->clear();
-            ui->cbox_roomType->clear();
-            populate_modRoom_cboxes();
-            on_btn_modRoomBdlg_clicked();
+            if (check.next()) {
+                ui->lbl_editUserWarning_3->setText("Delete failed - There are still floors in this building");
+            } else {
+                QSqlQuery q2 = dbManager->execQuery("DELETE FROM Building WHERE BuildingNo=" + ui->le_newTypeLoc->text());
+                ui->lbl_editUserWarning_3->setText("Building Deleted");
+
+                ui->cbox_roomLoc->clear();
+                ui->cbox_roomFloor->clear();
+                ui->cbox_roomRoom->clear();
+                ui->le_roomNo->clear();
+                ui->cbox_roomType->clear();
+                populate_modRoom_cboxes();
+                on_btn_modRoomBdlg_clicked();
+            }
         }
         break;
     }
@@ -5271,20 +5345,26 @@ void MainWindow::on_btn_delTypeLoc_clicked()
         if (!q3.next()) {
             ui->lbl_editUserWarning_3->setText("No floor with this number exists.");
         } else {
-            QSqlQuery q4 = dbManager->execQuery("DELETE FROM Floor WHERE FloorNo=" + ui->le_newTypeLoc->text()
-                                                + " AND BuildingId=" + buildingidq.value(0).toString());
-            ui->lbl_editUserWarning_3->setText("Floor Deleted");
+            // check if rooms exist
+            QSqlQuery check = dbManager->execQuery("SELECT * FROM Room WHERE FloorId=" + q3.value(0).toString());
+            if (check.next()) {
+                ui->lbl_editUserWarning_3->setText("Delete failed - There are still rooms on this floor");
+            } else {
+                QSqlQuery q4 = dbManager->execQuery("DELETE FROM Floor WHERE FloorNo=" + ui->le_newTypeLoc->text()
+                                                    + " AND BuildingId=" + buildingidq.value(0).toString());
+                ui->lbl_editUserWarning_3->setText("Floor Deleted");
 
-            ui->cbox_roomFloor->clear();
-            ui->cbox_roomRoom->clear();
-            ui->le_roomNo->clear();
-            ui->cbox_roomType->clear();
+                ui->cbox_roomFloor->clear();
+                ui->cbox_roomRoom->clear();
+                ui->le_roomNo->clear();
+                ui->cbox_roomType->clear();
 
-            // fake an update to the building cbox to refresh the dropdown
-            int before = ui->cbox_roomLoc->currentIndex();
-            ui->cbox_roomLoc->setCurrentIndex(0);
-            ui->cbox_roomLoc->setCurrentIndex(before);
-            on_btn_modRoomFloor_clicked();
+                // fake an update to the building cbox to refresh the dropdown
+                int before = ui->cbox_roomLoc->currentIndex();
+                ui->cbox_roomLoc->setCurrentIndex(0);
+                ui->cbox_roomLoc->setCurrentIndex(before);
+                on_btn_modRoomFloor_clicked();
+            }
         }
 
         break;
@@ -5298,7 +5378,6 @@ void MainWindow::on_btn_delTypeLoc_clicked()
                                             " AND BuildingId = " + buildingidq.value(0).toString()); // room building floor
         q3.next();
 
-
         QString floorid = q3.value(0).toString();
 
         qDebug() << floorid;
@@ -5309,18 +5388,24 @@ void MainWindow::on_btn_delTypeLoc_clicked()
         if (!q4.next()) {
             ui->lbl_editUserWarning_3->setText("No room with this number exists.");
         } else {
-            dbManager->execQuery("DELETE FROM Room WHERE FloorId=" + floorid + " AND RoomNo=" + ui->le_newTypeLoc->text());
-            ui->lbl_editUserWarning_3->setText("Room Deleted");
+            QSqlQuery check = dbManager->execQuery("SELECT * FROM Space WHERE RoomId=" + q4.value(0).toString());
 
-            ui->cbox_roomRoom->clear();
-            ui->le_roomNo->clear();
-            ui->cbox_roomType->clear();
+            if (check.next()) {
+                ui->lbl_editUserWarning_3->setText("Delete failed - There are still beds in this room");
+            } else {
+                dbManager->execQuery("DELETE FROM Room WHERE FloorId=" + floorid + " AND RoomNo=" + ui->le_newTypeLoc->text());
+                ui->lbl_editUserWarning_3->setText("Room Deleted");
 
-            // fake an update to the floors cbox to refresh the dropdown
-            int before = ui->cbox_roomFloor->currentIndex();
-            ui->cbox_roomFloor->setCurrentIndex(0);
-            ui->cbox_roomFloor->setCurrentIndex(before);
-            on_btn_modRoomRoom_clicked();
+                ui->cbox_roomRoom->clear();
+                ui->le_roomNo->clear();
+                ui->cbox_roomType->clear();
+
+                // fake an update to the floors cbox to refresh the dropdown
+                int before = ui->cbox_roomFloor->currentIndex();
+                ui->cbox_roomFloor->setCurrentIndex(0);
+                ui->cbox_roomFloor->setCurrentIndex(before);
+                on_btn_modRoomRoom_clicked();
+            }
         }
         break;
     }
@@ -5786,3 +5871,4 @@ void MainWindow::on_addStorageClient_clicked()
     sto->exec();
     delete(sto);
 }
+

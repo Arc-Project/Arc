@@ -554,6 +554,8 @@ private slots:
 
     void printRestrictionReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
 
+    void printRunningNotes(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
+
     void on_comboBox_3_currentTextChanged(const QString &arg1);
 
     void on_btn_saveShift_clicked();
@@ -583,6 +585,8 @@ private slots:
     void on_addStorageClient_clicked();
     void on_comboBox_2_currentTextChanged(const QString &arg1);
 
+    void on_checkBox_cl_dob_no_clicked(bool checked);
+
 private:
 
     Ui::MainWindow *ui;
@@ -593,8 +597,7 @@ private:
     Client * curClient;
     QString curClientID;
     bool editOverLap;
-//    bool pic_available = true;
-//    bool table_available = true;
+
 
     bool caseWorkerUpdated = true;
    QImage profilePic;
