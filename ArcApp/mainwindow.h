@@ -206,6 +206,7 @@ private slots:
     void on_restrictionRefresh_btn_clicked();
     void on_noDatabaseConnection();
     void on_noDatabaseConnection(QSqlDatabase* database);
+    void on_modelDataUpdated(int reportType);
     
     void on_reconnectedToDatabase();
     
@@ -616,6 +617,7 @@ private:
     void getCashFloat(QDate date, int shiftNo);
     void getMonthlyReport(int month, int year);
     void updateRestrictionTables();
+    void resizeTableView(QTableView* tableView);
 
 
 

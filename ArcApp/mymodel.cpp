@@ -34,14 +34,16 @@ QVariant MyModel::headerData(int section, Qt::Orientation orientation, int role)
     return QVariant();
 }
 
-bool MyModel::setData(QStringList* data, int rowCount, int colCount)
+void MyModel::setData(QStringList* data, int rowCount, int colCount, int reportType)
 {
     beginResetModel();
     delete tableData;
     tableData = data;
     rows = rowCount;
     cols = colCount;
+    type = reportType;
     endResetModel();
+    emit MyModel::modelDataUpdated(type);
 }
 
 void MyModel::setTitle(QStringList* title)
@@ -54,7 +56,7 @@ QVariant MyModel::data(const QModelIndex &index, int role) const
 {
     if (role == Qt::DisplayRole)
     {
-      return tableData->at(index.row() * cols + index.column());
+      return QString("  " + tableData->at(index.row() * cols + index.column()) + "  ");
     }
     return QVariant();
 }
