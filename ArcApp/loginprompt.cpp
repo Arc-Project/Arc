@@ -19,6 +19,7 @@ LoginPrompt::~LoginPrompt()
 // login button
 void LoginPrompt::on_btn_login_clicked()
 {
+    QSqlQuery queryResults;
     bool validLogin = false;
 
     QString username = ui->lineEdit_Uname->text();
@@ -29,7 +30,7 @@ void LoginPrompt::on_btn_login_clicked()
     } else if (pw.isEmpty()) {
         ui->label_LoginError->setText("Please enter a password");
     } else {
-        QSqlQuery queryResults = dbManager->loginSelect(username, pw);
+        queryResults = dbManager->loginSelect(username, pw);
 
         int numrows = queryResults.numRowsAffected();
 
