@@ -5884,11 +5884,16 @@ void MainWindow::updatemenuforuser() {
         sp_retain2.setRetainSizeWhenHidden(true);
         ui->adminButton->setSizePolicy(sp_retain2);
         ui->adminButton->hide();
+
+        currentrole = STANDARD;
     } else if (roleq.value(0).toString() == "CASE WORKER") {
         QSizePolicy sp_retain = ui->caseButton->sizePolicy();
         sp_retain.setRetainSizeWhenHidden(true);
         ui->adminButton->setSizePolicy(sp_retain);
         ui->adminButton->hide();
+        currentrole = CASEWORKER;
+    } else {
+        currentrole = ADMIN;
     }
 
     //display logged in user and current shift in status bar
