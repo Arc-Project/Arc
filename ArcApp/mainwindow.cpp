@@ -2006,6 +2006,7 @@ void MainWindow::displayPicThread()
 //add image to client info picture graphicview
 void MainWindow::addInfoPic(QImage img){
     qDebug()<<"Add Info Picture??";
+    qDebug()<<"IMAGE SIZE"<<img.byteCount();
     QPixmap item2 = QPixmap::fromImage(img);
     QPixmap scaled = QPixmap(item2.scaledToWidth((int)(ui->graphicsView_getInfo->width()*0.9), Qt::SmoothTransformation));
     QGraphicsScene *scene2 = new QGraphicsScene();
