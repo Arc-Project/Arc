@@ -180,7 +180,7 @@ QHeaderView{
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -513,6 +513,9 @@ QHeaderView{
           </property>
           <property name="selectionBehavior">
            <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <property name="textElideMode">
+           <enum>Qt::ElideMiddle</enum>
           </property>
           <attribute name="horizontalHeaderMinimumSectionSize">
            <number>10</number>
