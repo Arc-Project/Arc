@@ -2999,10 +2999,18 @@ void MainWindow::on_pushButton_25_clicked()
     }
 
     // remove tag from all beds with this code
-    QSqlQuery allbed = dbManager->execQuery("SELECT SpaceCode, ProgramCodes from Space WHERE ProgramCodes LIKE '%" + pcode + "%'");
-    qDebug() << "SELECT SpaceCode, ProgramCodes from Space WHERE ProgramCodes LIKE '%" + pcode + "%'";
+    QSqlQuery bednum = dbManager->execQuery("SELECT SpaceCode, ProgramCodes FROM Space WHERE ProgramCodes LIKE '%" + pcode + "%'");
+    qDebug() << "SELECT SpaceCode, ProgramCodes FROM Space WHERE ProgramCodes LIKE '%" + pcode + "%'";
+    qDebug() << "err" << bednum.lastError();
 
-    while (allbed.next()) {
+    int numbeds = 0;
+    while (bednum.next()) {
+        numbeds++;
+    }
+
+    for (int a = 0; a < numbeds; a++) {
+        QSqlQuery allbed = dbManager->execQuery("SELECT SpaceCode, ProgramCodes FROM Space WHERE ProgramCodes LIKE '%" + pcode + "%'");
+        allbed.next();
         QString thebedcode = allbed.value(0).toString();
         QString selectedtagg = allbed.value(0).toString();
 
