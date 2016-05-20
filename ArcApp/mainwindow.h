@@ -597,8 +597,7 @@ private:
     Client * curClient;
     QString curClientID;
     bool editOverLap;
-//    bool pic_available = true;
-//    bool table_available = true;
+
 
     bool caseWorkerUpdated = true;
    QImage profilePic;
