@@ -4771,8 +4771,8 @@ QHeaderView{
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>1163</width>
-                 <height>1325</height>
+                 <width>620</width>
+                 <height>1294</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">

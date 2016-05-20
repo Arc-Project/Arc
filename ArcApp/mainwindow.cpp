@@ -2998,10 +2998,70 @@ void MainWindow::on_pushButton_25_clicked()
         return;
     }
 
+    // remove tag from all beds with this code
+    QSqlQuery bednum = dbManager->execQuery("SELECT SpaceCode, ProgramCodes FROM Space WHERE ProgramCodes LIKE '%" + pcode + "%'");
+    qDebug() << "SELECT SpaceCode, ProgramCodes FROM Space WHERE ProgramCodes LIKE '%" + pcode + "%'";
+    qDebug() << "err" << bednum.lastError();
+
+    int numbeds = 0;
+    while (bednum.next()) {
+        numbeds++;
+    }
+
+    for (int a = 0; a < numbeds; a++) {
+        QSqlQuery allbed = dbManager->execQuery("SELECT SpaceCode, ProgramCodes FROM Space WHERE ProgramCodes LIKE '%" + pcode + "%'");
+        allbed.next();
+        QString thebedcode = allbed.value(0).toString();
+        QString selectedtagg = allbed.value(0).toString();
+
+        qDebug() << thebedcode;
+        qDebug() << selectedtagg;
+
+        std::string selectedtag = selectedtagg.toStdString();
+
+        std::vector<std::string> tagbreakdown = split(selectedtag, '-');
+
+        // parse space code to check building number + floor number + room number + space number
+        QString buildingnum = QString::fromStdString(tagbreakdown[0]);
+        QString floornum = QString::fromStdString(tagbreakdown[1]);
+        QString roomnum = QString::fromStdString(tagbreakdown[2]);
+        std::string bednumtype = tagbreakdown[3];
+
+        // strip the last character
+        QString bednumber = QString::fromStdString(bednumtype.substr(0, bednumtype.size()-1));
+
+        // get space id
+        QSqlQuery singlebedquery = dbManager->searchSingleBed(buildingnum, floornum, roomnum, bednumber);
+        singlebedquery.next();
+        QString spaceid = singlebedquery.value(3).toString();
+
+        // get curr tag
+        QString currenttag = singlebedquery.value(8).toString();
+
+        qDebug() << currenttag;
+
+        // remove tag
+        QString newtag = "";
+        std::string curtagtogether = currenttag.toStdString();
+        std::vector<std::string> curtagbreakdown = split(curtagtogether, ',');
+        for (std::string t : curtagbreakdown) {
+            if (QString::fromStdString(t) != pcode) {
+                newtag += QString::fromStdString(t);
+                newtag += ",";
+            }
+        }
+        std::string tempstr = newtag.toStdString();
+        tempstr.pop_back();
+        newtag = QString::fromStdString(tempstr);
+
+        // update tag value
+        dbManager->updateSpaceProgram(spaceid, newtag);
+    }
+
     QSqlQuery queryResults = dbManager->execQuery("DELETE FROM Program WHERE ProgramCode='" + pcode + "'");
     int numrows = queryResults.numRowsAffected();
 
-    if (numrows != 0) {
+    if (numrows > 0) {
         ui->lbl_editProgWarning->setText("Program Deleted");
         QStandardItemModel * model = new QStandardItemModel(0,0);
         model->clear();
@@ -3016,8 +3076,10 @@ void MainWindow::on_pushButton_25_clicked()
         ui->le_password->setText("");
         ui->le_users->setText("");
     } else {
-        ui->lbl_editProgWarning->setText("Program Not Found");
+        ui->lbl_editProgWarning->setText("Program Not Deleted - make sure valid program is selected");
     }
+    //HANK
+
     return;
 }
 
@@ -3446,9 +3508,10 @@ void MainWindow::on_addbedtoprogram_clicked()
 
     // get curr tag
     QString currenttag = singlebedquery.value(8).toString();
-
-    // append to tag
-    currenttag += ",";
+    if (currenttag != "") {
+        // append to tag
+        currenttag += ",";
+    }
     currenttag += pcode;
 
     qDebug() << currenttag;
@@ -4470,7 +4533,6 @@ void MainWindow::on_btn_modRoomType_clicked()
     // this shouldn't be modifiable... - there are only ever beds and mats.
 }
 
-// HANK
 void MainWindow::on_EditShiftsButton_clicked()
 {
     addHistory(ADMINPAGE);
