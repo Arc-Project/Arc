@@ -3676,7 +3676,7 @@ void MainWindow::updateShiftReportTables(QDate date, int shiftNo)
     ui->lbl_shiftReportDateVal->setText(date.toString(Qt::ISODate));
     ui->lbl_shiftReportShiftVal->setText(QString::number(shiftNo));
     ui->shiftReport_dateEdit->setDate(date);
-    ui->shiftReport_spinBox->setValue(currentshiftid);
+    ui->shiftReport_spinBox->setValue(shiftNo);
 }
 
 void MainWindow::on_dailyReportGo_btn_clicked()
