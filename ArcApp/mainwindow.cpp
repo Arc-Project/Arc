@@ -197,6 +197,7 @@ void MainWindow::initCurrentWidget(int idx){
                 read_curClient_Information(curClientID);
             break;
         case REPORTS:    //WIDGET 11
+            ui->swdg_reports->setCurrentIndex(DAILYREPORT);
             ui->dailyReport_tabWidget->setCurrentIndex(DEFAULTTAB);
             ui->shiftReport_tabWidget->setCurrentIndex(DEFAULTTAB);
             MainWindow::updateDailyReportTables(QDate::currentDate());
@@ -278,6 +279,9 @@ DEV TESTING BUTTONS (START)
 ==============================================================================*/
 void MainWindow::on_actionDB_Connection_triggered()
 {
+    ui->transaction_tableView->setVisible(false);
+    ui->transaction_tableView->resizeColumnsToContents();
+    ui->transaction_tableView->setVisible(true);
 }
 
 void MainWindow::on_actionTest_Query_triggered()
@@ -1387,6 +1391,7 @@ void MainWindow::on_reportsButton_clicked()
 {
     if (dbManager->checkDatabaseConnection())
     {
+        ui->btn_dailyReport->setChecked(true);
         ui->stackedWidget->setCurrentIndex(REPORTS);
         addHistory(MAINMENU);
         qDebug() << "pushed page " << MAINMENU;
@@ -3639,7 +3644,67 @@ void MainWindow::setupReportsScreen()
 
     ui->month_comboBox->setCurrentIndex(QDate::currentDate().month() - 1);
     ui->year_comboBox->setCurrentIndex(yearList.size() - 1);
+
+    connect(&(checkoutReport->model), SIGNAL(modelDataUpdated(int)), this,
+        SLOT(on_modelDataUpdated(int)));
+    connect(&(vacancyReport->model), SIGNAL(modelDataUpdated(int)), this,
+        SLOT(on_modelDataUpdated(int)));
+    connect(&(lunchReport->model), SIGNAL(modelDataUpdated(int)), this,
+        SLOT(on_modelDataUpdated(int)));
+    connect(&(wakeupReport->model), SIGNAL(modelDataUpdated(int)), this,
+        SLOT(on_modelDataUpdated(int)));
+    connect(&(bookingReport->model), SIGNAL(modelDataUpdated(int)), this,
+        SLOT(on_modelDataUpdated(int)));
+    connect(&(transactionReport->model), SIGNAL(modelDataUpdated(int)), this,
+        SLOT(on_modelDataUpdated(int)));
+    connect(&(clientLogReport->model), SIGNAL(modelDataUpdated(int)), this,
+        SLOT(on_modelDataUpdated(int)));
+    connect(&(otherReport->model), SIGNAL(modelDataUpdated(int)), this,
+        SLOT(on_modelDataUpdated(int)));
 }
+
+void MainWindow::on_modelDataUpdated(int reportType)
+{
+    switch(reportType)
+    {
+        case CHECKOUT_REPORT:
+            resizeTableView(ui->checkout_tableView);
+            break;
+        case VACANCY_REPORT:
+            resizeTableView(ui->vacancy_tableView);
+            break;
+        case LUNCH_REPORT:
+            resizeTableView(ui->lunch_tableView);
+            break;
+        case WAKEUP_REPORT:
+            resizeTableView(ui->lunch_tableView);
+            break;
+        case BOOKING_REPORT:
+            resizeTableView(ui->booking_tableView);
+            break;
+        case TRANSACTION_REPORT:
+            resizeTableView(ui->transaction_tableView);
+            break;
+        case CLIENT_REPORT:
+            resizeTableView(ui->clientLog_tableView);
+            break;
+        case OTHER_REPORT:
+            resizeTableView(ui->other_tableView);
+    }
+}
+
+void MainWindow::resizeTableView(QTableView* tableView)
+{
+    tableView->setVisible(false);
+    tableView->resizeColumnsToContents();
+    tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+//    ui->bookingTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+//    ui->bookingTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    tableView->setVisible(true);
+}
+
+
 
 void MainWindow::updateDailyReportTables(QDate date)
 {
