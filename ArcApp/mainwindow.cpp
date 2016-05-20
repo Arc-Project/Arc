@@ -2088,7 +2088,7 @@ void MainWindow::initClTransactionTable(){
     ui->tableWidget_transaction->setColumnCount(8);
     ui->tableWidget_transaction->clear();
 
-    ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Time"<<"Amount"<<"Payment Type"<<"ChequeNo"<<"MSQ"<<"ChequeDate"<<"TransType"<<"Employee");
+    ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"TransType"<<"Amount"<<"Payment Type"<<"ChequeNo"<<"MSQ"<<"ChequeDate"<<"Employee");
     ui->tableWidget_transaction->setMinimumHeight(30*6-1);
 
 }
@@ -2102,6 +2102,7 @@ void MainWindow::displayTransaction(QSqlQuery results, QTableWidget* table){
     while(results.next()){
         table->insertRow(row);
         for(int i =0; i<colCnt; i++){
+
             if(i == 2){
                 QString balance = QString("%1%2").arg(results.value(i).toDouble() >= 0 ? "$" : "-$").
                     arg(QString::number(fabs(results.value(i).toDouble()), 'f', 2));
@@ -2678,9 +2679,9 @@ void MainWindow::on_pushButton_casefile_book_reload_clicked()
 void MainWindow::initCasefileTransactionTable(){
     ui->tableWidget_casefile_transaction->setRowCount(0);
 
-    ui->tableWidget_casefile_transaction->setColumnCount(12);
+    ui->tableWidget_casefile_transaction->setColumnCount(11);
     ui->tableWidget_casefile_transaction->clear();
-    ui->tableWidget_casefile_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Time"<<"Amount"<<"Payment Type"<<"ChequeNo"<<"MSQ"<<"ChequeDate"<<"TransType"
+    ui->tableWidget_casefile_transaction->setHorizontalHeaderLabels(QStringList()<<"DateTime"<<"TransType"<<"Amount"<<"Payment Type"<<"ChequeNo"<<"MSQ"<<"ChequeDate"
                                                            <<"Deleted"<<"Outstanding"<<"Employee"<<"Notes");
 
 }
@@ -2706,7 +2707,7 @@ void MainWindow::on_pushButton_casefile_trans_reload_clicked()
 }
 
 
-/*-------------------CASEFILE END-----------------------------------*/
+/*----------------------------------------CASEFILE END------------------------------------------*/
 
 
 void MainWindow::on_EditRoomsButton_clicked()
