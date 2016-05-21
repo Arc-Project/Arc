@@ -121,6 +121,9 @@ public:
     double realCost(QDate start, QDate end, double daily, double monthly);
     std::pair<int,int> monthDay(QDate start, QDate end);
     double quickCost(std::pair<int,int>p, double daily, double monthly);
+    void setStorageClient();
+    void lockupShifts();
+    void showShifts(int num);
     //COLIN END//////
 
     void updatemenuforuser();
@@ -605,6 +608,26 @@ private slots:
 
     void on_bookingTable_itemClicked(QTableWidgetItem *item);
 
+    void on_shiftNum_currentIndexChanged(int index);
+
+    void on_shiftDay_currentIndexChanged(int index);
+
+    void on_shiftE1_timeChanged(const QTime &time);
+
+    void on_shiftS2_timeChanged(const QTime &time);
+
+    void on_shiftE2_timeChanged(const QTime &time);
+
+    void on_shiftS3_timeChanged(const QTime &time);
+
+    void on_shiftS4_timeChanged(const QTime &time);
+
+    void on_shiftS5_timeChanged(const QTime &time);
+
+    void on_shiftE3_timeChanged(const QTime &time);
+
+    void on_shiftE4_timeChanged(const QTime &time);
+
 private:
 
     Ui::MainWindow *ui;
@@ -615,7 +638,7 @@ private:
     Client * curClient;
     QString curClientID, curClientName;
     bool editOverLap;
-
+    int numShift;
 
     bool caseWorkerUpdated = true;
    QImage profilePic;
