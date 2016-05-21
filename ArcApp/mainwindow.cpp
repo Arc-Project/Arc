@@ -432,6 +432,9 @@ void MainWindow::on_endDateEdit_dateChanged()
 
     }
     clearTable(ui->bookingTable);
+    std::pair<int,int> p = monthDay(ui->startDateEdit->date(), ui->endDateEdit->date());
+    ui->bookMonthLabel->setText(QString::number(p.first));
+    ui->bookDayLabel->setText(QString::number(p.second));
     ui->makeBookingButton->hide();
 }
 
@@ -719,7 +722,7 @@ void MainWindow::on_bookingSearchButton_clicked()
     QString program = ui->programDropdown->currentText();
 
     QSqlQuery result = dbManager->getCurrentBooking(ui->startDateEdit->date(), ui->endDateEdit->date(), program);
-
+    ui->bookCostLabel->setText("");
    /* ui->bookingTable->setRowCount(0);
     ui->bookingTable->clear();
     ui->bookingTable->setHorizontalHeaderLabels(QStringList() << "Room #" << "Location" << "Program" << "Description" << "Cost" << "Monthly");
@@ -6197,6 +6200,23 @@ void MainWindow::on_editDelete_clicked()
     ui->editLookupTable->removeRow(row);
     ui->editDelete->setEnabled(true);
 }
+
+double MainWindow::quickCost(std::pair<int,int> p, double daily, double monthly){
+    int days, months;
+    double dailyCost, totalCost;
+    days = p.second;
+    months = p.first;
+    dailyCost = days * daily;
+    if(dailyCost > monthly){
+        dailyCost = monthly;
+    }
+
+    totalCost = monthly * months + dailyCost;
+    return totalCost;
+
+
+}
+
 double MainWindow::realCost(QDate start, QDate end, double daily, double monthly){
     int days, months, totalDays;
     double dailyCost, totalCost;
@@ -6217,9 +6237,25 @@ double MainWindow::realCost(QDate start, QDate end, double daily, double monthly
     }
 
     totalCost = monthly * months + dailyCost;
-    qDebug() << "Months " << months << "Days " << days << " Total Cost " << totalCost;
     return totalCost;
 
+}
+std::pair<int,int> MainWindow::monthDay(QDate start, QDate end){
+    int days, months, totalDays;
+    months = 0;
+    totalDays = end.toJulianDay() - start.toJulianDay();
+    QDate holdEnd;
+    holdEnd = end;
+    while((holdEnd = holdEnd.addMonths(-1)) >= start)
+        months++;
+    holdEnd = holdEnd.addMonths(1);
+    if(holdEnd == start)
+        days = 0;
+    else
+        days = holdEnd.toJulianDay() - start.toJulianDay();
+
+    std::pair<int,int> p = std::make_pair(months, days);
+    return p;
 }
 
 void MainWindow::on_addMonth_clicked()
@@ -6231,4 +6267,17 @@ void MainWindow::on_addMonth_clicked()
         switcher = switcher.addDays(-1);
     switcher = switcher.addMonths(1);
     ui->endDateEdit->setDate(switcher);
+}
+
+void MainWindow::on_bookingTable_itemClicked(QTableWidgetItem *item)
+{
+    int row = item->row();
+    if(row == -1)
+        return;
+    double daily, monthly;
+    daily = ui->bookingTable->item(row, 3)->text().toDouble();
+    monthly = ui->bookingTable->item(row, 4)->text().toDouble();
+    std::pair<int,int> p = std::make_pair(ui->bookMonthLabel->text().toInt(), ui->bookDayLabel->text().toInt());
+    double cost = quickCost(p,daily, monthly);
+    ui->bookCostLabel->setText(QString::number(cost, 'f',2));
 }
