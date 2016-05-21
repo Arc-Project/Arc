@@ -168,6 +168,17 @@ void DatabaseManager::printAll(QSqlQuery queryResults)
         qDebug() << record;
     }
 }
+bool DatabaseManager::deleteBooking(QString id){
+    QSqlQuery query(db);
+    QString q = "DELETE FROM Booking WHERE BookingId ='" + id + "'";
+    return query.exec(q);
+}
+QSqlQuery DatabaseManager::getRole(QString empName){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Employee WHERE Username ='" + empName + "'";
+    query.exec(q);
+    return query;
+}
 
 QSqlQuery DatabaseManager::execQuery(QString queryString)
 {
