@@ -595,7 +595,7 @@ private slots:
 
     void on_checkBox_cl_dob_no_clicked(bool checked);
 
-
+    void on_editDelete_clicked();
 private:
 
     Ui::MainWindow *ui;
