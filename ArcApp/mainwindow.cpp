@@ -1740,6 +1740,15 @@ void MainWindow::on_button_cancel_client_register_clicked()
     ui->stackedWidget->setCurrentIndex(MAINMENU);
 }
 
+/*=============================================================================
+ * DELETE CLIENT USING CLIENT ID
+ * ==========================================================================*/
+void MainWindow::deleteClient(){
+    //if( != 'STANDARD')  // check client role
+        //open dialog
+
+
+}
 
 /*==============================================================================
 SEARCH CLIENTS USING NAME

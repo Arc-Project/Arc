@@ -62,7 +62,7 @@ public:
     bool insertClientWithPic(QStringList* registerFieldList, QImage* profilePic);
     bool insertClientLog(QStringList* registerFieldList);
     bool updateClientWithPic(QStringList* registerFieldList, QString clientId, QImage* profilePic);
-
+    bool deleteClientFromTable(QString tableName, QString ClientId);
 
     QSqlQuery searchClientList(QString ClientName);
     QSqlQuery searchTableClientInfo(QString tableName, QString ClientId);

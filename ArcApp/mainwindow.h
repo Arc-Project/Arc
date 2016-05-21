@@ -95,6 +95,7 @@ public:
     void getCurrentClientId();   //get client id from client list table
     void getClientInfo();
     void statusColor();
+    void deleteClient();
 
     //COLIN STUFF////
     void getProgramCodes();
