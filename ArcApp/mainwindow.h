@@ -83,6 +83,8 @@ public:
     int currentrole = STANDARD;
     int currentshiftid = 0;
 
+    bool resettingfromcode = false;
+
     bookingManager book;
     void searchClientListThread();
     void setup_searchClientTable(QSqlQuery results);
