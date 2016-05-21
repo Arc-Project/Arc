@@ -5098,8 +5098,8 @@ QHeaderView{
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>718</width>
-                 <height>1381</height>
+                 <width>1269</width>
+                 <height>1294</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -15408,7 +15408,7 @@ QHeaderView{
      <x>0</x>
      <y>0</y>
      <width>1625</width>
-     <height>29</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="font">
