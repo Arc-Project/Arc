@@ -180,7 +180,7 @@ QHeaderView{
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -964,38 +964,9 @@ QHeaderView{
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_cl_info_comment">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>200</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <pointsize>11</pointsize>
-                   </font>
-                  </property>
-                  <property name="autoFillBackground">
-                   <bool>true</bool>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                  </property>
-                  <property name="margin">
-                   <number>1</number>
-                  </property>
-                  <property name="indent">
-                   <number>1</number>
+                 <widget class="QPlainTextEdit" name="textEdit_cl_info_comment">
+                  <property name="enabled">
+                   <bool>false</bool>
                   </property>
                  </widget>
                 </item>
@@ -4771,8 +4742,8 @@ QHeaderView{
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>620</width>
-                 <height>1294</height>
+                 <width>1112</width>
+                 <height>1381</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -7818,6 +7789,9 @@ QHeaderView{
            </item>
            <item row="2" column="0" colspan="2">
             <widget class="QPlainTextEdit" name="plainTextEdit_cl_comments">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -14758,7 +14732,7 @@ QHeaderView{
      <x>0</x>
      <y>0</y>
      <width>1542</width>
-     <height>23</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="font">
