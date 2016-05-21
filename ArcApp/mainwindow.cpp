@@ -2878,6 +2878,7 @@ void MainWindow::on_pushButton_4_clicked()
 
     if (name.length() == 0) {
         ui->lbl_editUserWarning->setText("Enter a Name");
+        return;
     }
 
     // first, check to make sure the username is taken
