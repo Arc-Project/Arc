@@ -2664,14 +2664,30 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
         x->setColumnWidth(2, width*0.16);
     }
 
+    //clear old data
+    ui->tw_caseFiles->clearContents();
+    ui->tw_caseFiles->setRowCount(0);
+    ui->le_caseFilter->clear();
+
     //get client id
     int nRow = ui->tableWidget_search_client->currentRow();
     if (nRow <0)
         return;
     curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
-    QString curFirstName = ui->tableWidget_search_client->item(nRow, 1)->text();
-    QString curMiddleName = ui->tableWidget_search_client->item(nRow, 2)->text().size() > 0 ? ui->tableWidget_search_client->item(nRow, 2)->text()+ " " : "";
-    QString curLastName = ui->tableWidget_search_client->item(nRow, 3)->text();
+    QString curFirstName = ui->tableWidget_search_client->item(nRow, 2)->text();
+    QString curMiddleName = ui->tableWidget_search_client->item(nRow, 3)->text().size() > 0 ? ui->tableWidget_search_client->item(nRow, 2)->text()+ " " : "";
+    QString curLastName = ui->tableWidget_search_client->item(nRow, 1)->text();
+
+    //if dir was saved
+    if (!ui->le_caseDir->text().isEmpty()){
+    QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+                          ui->tableWidget_search_client->item(nRow, 2)->text() + "*");
+
+    qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+                ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
+    ui->le_caseDir->setText(dir.path());
+    populate_tw_caseFiles(filter);
+    }
 
     qDebug() << "id displayed:" << idDisplayed;
     qDebug() << "id selected:" << curClientID;
@@ -3410,11 +3426,11 @@ void MainWindow::on_pushButton_3_clicked()
         mruDir.setValue(DEFAULT_DIR_KEY, tempDir);
         int nRow = ui->tableWidget_search_client->currentRow();
 
-        QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 3)->text() + ", " +
-                              ui->tableWidget_search_client->item(nRow, 1)->text() + "*");
+        QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+                              ui->tableWidget_search_client->item(nRow, 2)->text() + "*");
 
-        qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 3)->text() + ", " +
-                    ui->tableWidget_search_client->item(nRow, 1)->text() + "*";
+        qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+                    ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
         ui->le_caseDir->setText(dir.path());
         populate_tw_caseFiles(filter);
     }
