@@ -1525,8 +1525,12 @@ void MainWindow::getRegisterLogFields(QStringList* fieldList)
     QString action;
     if(registerType == NEWCLIENT || ui->button_register_client->text() == "Register")
         action = "Registered";
-    else
+    else if(registerType == EDITCLIENT)
         action = "Updated";
+    else if(registerType == DELETECLIENT)
+        action = "Deleted";
+    else
+        return;
 
     *fieldList << fullName
                << action
@@ -1667,7 +1671,7 @@ void MainWindow::on_button_register_client_clicked()
                 qDebug() << "Could not register client";
             }
         }
-        else
+        else if(registerType == EDITCLIENT)
         {
             if (dbManager->updateClientWithPic(&registerFieldList, curClientID, &profilePic))
             {
@@ -1682,6 +1686,8 @@ void MainWindow::on_button_register_client_clicked()
                 qDebug() << "Could not edit client info";
             }
         }
+        else
+            return;
 
     }
     else
@@ -1763,10 +1769,33 @@ void MainWindow::on_button_cancel_client_register_clicked()
  * DELETE CLIENT USING CLIENT ID
  * ==========================================================================*/
 void MainWindow::deleteClient(){
-    //if( != 'STANDARD')  // check client role
-        //open dialog
+    //check if the user have permission or not.
+    if(currentrole != CASEWORKER && currentrole != ADMIN )
+        statusBar()->showMessage("No permision to delete client! ", 5000);
 
+    //confirm delete client
+    if(!doMessageBox(QString("Do you want delete '" + curClientName + "'?"))){
+        return;
+    }
+    QStringList logFieldList;
+    getRegisterLogFields(&logFieldList);
+    if(!dbManager->insertClientLog(&logFieldList)){
+        statusBar()->showMessage("Fail to delete Client. Please try again. ", 5000);
+        return;
+    }
+    if(!dbManager->deleteClientFromTable("Client", curClientID)){
+        statusBar()->showMessage("Fail to delete Client. Please try again. ", 5000);
+        return;
+    }
 
+    statusBar()->showMessage(QString(curClientName + " is deleted successfully"), 5000);
+    curClientID = "";
+    curClientName = "";
+
+    //maybe need to block update
+
+    //move to main window
+    ui->stackedWidget->setCurrentIndex(MAINMENU);
 }
 
 /*==============================================================================
@@ -6062,7 +6091,6 @@ void MainWindow::on_confirmStorage_clicked()
 {
     Storage * store = new Storage(this, curClient->clientId, curClient->fullName, "", "");
     store->exec();
-
 
     delete(store);
 }

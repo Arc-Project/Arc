@@ -32,6 +32,7 @@
 #define NOREGISTER          0
 #define NEWCLIENT           1
 #define EDITCLIENT          2
+#define DELETECLIENT        3
 
 #define PERSIONACASEPLAN 	0
 #define RUNNINGNOTE			1
