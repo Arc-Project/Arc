@@ -140,7 +140,7 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case BOOKINGLOOKUP: //WIDGET 2
             qDebug()<<"###BOOKING LOOKUP Client INFO###";
-
+            ui->bookCostLabel->setText("0");
             if(curClient != NULL){
                 qDebug()<<"ID: " << curClientID << curClient->clientId;
                 qDebug()<<"NAME: " << curClient->fullName;
@@ -415,6 +415,7 @@ void MainWindow::on_startDateEdit_dateChanged()
     }
     clearTable(ui->bookingTable);
     ui->makeBookingButton->hide();
+    ui->bookCostLabel->setText("0");
 }
 
 void MainWindow::on_wakeupCheck_clicked()
@@ -443,12 +444,14 @@ void MainWindow::on_endDateEdit_dateChanged()
     ui->bookMonthLabel->setText(QString::number(p.first));
     ui->bookDayLabel->setText(QString::number(p.second));
     ui->makeBookingButton->hide();
+    ui->bookCostLabel->setText("0");
 }
 
 void MainWindow::on_monthCheck_clicked(bool checked)
 {
     clearTable(ui->bookingTable);
     ui->makeBookingButton->hide();
+    ui->bookCostLabel->setText("0");
     if(checked)
     {
         editOverLap = true;
@@ -4907,6 +4910,7 @@ void MainWindow::on_programDropdown_currentIndexChanged()
 {
     clearTable(ui->bookingTable);
     ui->makeBookingButton->hide();
+    ui->bookCostLabel->setText("0");
 }
 
 void MainWindow::on_confirmAddLunch_clicked()
@@ -6345,6 +6349,7 @@ std::pair<int,int> MainWindow::monthDay(QDate start, QDate end){
 
 void MainWindow::on_addMonth_clicked()
 {
+
     QDate switcher, possibleChange;
     switcher = ui->endDateEdit->date();
     possibleChange = switcher.addDays(-1);
