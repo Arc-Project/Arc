@@ -183,7 +183,7 @@ void MainWindow::initCurrentWidget(int idx){
             newHistory = true;
             initCasefileTransactionTable();
             initPcp();
-            ui->actionExport_to_PDF->setEnabled(false);
+            ui->actionExport_to_PDF->setEnabled(true);
             break;
         case EDITBOOKING: //WIDGET 9
             ui->editLookupTable->clear();
@@ -2599,10 +2599,10 @@ void MainWindow::on_tabw_casefiles_currentChanged(int index)
     switch(index)
     {
         case PERSIONACASEPLAN:
-            ui->actionExport_to_PDF->setEnabled(false);
+            ui->actionExport_to_PDF->setEnabled(true);
             break;
         case RUNNINGNOTE:
-            ui->actionExport_to_PDF->setEnabled(false);
+            ui->actionExport_to_PDF->setEnabled(true);
             break;
         case BOOKINGHISTORY:
             ui->actionExport_to_PDF->setEnabled(false);
@@ -4102,8 +4102,38 @@ void MainWindow::on_actionPcptables_triggered()
 
 //    for (int i = 0; i < checkoutReport->model.tableData->size(); ++i)
 //         qDebug() << checkoutReport->model.tableData->at(i);
+    int recNo = (int) qCeil(ui->te_notes->document()->lineCount()/30.0);
 
-    qDebug() << ui->stackedWidget->currentIndex() << " " << ui->dailyReport_tabWidget->currentIndex();
+    qDebug() << recNo;
+    QTextCursor *cursor = new QTextCursor(ui->te_notes->document());
+    qDebug() << "pos: " << cursor->position();
+    qDebug() << "anchor: " << cursor->anchor();
+    cursor->movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, (recNo-1) * 30);
+    qDebug() << "pos: " << cursor->position();
+    qDebug() << "anchor: " << cursor->anchor();
+    QString s;
+    for (int i = 0; i < 30; i++) {
+        cursor->movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+        qDebug() << "pos: " << cursor->position();
+        qDebug() << "anchor: " << cursor->anchor();
+        s += cursor->selectedText() + "\r\n";
+        cursor->movePosition(QTextCursor::Down, QTextCursor::MoveAnchor);
+        cursor->movePosition(QTextCursor::StartOfLine, QTextCursor::MoveAnchor);
+    }
+
+//    for (auto it = s.begin(); it != s.end(); ++it) {
+//        s.replace("\u2029", '\n');
+//    }
+//    int j;
+
+//    qDebug() << u8"\u2029";
+//    while ((j = s.indexOf( QChar::ParagraphSeparator, j)) != -1) {
+//        s.replace(QChar::ParagraphSeparator, QString("\n"));
+//        qDebug() << "Found '\u2029' tag at index position" << j;
+//        ++j;
+//    }
+
+    qDebug() << s;
 
 }
 
@@ -4758,11 +4788,11 @@ void MainWindow::on_actionExport_to_PDF_triggered()
         }
     }
 
-    // case files pcp
+    // case files running notes
     if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == RUNNINGNOTE){
         rptTemplate = ":/templates/pdf/running.xml";
-        report->recordCount << 1;
-
+        report->recordCount << (int) qCeil(ui->te_notes->document()->lineCount()/30.0);
+        qDebug() << "record count: " << (int) qCeil(ui->te_notes->document()->lineCount()/30.0);
     }
 
     report->loadReport(rptTemplate);
@@ -5011,23 +5041,23 @@ void MainWindow::printPCP(const int recNo, const QString paramName, QVariant &pa
     QTableWidget *tw_pcp = pcp_tables.at(reportPage);
 
     if (paramName == "goal") {
-        if (tw_pcp->item(recNo, 0)->text().isEmpty()) return;
+        if (tw_pcp->item(recNo, 0) == 0 ) return;
          paramValue = tw_pcp->item(recNo, 0)->text();
          qDebug() << "report page: " << reportPage << " recNp: " << recNo << " value: " << tw_pcp->item(recNo, 0)->text();
     } else if (paramName == "strategy") {
-        if (tw_pcp->item(recNo, 1)->text().isEmpty()) return;
+        if (tw_pcp->item(recNo, 1) == 0 ) return;
          paramValue = tw_pcp->item(recNo, 1)->text();
          qDebug() << "report page: " << reportPage << " recNp: " << recNo << " value: " << tw_pcp->item(recNo, 1)->text();
     } else if (paramName == "date") {
-        if (tw_pcp->item(recNo, 2)->text().isEmpty()) return;
+        if (tw_pcp->item(recNo, 2) == 0 ) return;
          paramValue = tw_pcp->item(recNo, 2)->text();
          qDebug() << "report page: " << reportPage << " recNp: " << recNo << " value: " << tw_pcp->item(recNo, 2)->text();
     } else if (paramName == "person") {
-        if (tw_pcp->item(recNo, 0)->text().isEmpty()) return;
+        if (tw_pcp->item(recNo, 0) == 0 ) return;
          paramValue = tw_pcp->item(recNo, 0)->text();
          qDebug() << "report page: " << reportPage << " recNp: " << recNo << " value: " << tw_pcp->item(recNo, 0)->text();
     } else if (paramName == "task"){
-        if (tw_pcp->item(recNo, 1)->text().isEmpty()) return;
+        if (tw_pcp->item(recNo, 1) == 0 ) return;
          paramValue = tw_pcp->item(recNo, 1)->text();
          qDebug() << "report page: " << reportPage << " recNp: " << recNo << " value: " << tw_pcp->item(recNo, 1)->text();
     }
@@ -5035,11 +5065,30 @@ void MainWindow::printPCP(const int recNo, const QString paramName, QVariant &pa
 
 void MainWindow::printRunningNotes(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
     Q_UNUSED(reportPage);
-    Q_UNUSED(recNo);
-    if (paramName == "notes") {
-        if (ui->te_notes->document()->toPlainText().isEmpty()) return;
-            paramValue = ui->te_notes->document()->toPlainText();
+    Q_UNUSED(paramName);
+    QString s;
+    QTextCursor *cursor = new QTextCursor(ui->te_notes->document());
+
+    qDebug() << "recNo: " << recNo;
+
+//    qDebug() << "pos: " << cursor->position();
+//    qDebug() << "anchor: " << cursor->anchor();
+    cursor->movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, recNo * 30);
+//    qDebug() << "pos: " << cursor->position();
+//    qDebug() << "anchor: " << cursor->anchor();
+
+    for (int i = 0; i < 30; i++) {
+        cursor->movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+
+//        qDebug() << "pos: " << cursor->position();
+//        qDebug() << "anchor: " << cursor->anchor();
+
+        s += cursor->selectedText() + "\r\n";
+        if (!cursor->movePosition(QTextCursor::Down, QTextCursor::MoveAnchor)) break;
+        cursor->movePosition(QTextCursor::StartOfLine, QTextCursor::MoveAnchor);
     }
+    s.chop(2);
+    paramValue = s;
 }
 
 void MainWindow::on_btn_createNewUser_3_clicked()
