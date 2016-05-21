@@ -3228,7 +3228,7 @@ QHeaderView{
          <rect>
           <x>726</x>
           <y>545</y>
-          <width>16</width>
+          <width>71</width>
           <height>28</height>
          </rect>
         </property>
@@ -12531,7 +12531,7 @@ QHeaderView{
              </font>
             </property>
             <property name="text">
-             <string>Balance Owing:</string>
+             <string>Current Balance:</string>
             </property>
            </widget>
           </item>
@@ -12554,7 +12554,7 @@ QHeaderView{
            </widget>
           </item>
           <item row="5" column="0">
-           <widget class="QLabel" name="label_68">
+           <widget class="QLabel" name="confirmPayRefund">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -15105,6 +15105,188 @@ QHeaderView{
          </widget>
         </item>
        </layout>
+      </widget>
+      <widget class="QWidget" name="newShifts">
+       <widget class="QComboBox" name="shiftNum">
+        <property name="geometry">
+         <rect>
+          <x>190</x>
+          <y>90</y>
+          <width>73</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <item>
+         <property name="text">
+          <string>1</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>2</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>3</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>4</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>5</string>
+         </property>
+        </item>
+       </widget>
+       <widget class="QComboBox" name="shiftDay">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>90</y>
+          <width>73</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <item>
+         <property name="text">
+          <string>Monday</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Tuesday</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Wednesday</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Thursday</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Friday</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Saturday</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Sunday</string>
+         </property>
+        </item>
+       </widget>
+       <widget class="QTimeEdit" name="shiftS1">
+        <property name="geometry">
+         <rect>
+          <x>550</x>
+          <y>110</y>
+          <width>118</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QTimeEdit" name="shiftE1">
+        <property name="geometry">
+         <rect>
+          <x>700</x>
+          <y>110</y>
+          <width>118</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QTimeEdit" name="shiftE2">
+        <property name="geometry">
+         <rect>
+          <x>700</x>
+          <y>140</y>
+          <width>118</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QTimeEdit" name="shiftS2">
+        <property name="geometry">
+         <rect>
+          <x>550</x>
+          <y>140</y>
+          <width>118</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QTimeEdit" name="shiftE3">
+        <property name="geometry">
+         <rect>
+          <x>700</x>
+          <y>170</y>
+          <width>118</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QTimeEdit" name="shiftS3">
+        <property name="geometry">
+         <rect>
+          <x>550</x>
+          <y>170</y>
+          <width>118</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QTimeEdit" name="shiftE4">
+        <property name="geometry">
+         <rect>
+          <x>700</x>
+          <y>200</y>
+          <width>118</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QTimeEdit" name="shiftS4">
+        <property name="geometry">
+         <rect>
+          <x>550</x>
+          <y>200</y>
+          <width>118</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QTimeEdit" name="shiftE5">
+        <property name="geometry">
+         <rect>
+          <x>700</x>
+          <y>230</y>
+          <width>118</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QTimeEdit" name="shiftS5">
+        <property name="geometry">
+         <rect>
+          <x>550</x>
+          <y>230</y>
+          <width>118</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
       </widget>
      </widget>
     </item>
