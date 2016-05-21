@@ -634,6 +634,10 @@ private slots:
 
     void on_shiftE4_timeChanged(const QTime &time);
 
+    void on_shiftReport_tabWidget_currentChanged(int index);
+
+    void on_dailyReport_tabWidget_currentChanged(int index);
+
 private:
 
     Ui::MainWindow *ui;
@@ -663,7 +667,7 @@ private:
     void getCashFloat(QDate date, int shiftNo);
     void getMonthlyReport(int month, int year);
     void updateRestrictionTables();
-    void resizeTableView(QTableView* tableView, int cols, QString type);
+    void resizeTableView(QTableView* tableView);
 
 
 

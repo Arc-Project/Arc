@@ -3890,21 +3890,21 @@ void MainWindow::setupReportsScreen()
     ui->year_comboBox->setCurrentIndex(yearList.size() - 1);
 
     connect(&(checkoutReport->model), SIGNAL(modelDataUpdated(int, int)), this,
-        SLOT(on_modelDataUpdated(int, int)));
+        SLOT(on_modelDataUpdated(int, int)),Qt::QueuedConnection);
     connect(&(vacancyReport->model), SIGNAL(modelDataUpdated(int, int)), this,
-        SLOT(on_modelDataUpdated(int, int)));
+        SLOT(on_modelDataUpdated(int, int)),Qt::QueuedConnection);
     connect(&(lunchReport->model), SIGNAL(modelDataUpdated(int, int)), this,
-        SLOT(on_modelDataUpdated(int, int)));
+        SLOT(on_modelDataUpdated(int, int)),Qt::QueuedConnection);
     connect(&(wakeupReport->model), SIGNAL(modelDataUpdated(int, int)), this,
-        SLOT(on_modelDataUpdated(int, int)));
+        SLOT(on_modelDataUpdated(int, int)),Qt::QueuedConnection);
     connect(&(bookingReport->model), SIGNAL(modelDataUpdated(int, int)), this,
-        SLOT(on_modelDataUpdated(int, int)));
+        SLOT(on_modelDataUpdated(int, int)),Qt::QueuedConnection);
     connect(&(transactionReport->model), SIGNAL(modelDataUpdated(int, int)), this,
-        SLOT(on_modelDataUpdated(int, int)));
+        SLOT(on_modelDataUpdated(int, int)),Qt::QueuedConnection);
     connect(&(clientLogReport->model), SIGNAL(modelDataUpdated(int, int)), this,
-        SLOT(on_modelDataUpdated(int, int)));
+        SLOT(on_modelDataUpdated(int, int)),Qt::QueuedConnection);
     connect(&(otherReport->model), SIGNAL(modelDataUpdated(int, int)), this,
-        SLOT(on_modelDataUpdated(int, int)));
+        SLOT(on_modelDataUpdated(int, int)),Qt::QueuedConnection);
 }
 
 void MainWindow::on_modelDataUpdated(int reportType, int cols)
@@ -3912,40 +3912,39 @@ void MainWindow::on_modelDataUpdated(int reportType, int cols)
     switch(reportType)
     {
         case CHECKOUT_REPORT:
-            resizeTableView(ui->checkout_tableView, cols, QString("checkout"));
+            resizeTableView(ui->checkout_tableView);
             break;
         case VACANCY_REPORT:
-            resizeTableView(ui->vacancy_tableView, cols, QString("vacancy"));
+            resizeTableView(ui->vacancy_tableView);
             break;
         case LUNCH_REPORT:
-            resizeTableView(ui->lunch_tableView, cols, QString("lunch"));
+            resizeTableView(ui->lunch_tableView);
             break;
         case WAKEUP_REPORT:
-            resizeTableView(ui->wakeup_tableView, cols, QString("wakeup"));
+            resizeTableView(ui->wakeup_tableView);
             break;
         case BOOKING_REPORT:
-            resizeTableView(ui->booking_tableView, cols, QString("booking"));
+            resizeTableView(ui->booking_tableView);
             break;
         case TRANSACTION_REPORT:
-            resizeTableView(ui->transaction_tableView, cols, QString("transaction"));
+            resizeTableView(ui->transaction_tableView);
             break;
         case CLIENT_REPORT:
-            resizeTableView(ui->clientLog_tableView, cols, QString("client"));
+            resizeTableView(ui->clientLog_tableView);
             break;
         case OTHER_REPORT:
-            resizeTableView(ui->other_tableView, cols, QString("other"));
+            resizeTableView(ui->other_tableView);
     }
 }
 
-void MainWindow::resizeTableView(QTableView* tableView, int cols, QString type)
+void MainWindow::resizeTableView(QTableView* tableView)
 {
     tableView->setVisible(false);
     tableView->resizeColumnsToContents();
-    tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    tableView->setSelectionMode(QAbstractItemView::SingleSelection);
 
-    double width = tableView->size().width();
-    qDebug() << "report report type = " << type;
+    int cols = tableView->horizontalHeader()->count();
+    double width = tableView->horizontalHeader()->size().width();
+    qDebug() << "report report type = ";
     qDebug() << " width = " << width;
     double currentWidth = 0;
     for (int i = 0; i < cols; ++i)
@@ -3956,18 +3955,19 @@ void MainWindow::resizeTableView(QTableView* tableView, int cols, QString type)
     if (diff > 0)
     {
         double sizeIncrease = diff / cols;
+        
         for (int i = 0; i < cols; ++i)
         {
+            if (diff > currentWidth * 1.5f)
+            {
+                sizeIncrease = tableView->columnWidth(i) * 0.75f;
+            }
             tableView->setColumnWidth(i, tableView->columnWidth(i) + sizeIncrease);
         }
     }
-    
-
 
     tableView->setVisible(true);
 }
-
-
 
 void MainWindow::updateDailyReportTables(QDate date)
 {
@@ -6601,4 +6601,40 @@ void MainWindow::on_shiftE4_timeChanged(const QTime &time)
         return;
     }
     ui->shiftS5->setTime(time.addSecs(60));
+}
+
+void MainWindow::on_shiftReport_tabWidget_currentChanged(int index)
+{
+    switch (index)
+    {
+        case 0:
+            resizeTableView(ui->booking_tableView);
+            break;
+        case 1:
+            resizeTableView(ui->transaction_tableView);
+            break;
+        case 2:
+            resizeTableView(ui->clientLog_tableView);
+            break;
+        case 3:
+            resizeTableView(ui->other_tableView);
+    }
+}
+
+void MainWindow::on_dailyReport_tabWidget_currentChanged(int index)
+{
+    switch (index)
+    {
+        case 0:
+            resizeTableView(ui->checkout_tableView);
+            break;
+        case 1:
+            resizeTableView(ui->vacancy_tableView);
+            break;
+        case 2:
+            resizeTableView(ui->lunch_tableView);
+            break;
+        case 3:
+            resizeTableView(ui->wakeup_tableView);
+    }
 }
