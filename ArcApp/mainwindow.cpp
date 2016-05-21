@@ -195,6 +195,12 @@ void MainWindow::initCurrentWidget(int idx){
             //initcode
             break;
         case CLIENTREGISTER:    //WIDGET 10
+            if((registerType == EDITCLIENT || registerType == DELETECLIENT)
+                    && (currentrole == CASEWORKER || currentrole == ADMIN))
+                ui->button_delete_client->show();
+            else
+                ui->button_delete_client->hide();
+
             clear_client_register_form();
             defaultRegisterOptions();           //combobox item add
             if(curClientID != NULL || curClientID != "")
@@ -1514,8 +1520,12 @@ void MainWindow::getRegisterLogFields(QStringList* fieldList)
     QString action;
     if(registerType == NEWCLIENT || ui->button_register_client->text() == "Register")
         action = "Registered";
-    else
+    else if(registerType == EDITCLIENT)
         action = "Updated";
+    else if(registerType == DELETECLIENT)
+        action = "Deleted";
+    else
+        return;
 
     *fieldList << fullName
                << action
@@ -1656,7 +1666,7 @@ void MainWindow::on_button_register_client_clicked()
                 qDebug() << "Could not register client";
             }
         }
-        else
+        else if(registerType == EDITCLIENT)
         {
             if (dbManager->updateClientWithPic(&registerFieldList, curClientID, &profilePic))
             {
@@ -1671,6 +1681,8 @@ void MainWindow::on_button_register_client_clicked()
                 qDebug() << "Could not edit client info";
             }
         }
+        else
+            return;
 
     }
     else
@@ -1751,11 +1763,51 @@ void MainWindow::on_button_cancel_client_register_clicked()
 /*=============================================================================
  * DELETE CLIENT USING CLIENT ID
  * ==========================================================================*/
+void MainWindow::on_button_delete_client_clicked()
+{
+    //check if the user have permission or not.
+    registerType = DELETECLIENT;
+    if(currentrole != CASEWORKER && currentrole != ADMIN ){
+        statusBar()->showMessage("No permision to delete client! ", 5000);
+        ui->button_delete_client->hide();
+        return;
+    }
+    if(ui->lineEdit_cl_fName->text() == "anonymous" || ui->lineEdit_cl_lName->text() == "anonymous"){
+        statusBar()->showMessage("Cannot Delete anonymous.", 5000);
+        ui->button_delete_client->hide();
+        return;
+    }
+    deleteClient();
+
+}
+
+
 void MainWindow::deleteClient(){
-    //if( != 'STANDARD')  // check client role
-        //open dialog
 
 
+    //confirm delete client
+    if(!doMessageBox(QString("Do you want delete '" + curClientName + "'?"))){
+        return;
+    }
+    QStringList logFieldList;
+    getRegisterLogFields(&logFieldList);
+    if(!dbManager->insertClientLog(&logFieldList)){
+        statusBar()->showMessage("Fail to delete Client. Please try again. ", 5000);
+        return;
+    }
+    if(!dbManager->deleteClientFromTable("Client", curClientID)){
+        statusBar()->showMessage("Fail to delete Client. Please try again. ", 5000);
+        return;
+    }
+
+    statusBar()->showMessage(QString(curClientName + " is deleted successfully"), 5000);
+    curClientID = "";
+    curClientName = "";
+    registerType = NOREGISTER;
+    //maybe need to block update
+
+    //move to main window
+    ui->stackedWidget->setCurrentIndex(MAINMENU);
 }
 
 /*==============================================================================
@@ -2148,6 +2200,7 @@ void MainWindow::searchTransaction(QString clientId){
     qDebug()<<"search transaction STaRt";
 
     QSqlQuery transQuery = dbManager->searchClientTransList(transacNum, clientId, CLIENTLOOKUP);
+    initClientLookupInfo();
     initClTransactionTable();
     displayTransaction(transQuery, ui->tableWidget_transaction);
 
@@ -2172,7 +2225,7 @@ void MainWindow::initClTransactionTable(){
 
 //search transaction list when click transaction list
 void MainWindow::displayTransaction(QSqlQuery results, QTableWidget* table){
-
+   // ui->textEdit_cl_info_comment->clear();
     int row = 0;
     int colCnt = results.record().count();
     while(results.next()){
@@ -2828,6 +2881,7 @@ void MainWindow::on_pushButton_4_clicked()
 
     if (name.length() == 0) {
         ui->lbl_editUserWarning->setText("Enter a Name");
+        return;
     }
 
     // first, check to make sure the username is taken
@@ -6054,14 +6108,24 @@ void MainWindow::updatemenuforuser() {
         ui->adminButton->setSizePolicy(sp_retain2);
         ui->adminButton->hide();
 
+        //for client delete option(EUNWON)
+        ui->button_delete_client->hide();
+
         currentrole = STANDARD;
     } else if (roleq.value(0).toString() == "CASE WORKER") {
         QSizePolicy sp_retain = ui->caseButton->sizePolicy();
         sp_retain.setRetainSizeWhenHidden(true);
         ui->adminButton->setSizePolicy(sp_retain);
         ui->adminButton->hide();
+
+        //for client delete option(EUNWON)
+        ui->button_delete_client->show();
+
         currentrole = CASEWORKER;
     } else {
+        //for client delete option(EUNWON)
+        ui->button_delete_client->show();
+
         currentrole = ADMIN;
     }
 
@@ -6113,7 +6177,6 @@ void MainWindow::on_confirmStorage_clicked()
 {
     Storage * store = new Storage(this, curClient->clientId, curClient->fullName, "", "");
     store->exec();
-
 
     delete(store);
 }
@@ -6210,6 +6273,7 @@ void MainWindow::on_editDelete_clicked()
     ui->editLookupTable->removeRow(row);
     ui->editDelete->setEnabled(true);
 }
+
 
 double MainWindow::quickCost(std::pair<int,int> p, double daily, double monthly){
     int days, months;
