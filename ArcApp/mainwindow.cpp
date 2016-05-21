@@ -2387,6 +2387,7 @@ void MainWindow::on_btn_createNewUser_clicked()
     // obtain username and pw and role from UI
     QString uname = ui->le_userName->text();
     QString pw = ui->le_password->text();
+    QString name = ui->lineEdit_EmpName->text();
 
     caseWorkerUpdated = true;
     if (uname.length() == 0) {
@@ -2399,6 +2400,11 @@ void MainWindow::on_btn_createNewUser_clicked()
         return;
     }
 
+    if (name.length() == 0) {
+        ui->lbl_editUserWarning->setText("Enter a Name");
+        return;
+    }
+
     // first, check to see if the username is taken
     QSqlQuery queryResults = dbManager->findUser(uname);
     int numrows = queryResults.numRowsAffected();
@@ -2407,7 +2413,7 @@ void MainWindow::on_btn_createNewUser_clicked()
         ui->lbl_editUserWarning->setText("This username is already taken");
         return;
     } else {
-        QSqlQuery queryResults = dbManager->addNewEmployee(uname, pw, ui->comboBox->currentText());
+        QSqlQuery queryResults = dbManager->addNewEmployee(uname, pw, ui->comboBox->currentText(), name);
         int numrows = queryResults.numRowsAffected();
 
         if (numrows != 0) {
@@ -2416,14 +2422,17 @@ void MainWindow::on_btn_createNewUser_clicked()
             model->clear();
             ui->tableWidget_3->clear();
             ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
-            ui->tableWidget_3->setColumnCount(3);
+            ui->tableWidget_3->setColumnCount(4);
             ui->tableWidget_3->setRowCount(0);
-            ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
+            ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
 
             ui->comboBox->setCurrentIndex(0);
             ui->le_userName->setText("");
             ui->le_password->setText("");
             ui->le_users->setText("");
+            ui->lineEdit_EmpName->setText("");
+
+            on_btn_listAllUsers_clicked();
         } else {
             ui->lbl_editUserWarning->setText("Something went wrong - please try again");
         }
@@ -2463,19 +2472,19 @@ void MainWindow::on_btn_listAllUsers_clicked()
     ui->tableWidget_3->clear();
     ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
 
-    QSqlQuery result = dbManager->execQuery("SELECT Username, Password, Role FROM Employee");
+    QSqlQuery result = dbManager->execQuery("SELECT Username, Password, Role, EmpName FROM Employee");
 
     int numCols = result.record().count();
     ui->tableWidget_3->setColumnCount(numCols);
-    ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
+    ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
     int x = 0;
     int qt = result.size();
     qDebug() << qt;
     while (result.next()) {
         ui->tableWidget_3->insertRow(x);
         QStringList row;
-        row << result.value(0).toString() << result.value(1).toString() << result.value(2).toString();
-        for (int i = 0; i < 3; ++i)
+        row << result.value(0).toString() << result.value(1).toString() << result.value(2).toString() << result.value(3).toString();
+        for (int i = 0; i < 4; ++i)
         {
             ui->tableWidget_3->setItem(x, i, new QTableWidgetItem(row.at(i)));
         }
@@ -2490,19 +2499,19 @@ void MainWindow::on_btn_searchUsers_clicked()
     ui->tableWidget_3->clear();
     ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
 
-    QSqlQuery result = dbManager->execQuery("SELECT Username, Password, Role FROM Employee WHERE Username LIKE '%"+ ename +"%'");
+    QSqlQuery result = dbManager->execQuery("SELECT Username, Password, Role, EmpName FROM Employee WHERE Username LIKE '%"+ ename +"%'");
 
     int numCols = result.record().count();
     ui->tableWidget_3->setColumnCount(numCols);
-    ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
+    ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
     int x = 0;
     int qt = result.size();
     qDebug() << qt;
     while (result.next()) {
         ui->tableWidget_3->insertRow(x);
         QStringList row;
-        row << result.value(0).toString() << result.value(1).toString() << result.value(2).toString();
-        for (int i = 0; i < 3; ++i)
+        row << result.value(0).toString() << result.value(1).toString() << result.value(2).toString() << result.value(3).toString();
+        for (int i = 0; i < 4; ++i)
         {
             ui->tableWidget_3->setItem(x, i, new QTableWidgetItem(row.at(i)));
         }
@@ -2528,32 +2537,32 @@ void MainWindow::on_btn_searchUsers_clicked()
 void MainWindow::on_tableWidget_3_doubleClicked(const QModelIndex &index)
 {
     // populate the fields on the right
-    QString uname = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 0)).toString();
-    QString pw = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 1)).toString();
-    QString role = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 2)).toString();
-    qDebug() << uname;
-    qDebug() << pw;
-    qDebug() << role;
+//    QString uname = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 0)).toString();
+//    QString pw = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 1)).toString();
+//    QString role = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 2)).toString();
+//    qDebug() << uname;
+//    qDebug() << pw;
+//    qDebug() << role;
 
-//    QStandardItemModel* model = qobject_cast<QStandardItemModel*>(ui->tableWidget_3->model());
-//    int row = index.row();
+////    QStandardItemModel* model = qobject_cast<QStandardItemModel*>(ui->tableWidget_3->model());
+////    int row = index.row();
 
-//     QStandardItemModel* model = ui->tableWidget_3->model();
-//    qDebug() << model;
-//    QString uname = model->item(row, 0)->text();
-//    QString pw = model->item(row, 1)->text();
-//    QString role = model->item(row, 2)->text();
+////     QStandardItemModel* model = ui->tableWidget_3->model();
+////    qDebug() << model;
+////    QString uname = model->item(row, 0)->text();
+////    QString pw = model->item(row, 1)->text();
+////    QString role = model->item(row, 2)->text();
 
-    if (role == "STANDARD") {
-        ui->comboBox->setCurrentIndex(0);
-    } else if (role == "CASE WORKER") {
-        ui->comboBox->setCurrentIndex(1);
-    } else if (role == "ADMIN") {
-        ui->comboBox->setCurrentIndex(2);
-    }
+//    if (role == "STANDARD") {
+//        ui->comboBox->setCurrentIndex(0);
+//    } else if (role == "CASE WORKER") {
+//        ui->comboBox->setCurrentIndex(1);
+//    } else if (role == "ADMIN") {
+//        ui->comboBox->setCurrentIndex(2);
+//    }
 
-    ui->le_userName->setText(uname);
-    ui->le_password->setText(pw);
+//    ui->le_userName->setText(uname);
+//    ui->le_password->setText(pw);
 }
 
 void MainWindow::on_pushButton_CaseFiles_clicked()
@@ -2799,6 +2808,8 @@ void MainWindow::on_pushButton_4_clicked()
     // obtain username and pw and role from UI
     QString uname = ui->le_userName->text();
     QString pw = ui->le_password->text();
+    QString name = ui->lineEdit_EmpName->text();
+
     caseWorkerUpdated = true;
     if (uname.length() == 0) {
         ui->lbl_editUserWarning->setText("Enter a Username");
@@ -2810,12 +2821,16 @@ void MainWindow::on_pushButton_4_clicked()
         return;
     }
 
+    if (name.length() == 0) {
+        ui->lbl_editUserWarning->setText("Enter a Name");
+    }
+
     // first, check to make sure the username is taken
     QSqlQuery queryResults = dbManager->findUser(uname);
     int numrows1 = queryResults.numRowsAffected();
 
     if (numrows1 == 1) {
-        QSqlQuery queryResults = dbManager->updateEmployee(uname, pw, ui->comboBox->currentText());
+        QSqlQuery queryResults = dbManager->updateEmployee(uname, pw, ui->comboBox->currentText(), name);
         int numrows = queryResults.numRowsAffected();
 
         if (numrows != 0) {
@@ -2824,14 +2839,17 @@ void MainWindow::on_pushButton_4_clicked()
             model->clear();
             ui->tableWidget_3->clear();
             ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
-            ui->tableWidget_3->setColumnCount(3);
+            ui->tableWidget_3->setColumnCount(4);
             ui->tableWidget_3->setRowCount(0);
-            ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
+            ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
 
             ui->comboBox->setCurrentIndex(0);
             ui->le_userName->setText("");
             ui->le_password->setText("");
+            ui->lineEdit_EmpName->setText("");
             ui->le_users->setText("");
+
+            on_btn_listAllUsers_clicked();
         } else {
             ui->lbl_editUserWarning->setText("Something went wrong - Please try again");
         }
@@ -2850,13 +2868,14 @@ void MainWindow::on_btn_displayUser_clicked()
     model->clear();
     ui->tableWidget_3->clear();
     ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
-    ui->tableWidget_3->setColumnCount(3);
+    ui->tableWidget_3->setColumnCount(4);
     ui->tableWidget_3->setRowCount(0);
-    ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
+    ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
 
     ui->comboBox->setCurrentIndex(0);
     ui->le_userName->setText("");
     ui->le_password->setText("");
+    ui->lineEdit_EmpName->setText("");
     ui->le_users->setText("");
 }
 
@@ -2866,6 +2885,7 @@ void MainWindow::on_tableWidget_3_clicked(const QModelIndex &index)
     QString uname = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 0)).toString();
     QString pw = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 1)).toString();
     QString role = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 2)).toString();
+    QString name = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 3)).toString();
     qDebug() << uname;
     qDebug() << pw;
     qDebug() << role;
@@ -2889,6 +2909,7 @@ void MainWindow::on_tableWidget_3_clicked(const QModelIndex &index)
 
     ui->le_userName->setText(uname);
     ui->le_password->setText(pw);
+    ui->lineEdit_EmpName->setText(name);
 }
 
 // delete button
@@ -2920,14 +2941,17 @@ void MainWindow::on_pushButton_6_clicked()
             model->clear();
             ui->tableWidget_3->clear();
             ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
-            ui->tableWidget_3->setColumnCount(3);
+            ui->tableWidget_3->setColumnCount(4);
             ui->tableWidget_3->setRowCount(0);
-            ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
+            ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
 
             ui->comboBox->setCurrentIndex(0);
             ui->le_userName->setText("");
             ui->le_password->setText("");
+            ui->lineEdit_EmpName->setText("");
             ui->le_users->setText("");
+
+            on_btn_listAllUsers_clicked();
         } else {
             ui->lbl_editUserWarning->setText("Employee Not Found");
         }
