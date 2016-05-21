@@ -852,7 +852,7 @@ void MainWindow::populateBooking(){
     else{
         ui->monthLabel->setText("NO");
     }
-    //ui->bookTotalCost->setText(QString::number(curBook->cost, 'f', 2));
+    ui->bookTotalCost->setText(QString::number(curBook->cost, 'f', 2));
 }
 
 void MainWindow::getProgramCodes(){
