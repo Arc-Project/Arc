@@ -168,6 +168,17 @@ void DatabaseManager::printAll(QSqlQuery queryResults)
         qDebug() << record;
     }
 }
+bool DatabaseManager::deleteBooking(QString id){
+    QSqlQuery query(db);
+    QString q = "DELETE FROM Booking WHERE BookingId ='" + id + "'";
+    return query.exec(q);
+}
+QSqlQuery DatabaseManager::getRole(QString empName){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Employee WHERE Username ='" + empName + "'";
+    query.exec(q);
+    return query;
+}
 
 QSqlQuery DatabaseManager::execQuery(QString queryString)
 {
@@ -440,13 +451,14 @@ QSqlQuery DatabaseManager::searchClientList(QString ClientName){
     QSqlQuery query(db);
 
     //default select query
-    QString searchQuery = QString("SELECT ClientId, FirstName, MiddleName, LastName, Dob, Balance ")
+    QString searchQuery = QString("SELECT ClientId, LastName, FirstName, MiddleName, Dob, Balance ")
             + QString("FROM Client ");
     QStringList clientNames;
     if(ClientName.toLower() == "anonymous"){
             qDebug()<<"case: " + ClientName.toLower();
-            searchQuery += QString("WHERE LastName Like '"+ ClientName.toLower() + "' ")
-                         + QString("ORDER BY FirstName ASC, LastName ASC");
+            searchQuery += QString("WHERE FirstName Like '"+ ClientName.toLower() + "' ")
+                         + QString("OR LastName Like '"+ ClientName.toLower() + "' ");
+
     }
     else if(ClientName != ""){
         clientNames = ClientName.split(" ");
@@ -456,24 +468,23 @@ QSqlQuery DatabaseManager::searchClientList(QString ClientName){
         qDebug()<<"Name 1 words";
         searchQuery += QString("WHERE (FirstName LIKE '"+clientNames.at(0) + "%' ")
                      + QString("OR LastName Like '"+clientNames.at(0)+"%') ")
-                     + QString("AND NOT FirstName = 'anonymous' ")
-                     + QString("ORDER BY FirstName ASC, LastName ASC");
+                     + QString("AND NOT FirstName = 'anonymous' ");
     }
     //if 2 word name, match first name and last name
     else if(clientNames.count() == 2){
         qDebug() << "Name 2 words";
         searchQuery += QString("WHERE (LastName LIKE '"+clientNames.at(0) + "%' AND FirstName LIKE '" + clientNames.at(1) + "%') ")
                      + QString("OR (FirstName Like '"+clientNames.at(0)+"%' AND LastName LIKE '" + clientNames.at(1) + "%') ")
-                     + QString("AND NOT FirstName = 'anonymous' ")
-                     + QString("ORDER BY FirstName ASC, LastName ASC");
+                     + QString("AND NOT FirstName = 'anonymous' ");
     }
     else{
-        if(ClientName =="")
+        if(ClientName ==""){
             qDebug()<<"DB no name";
-        else
+            searchQuery+= QString("WHERE NOT FirstName = 'anonymous' ");
+        }else
             qDebug()<<"Wrong name";
     }
-
+    searchQuery += QString("ORDER BY LastName ASC, FirstName ASC");
     query.prepare(searchQuery);
     query.exec();
     return query;
@@ -542,31 +553,20 @@ QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId, i
     QString queryStart;
     if(type == 1){   //CLIENT INFO PAGE
         queryStart = "SELECT TOP "+ QString::number(maxNum)
-                   + QString("Date, Time, Amount, Type, ChequeNo, MSQ, ChequeDate, TransType, EmpName ");
+                   + QString("Date, TransType, Amount, Type, ChequeNo, MSQ, ChequeDate, EmpName ");
     }else{          //CASEFILE PAGE
         queryStart = "SELECT "
-                   + QString("Date, Time, Amount, Type, ChequeNo, MSQ, ChequeDate, TransType, Deleted, Outstanding, EmpName, Notes ");
+                   + QString("CAST(Date AS datetime) + CAST(Time AS datetime) AS Datetime, TransType, Amount, Type, ChequeNo, MSQ, ChequeDate, Deleted, Outstanding, EmpName, Notes ");
     }
     clientTransQuery.prepare(queryStart
                            + QString("FROM Transac ")
                            + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC, Time DESC"));
 
+    qDebug()<<"QERY: "<< queryStart;
     clientTransQuery.exec();
     return clientTransQuery;
 }
-/* PLZDELETE
-QSqlQuery DatabaseManager::searchBookList(int maxNum, QString clientId){
-    QSqlQuery clientBookingQuery;
-    clientBookingQuery.prepare(QString("SELECT TOP "+ QString::number(maxNum) )
-                           + QString(" DateCreated, ProgramCode, StartDate, EndDate, Cost, ")
-                           + QString("SpaceId, FirstBook ")
-                           + QString("FROM Booking ")
-                           + QString("WHERE ClientId = " + clientId + " ORDER BY EndDate DESC, DateCreated DESC"));
 
-    clientBookingQuery.exec();
-    return clientBookingQuery;
-}
-*/
 
 QSqlQuery DatabaseManager::searchBookList(int maxNum, QString clientId, int type){
     QSqlQuery clientBookingQuery;
@@ -789,6 +789,15 @@ bool DatabaseManager::insertClientLog(QStringList* registerFieldList)
     }
     return false;
 }
+
+bool DatabaseManager::deleteClientFromTable(QString tableName, QString ClientId){
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    query.prepare(QString("DELETE FROM "+tableName)
+                  += QString(" WHERE ClientId = " + ClientId));
+    return query.exec();
+}
+
 /* .............................................................
          CLIENT REGISTER FINISHED
   ==============================================================*/
@@ -1001,13 +1010,13 @@ bool DatabaseManager::getDailyReportCheckoutQuery(QSqlQuery* queryResults, QDate
 {
     QString queryString =
         QString("SELECT b.ClientName, s.SpaceCode, b.StartDate, ")
-        + QString("b.EndDate, b.ProgramCode, REPLACE('$' + CAST(c.Balance AS VARCHAR), '$-', '-$') ")
+        + QString("b.EndDate, b.ProgramCode, c.EspDays, REPLACE('$' + CAST(c.Balance AS VARCHAR), '$-', '-$') ")
         + QString("FROM Booking b INNER JOIN Client c ON b.ClientId = c.ClientId ")
         + QString("INNER JOIN Space s ON b.SpaceId = s.SpaceId ")
         + QString("WHERE EndDate = '" + date.toString(Qt::ISODate))
         + QString("' AND FirstBook = 'YES' ORDER BY b.ProgramCode Desc" );
 
-        // qDebug() << queryString;
+        qDebug() << queryString;
     return queryResults->exec(queryString);
 }
 
@@ -1761,20 +1770,20 @@ QSqlQuery DatabaseManager::findUser(QString username) {
     return query;
 }
 
-QSqlQuery DatabaseManager::addNewEmployee(QString username, QString password, QString role) {
+QSqlQuery DatabaseManager::addNewEmployee(QString username, QString password, QString role, QString name) {
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
 
-    query.exec("INSERT INTO Employee VALUES ('" + username + "', '" + password + "', '" + role + "')");
+    query.exec("INSERT INTO Employee VALUES ('" + username + "', '" + password + "', '" + role + "', '" + name + "')");
 
     return query;
 }
 
-QSqlQuery DatabaseManager::updateEmployee(QString username, QString password, QString role) {
+QSqlQuery DatabaseManager::updateEmployee(QString username, QString password, QString role, QString name) {
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
 
-    query.exec("UPDATE Employee SET Password='" + password + "', Role='" + role + "'WHERE Username='" + username + "';");
+    query.exec("UPDATE Employee SET EmpName='"+ name +"', Password='" + password + "', Role='" + role + "'WHERE Username='" + username + "';");
 
     return query;
 }

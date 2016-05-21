@@ -117,10 +117,12 @@ void MainWindow::initCurrentWidget(int idx){
     switch(idx){
         case MAINMENU:  //WIDGET 0
             curClientID = "";
+            curClientName = "";
             registerType = NOREGISTER;
             ui->actionExport_to_PDF->setEnabled(false);
             break;
         case CLIENTLOOKUP:  //WIDGET 1
+            curClientName="";
             initClientLookupInfo();
             if(caseWorkerUpdated){
                 getCaseWorkerList();
@@ -130,13 +132,15 @@ void MainWindow::initCurrentWidget(int idx){
             if(registerType == EDITCLIENT)
                 getClientInfo();
             registerType = NOREGISTER;
+            set_curClient_name();
             ui->checkBox_search_anonymous->setChecked(false);
             ui->pushButton_search_client->setEnabled(true);
             //initimageview
             ui->actionExport_to_PDF->setEnabled(false);
             break;
         case BOOKINGLOOKUP: //WIDGET 2
-            qDebug()<<"Client INFO";
+            qDebug()<<"###BOOKING LOOKUP Client INFO###";
+
             if(curClient != NULL){
                 qDebug()<<"ID: " << curClientID << curClient->clientId;
                 qDebug()<<"NAME: " << curClient->fullName;
@@ -173,7 +177,7 @@ void MainWindow::initCurrentWidget(int idx){
             ui->tabw_casefiles->setCurrentIndex(PERSIONACASEPLAN);
             ui->tableWidget_casefile_booking->verticalHeader()->show();
             ui->tableWidget_casefile_transaction->verticalHeader()->show();
-            qDebug()<<"Client INFO";
+            qDebug()<<"###CASEFILE Client INFO###";
             if(curClient != NULL){
                 qDebug()<<"ID: " << curClientID << curClient->clientId;
                 qDebug()<<"NAME: " << curClient->fullName;
@@ -197,6 +201,7 @@ void MainWindow::initCurrentWidget(int idx){
                 read_curClient_Information(curClientID);
             break;
         case REPORTS:    //WIDGET 11
+            ui->swdg_reports->setCurrentIndex(DAILYREPORT);
             ui->dailyReport_tabWidget->setCurrentIndex(DEFAULTTAB);
             ui->shiftReport_tabWidget->setCurrentIndex(DEFAULTTAB);
             MainWindow::updateDailyReportTables(QDate::currentDate());
@@ -278,6 +283,9 @@ DEV TESTING BUTTONS (START)
 ==============================================================================*/
 void MainWindow::on_actionDB_Connection_triggered()
 {
+    ui->transaction_tableView->setVisible(false);
+    ui->transaction_tableView->resizeColumnsToContents();
+    ui->transaction_tableView->setVisible(true);
 }
 
 void MainWindow::on_actionTest_Query_triggered()
@@ -365,6 +373,7 @@ void MainWindow::on_lunchCheck_clicked()
 void MainWindow::on_paymentButton_2_clicked()
 {
     trans = new transaction();
+    trans->paidToday = 0;
     double owed;
     //owed = curBook->cost;
     owed = ui->costInput->text().toDouble();
@@ -374,7 +383,17 @@ void MainWindow::on_paymentButton_2_clicked()
     ui->stayLabel->setText(QString::number(curClient->balance, 'f', 2));
     qDebug() << "Done";
     delete(pay);
+    double totalPaid = ui->bookAmtPaid->text().toDouble();
+    totalPaid += trans->paidToday;
+    if(totalPaid < 0){
+        ui->bookLabelPaid->setText("Total Refunded:");
+        ui->bookAmtPaid->setText(QString::number(totalPaid * -1, 'f', 2));
 
+    }
+    else{
+        ui->bookLabelPaid->setText("Total Paid:");
+        ui->bookAmtPaid->setText(QString::number(totalPaid, 'f', 2));
+    }
 
 }
 void MainWindow::on_startDateEdit_dateChanged()
@@ -813,6 +832,8 @@ void MainWindow::on_makeBookingButton_clicked()
     ui->stackedWidget->setCurrentIndex(BOOKINGPAGE);
     populateBooking();
     ui->makeBookingButton_2->setEnabled(true);
+    ui->bookAmtPaid->setText("0");
+    ui->confirmTotalPaid->setText("0");
 
 }
 void MainWindow::populateBooking(){
@@ -1103,6 +1124,8 @@ void MainWindow::on_editDate_dateChanged(const QDate &date)
         while(result.next()){
             if(x == 0){
                 nextStart = QDate::fromString(result.value("StartDate").toString(), "yyyy-MM-dd");
+                if(nextStart > date)
+                    nextStart = date;
             }
             x++;
         }
@@ -1211,6 +1234,9 @@ void MainWindow::on_editRoom_clicked()
 void MainWindow::on_pushButton_bookRoom_clicked()
 {
     addHistory(CLIENTLOOKUP);
+    qDebug()<<"push book room";
+    setSelectedClientInfo();
+    /*
     curClient = new Client();
     int nRow = ui->tableWidget_search_client->currentRow();
     if (nRow <0){
@@ -1245,7 +1271,7 @@ void MainWindow::on_pushButton_bookRoom_clicked()
     // qDebug()<<"ID: " << curClientID << curClient->clientId;
     // qDebug()<<"NAME: " << curClient->fullName;
     // qDebug()<<"Balance: " << curClient->balance;
-
+*/
     ui->stackedWidget->setCurrentIndex(BOOKINGLOOKUP);
 
 }
@@ -1312,6 +1338,7 @@ void MainWindow::populateConfirm(){
     ui->confirmRoom->setText(curBook->room);
     ui->confirmPaid->setText(QString::number(curClient->balance));
     ui->confirmProgram->setText(curBook->program);
+    ui->confirmTotalPaid->setText(QString::number(trans->paidToday, 'f', 2));
 
 
 }
@@ -1378,7 +1405,7 @@ void MainWindow::on_pushButton_editClientInfo_clicked()
 
     ui->stackedWidget->setCurrentIndex(CLIENTREGISTER);
     ui->label_cl_infoedit_title->setText("Edit Client Information");
-    ui->button_register_client->setText("Edit");
+    ui->button_register_client->setText("Save");
     //getCurrentClientId();
 }
 
@@ -1387,6 +1414,7 @@ void MainWindow::on_reportsButton_clicked()
 {
     if (dbManager->checkDatabaseConnection())
     {
+        ui->btn_dailyReport->setChecked(true);
         ui->stackedWidget->setCurrentIndex(REPORTS);
         addHistory(MAINMENU);
         qDebug() << "pushed page " << MAINMENU;
@@ -1682,10 +1710,10 @@ bool MainWindow::check_client_register_form(){
 }
 
 void MainWindow::getCaseWorkerList(){
-    QString caseWorkerquery = "SELECT Username, EmpId FROM Employee WHERE Role = 'CASE WORKER' ORDER BY Username";
+    QString caseWorkerquery = "SELECT Username, EmpId FROM Employee WHERE (Role = 'CASE WORKER' OR Role = 'ADMIN') ORDER BY Username";
     QSqlQuery caseWorkers = dbManager->execQuery(caseWorkerquery);
     //dbManager->printAll(caseWorkers);
-    caseWorkerList.empty();
+    caseWorkerList.clear();
     while(caseWorkers.next()){
         qDebug()<<"CASEWORKER: " <<caseWorkers.value(0).toString() << caseWorkers.value(1).toString();
         if(!caseWorkerList.contains(caseWorkers.value(0).toString())){
@@ -1704,6 +1732,9 @@ void MainWindow::defaultRegisterOptions(){
 
     if(caseWorkerUpdated){
       if(ui->comboBox_cl_caseWorker->count() != caseWorkerList.count()+1){
+          qDebug()<<"CASE WORKER LIST UPDATE";
+          ui->comboBox_cl_caseWorker->clear();
+          ui->comboBox_cl_caseWorker->addItem("NONE");
           QMap<QString, int>::const_iterator it = caseWorkerList.constBegin();
           while(it != caseWorkerList.constEnd()){
             if(ui->comboBox_cl_caseWorker->findText(it.key())== -1){
@@ -1728,6 +1759,15 @@ void MainWindow::on_button_cancel_client_register_clicked()
     ui->stackedWidget->setCurrentIndex(MAINMENU);
 }
 
+/*=============================================================================
+ * DELETE CLIENT USING CLIENT ID
+ * ==========================================================================*/
+void MainWindow::deleteClient(){
+    //if( != 'STANDARD')  // check client role
+        //open dialog
+
+
+}
 
 /*==============================================================================
 SEARCH CLIENTS USING NAME
@@ -1741,7 +1781,7 @@ void MainWindow::on_pushButton_search_client_clicked()
 
     useProgressDialog("Search Client "+clientName,  QtConcurrent::run(this, &searchClientListThread));
     statusBar()->showMessage(QString("Found " + QString::number(maxClient) + " Clients"), 5000);
-
+    connect(ui->tableWidget_search_client, SIGNAL(cellClicked(int,int)), this, SLOT(set_curClient_name(int,int)),Qt::UniqueConnection);
     connect(ui->tableWidget_search_client, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(selected_client_info(int,int)),Qt::UniqueConnection);
 }
 
@@ -1780,6 +1820,42 @@ void MainWindow::initClientLookupTable(){
 
 }
 
+void MainWindow::set_curClient_name(int nRow, int nCol){
+    Q_UNUSED(nCol)
+    curClientName = "";
+    if(nRow <0 && curClientID == NULL)
+        return;
+    QString selectClientId = ui->tableWidget_search_client->item(nRow, 0)->text();
+    QString fName, lName, mName;
+
+    if(curClientID != selectClientId){
+        lName =  ui->tableWidget_search_client->item(nRow, 1)->text();
+        fName =  ui->tableWidget_search_client->item(nRow, 2)->text();
+        mName =  ui->tableWidget_search_client->item(nRow, 3)->text();
+    }
+    else{
+        fName = ui->label_cl_info_fName_val->text();
+        mName = ui->label_cl_info_mName_val->text();
+        lName =  ui->label_cl_info_lName_val->text();
+    }
+    qDebug()<<"curClientName";
+    //MAKE FULL NAME
+    if(fName!=NULL)
+        curClientName = QString(fName.toUpper());
+    if(lName!=NULL){
+        if(curClientName!="")
+            curClientName += QString(", ");
+        curClientName += QString(lName.toUpper());
+    }
+    if(mName!=NULL){
+        if(curClientName!="")
+            curClientName += QString(" ");
+        curClientName += QString(mName);
+    }
+
+    ui->label_cl_curClient->setText(curClientName);
+}
+
 //set up table widget to add result of search client using name
 void MainWindow::setup_searchClientTable(QSqlQuery results){
     //initClientLookupInfo();
@@ -1789,7 +1865,7 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
     ui->tableWidget_search_client->setColumnCount(colCnt);
     ui->tableWidget_search_client->clear();
 
-    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"FirstName"<<"Middle Initial"<<"LastName"<<"DateOfBirth"<<"Balance");
+    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"LastName"<<"FirstName"<<"Middle Initial"<<"DateOfBirth"<<"Balance");
 
 
     int row =0;
@@ -1987,7 +2063,7 @@ void MainWindow::displayClientInfoThread(QString val){
 
    ui->label_cl_info_Supporter2_name_val->setText(clientInfo.value(18).toString());
    ui->label_cl_info_Supporter2_contact_val->setText(clientInfo.value(19).toString());
-   ui->label_cl_info_comment->setText(clientInfo.value(20).toString());
+   ui->textEdit_cl_info_comment->document()->setPlainText(clientInfo.value(20).toString());
 }
 
 void MainWindow::displayPicThread()
@@ -2006,6 +2082,7 @@ void MainWindow::displayPicThread()
 //add image to client info picture graphicview
 void MainWindow::addInfoPic(QImage img){
     qDebug()<<"Add Info Picture??";
+    qDebug()<<"IMAGE SIZE"<<img.byteCount();
     QPixmap item2 = QPixmap::fromImage(img);
     QPixmap scaled = QPixmap(item2.scaledToWidth((int)(ui->graphicsView_getInfo->width()*0.9), Qt::SmoothTransformation));
     QGraphicsScene *scene2 = new QGraphicsScene();
@@ -2019,7 +2096,7 @@ void MainWindow::setSelectedClientInfo(){
     //transacTotal
     curClient = new Client();
     int nRow = ui->tableWidget_search_client->currentRow();
-    if (nRow <=0){
+    if (nRow <0){
         if(curClientID == NULL){
             statusBar()->showMessage(tr("Please search and select Client"), 5000);
             return;
@@ -2034,23 +2111,35 @@ void MainWindow::setSelectedClientInfo(){
             curClient->balance =  balanceString.toFloat();
             // curClient->balance =  ui->label_cl_info_balance_amt->text().toFloat();
 
-            curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
+         //   curClient->fullName = QString(curClient->lName + " " + curClient->fName + " " + curClient->mName);
         }
     }
     else{
         curClientID = curClient->clientId = ui->tableWidget_search_client->item(nRow, 0)->text();
-        curClient->fName =  ui->tableWidget_search_client->item(nRow, 1)->text();
-        curClient->mName =  ui->tableWidget_search_client->item(nRow, 2)->text();
-        curClient->lName =  ui->tableWidget_search_client->item(nRow, 3)->text();
+        curClient->lName =  ui->tableWidget_search_client->item(nRow, 1)->text();
+        curClient->fName =  ui->tableWidget_search_client->item(nRow, 2)->text();
+        curClient->mName =  ui->tableWidget_search_client->item(nRow, 3)->text();
         QString balanceString = ui->tableWidget_search_client->item(nRow, 5)->text();
         balanceString.replace("$", "");
         curClient->balance =  balanceString.toFloat();
         // curClient->balance =  ui->tableWidget_search_client->item(nRow, 5)->text().toFloat();
 
-        curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
+      //  curClient->fullName = QString(curClient->lName + " " + curClient->fName + " " + curClient->mName);
     }
 
-
+    //MAKE FULL NAME
+    if(curClient->fName!=NULL)
+        curClient->fullName = QString(curClient->fName);
+    if(curClient->lName!=NULL){
+        if(curClient->fullName!="")
+            curClient->fullName += QString(", ");
+        curClient->fullName += QString(curClient->lName);
+    }
+    if(curClient->mName!=NULL){
+        if(curClient->fullName!="")
+            curClient->fullName += QString(" ");
+        curClient->fullName += QString(curClient->mName);
+    }
 
     qDebug()<<"ID: " << curClientID << curClient->clientId;
     qDebug()<<"NAME: " << curClient->fullName;
@@ -2082,7 +2171,7 @@ void MainWindow::initClTransactionTable(){
     ui->tableWidget_transaction->setColumnCount(8);
     ui->tableWidget_transaction->clear();
 
-    ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Time"<<"Amount"<<"Payment Type"<<"ChequeNo"<<"MSQ"<<"ChequeDate"<<"TransType"<<"Employee");
+    ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"TransType"<<"Amount"<<"Payment Type"<<"ChequeNo"<<"MSQ"<<"ChequeDate"<<"Employee");
     ui->tableWidget_transaction->setMinimumHeight(30*6-1);
 
 }
@@ -2096,6 +2185,7 @@ void MainWindow::displayTransaction(QSqlQuery results, QTableWidget* table){
     while(results.next()){
         table->insertRow(row);
         for(int i =0; i<colCnt; i++){
+
             if(i == 2){
                 QString balance = QString("%1%2").arg(results.value(i).toDouble() >= 0 ? "$" : "-$").
                     arg(QString::number(fabs(results.value(i).toDouble()), 'f', 2));
@@ -2200,7 +2290,7 @@ void MainWindow::initClientLookupInfo(){
         ui->tableWidget_search_client->clear();
         ui->lineEdit_search_clientName->clear();
     }
-
+    ui->label_cl_curClient->setText(curClientName);
     //init client Info Form Field
     ui->label_cl_info_fName_val->clear();
     ui->label_cl_info_mName_val->clear();
@@ -2226,7 +2316,7 @@ void MainWindow::initClientLookupInfo(){
     ui->label_cl_info_Supporter2_name_val->clear();
     ui->label_cl_info_Supporter2_contact_val->clear();
 
-    ui->label_cl_info_comment->clear();
+    ui->textEdit_cl_info_comment->clear();
 
     QGraphicsScene *scene = new QGraphicsScene();
     scene->clear();
@@ -2309,6 +2399,7 @@ void MainWindow::on_btn_createNewUser_clicked()
     // obtain username and pw and role from UI
     QString uname = ui->le_userName->text();
     QString pw = ui->le_password->text();
+    QString name = ui->lineEdit_EmpName->text();
 
     caseWorkerUpdated = true;
     if (uname.length() == 0) {
@@ -2321,6 +2412,11 @@ void MainWindow::on_btn_createNewUser_clicked()
         return;
     }
 
+    if (name.length() == 0) {
+        ui->lbl_editUserWarning->setText("Enter a Name");
+        return;
+    }
+
     // first, check to see if the username is taken
     QSqlQuery queryResults = dbManager->findUser(uname);
     int numrows = queryResults.numRowsAffected();
@@ -2329,7 +2425,7 @@ void MainWindow::on_btn_createNewUser_clicked()
         ui->lbl_editUserWarning->setText("This username is already taken");
         return;
     } else {
-        QSqlQuery queryResults = dbManager->addNewEmployee(uname, pw, ui->comboBox->currentText());
+        QSqlQuery queryResults = dbManager->addNewEmployee(uname, pw, ui->comboBox->currentText(), name);
         int numrows = queryResults.numRowsAffected();
 
         if (numrows != 0) {
@@ -2338,14 +2434,17 @@ void MainWindow::on_btn_createNewUser_clicked()
             model->clear();
             ui->tableWidget_3->clear();
             ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
-            ui->tableWidget_3->setColumnCount(3);
+            ui->tableWidget_3->setColumnCount(4);
             ui->tableWidget_3->setRowCount(0);
-            ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
+            ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
 
             ui->comboBox->setCurrentIndex(0);
             ui->le_userName->setText("");
             ui->le_password->setText("");
             ui->le_users->setText("");
+            ui->lineEdit_EmpName->setText("");
+
+            on_btn_listAllUsers_clicked();
         } else {
             ui->lbl_editUserWarning->setText("Something went wrong - please try again");
         }
@@ -2385,19 +2484,19 @@ void MainWindow::on_btn_listAllUsers_clicked()
     ui->tableWidget_3->clear();
     ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
 
-    QSqlQuery result = dbManager->execQuery("SELECT Username, Password, Role FROM Employee");
+    QSqlQuery result = dbManager->execQuery("SELECT Username, Password, Role, EmpName FROM Employee");
 
     int numCols = result.record().count();
     ui->tableWidget_3->setColumnCount(numCols);
-    ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
+    ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
     int x = 0;
     int qt = result.size();
     qDebug() << qt;
     while (result.next()) {
         ui->tableWidget_3->insertRow(x);
         QStringList row;
-        row << result.value(0).toString() << result.value(1).toString() << result.value(2).toString();
-        for (int i = 0; i < 3; ++i)
+        row << result.value(0).toString() << result.value(1).toString() << result.value(2).toString() << result.value(3).toString();
+        for (int i = 0; i < 4; ++i)
         {
             ui->tableWidget_3->setItem(x, i, new QTableWidgetItem(row.at(i)));
         }
@@ -2412,19 +2511,19 @@ void MainWindow::on_btn_searchUsers_clicked()
     ui->tableWidget_3->clear();
     ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
 
-    QSqlQuery result = dbManager->execQuery("SELECT Username, Password, Role FROM Employee WHERE Username LIKE '%"+ ename +"%'");
+    QSqlQuery result = dbManager->execQuery("SELECT Username, Password, Role, EmpName FROM Employee WHERE Username LIKE '%"+ ename +"%'");
 
     int numCols = result.record().count();
     ui->tableWidget_3->setColumnCount(numCols);
-    ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
+    ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
     int x = 0;
     int qt = result.size();
     qDebug() << qt;
     while (result.next()) {
         ui->tableWidget_3->insertRow(x);
         QStringList row;
-        row << result.value(0).toString() << result.value(1).toString() << result.value(2).toString();
-        for (int i = 0; i < 3; ++i)
+        row << result.value(0).toString() << result.value(1).toString() << result.value(2).toString() << result.value(3).toString();
+        for (int i = 0; i < 4; ++i)
         {
             ui->tableWidget_3->setItem(x, i, new QTableWidgetItem(row.at(i)));
         }
@@ -2450,37 +2549,38 @@ void MainWindow::on_btn_searchUsers_clicked()
 void MainWindow::on_tableWidget_3_doubleClicked(const QModelIndex &index)
 {
     // populate the fields on the right
-    QString uname = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 0)).toString();
-    QString pw = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 1)).toString();
-    QString role = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 2)).toString();
-    qDebug() << uname;
-    qDebug() << pw;
-    qDebug() << role;
+//    QString uname = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 0)).toString();
+//    QString pw = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 1)).toString();
+//    QString role = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 2)).toString();
+//    qDebug() << uname;
+//    qDebug() << pw;
+//    qDebug() << role;
 
-//    QStandardItemModel* model = qobject_cast<QStandardItemModel*>(ui->tableWidget_3->model());
-//    int row = index.row();
+////    QStandardItemModel* model = qobject_cast<QStandardItemModel*>(ui->tableWidget_3->model());
+////    int row = index.row();
 
-//     QStandardItemModel* model = ui->tableWidget_3->model();
-//    qDebug() << model;
-//    QString uname = model->item(row, 0)->text();
-//    QString pw = model->item(row, 1)->text();
-//    QString role = model->item(row, 2)->text();
+////     QStandardItemModel* model = ui->tableWidget_3->model();
+////    qDebug() << model;
+////    QString uname = model->item(row, 0)->text();
+////    QString pw = model->item(row, 1)->text();
+////    QString role = model->item(row, 2)->text();
 
-    if (role == "STANDARD") {
-        ui->comboBox->setCurrentIndex(0);
-    } else if (role == "CASE WORKER") {
-        ui->comboBox->setCurrentIndex(1);
-    } else if (role == "ADMIN") {
-        ui->comboBox->setCurrentIndex(2);
-    }
+//    if (role == "STANDARD") {
+//        ui->comboBox->setCurrentIndex(0);
+//    } else if (role == "CASE WORKER") {
+//        ui->comboBox->setCurrentIndex(1);
+//    } else if (role == "ADMIN") {
+//        ui->comboBox->setCurrentIndex(2);
+//    }
 
-    ui->le_userName->setText(uname);
-    ui->le_password->setText(pw);
+//    ui->le_userName->setText(uname);
+//    ui->le_password->setText(pw);
 }
 
 void MainWindow::on_pushButton_CaseFiles_clicked()
 {
     addHistory(CLIENTLOOKUP);
+    qDebug()<<"push casefile";
     setSelectedClientInfo();
     ui->stackedWidget->setCurrentIndex(CASEFILE);
 
@@ -2672,9 +2772,9 @@ void MainWindow::on_pushButton_casefile_book_reload_clicked()
 void MainWindow::initCasefileTransactionTable(){
     ui->tableWidget_casefile_transaction->setRowCount(0);
 
-    ui->tableWidget_casefile_transaction->setColumnCount(12);
+    ui->tableWidget_casefile_transaction->setColumnCount(11);
     ui->tableWidget_casefile_transaction->clear();
-    ui->tableWidget_casefile_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Time"<<"Amount"<<"Payment Type"<<"ChequeNo"<<"MSQ"<<"ChequeDate"<<"TransType"
+    ui->tableWidget_casefile_transaction->setHorizontalHeaderLabels(QStringList()<<"DateTime"<<"TransType"<<"Amount"<<"Payment Type"<<"ChequeNo"<<"MSQ"<<"ChequeDate"
                                                            <<"Deleted"<<"Outstanding"<<"Employee"<<"Notes");
 
 }
@@ -2700,7 +2800,7 @@ void MainWindow::on_pushButton_casefile_trans_reload_clicked()
 }
 
 
-/*-------------------CASEFILE END-----------------------------------*/
+/*----------------------------------------CASEFILE END------------------------------------------*/
 
 
 void MainWindow::on_EditRoomsButton_clicked()
@@ -2720,6 +2820,8 @@ void MainWindow::on_pushButton_4_clicked()
     // obtain username and pw and role from UI
     QString uname = ui->le_userName->text();
     QString pw = ui->le_password->text();
+    QString name = ui->lineEdit_EmpName->text();
+
     caseWorkerUpdated = true;
     if (uname.length() == 0) {
         ui->lbl_editUserWarning->setText("Enter a Username");
@@ -2731,12 +2833,16 @@ void MainWindow::on_pushButton_4_clicked()
         return;
     }
 
+    if (name.length() == 0) {
+        ui->lbl_editUserWarning->setText("Enter a Name");
+    }
+
     // first, check to make sure the username is taken
     QSqlQuery queryResults = dbManager->findUser(uname);
     int numrows1 = queryResults.numRowsAffected();
 
     if (numrows1 == 1) {
-        QSqlQuery queryResults = dbManager->updateEmployee(uname, pw, ui->comboBox->currentText());
+        QSqlQuery queryResults = dbManager->updateEmployee(uname, pw, ui->comboBox->currentText(), name);
         int numrows = queryResults.numRowsAffected();
 
         if (numrows != 0) {
@@ -2745,14 +2851,17 @@ void MainWindow::on_pushButton_4_clicked()
             model->clear();
             ui->tableWidget_3->clear();
             ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
-            ui->tableWidget_3->setColumnCount(3);
+            ui->tableWidget_3->setColumnCount(4);
             ui->tableWidget_3->setRowCount(0);
-            ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
+            ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
 
             ui->comboBox->setCurrentIndex(0);
             ui->le_userName->setText("");
             ui->le_password->setText("");
+            ui->lineEdit_EmpName->setText("");
             ui->le_users->setText("");
+
+            on_btn_listAllUsers_clicked();
         } else {
             ui->lbl_editUserWarning->setText("Something went wrong - Please try again");
         }
@@ -2771,13 +2880,14 @@ void MainWindow::on_btn_displayUser_clicked()
     model->clear();
     ui->tableWidget_3->clear();
     ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
-    ui->tableWidget_3->setColumnCount(3);
+    ui->tableWidget_3->setColumnCount(4);
     ui->tableWidget_3->setRowCount(0);
-    ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
+    ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
 
     ui->comboBox->setCurrentIndex(0);
     ui->le_userName->setText("");
     ui->le_password->setText("");
+    ui->lineEdit_EmpName->setText("");
     ui->le_users->setText("");
 }
 
@@ -2787,6 +2897,7 @@ void MainWindow::on_tableWidget_3_clicked(const QModelIndex &index)
     QString uname = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 0)).toString();
     QString pw = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 1)).toString();
     QString role = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 2)).toString();
+    QString name = ui->tableWidget_3->model()->data(ui->tableWidget_3->model()->index(index.row(), 3)).toString();
     qDebug() << uname;
     qDebug() << pw;
     qDebug() << role;
@@ -2810,6 +2921,7 @@ void MainWindow::on_tableWidget_3_clicked(const QModelIndex &index)
 
     ui->le_userName->setText(uname);
     ui->le_password->setText(pw);
+    ui->lineEdit_EmpName->setText(name);
 }
 
 // delete button
@@ -2841,14 +2953,17 @@ void MainWindow::on_pushButton_6_clicked()
             model->clear();
             ui->tableWidget_3->clear();
             ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
-            ui->tableWidget_3->setColumnCount(3);
+            ui->tableWidget_3->setColumnCount(4);
             ui->tableWidget_3->setRowCount(0);
-            ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role");
+            ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
 
             ui->comboBox->setCurrentIndex(0);
             ui->le_userName->setText("");
             ui->le_password->setText("");
+            ui->lineEdit_EmpName->setText("");
             ui->le_users->setText("");
+
+            on_btn_listAllUsers_clicked();
         } else {
             ui->lbl_editUserWarning->setText("Employee Not Found");
         }
@@ -2993,10 +3108,70 @@ void MainWindow::on_pushButton_25_clicked()
         return;
     }
 
+    // remove tag from all beds with this code
+    QSqlQuery bednum = dbManager->execQuery("SELECT SpaceCode, ProgramCodes FROM Space WHERE ProgramCodes LIKE '%" + pcode + "%'");
+    qDebug() << "SELECT SpaceCode, ProgramCodes FROM Space WHERE ProgramCodes LIKE '%" + pcode + "%'";
+    qDebug() << "err" << bednum.lastError();
+
+    int numbeds = 0;
+    while (bednum.next()) {
+        numbeds++;
+    }
+
+    for (int a = 0; a < numbeds; a++) {
+        QSqlQuery allbed = dbManager->execQuery("SELECT SpaceCode, ProgramCodes FROM Space WHERE ProgramCodes LIKE '%" + pcode + "%'");
+        allbed.next();
+        QString thebedcode = allbed.value(0).toString();
+        QString selectedtagg = allbed.value(0).toString();
+
+        qDebug() << thebedcode;
+        qDebug() << selectedtagg;
+
+        std::string selectedtag = selectedtagg.toStdString();
+
+        std::vector<std::string> tagbreakdown = split(selectedtag, '-');
+
+        // parse space code to check building number + floor number + room number + space number
+        QString buildingnum = QString::fromStdString(tagbreakdown[0]);
+        QString floornum = QString::fromStdString(tagbreakdown[1]);
+        QString roomnum = QString::fromStdString(tagbreakdown[2]);
+        std::string bednumtype = tagbreakdown[3];
+
+        // strip the last character
+        QString bednumber = QString::fromStdString(bednumtype.substr(0, bednumtype.size()-1));
+
+        // get space id
+        QSqlQuery singlebedquery = dbManager->searchSingleBed(buildingnum, floornum, roomnum, bednumber);
+        singlebedquery.next();
+        QString spaceid = singlebedquery.value(3).toString();
+
+        // get curr tag
+        QString currenttag = singlebedquery.value(8).toString();
+
+        qDebug() << currenttag;
+
+        // remove tag
+        QString newtag = "";
+        std::string curtagtogether = currenttag.toStdString();
+        std::vector<std::string> curtagbreakdown = split(curtagtogether, ',');
+        for (std::string t : curtagbreakdown) {
+            if (QString::fromStdString(t) != pcode) {
+                newtag += QString::fromStdString(t);
+                newtag += ",";
+            }
+        }
+        std::string tempstr = newtag.toStdString();
+        tempstr.pop_back();
+        newtag = QString::fromStdString(tempstr);
+
+        // update tag value
+        dbManager->updateSpaceProgram(spaceid, newtag);
+    }
+
     QSqlQuery queryResults = dbManager->execQuery("DELETE FROM Program WHERE ProgramCode='" + pcode + "'");
     int numrows = queryResults.numRowsAffected();
 
-    if (numrows != 0) {
+    if (numrows > 0) {
         ui->lbl_editProgWarning->setText("Program Deleted");
         QStandardItemModel * model = new QStandardItemModel(0,0);
         model->clear();
@@ -3011,8 +3186,10 @@ void MainWindow::on_pushButton_25_clicked()
         ui->le_password->setText("");
         ui->le_users->setText("");
     } else {
-        ui->lbl_editProgWarning->setText("Program Not Found");
+        ui->lbl_editProgWarning->setText("Program Not Deleted - make sure valid program is selected");
     }
+    //HANK
+
     return;
 }
 
@@ -3441,9 +3618,10 @@ void MainWindow::on_addbedtoprogram_clicked()
 
     // get curr tag
     QString currenttag = singlebedquery.value(8).toString();
-
-    // append to tag
-    currenttag += ",";
+    if (currenttag != "") {
+        // append to tag
+        currenttag += ",";
+    }
     currenttag += pcode;
 
     qDebug() << currenttag;
@@ -3638,7 +3816,67 @@ void MainWindow::setupReportsScreen()
 
     ui->month_comboBox->setCurrentIndex(QDate::currentDate().month() - 1);
     ui->year_comboBox->setCurrentIndex(yearList.size() - 1);
+
+    connect(&(checkoutReport->model), SIGNAL(modelDataUpdated(int)), this,
+        SLOT(on_modelDataUpdated(int)));
+    connect(&(vacancyReport->model), SIGNAL(modelDataUpdated(int)), this,
+        SLOT(on_modelDataUpdated(int)));
+    connect(&(lunchReport->model), SIGNAL(modelDataUpdated(int)), this,
+        SLOT(on_modelDataUpdated(int)));
+    connect(&(wakeupReport->model), SIGNAL(modelDataUpdated(int)), this,
+        SLOT(on_modelDataUpdated(int)));
+    connect(&(bookingReport->model), SIGNAL(modelDataUpdated(int)), this,
+        SLOT(on_modelDataUpdated(int)));
+    connect(&(transactionReport->model), SIGNAL(modelDataUpdated(int)), this,
+        SLOT(on_modelDataUpdated(int)));
+    connect(&(clientLogReport->model), SIGNAL(modelDataUpdated(int)), this,
+        SLOT(on_modelDataUpdated(int)));
+    connect(&(otherReport->model), SIGNAL(modelDataUpdated(int)), this,
+        SLOT(on_modelDataUpdated(int)));
 }
+
+void MainWindow::on_modelDataUpdated(int reportType)
+{
+    switch(reportType)
+    {
+        case CHECKOUT_REPORT:
+            resizeTableView(ui->checkout_tableView);
+            break;
+        case VACANCY_REPORT:
+            resizeTableView(ui->vacancy_tableView);
+            break;
+        case LUNCH_REPORT:
+            resizeTableView(ui->lunch_tableView);
+            break;
+        case WAKEUP_REPORT:
+            resizeTableView(ui->lunch_tableView);
+            break;
+        case BOOKING_REPORT:
+            resizeTableView(ui->booking_tableView);
+            break;
+        case TRANSACTION_REPORT:
+            resizeTableView(ui->transaction_tableView);
+            break;
+        case CLIENT_REPORT:
+            resizeTableView(ui->clientLog_tableView);
+            break;
+        case OTHER_REPORT:
+            resizeTableView(ui->other_tableView);
+    }
+}
+
+void MainWindow::resizeTableView(QTableView* tableView)
+{
+    tableView->setVisible(false);
+    tableView->resizeColumnsToContents();
+    tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+//    ui->bookingTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+//    ui->bookingTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    tableView->setVisible(true);
+}
+
+
 
 void MainWindow::updateDailyReportTables(QDate date)
 {
@@ -3731,6 +3969,11 @@ void MainWindow::on_saveOther_btn_clicked()
     {
         statusBar()->showMessage(tr("Could not save new log"), 5000);
     }
+    QDate date = ui->shiftReport_dateEdit->date();
+    int shiftNo = ui->shiftReport_spinBox->value();
+   useProgressDialog("Processing reports...",
+       QtConcurrent::run(otherReport, &bookingReport->updateModelThread, date, shiftNo));
+
 }
 
 void MainWindow::getDailyReportStats(QDate date)
@@ -3983,6 +4226,7 @@ void MainWindow::addHistory(int n){
 void MainWindow::on_pushButton_processPaymeent_clicked()
 {
     addHistory(CLIENTLOOKUP);
+    /*
     int nRow = ui->tableWidget_search_client->currentRow();
     if (nRow <0)
         return;
@@ -3997,7 +4241,9 @@ void MainWindow::on_pushButton_processPaymeent_clicked()
     curClient->balance =  balanceString.toFloat();
     // curClient->balance =  ui->tableWidget_search_client->item(nRow, 5)->text().toFloat();
     curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
-
+*/
+    qDebug()<<"push processPayment";
+    setSelectedClientInfo();
     trans = new transaction();
     QString note = "";
     payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true, userLoggedIn, QString::number(currentshiftid));
@@ -4435,7 +4681,6 @@ void MainWindow::on_btn_modRoomType_clicked()
     // this shouldn't be modifiable... - there are only ever beds and mats.
 }
 
-// HANK
 void MainWindow::on_EditShiftsButton_clicked()
 {
     addHistory(ADMINPAGE);
@@ -5810,11 +6055,16 @@ void MainWindow::updatemenuforuser() {
         sp_retain2.setRetainSizeWhenHidden(true);
         ui->adminButton->setSizePolicy(sp_retain2);
         ui->adminButton->hide();
+
+        currentrole = STANDARD;
     } else if (roleq.value(0).toString() == "CASE WORKER") {
         QSizePolicy sp_retain = ui->caseButton->sizePolicy();
         sp_retain.setRetainSizeWhenHidden(true);
         ui->adminButton->setSizePolicy(sp_retain);
         ui->adminButton->hide();
+        currentrole = CASEWORKER;
+    } else {
+        currentrole = ADMIN;
     }
 
     //display logged in user and current shift in status bar
@@ -5925,3 +6175,37 @@ void MainWindow::on_addStorageClient_clicked()
     delete(sto);
 }
 
+
+void MainWindow::on_editDelete_clicked()
+{
+    QSqlQuery role = dbManager->getRole(userLoggedIn);
+    if(!role.next())
+        return;
+    QString userRole = role.value("Role").toString();
+    if(userRole != "ADMIN"){
+        doMessageBox("Admin only feature");
+        return;
+    }
+    if(!doMessageBox("Deleting is permenant, and no refund is given. Continue?"))
+        return;
+    int row = ui->editLookupTable->selectionModel()->currentIndex().row();
+    if(row == -1)
+        return;
+    ui->editDelete->setEnabled(false);
+    curBook = new Booking();
+    popBookFromRow();
+    QSqlQuery result = dbManager->getBalance(curBook->clientId);
+    if(!result.next()){
+        ui->editDelete->setEnabled(true);
+        return;
+    }
+    double curBal = result.value("Balance").toString().toDouble();
+    if(!dbManager->deleteBooking(curBook->bookID)){
+        qDebug() << "Error deleting booking";
+    }
+    curBal += curBook->cost;
+    if(!dbManager->updateBalance(curBal, curBook->clientId))
+        qDebug() << "Error updating balance";
+    ui->editLookupTable->removeRow(row);
+    ui->editDelete->setEnabled(true);
+}

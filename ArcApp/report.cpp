@@ -33,7 +33,7 @@ void Report::setTitle()
   {
     case CHECKOUT_REPORT:
       *title << "Client" << "Space #" << "Start Date" << "End Date" 
-             << "Program" << "Balance";//"Reason" << "ESP Days" << "Balance";
+             << "Program" << "ESP Days" << "Balance";//"Reason" << "ESP Days" << "Balance";
       break;
     case VACANCY_REPORT:
       *title << "Space #" << "Program Codes";
@@ -237,7 +237,7 @@ void Report::setTransactionData(QSqlQuery* query)
         *data << query->value(i).toString();
     }
   }
-  model.setData(data, numRows, NUMCOLS_TRANSACTION);
+  model.setData(data, numRows, NUMCOLS_TRANSACTION, reportType);
 }
 
 void Report::setData(QSqlQuery* query)
@@ -257,6 +257,6 @@ void Report::setData(QSqlQuery* query)
             *data << query->value(i).toString();
           }
         }
-        model.setData(data, numRows, numCols);
+        model.setData(data, numRows, numCols, reportType);
     }
 }

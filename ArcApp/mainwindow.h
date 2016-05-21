@@ -25,6 +25,10 @@
 #define RESTRICTIONS        4
 #define DEFAULTTAB          0
 
+#define STANDARD            0
+#define CASEWORKER          1
+#define ADMIN               2
+
 #define NOREGISTER          0
 #define NEWCLIENT           1
 #define EDITCLIENT          2
@@ -73,6 +77,7 @@ public:
     Worker* work = new Worker();
 
     QString userLoggedIn = "SOMEUSER";
+    int currentrole = STANDARD;
     int currentshiftid = 0;
 
     bookingManager book;
@@ -90,6 +95,7 @@ public:
     void getCurrentClientId();   //get client id from client list table
     void getClientInfo();
     void statusColor();
+    void deleteClient();
 
     //COLIN STUFF////
     void getProgramCodes();
@@ -206,6 +212,7 @@ private slots:
     void on_restrictionRefresh_btn_clicked();
     void on_noDatabaseConnection();
     void on_noDatabaseConnection(QSqlDatabase* database);
+    void on_modelDataUpdated(int reportType);
     
     void on_reconnectedToDatabase();
     
@@ -231,6 +238,8 @@ private slots:
     void on_checkBox_search_anonymous_clicked(bool checked);    //SEARCH ANONYMOUS
 
     void selected_client_info(int nRow, int nCol);
+
+    void set_curClient_name(int nRow = -1, int nCol = -1);       //when select client
 
     void initClientLookupTable();                               //initialize anonymouse
 
@@ -587,6 +596,7 @@ private slots:
 
     void on_checkBox_cl_dob_no_clicked(bool checked);
 
+    void on_editDelete_clicked();
 private:
 
     Ui::MainWindow *ui;
@@ -595,7 +605,7 @@ private:
     bool setup;
     transaction * trans;
     Client * curClient;
-    QString curClientID;
+    QString curClientID, curClientName;
     bool editOverLap;
 
 
@@ -616,6 +626,7 @@ private:
     void getCashFloat(QDate date, int shiftNo);
     void getMonthlyReport(int month, int year);
     void updateRestrictionTables();
+    void resizeTableView(QTableView* tableView);
 
 
 

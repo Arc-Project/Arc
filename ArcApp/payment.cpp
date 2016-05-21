@@ -20,8 +20,28 @@ payment::payment(QWidget *parent, transaction * trans, double balance, double co
     this->client = client;
     ui->chequeDate->setDate(QDate::currentDate());
     ui->balanceLabel->setText(QString::number(balance));
-    ui->transactionLabel->setText(QString::number(cost));
-    ui->owedLabel->setText(QString::number(cost - balance));
+    if(cost < 0){
+        ui->refundOrTrans->setText("Current Refund");
+        ui->transactionLabel->setText(QString::number(cost * -1));
+
+    }
+    else{
+        ui->refundOrTrans->setText("Current Transaction");
+        ui->transactionLabel->setText(QString::number(cost));
+
+    }
+    double s = cost - balance;
+    if(s > 0){
+        ui->payOweRef->setText("Total Amount Owed");
+        ui->owedLabel->setText(QString::number(cost - balance));
+
+    }
+    else{
+        ui->payOweRef->setText("Total Refund Due");
+        ui->owedLabel->setText(QString::number((cost - balance) * -1));
+
+
+    }
     ui->plainTextEdit->insertPlainText(note);
     shiftNo = shift;
     empId = emp;
@@ -58,10 +78,18 @@ bool payment::makePayment(){
         }
     }
     else{
+        if(ui->paymentDrop->currentIndex() == 1){
+            values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
+                    + "','" + QString::number(transact->amount) + "','" + transact->type + "','" + transact->notes
+                    + "','" + transact->chequeNo + "','" + "NO" + "','" + transact->issuedString + "','" + transact->transType
+                    + "', 0" + ",'" + "0" + "', '" + empId + "','" + shiftNo + "','" + QTime::currentTime().toString() + "'";
+        }
+        else{
         values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
                 + "','" + QString::number(transact->amount) + "','" + transact->type + "','" + transact->notes
                 + "', NULL, NULL, NULL" + ",'" + transact->transType + "', 0" + ",'" + transact->outstanding + "', '" + empId + "','" + shiftNo + "','" + QTime::currentTime().toString() + "'";
 
+        }
     }
     if(dbManager->addPayment(values)){
         return true;
@@ -88,7 +116,7 @@ bool payment::addTransaction(){
     else{
         transact->amount = amt;
     }*/
-    if(ui->payWaitMSD->isChecked()){
+    if(ui->payWaitMSD->isChecked() && ui->payWaitMSD->isEnabled()){
 
         transact->outstanding = "1";
     }
@@ -144,6 +172,11 @@ void payment::on_addPaymentButton_clicked()
     }
     else{
         client->balance = newBal;
+        if(ui->paymentRadio->isChecked())
+            transact->paidToday = transact->amount;
+        else
+            transact->paidToday = transact->amount * -1;
+
     }
     if(makePayment()){
 //        ui->addPaymentButton->setEnabled(false);
@@ -182,6 +215,10 @@ void payment::on_paymentDrop_currentIndexChanged(const QString &arg1)
     qDebug() << arg1;
     if(ui->paymentDrop->currentIndex() == 1){
        showCheque();
+       if(ui->refundRadio->isChecked()){
+           ui->msqCheck->setEnabled(false);
+           ui->payWaitMSD->setEnabled(false);
+       }
     }
     else{
        hideCheque();
@@ -229,9 +266,11 @@ void payment::doPayment(){
 }
 void payment::doRefund(){
     ui->payRefLabel->setText("Refund Amount");
-    ui->paymentDrop->setEnabled(false);
+    ui->msqCheck->setEnabled(false);
+    ui->payWaitMSD->setEnabled(false);
+    //ui->paymentDrop->setEnabled(false);
 //    ui->addPaymentButton->setText("Add Refund");
-    hideCheque();
+    //hideCheque();
 
 }
 

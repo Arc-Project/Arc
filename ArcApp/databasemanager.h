@@ -62,7 +62,7 @@ public:
     bool insertClientWithPic(QStringList* registerFieldList, QImage* profilePic);
     bool insertClientLog(QStringList* registerFieldList);
     bool updateClientWithPic(QStringList* registerFieldList, QString clientId, QImage* profilePic);
-
+    bool deleteClientFromTable(QString tableName, QString ClientId);
 
     QSqlQuery searchClientList(QString ClientName);
     QSqlQuery searchTableClientInfo(QString tableName, QString ClientId);
@@ -148,14 +148,15 @@ public:
     bool updateStoreDate(QString storeId);
     QSqlQuery getFullStorage();
     bool removeStorage(QString storeId);
-
+    bool deleteBooking(QString id);
+    QSqlQuery getRole(QString empName);
 
     //END COLIN STUFF///////////////////////////////////////////////////////
     void print();
     QSqlQuery loginSelect(QString username, QString password);
     QSqlQuery findUser(QString username);
-    QSqlQuery addNewEmployee(QString username, QString password, QString role);
-    QSqlQuery updateEmployee(QString username, QString password, QString role);
+    QSqlQuery addNewEmployee(QString username, QString password, QString role, QString name);
+    QSqlQuery updateEmployee(QString username, QString password, QString role, QString name);
     QSqlQuery deleteEmployee(QString username, QString password, QString role);
     bool downloadLatestCaseFile();
     QSqlQuery getTransactions(QDate start, QDate end);
