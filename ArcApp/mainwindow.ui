@@ -2448,28 +2448,61 @@ QHeaderView{
       </widget>
       <widget class="QWidget" name="bookingLookup">
        <layout class="QGridLayout" name="gridLayout_21">
-        <item row="1" column="4">
-         <spacer name="horizontalSpacer_13">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
+        <item row="0" column="0" rowspan="2">
+         <layout class="QVBoxLayout" name="verticalLayout_8">
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Start Date</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDateEdit" name="startDateEdit">
+            <property name="minimumSize">
+             <size>
+              <width>165</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="frame">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::UpDownArrows</enum>
+            </property>
+            <property name="calendarPopup">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="5">
+         <widget class="QPushButton" name="bookingSearchButton">
+          <property name="minimumSize">
            <size>
-            <width>40</width>
-            <height>20</height>
+            <width>80</width>
+            <height>35</height>
            </size>
           </property>
-         </spacer>
-        </item>
-        <item row="1" column="2">
-         <widget class="QCheckBox" name="monthCheck">
           <property name="font">
            <font>
-            <pointsize>12</pointsize>
+            <pointsize>14</pointsize>
            </font>
           </property>
           <property name="text">
-           <string>Monthly</string>
+           <string>Search</string>
           </property>
          </widget>
         </item>
@@ -2516,46 +2549,6 @@ QHeaderView{
           </item>
          </layout>
         </item>
-        <item row="0" column="0" rowspan="2">
-         <layout class="QVBoxLayout" name="verticalLayout_8">
-          <item>
-           <widget class="QLabel" name="label_2">
-            <property name="font">
-             <font>
-              <pointsize>12</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Start Date</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QDateEdit" name="startDateEdit">
-            <property name="minimumSize">
-             <size>
-              <width>165</width>
-              <height>35</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>14</pointsize>
-             </font>
-            </property>
-            <property name="frame">
-             <bool>true</bool>
-            </property>
-            <property name="buttonSymbols">
-             <enum>QAbstractSpinBox::UpDownArrows</enum>
-            </property>
-            <property name="calendarPopup">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
         <item row="0" column="1" rowspan="2">
          <layout class="QVBoxLayout" name="verticalLayout_9">
           <item>
@@ -2593,6 +2586,19 @@ QHeaderView{
           </item>
          </layout>
         </item>
+        <item row="1" column="4">
+         <spacer name="horizontalSpacer_13">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
         <item row="3" column="5" colspan="2">
          <widget class="QPushButton" name="makeBookingButton">
           <property name="sizePolicy">
@@ -2614,6 +2620,24 @@ QHeaderView{
           </property>
           <property name="text">
            <string>Make Booking</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="6">
+         <widget class="QPushButton" name="pushButton_9">
+          <property name="minimumSize">
+           <size>
+            <width>70</width>
+            <height>35</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Clear</string>
           </property>
          </widget>
         </item>
@@ -2660,49 +2684,20 @@ QHeaderView{
           </column>
          </widget>
         </item>
-        <item row="1" column="6">
-         <widget class="QPushButton" name="pushButton_9">
-          <property name="minimumSize">
-           <size>
-            <width>70</width>
-            <height>35</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>14</pointsize>
-           </font>
-          </property>
+        <item row="0" column="2" rowspan="2">
+         <widget class="QPushButton" name="addMonth">
           <property name="text">
-           <string>Clear</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="5">
-         <widget class="QPushButton" name="bookingSearchButton">
-          <property name="minimumSize">
-           <size>
-            <width>80</width>
-            <height>35</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>14</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Search</string>
+           <string>Add Month</string>
           </property>
          </widget>
         </item>
        </layout>
        <zorder>makeBookingButton</zorder>
        <zorder>bookingTable</zorder>
-       <zorder>monthCheck</zorder>
        <zorder>bookingSearchButton</zorder>
        <zorder>pushButton_9</zorder>
        <zorder>horizontalSpacer_13</zorder>
+       <zorder>addMonth</zorder>
       </widget>
       <widget class="QWidget" name="bookingPage">
        <widget class="QLabel" name="bookLabelPaid">
@@ -3116,7 +3111,7 @@ QHeaderView{
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>244</width>
+          <width>246</width>
           <height>30</height>
          </rect>
         </property>
@@ -3212,7 +3207,7 @@ QHeaderView{
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>138</width>
+          <width>139</width>
           <height>30</height>
          </rect>
         </property>
@@ -4852,8 +4847,8 @@ QHeaderView{
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>620</width>
-                 <height>1294</height>
+                 <width>718</width>
+                 <height>1381</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -12289,7 +12284,7 @@ QHeaderView{
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>100</width>
+          <width>105</width>
           <height>30</height>
          </rect>
         </property>
@@ -14921,7 +14916,7 @@ QHeaderView{
      <x>0</x>
      <y>0</y>
      <width>1542</width>
-     <height>23</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="font">

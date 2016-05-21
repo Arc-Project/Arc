@@ -424,7 +424,7 @@ void MainWindow::on_endDateEdit_dateChanged()
     }
     else{
         editOverLap = false;
-        ui->monthCheck->setChecked(false);
+        //ui->monthCheck->setChecked(false);
     }
     if(ui->endDateEdit->date() < ui->startDateEdit->date()){
         QDate newDate = ui->startDateEdit->date().addDays(1);
@@ -448,10 +448,10 @@ void MainWindow::on_monthCheck_clicked(bool checked)
         days = days - month.day();
         month = month.addDays(days + 1);
         ui->endDateEdit->setDate(month);
-        ui->monthCheck->setChecked(true);
+        //ui->monthCheck->setChecked(true);
     }
     else{
-        ui->monthCheck->setChecked(false);
+       // ui->monthCheck->setChecked(false);
         editOverLap = true;
     }
 }
@@ -789,29 +789,16 @@ void MainWindow::setBooking(int row){
     curBook->endDate = ui->endDateEdit->date();
     curBook->stringStart = ui->startDateEdit->date().toString(Qt::ISODate);
     curBook->stringEnd = ui->endDateEdit->date().toString(Qt::ISODate);
-    curBook->monthly = ui->monthCheck->isChecked();
+    //curBook->monthly = ui->monthCheck->isChecked();
     curBook->program = ui->programDropdown->currentText();
     curBook->room = ui->bookingTable->item(row,0)->text();
     curBook->stayLength = ui->endDateEdit->date().toJulianDay() - ui->startDateEdit->date().toJulianDay();
-    double potentialCost = 999999;
-    double dailyCost = 0;
     curBook->roomId = ui->bookingTable->item(row, 5)->text();
-    QString dayCost = QString::number(ui->bookingTable->item(row, 3)->text().toDouble(), 'f', 2);
-    dailyCost = dayCost.toDouble();
-    dailyCost = curBook->stayLength * dailyCost;
-    if(ui->monthCheck->isChecked()){
-
-        potentialCost = ui->bookingTable->item(row, 4)->text().toInt();
-        if(dailyCost < potentialCost){
-            curBook->cost = dailyCost;
-        }
-        else{
-            curBook->cost = potentialCost;
-        }
-    }
-    else{
-        curBook->cost = dailyCost;
-    }
+    double daily, monthly;
+    daily = ui->bookingTable->item(row, 3)->text().toDouble();
+    monthly = ui->bookingTable->item(row, 4)->text().toDouble();
+    double cost;
+    cost = realCost(curBook->startDate, curBook->endDate, daily, monthly);
 
 }
 
@@ -824,11 +811,11 @@ void MainWindow::on_makeBookingButton_clicked()
     }
     //curClient = new Client();
    //popClientFromId("1");
-    ui->stackedWidget->setCurrentIndex(BOOKINGPAGE);
 //    int rowNum = ui->bookingTable->columnCount();
     QStringList data;
     curBook = new Booking;
     setBooking(row);
+    return;
     ui->stackedWidget->setCurrentIndex(BOOKINGPAGE);
     populateBooking();
     ui->makeBookingButton_2->setEnabled(true);
@@ -6103,6 +6090,7 @@ void MainWindow::on_storageDelete_clicked()
     storeId = ui->storageTable->item(row, 4)->text();
     if(!dbManager->removeStorage(storeId))
         qDebug() << "Error removing storage";
+    ui->storageTable->removeRow(row);
 }
 
 
@@ -6155,4 +6143,39 @@ void MainWindow::on_editDelete_clicked()
         qDebug() << "Error updating balance";
     ui->editLookupTable->removeRow(row);
     ui->editDelete->setEnabled(true);
+}
+double MainWindow::realCost(QDate start, QDate end, double daily, double monthly){
+    int days, months, totalDays;
+    double dailyCost, totalCost;
+    months = 0;
+    totalDays = end.toJulianDay() - start.toJulianDay();
+    QDate holdEnd;
+    holdEnd = end;
+    while((holdEnd = holdEnd.addMonths(-1)) >= start)
+        months++;
+    holdEnd = holdEnd.addMonths(1);
+    if(holdEnd == start)
+        days = 0;
+    else
+        days = holdEnd.toJulianDay() - start.toJulianDay();
+    dailyCost = days * daily;
+    if(dailyCost > monthly){
+        dailyCost = monthly;
+    }
+
+    totalCost = monthly * months + dailyCost;
+    qDebug() << "Months " << months << "Days " << days << " Total Cost " << totalCost;
+    return totalCost;
+
+}
+
+void MainWindow::on_addMonth_clicked()
+{
+    QDate switcher, possibleChange;
+    switcher = ui->endDateEdit->date();
+    possibleChange = switcher.addDays(-1);
+    if(possibleChange == ui->startDateEdit->date())
+        switcher = switcher.addDays(-1);
+    switcher = switcher.addMonths(1);
+    ui->endDateEdit->setDate(switcher);
 }
