@@ -3950,7 +3950,7 @@ void MainWindow::on_other_lineEdit_textEdited(const QString &text)
 void MainWindow::on_saveOther_btn_clicked()
 {
     QString logText = ui->other_lineEdit->text();
-    if (dbManager->insertOtherLog(userLoggedIn, currentshiftid, logText))
+    if (dbManager->insertOtherLog(usernameLoggedIn, currentshiftid, logText))
     {
         statusBar()->showMessage(tr("New log saved"), 5000);
         ui->other_lineEdit->clear();
@@ -4056,7 +4056,7 @@ void MainWindow::on_saveFloat_btn_clicked()
 
     QDate date = ui->cashFloat_dateEdit->date();
     int shiftNo = ui->cashFloat_spinBox->value();
-    QString empName = userLoggedIn;
+    QString empName = usernameLoggedIn;
     QString comments = ui->pte_floatMemo->toPlainText();
     QList<int> coins;
     coins << ui->sbox_nickels->value() << ui->sbox_dimes->value() << ui->sbox_quarters->value()
