@@ -1312,7 +1312,7 @@ void MainWindow::on_makeBookingButton_2_clicked()
     if(!dbManager->updateBalance(curClient->balance - curBook->cost, curClient->clientId)){
         qDebug() << "ERROR ADDING TO BALANCE UPDATE";
     }
-    if(!dbManager->insertIntoBookingHistory(curClient->fullName, curBook->room, curBook->program, curBook->stringStart, curBook->stringEnd, "NEW", userLoggedIn, QString::number(currentshiftid), curClient->clientId)){
+    if(!dbManager->insertIntoBookingHistory(curClient->fullName, curBook->room, curBook->program, curBook->stringStart, curBook->stringEnd, "NEW", usernameLoggedIn, QString::number(currentshiftid), curClient->clientId)){
         qDebug() << "ERROR INSERTING INTO BOOKING HISTORY";
     }
 
@@ -1533,7 +1533,7 @@ void MainWindow::getRegisterLogFields(QStringList* fieldList)
                << QDate::currentDate().toString("yyyy-MM-dd")
                << QString::number(currentshiftid) // get shift number
                << QTime::currentTime().toString("hh:mm:ss")
-               << userLoggedIn; //employee name
+               << usernameLoggedIn; //employee name
 
 }
 
