@@ -6028,9 +6028,10 @@ void MainWindow::on_comboBox_2_currentTextChanged(const QString &arg1)
 }
 
 void MainWindow::updatemenuforuser() {
-    QSqlQuery roleq = dbManager->execQuery("SELECT Role FROM Employee WHERE Username='" + userLoggedIn + "'");
+    QSqlQuery roleq = dbManager->execQuery("SELECT Role, EmpName FROM Employee WHERE Username='" + userLoggedIn + "'");
 
     roleq.next();
+    usernameLoggedIn = roleq.value("EmpName").toString();
 
     qDebug() << "ROLE: " << roleq.value(0).toString();
     qDebug() << "USER: " << userLoggedIn;
@@ -6058,7 +6059,7 @@ void MainWindow::updatemenuforuser() {
     }
 
     //display logged in user and current shift in status bar
-    lbl_curUser = new QLabel("Logged in as: " + userLoggedIn + "  ");
+    lbl_curUser = new QLabel("Logged in as: " + usernameLoggedIn + "  ");
     // lbl_curShift = new QLabel("Shift Number: " + currentshiftid);
     statusBar()->addPermanentWidget(lbl_curUser);
     // statusBar()->addPermanentWidget(lbl_curShift);

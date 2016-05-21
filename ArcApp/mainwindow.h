@@ -78,6 +78,7 @@ public:
     Worker* work = new Worker();
 
     QString userLoggedIn = "SOMEUSER";
+    QString usernameLoggedIn = "HANK";
     int currentrole = STANDARD;
     int currentshiftid = 0;
 
