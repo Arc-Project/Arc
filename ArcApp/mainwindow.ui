@@ -2460,6 +2460,23 @@ QHeaderView{
         <item row="3" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_102"/>
         </item>
+        <item row="0" column="1" colspan="2">
+         <widget class="QLabel" name="label_cl_curClient">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">color: rgb(0, 0, 106);</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="bookingLookup">

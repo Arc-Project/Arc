@@ -117,10 +117,12 @@ void MainWindow::initCurrentWidget(int idx){
     switch(idx){
         case MAINMENU:  //WIDGET 0
             curClientID = "";
+            curClientName = "";
             registerType = NOREGISTER;
             ui->actionExport_to_PDF->setEnabled(false);
             break;
         case CLIENTLOOKUP:  //WIDGET 1
+            curClientName="";
             initClientLookupInfo();
             if(caseWorkerUpdated){
                 getCaseWorkerList();
@@ -130,6 +132,7 @@ void MainWindow::initCurrentWidget(int idx){
             if(registerType == EDITCLIENT)
                 getClientInfo();
             registerType = NOREGISTER;
+            set_curClient_name();
             ui->checkBox_search_anonymous->setChecked(false);
             ui->pushButton_search_client->setEnabled(true);
             //initimageview
@@ -1750,7 +1753,7 @@ void MainWindow::on_pushButton_search_client_clicked()
 
     useProgressDialog("Search Client "+clientName,  QtConcurrent::run(this, &searchClientListThread));
     statusBar()->showMessage(QString("Found " + QString::number(maxClient) + " Clients"), 5000);
-
+    connect(ui->tableWidget_search_client, SIGNAL(cellClicked(int,int)), this, SLOT(set_curClient_name(int,int)),Qt::UniqueConnection);
     connect(ui->tableWidget_search_client, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(selected_client_info(int,int)),Qt::UniqueConnection);
 }
 
@@ -1787,6 +1790,41 @@ void MainWindow::initClientLookupTable(){
 
 
 
+}
+
+void MainWindow::set_curClient_name(int nRow, int nCol){
+    Q_UNUSED(nCol)
+    curClientName = "";
+    QString selectClientId = ui->tableWidget_search_client->item(nRow, 0)->text();
+    QString fName, lName, mName;
+    if(nRow <0 && curClientID == NULL)
+        return;
+    if(curClientID != selectClientId){
+        lName =  ui->tableWidget_search_client->item(nRow, 1)->text();
+        fName =  ui->tableWidget_search_client->item(nRow, 2)->text();
+        mName =  ui->tableWidget_search_client->item(nRow, 3)->text();
+    }
+    else{
+        fName = ui->label_cl_info_fName_val->text();
+        mName = ui->label_cl_info_mName_val->text();
+        lName =  ui->label_cl_info_lName_val->text();
+    }
+
+    //MAKE FULL NAME
+    if(fName!=NULL)
+        curClientName = QString(fName.toUpper());
+    if(lName!=NULL){
+        if(curClientName!="")
+            curClientName += QString(", ");
+        curClientName += QString(lName.toUpper());
+    }
+    if(mName!=NULL){
+        if(curClientName!="")
+            curClientName += QString(" ");
+        curClientName += QString(mName);
+    }
+
+    ui->label_cl_curClient->setText(curClientName);
 }
 
 //set up table widget to add result of search client using name
@@ -2223,7 +2261,7 @@ void MainWindow::initClientLookupInfo(){
         ui->tableWidget_search_client->clear();
         ui->lineEdit_search_clientName->clear();
     }
-
+    ui->label_cl_curClient->setText(curClientName);
     //init client Info Form Field
     ui->label_cl_info_fName_val->clear();
     ui->label_cl_info_mName_val->clear();
@@ -6025,4 +6063,5 @@ void MainWindow::on_addStorageClient_clicked()
     sto->exec();
     delete(sto);
 }
+
 

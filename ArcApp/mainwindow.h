@@ -238,6 +238,8 @@ private slots:
 
     void selected_client_info(int nRow, int nCol);
 
+    void set_curClient_name(int nRow = -1, int nCol = -1);       //when select client
+
     void initClientLookupTable();                               //initialize anonymouse
 
     void searchTransaction(QString clientId);
@@ -593,6 +595,7 @@ private slots:
 
     void on_checkBox_cl_dob_no_clicked(bool checked);
 
+
 private:
 
     Ui::MainWindow *ui;
@@ -601,7 +604,7 @@ private:
     bool setup;
     transaction * trans;
     Client * curClient;
-    QString curClientID;
+    QString curClientID, curClientName;
     bool editOverLap;
 
 
