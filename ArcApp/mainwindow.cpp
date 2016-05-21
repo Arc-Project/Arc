@@ -384,7 +384,7 @@ void MainWindow::on_paymentButton_2_clicked()
     //owed = curBook->cost;
     owed = ui->costInput->text().toDouble();
     QString note = "Booking: " + curBook->stringStart + " to " + curBook->stringEnd + " Cost: " + QString::number(curBook->cost, 'f', 2);
-    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, true, userLoggedIn, QString::number(currentshiftid));
+    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, true, usernameLoggedIn, QString::number(currentshiftid));
     pay->exec();
     ui->stayLabel->setText(QString::number(curClient->balance, 'f', 2));
     qDebug() << "Done";
@@ -1044,7 +1044,7 @@ void MainWindow::handleNewPayment(int row){
     curClient->balance = balance;
     QString note = "Paying Outstanding Balance";
 
-    payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true, userLoggedIn, QString::number(currentshiftid));
+    payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true, usernameLoggedIn, QString::number(currentshiftid));
     pay->exec();
     ui->mpTable->removeRow(row);
     delete(pay);
@@ -1173,7 +1173,7 @@ void MainWindow::on_editManagePayment_clicked()
         owed *= -1;
     }
     QString note = "";
-    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, type, userLoggedIn, QString::number(currentshiftid));
+    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, type, usernameLoggedIn, QString::number(currentshiftid));
     pay->exec();
     delete(pay);
 }
@@ -4348,7 +4348,7 @@ void MainWindow::on_pushButton_processPaymeent_clicked()
     setSelectedClientInfo();
     trans = new transaction();
     QString note = "";
-    payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true, userLoggedIn, QString::number(currentshiftid));
+    payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true, usernameLoggedIn, QString::number(currentshiftid));
     pay->exec();
     delete(pay);
 }
