@@ -180,7 +180,7 @@ QHeaderView{
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>13</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -12485,7 +12485,7 @@ QHeaderView{
              </font>
             </property>
             <property name="text">
-             <string>Balance Owing:</string>
+             <string>Current Balance:</string>
             </property>
            </widget>
           </item>
@@ -12508,7 +12508,7 @@ QHeaderView{
            </widget>
           </item>
           <item row="5" column="0">
-           <widget class="QLabel" name="label_68">
+           <widget class="QLabel" name="confirmPayRefund">
             <property name="minimumSize">
              <size>
               <width>0</width>

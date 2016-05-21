@@ -391,6 +391,7 @@ void MainWindow::on_paymentButton_2_clicked()
     delete(pay);
     double totalPaid = ui->bookAmtPaid->text().toDouble();
     totalPaid += trans->paidToday;
+    curBook->paidTotal = totalPaid;
     if(totalPaid < 0){
         ui->bookLabelPaid->setText("Total Refunded:");
         ui->bookAmtPaid->setText(QString::number(totalPaid * -1, 'f', 2));
@@ -808,6 +809,7 @@ void MainWindow::setBooking(int row){
     monthly = ui->bookingTable->item(row, 4)->text().toDouble();
     double cost;
     cost = realCost(curBook->startDate, curBook->endDate, daily, monthly);
+    curBook->cost = cost;
 
 }
 
@@ -847,6 +849,7 @@ void MainWindow::populateBooking(){
     else{
         ui->monthLabel->setText("NO");
     }
+    //ui->bookTotalCost->setText(QString::number(curBook->cost, 'f', 2));
 }
 
 void MainWindow::getProgramCodes(){
@@ -1331,9 +1334,17 @@ void MainWindow::populateConfirm(){
         ui->confirmMonthly->setText("NO");
     }
     ui->confirmRoom->setText(curBook->room);
-    ui->confirmPaid->setText(QString::number(curClient->balance));
+    ui->confirmPaid->setText(QString::number((curClient->balance - curBook->cost), 'f', 2));
     ui->confirmProgram->setText(curBook->program);
-    ui->confirmTotalPaid->setText(QString::number(trans->paidToday, 'f', 2));
+    if(curBook->paidTotal < 0){
+        ui->confirmPayRefund->setText("Total Refunded");
+        ui->confirmTotalPaid->setText(QString::number(curBook->paidTotal * -1, 'f', 2));
+
+    }else{
+        ui->confirmPayRefund->setText("Total Paid");
+
+        ui->confirmTotalPaid->setText(QString::number(curBook->paidTotal, 'f', 2));
+    }
 
 
 }
