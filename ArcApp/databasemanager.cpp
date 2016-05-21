@@ -789,6 +789,15 @@ bool DatabaseManager::insertClientLog(QStringList* registerFieldList)
     }
     return false;
 }
+
+bool DatabaseManager::deleteClientFromTable(QString tableName, QString ClientId){
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    query.prepare(QString("DELETE FROM "+tableName)
+                  += QString(" WHERE ClientId = " + ClientId));
+    return query.exec();
+}
+
 /* .............................................................
          CLIENT REGISTER FINISHED
   ==============================================================*/

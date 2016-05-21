@@ -1713,7 +1713,7 @@ void MainWindow::getCaseWorkerList(){
     QString caseWorkerquery = "SELECT Username, EmpId FROM Employee WHERE (Role = 'CASE WORKER' OR Role = 'ADMIN') ORDER BY Username";
     QSqlQuery caseWorkers = dbManager->execQuery(caseWorkerquery);
     //dbManager->printAll(caseWorkers);
-    caseWorkerList.empty();
+    caseWorkerList.clear();
     while(caseWorkers.next()){
         qDebug()<<"CASEWORKER: " <<caseWorkers.value(0).toString() << caseWorkers.value(1).toString();
         if(!caseWorkerList.contains(caseWorkers.value(0).toString())){
@@ -1732,6 +1732,9 @@ void MainWindow::defaultRegisterOptions(){
 
     if(caseWorkerUpdated){
       if(ui->comboBox_cl_caseWorker->count() != caseWorkerList.count()+1){
+          qDebug()<<"CASE WORKER LIST UPDATE";
+          ui->comboBox_cl_caseWorker->clear();
+          ui->comboBox_cl_caseWorker->addItem("NONE");
           QMap<QString, int>::const_iterator it = caseWorkerList.constBegin();
           while(it != caseWorkerList.constEnd()){
             if(ui->comboBox_cl_caseWorker->findText(it.key())== -1){
@@ -1756,6 +1759,15 @@ void MainWindow::on_button_cancel_client_register_clicked()
     ui->stackedWidget->setCurrentIndex(MAINMENU);
 }
 
+/*=============================================================================
+ * DELETE CLIENT USING CLIENT ID
+ * ==========================================================================*/
+void MainWindow::deleteClient(){
+    //if( != 'STANDARD')  // check client role
+        //open dialog
+
+
+}
 
 /*==============================================================================
 SEARCH CLIENTS USING NAME
