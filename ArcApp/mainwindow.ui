@@ -3770,9 +3770,6 @@ QHeaderView{
              <property name="columnCount">
               <number>0</number>
              </property>
-             <attribute name="horizontalHeaderVisible">
-              <bool>false</bool>
-             </attribute>
              <attribute name="horizontalHeaderMinimumSectionSize">
               <number>1</number>
              </attribute>
