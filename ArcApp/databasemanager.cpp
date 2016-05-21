@@ -434,7 +434,7 @@ void DatabaseManager::printDbConnections()
     for (QStringList::iterator it = list.begin(); it != list.end(); ++it)
     {
         QString current = *it;
-        qDebug() << "[[" << current << "]]";
+       // qDebug() << "[[" << current << "]]";//UNCOMMENT
     }
 }
 /*==============================================================================
@@ -553,15 +553,14 @@ QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId, i
     QString queryStart;
     if(type == 1){   //CLIENT INFO PAGE
         queryStart = "SELECT TOP "+ QString::number(maxNum)
-                   + QString("Date, TransType, Amount, Type, ChequeNo, MSQ, ChequeDate, EmpName ");
+                   + QString(" Date, TransType, Amount, Type, ChequeNo, MSQ, ChequeDate, EmpName ");
     }else{          //CASEFILE PAGE
         queryStart = "SELECT "
-                   + QString("CAST(Date AS datetime) + CAST(Time AS datetime) AS Datetime, TransType, Amount, Type, ChequeNo, MSQ, ChequeDate, Deleted, Outstanding, EmpName, Notes ");
+                   + QString(" CAST(Date AS datetime) + CAST(Time AS datetime) AS Datetime, TransType, Amount, Type, ChequeNo, MSQ, ChequeDate, Deleted, Outstanding, EmpName, Notes ");
     }
-    clientTransQuery.prepare(queryStart
-                           + QString("FROM Transac ")
-                           + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC, Time DESC"));
-
+    queryStart += QString("FROM Transac ")
+            + QString("WHERE ClientId = " + clientId + " ORDER BY Date DESC, Time DESC");
+    clientTransQuery.prepare(queryStart);
     qDebug()<<"QERY: "<< queryStart;
     clientTransQuery.exec();
     return clientTransQuery;
