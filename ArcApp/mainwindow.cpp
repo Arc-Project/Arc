@@ -384,7 +384,7 @@ void MainWindow::on_paymentButton_2_clicked()
     //owed = curBook->cost;
     owed = ui->costInput->text().toDouble();
     QString note = "Booking: " + curBook->stringStart + " to " + curBook->stringEnd + " Cost: " + QString::number(curBook->cost, 'f', 2);
-    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, true, userLoggedIn, QString::number(currentshiftid));
+    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, true, usernameLoggedIn, QString::number(currentshiftid));
     pay->exec();
     ui->stayLabel->setText(QString::number(curClient->balance, 'f', 2));
     qDebug() << "Done";
@@ -1044,7 +1044,7 @@ void MainWindow::handleNewPayment(int row){
     curClient->balance = balance;
     QString note = "Paying Outstanding Balance";
 
-    payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true, userLoggedIn, QString::number(currentshiftid));
+    payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true, usernameLoggedIn, QString::number(currentshiftid));
     pay->exec();
     ui->mpTable->removeRow(row);
     delete(pay);
@@ -1173,7 +1173,7 @@ void MainWindow::on_editManagePayment_clicked()
         owed *= -1;
     }
     QString note = "";
-    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, type, userLoggedIn, QString::number(currentshiftid));
+    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, type, usernameLoggedIn, QString::number(currentshiftid));
     pay->exec();
     delete(pay);
 }
@@ -3284,7 +3284,11 @@ void MainWindow::on_pushButton_25_clicked()
 // program clicked + selected
 void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
 {    
-    //if (lastprogramclicked != index) {
+    if (!resettingfromcode) {
+        if (index == lastprogramclicked) {
+            return;
+        }
+    }
         ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
         ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
         ui->lbl_editProgWarning->setText("Please hold while we set your beds");
@@ -3292,6 +3296,7 @@ void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
 
         ui->availablebedslist->clear();
         ui->availablebedslist->setRowCount(0);
+
         ui->assignedbedslist->clear();
         ui->assignedbedslist->setRowCount(0);
 
@@ -3402,7 +3407,7 @@ void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
 
         // ui->assignedbedslist->setModel(assignedmodel);
           lastprogramclicked = index;
-    //}
+
 
 }
 
@@ -3717,7 +3722,11 @@ void MainWindow::on_addbedtoprogram_clicked()
     // update tag value
     dbManager->updateSpaceProgram(spaceid, currenttag);
 
+    resettingfromcode = true;
+
     on_tableWidget_2_clicked(lastprogramclicked);
+
+    resettingfromcode = false;
 
     // ui->availablebedslist->clear();
     // ui->availablebedslist->setRowCount(0);
@@ -3823,7 +3832,9 @@ void MainWindow::on_removebedfromprogram_clicked()
 //    ui->assignedbedslist->setRowCount(0);
 //    ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
 //    ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+    resettingfromcode = true;
     on_tableWidget_2_clicked(lastprogramclicked);
+    resettingfromcode = false;
     ui->lbl_editProgWarning->setText("Bed Removed from Program");
 }
 
@@ -4353,7 +4364,7 @@ void MainWindow::on_pushButton_processPaymeent_clicked()
     setSelectedClientInfo();
     trans = new transaction();
     QString note = "";
-    payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true, userLoggedIn, QString::number(currentshiftid));
+    payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true, usernameLoggedIn, QString::number(currentshiftid));
     pay->exec();
     delete(pay);
 }
@@ -6104,7 +6115,7 @@ void MainWindow::setShift() {
 //    lbl_curShift = new QLabel();
 //    lbl_curShift->setText("Shift Number: " + currentshiftid);
 //    statusBar()->addPermanentWidget(lbl_curShift);
-  //  qDebug() << "Updated Shift";
+      qDebug() << "Shiftno =" << currentshiftid;
 }
 
 void MainWindow::on_btn_saveShift_clicked()
