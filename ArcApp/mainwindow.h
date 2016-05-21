@@ -40,6 +40,7 @@
 
 #include <QMainWindow>
 #include <QDebug>
+#include <utility>
 #include <QtConcurrent/QtConcurrent>
 #include "databasemanager.h"
 #include "bookingmanager.h"
@@ -117,7 +118,8 @@ public:
     void setBookSummary();
     bool doMessageBox(QString message);
     double realCost(QDate start, QDate end, double daily, double monthly);
-
+    std::pair<int,int> monthDay(QDate start, QDate end);
+    double quickCost(std::pair<int,int>p, double daily, double monthly);
     //COLIN END//////
 
     void updatemenuforuser();
@@ -599,6 +601,8 @@ private slots:
 
     void on_editDelete_clicked();
     void on_addMonth_clicked();
+
+    void on_bookingTable_itemClicked(QTableWidgetItem *item);
 
 private:
 

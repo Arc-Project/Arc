@@ -180,7 +180,7 @@ QHeaderView{
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -2042,11 +2042,10 @@ QHeaderView{
              </layout>
             </item>
            </layout>
+           <zorder>label_cl_info_Comment_tag</zorder>
+           <zorder>textEdit_cl_info_comment</zorder>
            <zorder>groupBox_cl_info_personal</zorder>
            <zorder>groupBox</zorder>
-           <zorder>horizontalSpacer_59</zorder>
-           <zorder>label_cl_info_status</zorder>
-           <zorder>horizontalLayoutWidget_2</zorder>
            <zorder>verticalSpacer_10</zorder>
            <zorder>verticalSpacer_11</zorder>
           </widget>
@@ -2496,7 +2495,7 @@ QHeaderView{
       </widget>
       <widget class="QWidget" name="bookingLookup">
        <layout class="QGridLayout" name="gridLayout_21">
-        <item row="0" column="0" rowspan="2">
+        <item row="0" column="0" rowspan="6">
          <layout class="QVBoxLayout" name="verticalLayout_8">
           <item>
            <widget class="QLabel" name="label_2">
@@ -2536,7 +2535,7 @@ QHeaderView{
           </item>
          </layout>
         </item>
-        <item row="1" column="5">
+        <item row="5" column="7">
          <widget class="QPushButton" name="bookingSearchButton">
           <property name="minimumSize">
            <size>
@@ -2554,7 +2553,7 @@ QHeaderView{
           </property>
          </widget>
         </item>
-        <item row="0" column="3" rowspan="2">
+        <item row="0" column="3" rowspan="6">
          <layout class="QVBoxLayout" name="verticalLayout_10">
           <item>
            <widget class="QLabel" name="label_20">
@@ -2597,7 +2596,7 @@ QHeaderView{
           </item>
          </layout>
         </item>
-        <item row="0" column="1" rowspan="2">
+        <item row="0" column="1" rowspan="6">
          <layout class="QVBoxLayout" name="verticalLayout_9">
           <item>
            <widget class="QLabel" name="label_10">
@@ -2634,7 +2633,14 @@ QHeaderView{
           </item>
          </layout>
         </item>
-        <item row="1" column="4">
+        <item row="1" column="5">
+         <widget class="QLabel" name="label_69">
+          <property name="text">
+           <string>Months:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="6">
          <spacer name="horizontalSpacer_13">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -2647,7 +2653,7 @@ QHeaderView{
           </property>
          </spacer>
         </item>
-        <item row="3" column="5" colspan="2">
+        <item row="7" column="7" colspan="2">
          <widget class="QPushButton" name="makeBookingButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -2671,7 +2677,7 @@ QHeaderView{
           </property>
          </widget>
         </item>
-        <item row="1" column="6">
+        <item row="5" column="8">
          <widget class="QPushButton" name="pushButton_9">
           <property name="minimumSize">
            <size>
@@ -2689,7 +2695,7 @@ QHeaderView{
           </property>
          </widget>
         </item>
-        <item row="2" column="0" colspan="7">
+        <item row="6" column="0" colspan="9">
          <widget class="QTableWidget" name="bookingTable">
           <property name="font">
            <font>
@@ -2732,10 +2738,45 @@ QHeaderView{
           </column>
          </widget>
         </item>
-        <item row="0" column="2" rowspan="2">
+        <item row="0" column="2" rowspan="6">
          <widget class="QPushButton" name="addMonth">
           <property name="text">
            <string>Add Month</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="5">
+         <widget class="QLabel" name="bookMonthLabel">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="5">
+         <widget class="QLabel" name="bookDayLabel">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="5">
+         <widget class="QLabel" name="label_78">
+          <property name="text">
+           <string>Days:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="7">
+         <widget class="QLabel" name="label_79">
+          <property name="text">
+           <string>Total Cost:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="7">
+         <widget class="QLabel" name="bookCostLabel">
+          <property name="text">
+           <string/>
           </property>
          </widget>
         </item>
@@ -2746,6 +2787,12 @@ QHeaderView{
        <zorder>pushButton_9</zorder>
        <zorder>horizontalSpacer_13</zorder>
        <zorder>addMonth</zorder>
+       <zorder>bookMonthLabel</zorder>
+       <zorder>label_78</zorder>
+       <zorder>bookDayLabel</zorder>
+       <zorder>label_69</zorder>
+       <zorder>label_79</zorder>
+       <zorder>bookCostLabel</zorder>
       </widget>
       <widget class="QWidget" name="bookingPage">
        <widget class="QLabel" name="bookLabelPaid">
