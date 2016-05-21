@@ -25,6 +25,10 @@
 #define RESTRICTIONS        4
 #define DEFAULTTAB          0
 
+#define STANDARD            0
+#define CASEWORKER          1
+#define ADMIN               2
+
 #define NOREGISTER          0
 #define NEWCLIENT           1
 #define EDITCLIENT          2
@@ -73,6 +77,7 @@ public:
     Worker* work = new Worker();
 
     QString userLoggedIn = "SOMEUSER";
+    int currentrole = STANDARD;
     int currentshiftid = 0;
 
     bookingManager book;
