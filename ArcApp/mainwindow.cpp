@@ -384,7 +384,7 @@ void MainWindow::on_paymentButton_2_clicked()
     //owed = curBook->cost;
     owed = ui->costInput->text().toDouble();
     QString note = "Booking: " + curBook->stringStart + " to " + curBook->stringEnd + " Cost: " + QString::number(curBook->cost, 'f', 2);
-    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, true, userLoggedIn, QString::number(currentshiftid));
+    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, true, usernameLoggedIn, QString::number(currentshiftid));
     pay->exec();
     ui->stayLabel->setText(QString::number(curClient->balance, 'f', 2));
     qDebug() << "Done";
@@ -1044,7 +1044,7 @@ void MainWindow::handleNewPayment(int row){
     curClient->balance = balance;
     QString note = "Paying Outstanding Balance";
 
-    payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true, userLoggedIn, QString::number(currentshiftid));
+    payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true, usernameLoggedIn, QString::number(currentshiftid));
     pay->exec();
     ui->mpTable->removeRow(row);
     delete(pay);
@@ -1173,7 +1173,7 @@ void MainWindow::on_editManagePayment_clicked()
         owed *= -1;
     }
     QString note = "";
-    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, type, userLoggedIn, QString::number(currentshiftid));
+    payment * pay = new payment(this, trans, curClient->balance, owed , curClient, note, type, usernameLoggedIn, QString::number(currentshiftid));
     pay->exec();
     delete(pay);
 }
@@ -1899,12 +1899,12 @@ void MainWindow::set_curClient_name(int nRow, int nCol){
 
     qDebug()<<"curClientName";
     //MAKE FULL NAME
-    if(fName!=NULL)
-        curClientName = QString(fName.toUpper());
-    if(lName!=NULL){
+    if(lName!=NULL)
+        curClientName = QString(lName.toUpper());
+    if(fName!=NULL){
         if(curClientName!="")
             curClientName += QString(", ");
-        curClientName += QString(lName.toUpper());
+        curClientName += QString(fName.toUpper());
     }
     if(mName!=NULL){
         if(curClientName!="")
@@ -2193,12 +2193,12 @@ void MainWindow::setSelectedClientInfo(){
     }
 
     //MAKE FULL NAME
-    if(curClient->fName!=NULL)
-        curClient->fullName = QString(curClient->fName);
-    if(curClient->lName!=NULL){
+    if(curClient->lName!=NULL)
+        curClient->fullName = QString(curClient->lName);
+    if(curClient->fName!=NULL){
         if(curClient->fullName!="")
             curClient->fullName += QString(", ");
-        curClient->fullName += QString(curClient->lName);
+        curClient->fullName += QString(curClient->fName);
     }
     if(curClient->mName!=NULL){
         if(curClient->fullName!="")
@@ -2238,7 +2238,7 @@ void MainWindow::initClTransactionTable(){
     ui->tableWidget_transaction->setColumnCount(8);
     ui->tableWidget_transaction->clear();
 
-    ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"TransType"<<"Amount"<<"Payment Type"<<"ChequeNo"<<"MSQ"<<"ChequeDate"<<"Employee");
+    ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"TransType"<<"Amount"<<"Payment Type"<<"Employee"<<"ChequeNo"<<"MSQ"<<"ChequeDate");
     ui->tableWidget_transaction->setMinimumHeight(30*6-1);
 
 }
@@ -2664,14 +2664,30 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
         x->setColumnWidth(2, width*0.16);
     }
 
+    //clear old data
+    ui->tw_caseFiles->clearContents();
+    ui->tw_caseFiles->setRowCount(0);
+    ui->le_caseFilter->clear();
+
     //get client id
     int nRow = ui->tableWidget_search_client->currentRow();
     if (nRow <0)
         return;
     curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
-    QString curFirstName = ui->tableWidget_search_client->item(nRow, 1)->text();
-    QString curMiddleName = ui->tableWidget_search_client->item(nRow, 2)->text().size() > 0 ? ui->tableWidget_search_client->item(nRow, 2)->text()+ " " : "";
-    QString curLastName = ui->tableWidget_search_client->item(nRow, 3)->text();
+    QString curFirstName = ui->tableWidget_search_client->item(nRow, 2)->text();
+    QString curMiddleName = ui->tableWidget_search_client->item(nRow, 3)->text().size() > 0 ? ui->tableWidget_search_client->item(nRow, 2)->text()+ " " : "";
+    QString curLastName = ui->tableWidget_search_client->item(nRow, 1)->text();
+
+    //if dir was saved
+    if (!ui->le_caseDir->text().isEmpty()){
+    QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+                          ui->tableWidget_search_client->item(nRow, 2)->text() + "*");
+
+    qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+                ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
+    ui->le_caseDir->setText(dir.path());
+    populate_tw_caseFiles(filter);
+    }
 
     qDebug() << "id displayed:" << idDisplayed;
     qDebug() << "id selected:" << curClientID;
@@ -3268,7 +3284,11 @@ void MainWindow::on_pushButton_25_clicked()
 // program clicked + selected
 void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
 {    
-    //if (lastprogramclicked != index) {
+    if (!resettingfromcode) {
+        if (index == lastprogramclicked) {
+            return;
+        }
+    }
         ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
         ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
         ui->lbl_editProgWarning->setText("Please hold while we set your beds");
@@ -3276,6 +3296,7 @@ void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
 
         ui->availablebedslist->clear();
         ui->availablebedslist->setRowCount(0);
+
         ui->assignedbedslist->clear();
         ui->assignedbedslist->setRowCount(0);
 
@@ -3386,7 +3407,7 @@ void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
 
         // ui->assignedbedslist->setModel(assignedmodel);
           lastprogramclicked = index;
-    //}
+
 
 }
 
@@ -3405,11 +3426,11 @@ void MainWindow::on_pushButton_3_clicked()
         mruDir.setValue(DEFAULT_DIR_KEY, tempDir);
         int nRow = ui->tableWidget_search_client->currentRow();
 
-        QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 3)->text() + ", " +
-                              ui->tableWidget_search_client->item(nRow, 1)->text() + "*");
+        QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+                              ui->tableWidget_search_client->item(nRow, 2)->text() + "*");
 
-        qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 3)->text() + ", " +
-                    ui->tableWidget_search_client->item(nRow, 1)->text() + "*";
+        qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+                    ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
         ui->le_caseDir->setText(dir.path());
         populate_tw_caseFiles(filter);
     }
@@ -3701,7 +3722,11 @@ void MainWindow::on_addbedtoprogram_clicked()
     // update tag value
     dbManager->updateSpaceProgram(spaceid, currenttag);
 
+    resettingfromcode = true;
+
     on_tableWidget_2_clicked(lastprogramclicked);
+
+    resettingfromcode = false;
 
     // ui->availablebedslist->clear();
     // ui->availablebedslist->setRowCount(0);
@@ -3807,7 +3832,9 @@ void MainWindow::on_removebedfromprogram_clicked()
 //    ui->assignedbedslist->setRowCount(0);
 //    ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
 //    ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+    resettingfromcode = true;
     on_tableWidget_2_clicked(lastprogramclicked);
+    resettingfromcode = false;
     ui->lbl_editProgWarning->setText("Bed Removed from Program");
 }
 
@@ -3944,8 +3971,6 @@ void MainWindow::resizeTableView(QTableView* tableView)
 
     int cols = tableView->horizontalHeader()->count();
     double width = tableView->horizontalHeader()->size().width();
-    qDebug() << "report report type = ";
-    qDebug() << " width = " << width;
     double currentWidth = 0;
     for (int i = 0; i < cols; ++i)
     {
@@ -4337,7 +4362,7 @@ void MainWindow::on_pushButton_processPaymeent_clicked()
     setSelectedClientInfo();
     trans = new transaction();
     QString note = "";
-    payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true, userLoggedIn, QString::number(currentshiftid));
+    payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true, usernameLoggedIn, QString::number(currentshiftid));
     pay->exec();
     delete(pay);
 }
@@ -6088,7 +6113,7 @@ void MainWindow::setShift() {
 //    lbl_curShift = new QLabel();
 //    lbl_curShift->setText("Shift Number: " + currentshiftid);
 //    statusBar()->addPermanentWidget(lbl_curShift);
-  //  qDebug() << "Updated Shift";
+      qDebug() << "Shiftno =" << currentshiftid;
 }
 
 void MainWindow::on_btn_saveShift_clicked()
