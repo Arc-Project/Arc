@@ -3957,6 +3957,11 @@ void MainWindow::on_saveOther_btn_clicked()
     {
         statusBar()->showMessage(tr("Could not save new log"), 5000);
     }
+    QDate date = ui->shiftReport_dateEdit->date();
+    int shiftNo = ui->shiftReport_spinBox->value();
+   useProgressDialog("Processing reports...",
+       QtConcurrent::run(otherReport, &bookingReport->updateModelThread, date, shiftNo));
+
 }
 
 void MainWindow::getDailyReportStats(QDate date)

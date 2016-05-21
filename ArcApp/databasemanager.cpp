@@ -1001,13 +1001,13 @@ bool DatabaseManager::getDailyReportCheckoutQuery(QSqlQuery* queryResults, QDate
 {
     QString queryString =
         QString("SELECT b.ClientName, s.SpaceCode, b.StartDate, ")
-        + QString("b.EndDate, b.ProgramCode, REPLACE('$' + CAST(c.Balance AS VARCHAR), '$-', '-$') ")
+        + QString("b.EndDate, b.ProgramCode, c.EspDays, REPLACE('$' + CAST(c.Balance AS VARCHAR), '$-', '-$') ")
         + QString("FROM Booking b INNER JOIN Client c ON b.ClientId = c.ClientId ")
         + QString("INNER JOIN Space s ON b.SpaceId = s.SpaceId ")
         + QString("WHERE EndDate = '" + date.toString(Qt::ISODate))
         + QString("' AND FirstBook = 'YES' ORDER BY b.ProgramCode Desc" );
 
-        // qDebug() << queryString;
+        qDebug() << queryString;
     return queryResults->exec(queryString);
 }
 
