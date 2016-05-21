@@ -180,7 +180,7 @@ QHeaderView{
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -3680,6 +3680,9 @@ QHeaderView{
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
              <property name="selectionMode">
               <enum>QAbstractItemView::SingleSelection</enum>
              </property>
@@ -3687,6 +3690,9 @@ QHeaderView{
               <enum>QAbstractItemView::SelectRows</enum>
              </property>
              <property name="showGrid">
+              <bool>false</bool>
+             </property>
+             <property name="sortingEnabled">
               <bool>false</bool>
              </property>
              <property name="rowCount">
@@ -3698,10 +3704,19 @@ QHeaderView{
              <attribute name="horizontalHeaderVisible">
               <bool>false</bool>
              </attribute>
+             <attribute name="horizontalHeaderCascadingSectionResizes">
+              <bool>false</bool>
+             </attribute>
              <attribute name="horizontalHeaderMinimumSectionSize">
               <number>1</number>
              </attribute>
              <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderStretchLastSection">
               <bool>false</bool>
              </attribute>
             </widget>
@@ -3914,6 +3929,16 @@ QHeaderView{
                   </property>
                  </item>
                 </widget>
+               </item>
+               <item row="5" column="0">
+                <widget class="QLabel" name="label_8">
+                 <property name="text">
+                  <string>Employee Name:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
+                <widget class="QLineEdit" name="lineEdit_EmpName"/>
                </item>
               </layout>
              </item>
@@ -4767,8 +4792,8 @@ QHeaderView{
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>718</width>
-                 <height>1381</height>
+                 <width>620</width>
+                 <height>1294</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -14754,7 +14779,7 @@ QHeaderView{
      <x>0</x>
      <y>0</y>
      <width>1542</width>
-     <height>29</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="font">

@@ -1750,20 +1750,20 @@ QSqlQuery DatabaseManager::findUser(QString username) {
     return query;
 }
 
-QSqlQuery DatabaseManager::addNewEmployee(QString username, QString password, QString role) {
+QSqlQuery DatabaseManager::addNewEmployee(QString username, QString password, QString role, QString name) {
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
 
-    query.exec("INSERT INTO Employee VALUES ('" + username + "', '" + password + "', '" + role + "')");
+    query.exec("INSERT INTO Employee VALUES ('" + username + "', '" + password + "', '" + role + "', '" + name + "')");
 
     return query;
 }
 
-QSqlQuery DatabaseManager::updateEmployee(QString username, QString password, QString role) {
+QSqlQuery DatabaseManager::updateEmployee(QString username, QString password, QString role, QString name) {
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
 
-    query.exec("UPDATE Employee SET Password='" + password + "', Role='" + role + "'WHERE Username='" + username + "';");
+    query.exec("UPDATE Employee SET EmpName='"+ name +"', Password='" + password + "', Role='" + role + "'WHERE Username='" + username + "';");
 
     return query;
 }
