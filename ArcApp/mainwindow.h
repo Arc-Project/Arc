@@ -116,6 +116,7 @@ public:
     void clearTable(QTableWidget * table);
     void setBookSummary();
     bool doMessageBox(QString message);
+    double realCost(QDate start, QDate end, double daily, double monthly);
 
     //COLIN END//////
 
@@ -597,6 +598,8 @@ private slots:
     void on_checkBox_cl_dob_no_clicked(bool checked);
 
     void on_editDelete_clicked();
+    void on_addMonth_clicked();
+
 private:
 
     Ui::MainWindow *ui;
