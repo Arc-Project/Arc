@@ -2272,7 +2272,8 @@ void MainWindow::displayTransaction(QSqlQuery results, QTableWidget* table){
     while(row > transacTotal){
         table->setRowCount(transacTotal);
     }
-    if (row > 25){
+    if (row > 23){
+        table->setMinimumHeight(30*24 -1);
         return;
     }
     table->setMinimumHeight(30*(row+1) -1);
@@ -2333,8 +2334,8 @@ void MainWindow::displayBookHistory(QSqlQuery results, QTableWidget * table){
     if(row > bookingTotal)
         table->setRowCount(bookingTotal);
 
-    if (row > 25){
-        table->setMinimumHeight(30*26 -1);
+    if (row > 23){
+        table->setMinimumHeight(30*24 -1);
         return;
     }
     if(row >5)
