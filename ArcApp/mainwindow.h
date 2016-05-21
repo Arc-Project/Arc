@@ -41,6 +41,7 @@
 
 #include <QMainWindow>
 #include <QDebug>
+#include <utility>
 #include <QtConcurrent/QtConcurrent>
 #include "databasemanager.h"
 #include "bookingmanager.h"
@@ -78,6 +79,7 @@ public:
     Worker* work = new Worker();
 
     QString userLoggedIn = "SOMEUSER";
+    QString usernameLoggedIn = "HANK";
     int currentrole = STANDARD;
     int currentshiftid = 0;
 
@@ -117,7 +119,9 @@ public:
     void clearTable(QTableWidget * table);
     void setBookSummary();
     bool doMessageBox(QString message);
-
+    double realCost(QDate start, QDate end, double daily, double monthly);
+    std::pair<int,int> monthDay(QDate start, QDate end);
+    double quickCost(std::pair<int,int>p, double daily, double monthly);
     //COLIN END//////
 
     void updatemenuforuser();
@@ -278,6 +282,8 @@ private slots:
     void getCaseWorkerList();
 
     void defaultRegisterOptions();
+
+    void on_button_delete_client_clicked();
 
 
 
@@ -598,7 +604,13 @@ private slots:
     void on_checkBox_cl_dob_no_clicked(bool checked);
 
     void on_editDelete_clicked();
-    void on_button_delete_client_clicked();
+
+
+
+    void on_addMonth_clicked();
+
+    void on_bookingTable_itemClicked(QTableWidgetItem *item);
+
 
 private:
 
