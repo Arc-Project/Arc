@@ -2035,7 +2035,7 @@ void MainWindow::displayClientInfoThread(QString val){
 
    ui->label_cl_info_Supporter2_name_val->setText(clientInfo.value(18).toString());
    ui->label_cl_info_Supporter2_contact_val->setText(clientInfo.value(19).toString());
-   ui->label_cl_info_comment->setText(clientInfo.value(20).toString());
+   ui->textEdit_cl_info_comment->document()->setPlainText(clientInfo.value(20).toString());
 }
 
 void MainWindow::displayPicThread()
@@ -2288,7 +2288,7 @@ void MainWindow::initClientLookupInfo(){
     ui->label_cl_info_Supporter2_name_val->clear();
     ui->label_cl_info_Supporter2_contact_val->clear();
 
-    ui->label_cl_info_comment->clear();
+    ui->textEdit_cl_info_comment->clear();
 
     QGraphicsScene *scene = new QGraphicsScene();
     scene->clear();
