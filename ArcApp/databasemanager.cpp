@@ -1016,7 +1016,7 @@ bool DatabaseManager::getDailyReportCheckoutQuery(QSqlQuery* queryResults, QDate
         + QString("WHERE EndDate = '" + date.toString(Qt::ISODate))
         + QString("' AND FirstBook = 'YES' ORDER BY b.ProgramCode Desc" );
 
-        qDebug() << queryString;
+        // qDebug() << queryString;
     return queryResults->exec(queryString);
 }
 
@@ -1151,9 +1151,9 @@ int DatabaseManager::getDailyReportTotalVacancies(QDate date)
             + QString(date.toString(Qt::ISODate) + "') as b ")
             + QString("ON s.SpaceId = b.SpaceId ")
             + QString("WHERE b.Date IS NULL");
-    qDebug() << queryString;
+    // qDebug() << queryString;
     int test = DatabaseManager::getIntFromQuery(queryString);
-    qDebug() << "totalVacancies" << QString::number(test);
+    // qDebug() << "totalVacancies" << QString::number(test);
     return DatabaseManager::getIntFromQuery(queryString);
 }
 

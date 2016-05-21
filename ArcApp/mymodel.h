@@ -27,7 +27,7 @@ private:
     QStringList* tableTitle = NULL;
     int type;
 signals:
-    void modelDataUpdated(int type);
+    void modelDataUpdated(int type, int cols);
 };
 
 #endif // MYMODEL_H

@@ -43,7 +43,7 @@ void MyModel::setData(QStringList* data, int rowCount, int colCount, int reportT
     cols = colCount;
     type = reportType;
     endResetModel();
-    emit MyModel::modelDataUpdated(type);
+    emit MyModel::modelDataUpdated(type, cols);
 }
 
 void MyModel::setTitle(QStringList* title)
