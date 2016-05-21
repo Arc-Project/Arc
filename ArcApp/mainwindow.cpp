@@ -803,6 +803,7 @@ void MainWindow::setBooking(int row){
     curBook->stringStart = ui->startDateEdit->date().toString(Qt::ISODate);
     curBook->stringEnd = ui->endDateEdit->date().toString(Qt::ISODate);
     //curBook->monthly = ui->monthCheck->isChecked();
+    curBook->monthly = false;
     curBook->program = ui->programDropdown->currentText();
     curBook->room = ui->bookingTable->item(row,0)->text();
     curBook->stayLength = ui->endDateEdit->date().toJulianDay() - ui->startDateEdit->date().toJulianDay();
@@ -852,7 +853,7 @@ void MainWindow::populateBooking(){
     else{
         ui->monthLabel->setText("NO");
     }
-    ui->bookTotalCost->setText(QString::number(curBook->cost, 'f', 2));
+
 }
 
 void MainWindow::getProgramCodes(){
@@ -4774,10 +4775,10 @@ void MainWindow::on_EditShiftsButton_clicked()
 {
 
     addHistory(ADMINPAGE);
-    //ui->stackedWidget->setCurrentIndex(EDITSHIFT);
-    ui->stackedWidget->setCurrentIndex(17);
-    showShifts(0);
-   return;
+   ui->stackedWidget->setCurrentIndex(EDITSHIFT);
+   // ui->stackedWidget->setCurrentIndex(17);
+   // showShifts(0);
+   //return;
     ui->tableWidget_6->clearContents();
 
     // populate table
