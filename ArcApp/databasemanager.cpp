@@ -168,6 +168,17 @@ void DatabaseManager::printAll(QSqlQuery queryResults)
         qDebug() << record;
     }
 }
+bool DatabaseManager::deleteBooking(QString id){
+    QSqlQuery query(db);
+    QString q = "DELETE FROM Booking WHERE BookingId ='" + id + "'";
+    return query.exec(q);
+}
+QSqlQuery DatabaseManager::getRole(QString empName){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Employee WHERE Username ='" + empName + "'";
+    query.exec(q);
+    return query;
+}
 
 QSqlQuery DatabaseManager::execQuery(QString queryString)
 {
@@ -999,13 +1010,13 @@ bool DatabaseManager::getDailyReportCheckoutQuery(QSqlQuery* queryResults, QDate
 {
     QString queryString =
         QString("SELECT b.ClientName, s.SpaceCode, b.StartDate, ")
-        + QString("b.EndDate, b.ProgramCode, REPLACE('$' + CAST(c.Balance AS VARCHAR), '$-', '-$') ")
+        + QString("b.EndDate, b.ProgramCode, c.EspDays, REPLACE('$' + CAST(c.Balance AS VARCHAR), '$-', '-$') ")
         + QString("FROM Booking b INNER JOIN Client c ON b.ClientId = c.ClientId ")
         + QString("INNER JOIN Space s ON b.SpaceId = s.SpaceId ")
         + QString("WHERE EndDate = '" + date.toString(Qt::ISODate))
         + QString("' AND FirstBook = 'YES' ORDER BY b.ProgramCode Desc" );
 
-        // qDebug() << queryString;
+        qDebug() << queryString;
     return queryResults->exec(queryString);
 }
 
@@ -1759,20 +1770,20 @@ QSqlQuery DatabaseManager::findUser(QString username) {
     return query;
 }
 
-QSqlQuery DatabaseManager::addNewEmployee(QString username, QString password, QString role) {
+QSqlQuery DatabaseManager::addNewEmployee(QString username, QString password, QString role, QString name) {
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
 
-    query.exec("INSERT INTO Employee VALUES ('" + username + "', '" + password + "', '" + role + "')");
+    query.exec("INSERT INTO Employee VALUES ('" + username + "', '" + password + "', '" + role + "', '" + name + "')");
 
     return query;
 }
 
-QSqlQuery DatabaseManager::updateEmployee(QString username, QString password, QString role) {
+QSqlQuery DatabaseManager::updateEmployee(QString username, QString password, QString role, QString name) {
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
 
-    query.exec("UPDATE Employee SET Password='" + password + "', Role='" + role + "'WHERE Username='" + username + "';");
+    query.exec("UPDATE Employee SET EmpName='"+ name +"', Password='" + password + "', Role='" + role + "'WHERE Username='" + username + "';");
 
     return query;
 }
