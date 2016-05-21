@@ -1953,6 +1953,7 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
                 qDebug()<<"TransactionHistory Is RUNNING";
                 return;
             }
+             qDebug()<<"transaction info start really";
             ui->pushButton_cl_trans_more->setEnabled(true);
             transacFuture = QtConcurrent::run(this, &searchTransaction, curClientID);
             useProgressDialog("Read recent transaction...", transacFuture);
@@ -1970,7 +1971,7 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
                  qDebug()<<"BookingHistory Is RUNNING";
                  return;
              }
-             ui->pushButton_cl_book_more->setEnabled(true);
+                        ui->pushButton_cl_book_more->setEnabled(true);
              bookHistoryFuture = QtConcurrent::run(this, &searchBookHistory, curClientID);
              useProgressDialog("Read recent booking...", bookHistoryFuture);
              //bookHistoryFuture.waitForFinished();
@@ -2001,6 +2002,7 @@ void MainWindow::selected_client_info(int nRow, int nCol)
 {
     Q_UNUSED(nCol)
     curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
+    ui->textEdit_cl_info_comment->clear();
     newTrans = true;
     newHistory = true;
     getClientInfo();
@@ -2197,15 +2199,16 @@ void MainWindow::searchTransaction(QString clientId){
     qDebug()<<"search transaction STaRt";
 
     QSqlQuery transQuery = dbManager->searchClientTransList(transacNum, clientId, CLIENTLOOKUP);
-    initClientLookupInfo();
+    //initClientLookupInfo();
     initClTransactionTable();
+    qDebug()<<"############CHECK TRANS QUERY";
     displayTransaction(transQuery, ui->tableWidget_transaction);
 
     QString totalNum= (transacTotal == 0)? "-" :
                      (QString::number(ui->tableWidget_transaction->rowCount()) + " / " + QString::number(transacTotal));
     ui->label_cl_trans_total_num->setText(totalNum + " Transaction");
 
-
+    qDebug()<<"FINE FOR SEARCH clientTransaction";
 }
 
 void MainWindow::initClTransactionTable(){
@@ -2222,6 +2225,7 @@ void MainWindow::initClTransactionTable(){
 
 //search transaction list when click transaction list
 void MainWindow::displayTransaction(QSqlQuery results, QTableWidget* table){
+    qDebug()<<"display transaction table";
    // ui->textEdit_cl_info_comment->clear();
     int row = 0;
     int colCnt = results.record().count();
@@ -2361,12 +2365,13 @@ void MainWindow::initClientLookupInfo(){
 
     ui->textEdit_cl_info_comment->clear();
 
+    qDebug()<<"CLEAR ALL INFO FIELD";
     QGraphicsScene *scene = new QGraphicsScene();
     scene->clear();
     ui->graphicsView_getInfo->setScene(scene);
 
     profilePic = (QImage)NULL;
-
+    qDebug()<<"CLEAR IMAGE FIELD";
     ui->label_cl_info_status->setAutoFillBackground(false);
 
     //initialize transaction
@@ -2383,6 +2388,7 @@ void MainWindow::initClientLookupInfo(){
     //initialize booking total count
     ui->label_cl_booking_total_num->setText("");
 
+    qDebug()<<"START BUTTON SETTUP";
     //disable buttons that need a clientId
     if(curClientID == NULL){
         ui->pushButton_bookRoom->setEnabled(false);
@@ -2390,7 +2396,7 @@ void MainWindow::initClientLookupInfo(){
         ui->pushButton_editClientInfo->setEnabled(false);
         ui->pushButton_CaseFiles->setEnabled(false);
     }
-
+    qDebug()<<"START HIDE BUTTON SETTUP";
     //hide buttons for different workflows
     switch (workFlow){
     case BOOKINGPAGE:
@@ -2428,7 +2434,7 @@ void MainWindow::initClientLookupInfo(){
         break;
     }
 
-
+    qDebug()<<"END BUTTON SETTUP";
 }
 
 
@@ -5892,7 +5898,7 @@ void MainWindow::setShift() {
        {
            QSqlQuery query(tempDb);
 
-           qDebug() << "Setting shift now";
+          // qDebug() << "Setting shift now";
            currentshiftid = -1;
            // current time
            QDateTime curtime = QDateTime::currentDateTime();
@@ -6035,7 +6041,7 @@ void MainWindow::setShift() {
 //    lbl_curShift = new QLabel();
 //    lbl_curShift->setText("Shift Number: " + currentshiftid);
 //    statusBar()->addPermanentWidget(lbl_curShift);
-    qDebug() << "Updated Shift";
+  //  qDebug() << "Updated Shift";
 }
 
 void MainWindow::on_btn_saveShift_clicked()
