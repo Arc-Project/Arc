@@ -32,6 +32,7 @@
 #define NOREGISTER          0
 #define NEWCLIENT           1
 #define EDITCLIENT          2
+#define DELETECLIENT        3
 
 #define PERSIONACASEPLAN 	0
 #define RUNNINGNOTE			1
@@ -281,6 +282,8 @@ private slots:
     void getCaseWorkerList();
 
     void defaultRegisterOptions();
+
+    void on_button_delete_client_clicked();
 
 
 
@@ -601,9 +604,13 @@ private slots:
     void on_checkBox_cl_dob_no_clicked(bool checked);
 
     void on_editDelete_clicked();
+
+
+
     void on_addMonth_clicked();
 
     void on_bookingTable_itemClicked(QTableWidgetItem *item);
+
 
 private:
 
