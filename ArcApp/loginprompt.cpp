@@ -49,6 +49,8 @@ void LoginPrompt::on_btn_login_clicked()
         w->show();
 
         w->userLoggedIn = username;
+
+
         w->updatemenuforuser();
 
         // thread for updating shift no every minute

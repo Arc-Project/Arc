@@ -311,7 +311,7 @@ void payment::on_btn_ok_clicked()
 
         return;
     }
-    if(doMessageBox("Adding payment, this is permentant, confirm?")){
+    if(doMessageBox("Adding payment, this is permenant, confirm?")){
 
         payment::on_addPaymentButton_clicked();
         close();
