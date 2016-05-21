@@ -2029,7 +2029,7 @@ void MainWindow::setSelectedClientInfo(){
     //transacTotal
     curClient = new Client();
     int nRow = ui->tableWidget_search_client->currentRow();
-    if (nRow <=0){
+    if (nRow <0){
         if(curClientID == NULL){
             statusBar()->showMessage(tr("Please search and select Client"), 5000);
             return;
@@ -2044,7 +2044,7 @@ void MainWindow::setSelectedClientInfo(){
             curClient->balance =  balanceString.toFloat();
             // curClient->balance =  ui->label_cl_info_balance_amt->text().toFloat();
 
-            curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
+         //   curClient->fullName = QString(curClient->lName + " " + curClient->fName + " " + curClient->mName);
         }
     }
     else{
@@ -2057,10 +2057,22 @@ void MainWindow::setSelectedClientInfo(){
         curClient->balance =  balanceString.toFloat();
         // curClient->balance =  ui->tableWidget_search_client->item(nRow, 5)->text().toFloat();
 
-        curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
+      //  curClient->fullName = QString(curClient->lName + " " + curClient->fName + " " + curClient->mName);
     }
 
-
+    //MAKE FULL NAME
+    if(curClient->fName!=NULL)
+        curClient->fullName = QString(curClient->fName);
+    if(curClient->lName!=NULL){
+        if(curClient->fullName!="")
+            curClient->fullName += QString(", ");
+        curClient->fullName += QString(curClient->lName);
+    }
+    if(curClient->mName!=NULL){
+        if(curClient->fullName!="")
+            curClient->fullName += QString(" ");
+        curClient->fullName += QString(curClient->mName);
+    }
 
     qDebug()<<"ID: " << curClientID << curClient->clientId;
     qDebug()<<"NAME: " << curClient->fullName;
