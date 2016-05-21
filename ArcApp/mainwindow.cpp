@@ -365,6 +365,7 @@ void MainWindow::on_lunchCheck_clicked()
 void MainWindow::on_paymentButton_2_clicked()
 {
     trans = new transaction();
+    trans->paidToday = 0;
     double owed;
     //owed = curBook->cost;
     owed = ui->costInput->text().toDouble();
@@ -374,7 +375,17 @@ void MainWindow::on_paymentButton_2_clicked()
     ui->stayLabel->setText(QString::number(curClient->balance, 'f', 2));
     qDebug() << "Done";
     delete(pay);
+    double totalPaid = ui->bookAmtPaid->text().toDouble();
+    totalPaid += trans->paidToday;
+    if(totalPaid < 0){
+        ui->bookLabelPaid->setText("Total Refunded:");
+        ui->bookAmtPaid->setText(QString::number(totalPaid * -1, 'f', 2));
 
+    }
+    else{
+        ui->bookLabelPaid->setText("Total Paid:");
+        ui->bookAmtPaid->setText(QString::number(totalPaid, 'f', 2));
+    }
 
 }
 void MainWindow::on_startDateEdit_dateChanged()
@@ -813,6 +824,8 @@ void MainWindow::on_makeBookingButton_clicked()
     ui->stackedWidget->setCurrentIndex(BOOKINGPAGE);
     populateBooking();
     ui->makeBookingButton_2->setEnabled(true);
+    ui->bookAmtPaid->setText("0");
+    ui->confirmTotalPaid->setText("0");
 
 }
 void MainWindow::populateBooking(){
@@ -1103,6 +1116,8 @@ void MainWindow::on_editDate_dateChanged(const QDate &date)
         while(result.next()){
             if(x == 0){
                 nextStart = QDate::fromString(result.value("StartDate").toString(), "yyyy-MM-dd");
+                if(nextStart > date)
+                    nextStart = date;
             }
             x++;
         }
@@ -1312,6 +1327,7 @@ void MainWindow::populateConfirm(){
     ui->confirmRoom->setText(curBook->room);
     ui->confirmPaid->setText(QString::number(curClient->balance));
     ui->confirmProgram->setText(curBook->program);
+    ui->confirmTotalPaid->setText(QString::number(trans->paidToday, 'f', 2));
 
 
 }
@@ -5872,3 +5888,37 @@ void MainWindow::on_addStorageClient_clicked()
     delete(sto);
 }
 
+
+void MainWindow::on_editDelete_clicked()
+{
+    QSqlQuery role = dbManager->getRole(userLoggedIn);
+    if(!role.next())
+        return;
+    QString userRole = role.value("Role").toString();
+    if(userRole != "ADMIN"){
+        doMessageBox("Admin only feature");
+        return;
+    }
+    if(!doMessageBox("Deleting is permenant, and no refund is given. Continue?"))
+        return;
+    int row = ui->editLookupTable->selectionModel()->currentIndex().row();
+    if(row == -1)
+        return;
+    ui->editDelete->setEnabled(false);
+    curBook = new Booking();
+    popBookFromRow();
+    QSqlQuery result = dbManager->getBalance(curBook->clientId);
+    if(!result.next()){
+        ui->editDelete->setEnabled(true);
+        return;
+    }
+    double curBal = result.value("Balance").toString().toDouble();
+    if(!dbManager->deleteBooking(curBook->bookID)){
+        qDebug() << "Error deleting booking";
+    }
+    curBal += curBook->cost;
+    if(!dbManager->updateBalance(curBal, curBook->clientId))
+        qDebug() << "Error updating balance";
+    ui->editLookupTable->removeRow(row);
+    ui->editDelete->setEnabled(true);
+}

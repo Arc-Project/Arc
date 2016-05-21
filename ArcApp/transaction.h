@@ -18,6 +18,7 @@ public:
     QString transType;
     QString transId;
     QString outstanding;
+    double paidToday;
 };
 
 #endif // TRANSACTION_H

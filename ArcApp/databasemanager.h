@@ -148,7 +148,8 @@ public:
     bool updateStoreDate(QString storeId);
     QSqlQuery getFullStorage();
     bool removeStorage(QString storeId);
-
+    bool deleteBooking(QString id);
+    QSqlQuery getRole(QString empName);
 
     //END COLIN STUFF///////////////////////////////////////////////////////
     void print();
