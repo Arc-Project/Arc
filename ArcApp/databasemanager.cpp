@@ -553,7 +553,7 @@ QSqlQuery DatabaseManager::searchClientTransList(int maxNum, QString clientId, i
     QString queryStart;
     if(type == 1){   //CLIENT INFO PAGE
         queryStart = "SELECT TOP "+ QString::number(maxNum)
-                   + QString(" Date, TransType, Amount, Type, ChequeNo, MSQ, ChequeDate, EmpName ");
+                   + QString(" Date, TransType, Amount, Type, EmpName , ChequeNo, MSQ, ChequeDate ");
     }else{          //CASEFILE PAGE
         queryStart = "SELECT "
                    + QString(" CAST(Date AS datetime) + CAST(Time AS datetime) AS Datetime, TransType, Amount, Type, ChequeNo, MSQ, ChequeDate, Deleted, Outstanding, EmpName, Notes ");

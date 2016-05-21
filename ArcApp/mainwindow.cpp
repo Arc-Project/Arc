@@ -1899,12 +1899,12 @@ void MainWindow::set_curClient_name(int nRow, int nCol){
 
     qDebug()<<"curClientName";
     //MAKE FULL NAME
-    if(fName!=NULL)
-        curClientName = QString(fName.toUpper());
-    if(lName!=NULL){
+    if(lName!=NULL)
+        curClientName = QString(lName.toUpper());
+    if(fName!=NULL){
         if(curClientName!="")
             curClientName += QString(", ");
-        curClientName += QString(lName.toUpper());
+        curClientName += QString(fName.toUpper());
     }
     if(mName!=NULL){
         if(curClientName!="")
@@ -2193,12 +2193,12 @@ void MainWindow::setSelectedClientInfo(){
     }
 
     //MAKE FULL NAME
-    if(curClient->fName!=NULL)
-        curClient->fullName = QString(curClient->fName);
-    if(curClient->lName!=NULL){
+    if(curClient->lName!=NULL)
+        curClient->fullName = QString(curClient->lName);
+    if(curClient->fName!=NULL){
         if(curClient->fullName!="")
             curClient->fullName += QString(", ");
-        curClient->fullName += QString(curClient->lName);
+        curClient->fullName += QString(curClient->fName);
     }
     if(curClient->mName!=NULL){
         if(curClient->fullName!="")
@@ -2238,7 +2238,7 @@ void MainWindow::initClTransactionTable(){
     ui->tableWidget_transaction->setColumnCount(8);
     ui->tableWidget_transaction->clear();
 
-    ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"TransType"<<"Amount"<<"Payment Type"<<"ChequeNo"<<"MSQ"<<"ChequeDate"<<"Employee");
+    ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"TransType"<<"Amount"<<"Payment Type"<<"Employee"<<"ChequeNo"<<"MSQ"<<"ChequeDate");
     ui->tableWidget_transaction->setMinimumHeight(30*6-1);
 
 }
