@@ -19,12 +19,12 @@
      <property name="minimumSize">
       <size>
        <width>93</width>
-       <height>28</height>
+       <height>35</height>
       </size>
      </property>
      <property name="font">
       <font>
-       <pointsize>10</pointsize>
+       <pointsize>14</pointsize>
       </font>
      </property>
      <property name="text">
@@ -37,12 +37,12 @@
      <property name="minimumSize">
       <size>
        <width>93</width>
-       <height>28</height>
+       <height>35</height>
       </size>
      </property>
      <property name="font">
       <font>
-       <pointsize>10</pointsize>
+       <pointsize>14</pointsize>
       </font>
      </property>
      <property name="text">
@@ -64,7 +64,13 @@
     </spacer>
    </item>
    <item row="0" column="0" colspan="3">
-    <widget class="QPlainTextEdit" name="storageInput"/>
+    <widget class="QPlainTextEdit" name="storageInput">
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+      </font>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

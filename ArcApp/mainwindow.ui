@@ -176,11 +176,11 @@ QHeaderView{
 </string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout_6">
+   <layout class="QGridLayout" name="gridLayout_78">
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>10</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -803,7 +803,7 @@ QHeaderView{
            </font>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="tab_cl_general">
            <attribute name="title">
@@ -2446,7 +2446,7 @@ QHeaderView{
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>100</width>
+                  <width>250</width>
                   <height>16777215</height>
                  </size>
                 </property>
@@ -2456,7 +2456,7 @@ QHeaderView{
                  </font>
                 </property>
                 <property name="text">
-                 <string>Add New</string>
+                 <string>Add / Remove Items</string>
                 </property>
                </widget>
               </item>
@@ -12328,594 +12328,607 @@ QHeaderView{
        </layout>
       </widget>
       <widget class="QWidget" name="page_7">
-       <widget class="QLabel" name="label_33">
-        <property name="geometry">
-         <rect>
-          <x>523</x>
-          <y>11</y>
-          <width>242</width>
-          <height>30</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>15</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Booking Successful</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_68">
-        <property name="geometry">
-         <rect>
-          <x>120</x>
-          <y>510</y>
-          <width>131</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Total Paid</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="confirmTotalPaid">
-        <property name="geometry">
-         <rect>
-          <x>110</x>
-          <y>560</y>
-          <width>72</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-       </widget>
-       <widget class="QWidget" name="layoutWidget">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>105</width>
-          <height>30</height>
-         </rect>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_42">
-         <item>
-          <widget class="QPushButton" name="confirmAddWake">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Edit Wakeups</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="layoutWidget">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>100</width>
-          <height>30</height>
-         </rect>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_44">
-         <item>
-          <widget class="QPushButton" name="confirmStorage">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Add Storage</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="layoutWidget">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>112</width>
-          <height>30</height>
-         </rect>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_40">
-         <item>
-          <widget class="QPushButton" name="confirmationFinal">
-           <property name="minimumSize">
-            <size>
-             <width>110</width>
-             <height>28</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Done</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QLabel" name="label_21">
-        <property name="geometry">
-         <rect>
-          <x>524</x>
-          <y>96</y>
-          <width>93</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Start Date:</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="confirmStart">
-        <property name="geometry">
-         <rect>
-          <x>717</x>
-          <y>96</y>
-          <width>72</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_22">
-        <property name="geometry">
-         <rect>
-          <x>524</x>
-          <y>131</y>
-          <width>83</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>End Date:</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="confirmEnd">
-        <property name="geometry">
-         <rect>
-          <x>717</x>
-          <y>131</y>
-          <width>72</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_23">
-        <property name="geometry">
-         <rect>
-          <x>524</x>
-          <y>166</y>
-          <width>62</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Nights:</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="confirmLength">
-        <property name="geometry">
-         <rect>
-          <x>717</x>
-          <y>166</y>
-          <width>72</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_24">
-        <property name="geometry">
-         <rect>
-          <x>524</x>
-          <y>201</y>
-          <width>76</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Monthly:</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="confirmMonthly">
-        <property name="geometry">
-         <rect>
-          <x>717</x>
-          <y>201</y>
-          <width>72</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_25">
-        <property name="geometry">
-         <rect>
-          <x>524</x>
-          <y>283</y>
-          <width>56</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Room:</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="confirmRoom">
-        <property name="geometry">
-         <rect>
-          <x>717</x>
-          <y>283</y>
-          <width>72</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_26">
-        <property name="geometry">
-         <rect>
-          <x>524</x>
-          <y>318</y>
-          <width>79</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Program:</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="confirmProgram">
-        <property name="geometry">
-         <rect>
-          <x>717</x>
-          <y>318</y>
-          <width>72</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_42">
-        <property name="geometry">
-         <rect>
-          <x>524</x>
-          <y>407</y>
-          <width>44</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Cost:</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="confirmCost">
-        <property name="geometry">
-         <rect>
-          <x>717</x>
-          <y>407</y>
-          <width>72</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_27">
-        <property name="geometry">
-         <rect>
-          <x>524</x>
-          <y>442</y>
-          <width>73</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Balance:</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="confirmPaid">
-        <property name="geometry">
-         <rect>
-          <x>717</x>
-          <y>442</y>
-          <width>72</width>
-          <height>21</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>TextLabel</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_44">
-        <property name="geometry">
-         <rect>
-          <x>524</x>
-          <y>524</y>
-          <width>58</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Lunch:</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="confirmAddLunch">
-        <property name="geometry">
-         <rect>
-          <x>717</x>
-          <y>524</y>
-          <width>96</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>Edit Lunches</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_46">
-        <property name="geometry">
-         <rect>
-          <x>524</x>
-          <y>559</y>
-          <width>75</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>28</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Wakeup:</string>
-        </property>
-       </widget>
+       <layout class="QGridLayout" name="gridLayout_79">
+        <item row="3" column="4" rowspan="3" colspan="2">
+         <layout class="QFormLayout" name="formLayout_11">
+          <property name="horizontalSpacing">
+           <number>37</number>
+          </property>
+          <property name="verticalSpacing">
+           <number>47</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_44">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Lunch:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_46">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Wakeup:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="confirmAddLunch">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Edit Lunches</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="confirmAddWake">
+            <property name="minimumSize">
+             <size>
+              <width>170</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Edit Wakeups</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QPushButton" name="confirmStorage">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Add Storage</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_42">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Cost of Booking:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLabel" name="confirmCost">
+            <property name="minimumSize">
+             <size>
+              <width>120</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_27">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Balance Owing:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLabel" name="confirmPaid">
+            <property name="minimumSize">
+             <size>
+              <width>120</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_68">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Total Paid</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLabel" name="confirmTotalPaid">
+            <property name="minimumSize">
+             <size>
+              <width>120</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_81">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Storage:</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="3" column="1" rowspan="3">
+         <layout class="QFormLayout" name="formLayout_5">
+          <property name="horizontalSpacing">
+           <number>97</number>
+          </property>
+          <property name="verticalSpacing">
+           <number>47</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_21">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Start Date:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="confirmStart">
+            <property name="minimumSize">
+             <size>
+              <width>120</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_22">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>End Date:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="confirmEnd">
+            <property name="minimumSize">
+             <size>
+              <width>120</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_25">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Room:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="confirmRoom">
+            <property name="minimumSize">
+             <size>
+              <width>120</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_23">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Nights:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLabel" name="confirmLength">
+            <property name="minimumSize">
+             <size>
+              <width>120</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_24">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Monthly:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLabel" name="confirmMonthly">
+            <property name="minimumSize">
+             <size>
+              <width>120</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_26">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Program:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLabel" name="confirmProgram">
+            <property name="minimumSize">
+             <size>
+              <width>120</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="2" column="1">
+         <spacer name="verticalSpacer_15">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>113</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="1" colspan="4">
+         <widget class="QLabel" name="label_33">
+          <property name="font">
+           <font>
+            <pointsize>20</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Booking Successful</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <spacer name="horizontalSpacer_28">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>228</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="4" column="3">
+         <spacer name="horizontalSpacer_27">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>228</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="6" column="5">
+         <spacer name="verticalSpacer_14">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>73</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="5" column="6">
+         <spacer name="horizontalSpacer_61">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>228</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="1">
+         <spacer name="verticalSpacer_16">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>72</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="7" column="5">
+         <widget class="QPushButton" name="confirmationFinal">
+          <property name="minimumSize">
+           <size>
+            <width>270</width>
+            <height>35</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Return to Main Menu</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="5">
+         <spacer name="verticalSpacer_17">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="editABook">
        <layout class="QGridLayout" name="gridLayout_30">
@@ -14946,78 +14959,106 @@ QHeaderView{
        <zorder>verticalSpacer_60</zorder>
       </widget>
       <widget class="QWidget" name="storagePage">
-       <widget class="QPushButton" name="storesearch">
-        <property name="geometry">
-         <rect>
-          <x>860</x>
-          <y>0</y>
-          <width>93</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Search</string>
-        </property>
-       </widget>
-       <widget class="QTableWidget" name="storageTable">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>811</width>
-          <height>911</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QPlainTextEdit" name="storageInfo">
-        <property name="geometry">
-         <rect>
-          <x>840</x>
-          <y>170</y>
-          <width>471</width>
-          <height>191</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_19">
-        <property name="geometry">
-         <rect>
-          <x>840</x>
-          <y>140</y>
-          <width>111</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Items In Storage</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="storageEdit">
-        <property name="geometry">
-         <rect>
-          <x>1050</x>
-          <y>130</y>
-          <width>93</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Edit</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="storageDelete">
-        <property name="geometry">
-         <rect>
-          <x>1180</x>
-          <y>130</y>
-          <width>93</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Delete</string>
-        </property>
-       </widget>
+       <layout class="QGridLayout" name="gridLayout_6">
+        <item row="0" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_102">
+          <item>
+           <widget class="QLabel" name="label_80">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>List of Storage Entries</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="storesearch">
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Display All</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="storageDelete">
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Delete Entry</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="0" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_104">
+          <item>
+           <widget class="QLabel" name="label_19">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>15</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Items in the Selected Entry</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="storageEdit">
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Edit Items</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0">
+         <widget class="QTableWidget" name="storageTable">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QPlainTextEdit" name="storageInfo">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
