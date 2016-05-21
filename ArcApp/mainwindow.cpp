@@ -140,7 +140,7 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case BOOKINGLOOKUP: //WIDGET 2
             qDebug()<<"###BOOKING LOOKUP Client INFO###";
-
+            ui->bookCostLabel->setText("0");
             if(curClient != NULL){
                 qDebug()<<"ID: " << curClientID << curClient->clientId;
                 qDebug()<<"NAME: " << curClient->fullName;
@@ -391,6 +391,7 @@ void MainWindow::on_paymentButton_2_clicked()
     delete(pay);
     double totalPaid = ui->bookAmtPaid->text().toDouble();
     totalPaid += trans->paidToday;
+    curBook->paidTotal = totalPaid;
     if(totalPaid < 0){
         ui->bookLabelPaid->setText("Total Refunded:");
         ui->bookAmtPaid->setText(QString::number(totalPaid * -1, 'f', 2));
@@ -414,6 +415,7 @@ void MainWindow::on_startDateEdit_dateChanged()
     }
     clearTable(ui->bookingTable);
     ui->makeBookingButton->hide();
+    ui->bookCostLabel->setText("0");
 }
 
 void MainWindow::on_wakeupCheck_clicked()
@@ -442,12 +444,14 @@ void MainWindow::on_endDateEdit_dateChanged()
     ui->bookMonthLabel->setText(QString::number(p.first));
     ui->bookDayLabel->setText(QString::number(p.second));
     ui->makeBookingButton->hide();
+    ui->bookCostLabel->setText("0");
 }
 
 void MainWindow::on_monthCheck_clicked(bool checked)
 {
     clearTable(ui->bookingTable);
     ui->makeBookingButton->hide();
+    ui->bookCostLabel->setText("0");
     if(checked)
     {
         editOverLap = true;
@@ -808,6 +812,7 @@ void MainWindow::setBooking(int row){
     monthly = ui->bookingTable->item(row, 4)->text().toDouble();
     double cost;
     cost = realCost(curBook->startDate, curBook->endDate, daily, monthly);
+    curBook->cost = cost;
 
 }
 
@@ -824,7 +829,6 @@ void MainWindow::on_makeBookingButton_clicked()
     QStringList data;
     curBook = new Booking;
     setBooking(row);
-    return;
     ui->stackedWidget->setCurrentIndex(BOOKINGPAGE);
     populateBooking();
     ui->makeBookingButton_2->setEnabled(true);
@@ -848,6 +852,7 @@ void MainWindow::populateBooking(){
     else{
         ui->monthLabel->setText("NO");
     }
+    //ui->bookTotalCost->setText(QString::number(curBook->cost, 'f', 2));
 }
 
 void MainWindow::getProgramCodes(){
@@ -1332,9 +1337,17 @@ void MainWindow::populateConfirm(){
         ui->confirmMonthly->setText("NO");
     }
     ui->confirmRoom->setText(curBook->room);
-    ui->confirmPaid->setText(QString::number(curClient->balance));
+    ui->confirmPaid->setText(QString::number((curClient->balance - curBook->cost), 'f', 2));
     ui->confirmProgram->setText(curBook->program);
-    ui->confirmTotalPaid->setText(QString::number(trans->paidToday, 'f', 2));
+    if(curBook->paidTotal < 0){
+        ui->confirmPayRefund->setText("Total Refunded");
+        ui->confirmTotalPaid->setText(QString::number(curBook->paidTotal * -1, 'f', 2));
+
+    }else{
+        ui->confirmPayRefund->setText("Total Paid");
+
+        ui->confirmTotalPaid->setText(QString::number(curBook->paidTotal, 'f', 2));
+    }
 
 
 }
@@ -1979,21 +1992,25 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
              newHistory = false;
              break;
     case 3:
-        if(ui->tableWidget_search_client->selectionModel()->currentIndex().row() == -1)
-            return;
-        if(curClientID == "" || curClientID == NULL)
-            return;
-        QSqlQuery result = dbManager->loadStorage(curClientID);
-        if(result.next()){
-            QString res = result.value("StorageItems").toString();
-            ui->clientStorage->setPlainText(res);
-        }
-        ui->clientStorage->setEnabled(false);
+       setStorageClient();
 
         break;
     }
 }
 
+void MainWindow::setStorageClient(){
+    ui->clientStorage->clear();
+    if(ui->tableWidget_search_client->selectionModel()->currentIndex().row() == -1)
+        return;
+    if(curClientID == "" || curClientID == NULL)
+        return;
+    QSqlQuery result = dbManager->loadStorage(curClientID);
+    if(result.next()){
+        QString res = result.value("StorageItems").toString();
+        ui->clientStorage->setPlainText(res);
+    }
+    ui->clientStorage->setEnabled(false);
+}
 
 //get client information after searching
 //double click client information
@@ -4727,8 +4744,12 @@ void MainWindow::on_btn_modRoomType_clicked()
 
 void MainWindow::on_EditShiftsButton_clicked()
 {
+
     addHistory(ADMINPAGE);
-    ui->stackedWidget->setCurrentIndex(EDITSHIFT);
+    //ui->stackedWidget->setCurrentIndex(EDITSHIFT);
+    ui->stackedWidget->setCurrentIndex(17);
+    showShifts(0);
+   return;
     ui->tableWidget_6->clearContents();
 
     // populate table
@@ -4889,6 +4910,7 @@ void MainWindow::on_programDropdown_currentIndexChanged()
 {
     clearTable(ui->bookingTable);
     ui->makeBookingButton->hide();
+    ui->bookCostLabel->setText("0");
 }
 
 void MainWindow::on_confirmAddLunch_clicked()
@@ -6224,10 +6246,12 @@ void MainWindow::on_addStorageClient_clicked()
     result = dbManager->pullClient(curClientID);
     if(!result.next())
         return;
-    QString name = result.value("FullName").toString();
+    QString name = result.value("LastName").toString() + ", " + result.value("FirstName").toString();
+
     Storage * sto = new Storage(this, curClientID, name, "", "");
     sto->exec();
     delete(sto);
+    setStorageClient();
 }
 
 
@@ -6325,6 +6349,7 @@ std::pair<int,int> MainWindow::monthDay(QDate start, QDate end){
 
 void MainWindow::on_addMonth_clicked()
 {
+
     QDate switcher, possibleChange;
     switcher = ui->endDateEdit->date();
     possibleChange = switcher.addDays(-1);
@@ -6347,3 +6372,203 @@ void MainWindow::on_bookingTable_itemClicked(QTableWidgetItem *item)
     ui->bookCostLabel->setText(QString::number(cost, 'f',2));
 }
 
+void MainWindow::on_shiftNum_currentIndexChanged(int index)
+{
+    lockupShifts();
+    showShifts(index + 1);
+}
+
+void MainWindow::on_shiftDay_currentIndexChanged(int index)
+{
+    lockupShifts();
+
+}
+void MainWindow::lockupShifts(){
+    QTime midnight = QTime::fromString("00:00:00", "hh:mm:ss");
+    ui->shiftS1->setTime(midnight);
+    midnight = midnight.addSecs(1);
+    ui->shiftS2->setTime(midnight);
+    midnight = midnight.addSecs(1);
+    ui->shiftS3->setTime(midnight);
+    midnight = midnight.addSecs(1);
+    ui->shiftS4->setTime(midnight);
+    midnight = midnight.addSecs(1);
+    ui->shiftS5->setTime(midnight);
+    midnight = midnight.addSecs(1);
+    ui->shiftE1->setTime(midnight);
+    midnight = midnight.addSecs(1);
+    ui->shiftE2->setTime(midnight);
+    midnight = midnight.addSecs(1);
+    ui->shiftE3->setTime(midnight);
+    midnight = midnight.addSecs(1);
+    ui->shiftE4->setTime(midnight);
+    midnight = midnight.addSecs(1);
+    ui->shiftE5->setTime(midnight);
+
+}
+void MainWindow::showShifts(int num){
+    ui->shiftS1->setHidden(true);
+    ui->shiftE1->setHidden(true);
+    ui->shiftS2->setHidden(true);
+    ui->shiftE2->setHidden(true);
+    ui->shiftS3->setHidden(true);
+    ui->shiftE3->setHidden(true);
+    ui->shiftS4->setHidden(true);
+    ui->shiftE4->setHidden(true);
+    ui->shiftS5->setHidden(true);
+    ui->shiftE5->setHidden(true);
+    ui->shiftS1->setEnabled(false);
+    ui->shiftS2->setEnabled(false);
+    ui->shiftS3->setEnabled(false);
+    ui->shiftS4->setEnabled(false);
+    ui->shiftS5->setEnabled(false);
+    ui->shiftE1->setEnabled(false);
+    ui->shiftE2->setEnabled(false);
+    ui->shiftE3->setEnabled(false);
+    ui->shiftE4->setEnabled(false);
+    ui->shiftE5->setEnabled(false);
+    numShift = num;
+    QTime endTime = QTime::fromString("23:59:59", "hh:mm:ss");
+    if(num-- > 0){
+        ui->shiftS1->setHidden(false);
+        ui->shiftE1->setEnabled(true);
+        ui->shiftE1->setHidden(false);
+        if(!num){
+            ui->shiftE1->setTime(endTime);
+            ui->shiftE1->setEnabled(false);
+        }
+    }
+    if(num-- > 0){
+        ui->shiftS2->setHidden(false);
+        ui->shiftE2->setHidden(false);
+        ui->shiftE2->setEnabled(true);
+
+        if(!num){
+            ui->shiftE2->setTime(endTime);
+            ui->shiftE2->setEnabled(false);
+        }
+    }
+    if(num-- > 0){
+        ui->shiftS3->setHidden(false);
+        ui->shiftE3->setHidden(false);
+        ui->shiftE3->setEnabled(true);
+
+        if(!num){
+            ui->shiftE3->setTime(endTime);
+            ui->shiftE3->setEnabled(false);
+        }
+    }
+    if(num-- > 0){
+        ui->shiftS4->setHidden(false);
+        ui->shiftE4->setHidden(false);
+        ui->shiftE4->setEnabled(true);
+
+        if(!num){
+            ui->shiftE4->setTime(endTime);
+            ui->shiftE4->setEnabled(false);
+        }
+    }
+    if(num-- > 0){
+        ui->shiftS5->setHidden(false);
+        ui->shiftE5->setHidden(false);
+        ui->shiftE5->setEnabled(true);
+
+        if(!num){
+            ui->shiftE5->setTime(endTime);
+            ui->shiftE5->setEnabled(false);
+        }
+    }
+
+}
+
+void MainWindow::on_shiftE1_timeChanged(const QTime &time)
+{
+    if(numShift <= 1){
+        return;
+    }
+    if(time <= ui->shiftS1->time()){
+        ui->shiftE1->setTime(ui->shiftS1->time().addSecs(60));
+        return;
+    }
+    ui->shiftS2->setTime(time.addSecs(1));
+}
+
+void MainWindow::on_shiftS2_timeChanged(const QTime &time)
+{
+    if(time <= ui->shiftE1->time()){
+        ui->shiftS2->setTime(ui->shiftE1->time().addSecs(60));
+        return;
+    }
+    if(ui->shiftE2->time() < time)
+        ui->shiftE2->setTime(time.addSecs(1));
+}
+
+void MainWindow::on_shiftE2_timeChanged(const QTime &time)
+{
+    if(numShift <= 2){
+        return;
+    }
+    if(time <= ui->shiftS2->time()){
+        ui->shiftE2->setTime(ui->shiftS2->time().addSecs(60));
+        return;
+    }
+    ui->shiftS3->setTime(time.addSecs(1));
+}
+
+void MainWindow::on_shiftS3_timeChanged(const QTime &time)
+{
+
+    if(time <= ui->shiftE2->time()){
+        ui->shiftS3->setTime(ui->shiftE2->time().addSecs(60));
+        return;
+    }
+    if(ui->shiftE3->time() < time)
+         ui->shiftE3->setTime(time.addSecs(60));
+}
+
+void MainWindow::on_shiftS4_timeChanged(const QTime &time)
+{
+
+    if(time <= ui->shiftE3->time()){
+        ui->shiftS4->setTime(ui->shiftE3->time().addSecs(60));
+        return;
+    }
+    if(ui->shiftE4->time() < time)
+        ui->shiftE4->setTime(time.addSecs(60));
+}
+
+void MainWindow::on_shiftS5_timeChanged(const QTime &time)
+{
+    if(time <= ui->shiftE4->time()){
+        ui->shiftS5->setTime(ui->shiftE4->time().addSecs(60));
+        return;
+    }
+    if(time >= ui->shiftE5->time()){
+        ui->shiftS5->setTime(ui->shiftE5->time().addSecs(-60));
+        return;
+    }
+}
+
+void MainWindow::on_shiftE3_timeChanged(const QTime &time)
+{
+    if(numShift <=3){
+        return;
+    }
+    if(time <= ui->shiftS3->time()){
+        ui->shiftE3->setTime(ui->shiftS3->time().addSecs(60));
+        return;
+    }
+    ui->shiftS4->setTime(time.addSecs(60));
+}
+
+void MainWindow::on_shiftE4_timeChanged(const QTime &time)
+{
+    if(numShift <= 4){
+        return;
+    }
+    if(time <= ui->shiftS4->time()){
+        ui->shiftE4->setTime(ui->shiftS4->time().addSecs(60));
+        return;
+    }
+    ui->shiftS5->setTime(time.addSecs(60));
+}
