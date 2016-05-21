@@ -1773,7 +1773,7 @@ void MainWindow::on_button_delete_client_clicked()
         ui->button_delete_client->hide();
         return;
     }
-    if(ui->lineEdit_cl_fName->text() == "anonymous" || ui->lineEdit_cl_lName->text() == "anonymous"){
+    if(ui->lineEdit_cl_fName->text().toLower() == "anonymous" || ui->lineEdit_cl_lName->text().toLower() == "anonymous"){
         statusBar()->showMessage("Cannot Delete anonymous.", 5000);
         ui->button_delete_client->hide();
         return;
@@ -1865,21 +1865,24 @@ void MainWindow::initClientLookupTable(){
 void MainWindow::set_curClient_name(int nRow, int nCol){
     Q_UNUSED(nCol)
     curClientName = "";
-    if(nRow <0 && curClientID == NULL)
+    if(nRow <0 && curClientID == NULL){
+        ui->label_cl_curClient_title->hide();
         return;
-    QString selectClientId = ui->tableWidget_search_client->item(nRow, 0)->text();
+    }
+    ui->label_cl_curClient_title->show();
     QString fName, lName, mName;
 
-    if(curClientID != selectClientId){
-        lName =  ui->tableWidget_search_client->item(nRow, 1)->text();
-        fName =  ui->tableWidget_search_client->item(nRow, 2)->text();
-        mName =  ui->tableWidget_search_client->item(nRow, 3)->text();
-    }
-    else{
+    if(nRow <0){
         fName = ui->label_cl_info_fName_val->text();
         mName = ui->label_cl_info_mName_val->text();
         lName =  ui->label_cl_info_lName_val->text();
     }
+    else{
+            lName =  ui->tableWidget_search_client->item(nRow, 1)->text();
+            fName =  ui->tableWidget_search_client->item(nRow, 2)->text();
+            mName =  ui->tableWidget_search_client->item(nRow, 3)->text();
+    }
+
     qDebug()<<"curClientName";
     //MAKE FULL NAME
     if(fName!=NULL)
