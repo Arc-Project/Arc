@@ -21,4 +21,23 @@
 #define VAL_FIFTY               50
 #define VAL_HUNDRED             100
 
+/* REPORT Constants */
+// Use date, shiftNo
+#define CHECKOUT_REPORT       0
+#define VACANCY_REPORT        1
+#define LUNCH_REPORT          2
+#define WAKEUP_REPORT         3
+
+// Use shiftNo
+#define BOOKING_REPORT        4
+#define TRANSACTION_REPORT    5
+#define CLIENT_REPORT         6
+#define OTHER_REPORT          7
+
+// No params
+#define YELLOW_REPORT         8
+#define RED_REPORT            9
+
+#define NUMCOLS_TRANSACTION   12
+
 #endif // SHARED_H

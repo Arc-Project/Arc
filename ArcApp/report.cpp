@@ -237,7 +237,7 @@ void Report::setTransactionData(QSqlQuery* query)
         *data << query->value(i).toString();
     }
   }
-  model.setData(data, numRows, NUMCOLS_TRANSACTION);
+  model.setData(data, numRows, NUMCOLS_TRANSACTION, reportType);
 }
 
 void Report::setData(QSqlQuery* query)
@@ -257,6 +257,6 @@ void Report::setData(QSqlQuery* query)
             *data << query->value(i).toString();
           }
         }
-        model.setData(data, numRows, numCols);
+        model.setData(data, numRows, numCols, reportType);
     }
 }
