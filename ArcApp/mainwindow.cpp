@@ -136,7 +136,8 @@ void MainWindow::initCurrentWidget(int idx){
             ui->actionExport_to_PDF->setEnabled(false);
             break;
         case BOOKINGLOOKUP: //WIDGET 2
-            qDebug()<<"Client INFO";
+            qDebug()<<"###BOOKING LOOKUP Client INFO###";
+
             if(curClient != NULL){
                 qDebug()<<"ID: " << curClientID << curClient->clientId;
                 qDebug()<<"NAME: " << curClient->fullName;
@@ -173,7 +174,7 @@ void MainWindow::initCurrentWidget(int idx){
             ui->tabw_casefiles->setCurrentIndex(PERSIONACASEPLAN);
             ui->tableWidget_casefile_booking->verticalHeader()->show();
             ui->tableWidget_casefile_transaction->verticalHeader()->show();
-            qDebug()<<"Client INFO";
+            qDebug()<<"###CASEFILE Client INFO###";
             if(curClient != NULL){
                 qDebug()<<"ID: " << curClientID << curClient->clientId;
                 qDebug()<<"NAME: " << curClient->fullName;
@@ -1215,6 +1216,9 @@ void MainWindow::on_editRoom_clicked()
 void MainWindow::on_pushButton_bookRoom_clicked()
 {
     addHistory(CLIENTLOOKUP);
+    qDebug()<<"push book room";
+    setSelectedClientInfo();
+    /*
     curClient = new Client();
     int nRow = ui->tableWidget_search_client->currentRow();
     if (nRow <0){
@@ -1249,7 +1253,7 @@ void MainWindow::on_pushButton_bookRoom_clicked()
     // qDebug()<<"ID: " << curClientID << curClient->clientId;
     // qDebug()<<"NAME: " << curClient->fullName;
     // qDebug()<<"Balance: " << curClient->balance;
-
+*/
     ui->stackedWidget->setCurrentIndex(BOOKINGLOOKUP);
 
 }
@@ -1382,7 +1386,7 @@ void MainWindow::on_pushButton_editClientInfo_clicked()
 
     ui->stackedWidget->setCurrentIndex(CLIENTREGISTER);
     ui->label_cl_infoedit_title->setText("Edit Client Information");
-    ui->button_register_client->setText("Edit");
+    ui->button_register_client->setText("Save");
     //getCurrentClientId();
 }
 
@@ -1687,7 +1691,7 @@ bool MainWindow::check_client_register_form(){
 }
 
 void MainWindow::getCaseWorkerList(){
-    QString caseWorkerquery = "SELECT Username, EmpId FROM Employee WHERE Role = 'CASE WORKER' ORDER BY Username";
+    QString caseWorkerquery = "SELECT Username, EmpId FROM Employee WHERE (Role = 'CASE WORKER' OR Role = 'ADMIN') ORDER BY Username";
     QSqlQuery caseWorkers = dbManager->execQuery(caseWorkerquery);
     //dbManager->printAll(caseWorkers);
     caseWorkerList.empty();
@@ -1794,7 +1798,7 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
     ui->tableWidget_search_client->setColumnCount(colCnt);
     ui->tableWidget_search_client->clear();
 
-    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"FirstName"<<"Middle Initial"<<"LastName"<<"DateOfBirth"<<"Balance");
+    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"LastName"<<"FirstName"<<"Middle Initial"<<"DateOfBirth"<<"Balance");
 
 
     int row =0;
@@ -2045,9 +2049,9 @@ void MainWindow::setSelectedClientInfo(){
     }
     else{
         curClientID = curClient->clientId = ui->tableWidget_search_client->item(nRow, 0)->text();
-        curClient->fName =  ui->tableWidget_search_client->item(nRow, 1)->text();
-        curClient->mName =  ui->tableWidget_search_client->item(nRow, 2)->text();
-        curClient->lName =  ui->tableWidget_search_client->item(nRow, 3)->text();
+        curClient->lName =  ui->tableWidget_search_client->item(nRow, 1)->text();
+        curClient->fName =  ui->tableWidget_search_client->item(nRow, 2)->text();
+        curClient->mName =  ui->tableWidget_search_client->item(nRow, 3)->text();
         QString balanceString = ui->tableWidget_search_client->item(nRow, 5)->text();
         balanceString.replace("$", "");
         curClient->balance =  balanceString.toFloat();
@@ -2488,6 +2492,7 @@ void MainWindow::on_tableWidget_3_doubleClicked(const QModelIndex &index)
 void MainWindow::on_pushButton_CaseFiles_clicked()
 {
     addHistory(CLIENTLOOKUP);
+    qDebug()<<"push casefile";
     setSelectedClientInfo();
     ui->stackedWidget->setCurrentIndex(CASEFILE);
 
@@ -4113,6 +4118,7 @@ void MainWindow::addHistory(int n){
 void MainWindow::on_pushButton_processPaymeent_clicked()
 {
     addHistory(CLIENTLOOKUP);
+    /*
     int nRow = ui->tableWidget_search_client->currentRow();
     if (nRow <0)
         return;
@@ -4127,7 +4133,9 @@ void MainWindow::on_pushButton_processPaymeent_clicked()
     curClient->balance =  balanceString.toFloat();
     // curClient->balance =  ui->tableWidget_search_client->item(nRow, 5)->text().toFloat();
     curClient->fullName = QString(curClient->fName + " " + curClient->mName + " " + curClient->lName);
-
+*/
+    qDebug()<<"push processPayment";
+    setSelectedClientInfo();
     trans = new transaction();
     QString note = "";
     payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true, userLoggedIn, QString::number(currentshiftid));

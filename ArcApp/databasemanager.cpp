@@ -440,12 +440,13 @@ QSqlQuery DatabaseManager::searchClientList(QString ClientName){
     QSqlQuery query(db);
 
     //default select query
-    QString searchQuery = QString("SELECT ClientId, FirstName, MiddleName, LastName, Dob, Balance ")
+    QString searchQuery = QString("SELECT ClientId, LastName, FirstName, MiddleName, Dob, Balance ")
             + QString("FROM Client ");
     QStringList clientNames;
     if(ClientName.toLower() == "anonymous"){
             qDebug()<<"case: " + ClientName.toLower();
-            searchQuery += QString("WHERE FirstName Like '"+ ClientName.toLower() + "' ");
+            searchQuery += QString("WHERE FirstName Like '"+ ClientName.toLower() + "' ")
+                         + QString("OR LastName Like '"+ ClientName.toLower() + "' ");
 
     }
     else if(ClientName != ""){
