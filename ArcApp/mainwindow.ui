@@ -682,7 +682,7 @@ QHeaderView{
                   </property>
                   <property name="maximumSize">
                    <size>
-                    <width>300</width>
+                    <width>400</width>
                     <height>16777215</height>
                    </size>
                   </property>
@@ -2462,9 +2462,15 @@ QHeaderView{
         </item>
         <item row="0" column="1" colspan="2">
          <widget class="QLabel" name="label_cl_curClient">
+          <property name="maximumSize">
+           <size>
+            <width>150</width>
+            <height>40</height>
+           </size>
+          </property>
           <property name="font">
            <font>
-            <pointsize>11</pointsize>
+            <pointsize>10</pointsize>
             <weight>75</weight>
             <bold>true</bold>
            </font>

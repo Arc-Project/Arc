@@ -1795,10 +1795,11 @@ void MainWindow::initClientLookupTable(){
 void MainWindow::set_curClient_name(int nRow, int nCol){
     Q_UNUSED(nCol)
     curClientName = "";
-    QString selectClientId = ui->tableWidget_search_client->item(nRow, 0)->text();
-    QString fName, lName, mName;
     if(nRow <0 && curClientID == NULL)
         return;
+    QString selectClientId = ui->tableWidget_search_client->item(nRow, 0)->text();
+    QString fName, lName, mName;
+
     if(curClientID != selectClientId){
         lName =  ui->tableWidget_search_client->item(nRow, 1)->text();
         fName =  ui->tableWidget_search_client->item(nRow, 2)->text();
@@ -1809,7 +1810,7 @@ void MainWindow::set_curClient_name(int nRow, int nCol){
         mName = ui->label_cl_info_mName_val->text();
         lName =  ui->label_cl_info_lName_val->text();
     }
-
+    qDebug()<<"curClientName";
     //MAKE FULL NAME
     if(fName!=NULL)
         curClientName = QString(fName.toUpper());
