@@ -667,46 +667,7 @@ QHeaderView{
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_cl_info_comment">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>200</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>300</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <pointsize>11</pointsize>
-                   </font>
-                  </property>
-                  <property name="autoFillBackground">
-                   <bool>true</bool>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                  </property>
-                  <property name="margin">
-                   <number>1</number>
-                  </property>
-                  <property name="indent">
-                   <number>1</number>
-                  </property>
-                 </widget>
+                 <widget class="QPlainTextEdit" name="textEdit_cl_info_comment"/>
                 </item>
                 <item>
                  <spacer name="horizontalSpacer_61">
@@ -4783,8 +4744,8 @@ QHeaderView{
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>620</width>
-                 <height>1294</height>
+                 <width>718</width>
+                 <height>1381</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -14770,7 +14731,7 @@ QHeaderView{
      <x>0</x>
      <y>0</y>
      <width>1542</width>
-     <height>23</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="font">
