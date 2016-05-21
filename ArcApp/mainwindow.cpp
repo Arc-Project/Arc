@@ -1317,7 +1317,7 @@ void MainWindow::on_makeBookingButton_2_clicked()
     if(!dbManager->updateBalance(curClient->balance - curBook->cost, curClient->clientId)){
         qDebug() << "ERROR ADDING TO BALANCE UPDATE";
     }
-    if(!dbManager->insertIntoBookingHistory(curClient->fullName, curBook->room, curBook->program, curBook->stringStart, curBook->stringEnd, "NEW", userLoggedIn, QString::number(currentshiftid), curClient->clientId)){
+    if(!dbManager->insertIntoBookingHistory(curClient->fullName, curBook->room, curBook->program, curBook->stringStart, curBook->stringEnd, "NEW", usernameLoggedIn, QString::number(currentshiftid), curClient->clientId)){
         qDebug() << "ERROR INSERTING INTO BOOKING HISTORY";
     }
 
@@ -1546,7 +1546,7 @@ void MainWindow::getRegisterLogFields(QStringList* fieldList)
                << QDate::currentDate().toString("yyyy-MM-dd")
                << QString::number(currentshiftid) // get shift number
                << QTime::currentTime().toString("hh:mm:ss")
-               << userLoggedIn; //employee name
+               << usernameLoggedIn; //employee name
 
 }
 
@@ -3887,62 +3887,81 @@ void MainWindow::setupReportsScreen()
     ui->month_comboBox->setCurrentIndex(QDate::currentDate().month() - 1);
     ui->year_comboBox->setCurrentIndex(yearList.size() - 1);
 
-    connect(&(checkoutReport->model), SIGNAL(modelDataUpdated(int)), this,
-        SLOT(on_modelDataUpdated(int)));
-    connect(&(vacancyReport->model), SIGNAL(modelDataUpdated(int)), this,
-        SLOT(on_modelDataUpdated(int)));
-    connect(&(lunchReport->model), SIGNAL(modelDataUpdated(int)), this,
-        SLOT(on_modelDataUpdated(int)));
-    connect(&(wakeupReport->model), SIGNAL(modelDataUpdated(int)), this,
-        SLOT(on_modelDataUpdated(int)));
-    connect(&(bookingReport->model), SIGNAL(modelDataUpdated(int)), this,
-        SLOT(on_modelDataUpdated(int)));
-    connect(&(transactionReport->model), SIGNAL(modelDataUpdated(int)), this,
-        SLOT(on_modelDataUpdated(int)));
-    connect(&(clientLogReport->model), SIGNAL(modelDataUpdated(int)), this,
-        SLOT(on_modelDataUpdated(int)));
-    connect(&(otherReport->model), SIGNAL(modelDataUpdated(int)), this,
-        SLOT(on_modelDataUpdated(int)));
+    connect(&(checkoutReport->model), SIGNAL(modelDataUpdated(int, int)), this,
+        SLOT(on_modelDataUpdated(int, int)));
+    connect(&(vacancyReport->model), SIGNAL(modelDataUpdated(int, int)), this,
+        SLOT(on_modelDataUpdated(int, int)));
+    connect(&(lunchReport->model), SIGNAL(modelDataUpdated(int, int)), this,
+        SLOT(on_modelDataUpdated(int, int)));
+    connect(&(wakeupReport->model), SIGNAL(modelDataUpdated(int, int)), this,
+        SLOT(on_modelDataUpdated(int, int)));
+    connect(&(bookingReport->model), SIGNAL(modelDataUpdated(int, int)), this,
+        SLOT(on_modelDataUpdated(int, int)));
+    connect(&(transactionReport->model), SIGNAL(modelDataUpdated(int, int)), this,
+        SLOT(on_modelDataUpdated(int, int)));
+    connect(&(clientLogReport->model), SIGNAL(modelDataUpdated(int, int)), this,
+        SLOT(on_modelDataUpdated(int, int)));
+    connect(&(otherReport->model), SIGNAL(modelDataUpdated(int, int)), this,
+        SLOT(on_modelDataUpdated(int, int)));
 }
 
-void MainWindow::on_modelDataUpdated(int reportType)
+void MainWindow::on_modelDataUpdated(int reportType, int cols)
 {
     switch(reportType)
     {
         case CHECKOUT_REPORT:
-            resizeTableView(ui->checkout_tableView);
+            resizeTableView(ui->checkout_tableView, cols, QString("checkout"));
             break;
         case VACANCY_REPORT:
-            resizeTableView(ui->vacancy_tableView);
+            resizeTableView(ui->vacancy_tableView, cols, QString("vacancy"));
             break;
         case LUNCH_REPORT:
-            resizeTableView(ui->lunch_tableView);
+            resizeTableView(ui->lunch_tableView, cols, QString("lunch"));
             break;
         case WAKEUP_REPORT:
-            resizeTableView(ui->lunch_tableView);
+            resizeTableView(ui->wakeup_tableView, cols, QString("wakeup"));
             break;
         case BOOKING_REPORT:
-            resizeTableView(ui->booking_tableView);
+            resizeTableView(ui->booking_tableView, cols, QString("booking"));
             break;
         case TRANSACTION_REPORT:
-            resizeTableView(ui->transaction_tableView);
+            resizeTableView(ui->transaction_tableView, cols, QString("transaction"));
             break;
         case CLIENT_REPORT:
-            resizeTableView(ui->clientLog_tableView);
+            resizeTableView(ui->clientLog_tableView, cols, QString("client"));
             break;
         case OTHER_REPORT:
-            resizeTableView(ui->other_tableView);
+            resizeTableView(ui->other_tableView, cols, QString("other"));
     }
 }
 
-void MainWindow::resizeTableView(QTableView* tableView)
+void MainWindow::resizeTableView(QTableView* tableView, int cols, QString type)
 {
     tableView->setVisible(false);
     tableView->resizeColumnsToContents();
     tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     tableView->setSelectionMode(QAbstractItemView::SingleSelection);
-//    ui->bookingTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-//    ui->bookingTable->setSelectionMode(QAbstractItemView::SingleSelection);
+
+    double width = tableView->size().width();
+    qDebug() << "report report type = " << type;
+    qDebug() << " width = " << width;
+    double currentWidth = 0;
+    for (int i = 0; i < cols; ++i)
+    {
+        currentWidth +=  tableView->columnWidth(i);
+    }
+    double diff = width - currentWidth;
+    if (diff > 0)
+    {
+        double sizeIncrease = diff / cols;
+        for (int i = 0; i < cols; ++i)
+        {
+            tableView->setColumnWidth(i, tableView->columnWidth(i) + sizeIncrease);
+        }
+    }
+    
+
+
     tableView->setVisible(true);
 }
 
@@ -4030,7 +4049,7 @@ void MainWindow::on_other_lineEdit_textEdited(const QString &text)
 void MainWindow::on_saveOther_btn_clicked()
 {
     QString logText = ui->other_lineEdit->text();
-    if (dbManager->insertOtherLog(userLoggedIn, currentshiftid, logText))
+    if (dbManager->insertOtherLog(usernameLoggedIn, currentshiftid, logText))
     {
         statusBar()->showMessage(tr("New log saved"), 5000);
         ui->other_lineEdit->clear();
@@ -4136,7 +4155,7 @@ void MainWindow::on_saveFloat_btn_clicked()
 
     QDate date = ui->cashFloat_dateEdit->date();
     int shiftNo = ui->cashFloat_spinBox->value();
-    QString empName = userLoggedIn;
+    QString empName = usernameLoggedIn;
     QString comments = ui->pte_floatMemo->toPlainText();
     QList<int> coins;
     coins << ui->sbox_nickels->value() << ui->sbox_dimes->value() << ui->sbox_quarters->value()
