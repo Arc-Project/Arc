@@ -392,7 +392,7 @@ private slots:
 
     void on_btn_pcpKey_clicked();
 
-    void retrievePcpData(QString type = "all", int tableId = -1);
+    void populateCaseFiles(QString type = "all", int tableId = -1);
 
     void insertPcp(QTableWidget *tw, QString type);
 
@@ -652,9 +652,6 @@ private slots:
     void on_actionAbout_triggered();
 
     void on_editClient_returnPressed();
-
-//    void populatePcpTable(QTableWidget *table, QSqlQuery result);
-    void populatePcpTable(QStringList goal, QStringList strategy, QStringList date, int tableIdx);
 
 private:
 

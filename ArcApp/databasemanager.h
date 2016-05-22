@@ -175,7 +175,6 @@ public:
     QSqlQuery updateNote(QString clientId, QString notes);
     QSqlQuery readNote(QString clientId);
     QSqlQuery getProgramDesc(QString programcode);
-    void readPcpThread(QString curClientID, QString type, int idx);
 
 signals:
     void dailyReportStatsChanged(QList<int> list, bool conn);
@@ -187,7 +186,6 @@ signals:
     void noDatabaseConnection(QSqlDatabase* database);
     void noDatabaseConnection();
     void reconnectedToDatabase();
-    void getPcpData(QStringList goal, QStringList strategy, QStringList date, int idx);
 
 private:
     QSqlDatabase db = QSqlDatabase::database();
