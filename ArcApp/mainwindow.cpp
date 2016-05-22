@@ -7502,6 +7502,7 @@ void MainWindow::ReadCurrentShift(){
 }
 
 void MainWindow::getShiftList(QStringList *shiftList){
+    qDebug()<<"get shift list. shift Size "<<shiftSize;
     if(!shiftExist)
         *shiftList<<selectedDay;
     if(shiftSize>=1 )
@@ -7656,9 +7657,9 @@ void MainWindow::updateList(QVector<QStringList>* day, QSqlQuery infoQuery){
 
 QString MainWindow::widthCal(float duration){
     int totalTime = QTime(0,0,0).secsTo(QTime(23,59,0));
-    qDebug()<<"total" <<QString::number(totalTime)<<"Duration?"<<QString::number(duration, 'g', 2);
+    //qDebug()<<"total" <<QString::number(totalTime)<<"Duration?"<<QString::number(duration, 'g', 2);
     float percent = duration*100/totalTime;
-    qDebug()<<"percent" <<percent;
+    //qDebug()<<"percent" <<percent;
     return QString::number(percent, 'g', 2);
 }
 
