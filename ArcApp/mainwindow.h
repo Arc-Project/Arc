@@ -712,6 +712,10 @@ private slots:
 
     void on_checkBox_shift_auto_endtime_clicked(bool checked);
 
+    void resetPcpTable(QTableWidget* table);
+
+    void reloadPcpTable(int table);
+
 private:
 
     Ui::MainWindow *ui;

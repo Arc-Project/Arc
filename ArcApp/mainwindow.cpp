@@ -2828,13 +2828,7 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
         x->setColumnWidth(1, width*0.41);
         x->setColumnWidth(2, width*0.16);
 
-        //reset table
-        qDebug() << "resetting pcp table ";
-        x->clearContents();
-        x->setMinimumHeight(73);
-        x->setMaximumHeight(1);
-        x->setMaximumHeight(16777215);
-        x->setRowCount(1);
+        resetPcpTable(x);
     }
 
     //clear old data
@@ -2870,94 +2864,30 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
     //running notes: move to another function
     QSqlQuery noteResult = dbManager->readNote(curClientID);
     qDebug() << noteResult.lastError();
-    while (noteResult.next()) {
-        ui->te_notes->document()->setPlainText(noteResult.value(0).toString());
-    }
-}
-void MainWindow::retrievePcpData(QString type, int tableId) {
-    Q_UNUSED(tableId);
+    ui->te_notes->document()->clear();
+    noteResult.next();
+    ui->te_notes->document()->setPlainText(noteResult.value(0).toString());
 
-    //pcp tables
+}
+
+void MainWindow::resetPcpTable(QTableWidget* table){
+    //reset table
+    qDebug() << "resetting pcp table ";
+    table->clearContents();
+    table->setMinimumHeight(73);
+    table->setMaximumHeight(1);
+    table->setMaximumHeight(16777215);
+    table->setRowCount(1);
+}
+
+void MainWindow::retrievePcpData(QString type, int tableId) {
     int tableIdx = 0;
     if (type == "all") {
         for (auto x: pcpTypes) {
-//            QString query = "SELECT rowId, Goal, Strategy, Date "
-//                            "FROM Pcp "
-//                            "WHERE ClientId = " + curClientID +
-//                            " AND Type = '" + x + "'";
-//            QSqlQuery result = dbManager->execQuery(query);
             dbManager->readPcpThread(curClientID, x, tableIdx++);
-//            useProgressDialog("Loading personalized case plan tables...", QtConcurrent::run(dbManager, dbManager->readPcpThread, curClientID, x, tableIdx++));
-
-//            qDebug() << result.lastError();
-//            auto table = (pcp_tables.at(tableIdx++));
-
-//            populatePcpTable(table, result);
-//            QtConcurrent::run(this, populatePcpTable, table, result);
-
-//            int numRows = result.numRowsAffected();
-
-
-//            //reset table
-//            table->clearContents();
-//            table->setMinimumHeight(73);
-//            table->setMaximumHeight(1);
-//            table->setMaximumHeight(16777215);
-//            table->setRowCount(1);
-
-//            //set number of rows
-//            for (int i = 0; i < numRows-1; i++) {
-//                table->insertRow(0);
-
-//                //set height of table
-//                table->setMinimumHeight(table->minimumHeight() + 35);
-//            }
-
-//            //populate table
-//            while (result.next()){
-//                for (int i = 0; i < 3; i++) {
-//                    table->setItem(result.value(0).toString().toInt(), i, new QTableWidgetItem(result.value(i+1).toString()));
-//                }
-//            }
         }
-        return;
     } else {
-
-//        QString query = "SELECT rowId, Goal, Strategy, Date "
-//                        "FROM Pcp "
-//                        "WHERE ClientId = " + curClientID +
-//                        " AND Type = '" + type + "'";
-//        QSqlQuery result = dbManager->execQuery(query);
-//        qDebug() << result.lastError();
-//        auto table = (pcp_tables.at(tableId));
-
-//        populatePcpTable(table, result);
-
-
-//        int numRows = result.numRowsAffected();
-
-
-//        //reset table
-//        table->clearContents();
-//        table->setMinimumHeight(73);
-//        table->setMaximumHeight(1);
-//        table->setMaximumHeight(16777215);
-//        table->setRowCount(1);
-
-//        //set number of rows
-//        for (int i = 0; i < numRows-1; i++) {
-//            table->insertRow(0);
-
-//            //set height of table
-//            table->setMinimumHeight(table->minimumHeight() + 35);
-//        }
-
-//        //populate table
-//        while (result.next()){
-//            for (int i = 0; i < 3; i++) {
-//                table->setItem(result.value(0).toString().toInt(), i, new QTableWidgetItem(result.value(i+1).toString()));
-//            }
-//        }
+        dbManager->readPcpThread(curClientID, type, tableId);
     }
 }
 
@@ -3642,15 +3572,16 @@ void MainWindow::on_pushButton_3_clicked()
     if (!tempDir.isEmpty()) {
         dir = tempDir;
         mruDir.setValue(DEFAULT_DIR_KEY, tempDir);
-        int nRow = ui->tableWidget_search_client->currentRow();
+//        int nRow = ui->tableWidget_search_client->currentRow();
 
-        QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
-                              ui->tableWidget_search_client->item(nRow, 2)->text() + "*");
+//        QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+//                              ui->tableWidget_search_client->item(nRow, 2)->text() + "*");
 
-        qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
-                    ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
+//        qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+//                    ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
         ui->le_caseDir->setText(dir.path());
-        populate_tw_caseFiles(filter);
+//        populate_tw_caseFiles(filter);
+        populate_tw_caseFiles();
     }
     connect(ui->tw_caseFiles, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(on_tw_caseFiles_cellDoubleClicked(int,int)), Qt::UniqueConnection);
 }
@@ -4685,76 +4616,82 @@ void MainWindow::on_actionPcptables_triggered()
         */
 }
 
+void MainWindow::reloadPcpTable(int table){
+    resetPcpTable(pcp_tables.at(table));
+    useProgressDialog("Loading PCP tables...", QtConcurrent::run(this, retrievePcpData, pcpTypes.at(table), table));
+}
+
 void MainWindow::on_btn_pcpRelaUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(0);
-    retrievePcpData(pcpTypes.at(0), 0);
+//    retrievePcpData(pcpTypes.at(0), 0);
+    reloadPcpTable(0);
 }
 
 void MainWindow::on_btn_pcpEduUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(1);
-    retrievePcpData(pcpTypes.at(1), 1);
+    reloadPcpTable(1);
 }
 
 void MainWindow::on_btn_pcpSubUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(2);
-    retrievePcpData(pcpTypes.at(2), 2);
+    reloadPcpTable(2);
 }
 
 void MainWindow::on_btn_pcpAccoUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(3);
-    retrievePcpData(pcpTypes.at(3), 3);
+    reloadPcpTable(3);
 }
 
 void MainWindow::on_btn_pcpLifeUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(4);
-    retrievePcpData(pcpTypes.at(4), 4);
+    reloadPcpTable(4);
 }
 
 void MainWindow::on_btn_pcpMentUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(5);
-    retrievePcpData(pcpTypes.at(5), 5);
+    reloadPcpTable(5);
 }
 
 void MainWindow::on_btn_pcpPhyUndo_2_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(6);
-    retrievePcpData(pcpTypes.at(6), 6);
+    reloadPcpTable(6);
 }
 
 void MainWindow::on_btn_pcpLegUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(7);
-    retrievePcpData(pcpTypes.at(7), 7);
+    reloadPcpTable(7);
 }
 
 void MainWindow::on_btn_pcpActUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(8);
-    retrievePcpData(pcpTypes.at(8), 8);
+    reloadPcpTable(8);
 }
 
 void MainWindow::on_btn_pcpTradUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(9);
-    retrievePcpData(pcpTypes.at(9), 9);
+    reloadPcpTable(9);
 }
 
 void MainWindow::on_btn_pcpOtherUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(10);
-    retrievePcpData(pcpTypes.at(10), 10);
+    reloadPcpTable(10);
 }
 
 void MainWindow::on_btn_pcpPplUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(11);
-    retrievePcpData(pcpTypes.at(11), 11);
+    reloadPcpTable(11);
 }
 
 void MainWindow::on_btn_notesSave_clicked()
@@ -4771,7 +4708,6 @@ void MainWindow::on_btn_notesSave_clicked()
         qDebug() << result2.lastError();
 
     }
-
 }
 
 void MainWindow::on_btn_notesUndo_clicked()
@@ -6120,14 +6056,15 @@ void MainWindow::on_pushButton_15_clicked()
 
 void MainWindow::on_chk_filter_clicked()
 {
-    if (!ui->chk_filter->isChecked()){
-        QStringList filter;
-        populate_tw_caseFiles(filter);
-    } else {
+    if (ui->chk_filter->isChecked()){
         int nRow = ui->tableWidget_search_client->currentRow();
 
-        QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 3)->text() + ", " +
-                              ui->tableWidget_search_client->item(nRow, 1)->text() + "*");
+        QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+                              ui->tableWidget_search_client->item(nRow, 2)->text() + "*");
+        qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " + ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
+        populate_tw_caseFiles(filter);
+    } else {
+        QStringList filter;
         populate_tw_caseFiles(filter);
     }
 }
