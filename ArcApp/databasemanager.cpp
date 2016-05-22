@@ -1964,28 +1964,43 @@ bool DatabaseManager::updateLunchRoom(QDate startDate, QDate endDate, QString cl
 
 QSqlQuery DatabaseManager::addPcp(int rowId, QString clientId, QString type, QString goal, QString strategy, QString date) {
     DatabaseManager::checkDatabaseConnection(&db);
-    QSqlQuery query(db);
+    QSqlQuery checkQuery(db);
+    QSqlQuery dataQuery(db);
+    QString checkRowId = "SELECT COUNT(*) FROM Pcp "
+                         "WHERE ClientId = " + clientId +
+                         " AND Type = '" + type + "'"
+                         " AND rowId = " + QString::number(rowId);
+    checkQuery.exec(checkRowId);
+    qDebug() << checkRowId;
+    checkQuery.next();
+    qDebug() << "rows found: " << checkQuery.value(0).toString();
+    if (checkQuery.value(0).toString() == "0") {
+        qDebug() << "inserting new row";
+        dataQuery.prepare("INSERT INTO Pcp (rowId, clientId, Type, Goal, Strategy, Date) "
+                      "VALUES (?, ?, ?, ?, ? ,?)");
+        dataQuery.addBindValue(QString::number(rowId));
+        dataQuery.addBindValue(clientId);
+        dataQuery.addBindValue(type);
+        dataQuery.addBindValue(goal);
+        dataQuery.addBindValue(strategy);
+        dataQuery.addBindValue(date);
+        dataQuery.exec();
 
-    query.prepare("INSERT INTO Pcp (rowId, clientId, Type, Goal, Strategy, Date) "
-                  "VALUES (?, ?, ?, ?, ? ,?)");
-    query.addBindValue(QString::number(rowId));
-    query.addBindValue(clientId);
-    query.addBindValue(type);
-    query.addBindValue(goal);
-    query.addBindValue(strategy);
-    query.addBindValue(date);
-    query.exec();
+        return dataQuery;
+    }
 
-    return query;
-}
+    dataQuery.prepare("UPDATE Pcp SET Goal=:goal, Strategy=:strategy, Date=:date WHERE Type=:type AND clientId=:clientId AND rowId=:rowId");
+    qDebug() << "updating existing row";
+    dataQuery.bindValue(":goal", goal);
+    dataQuery.bindValue(":strategy", strategy);
+    dataQuery.bindValue(":date", date);
+    dataQuery.bindValue(":type", type);
+    dataQuery.bindValue(":clientId", clientId);
+    dataQuery.bindValue(":rowId", rowId);
 
-QSqlQuery DatabaseManager::deletePcpRow(int rowId, QString type) {
-    DatabaseManager::checkDatabaseConnection(&db);
-    QSqlQuery query(db);
+    dataQuery.exec();
 
-    query.exec("DELETE FROM Pcp WHERE Type = '" + type + "' AND rowId = " + QString::number(rowId));
-
-    return query;
+    return dataQuery;
 }
 
 QSqlQuery DatabaseManager::addNote(QString clientId, QString notes) {
@@ -2063,4 +2078,45 @@ bool DatabaseManager::updateShift(QString queryStr, QStringList *shiftList){
         return true;
     }
     return false;
+}
+
+void DatabaseManager::readPcpThread(QString clientId, QString type, int idx)
+{
+    QString connName = QString::number(dbManager->getDbCounter());
+    QStringList goal, strategy, date;
+    bool conn = true;
+    {
+        QSqlDatabase tempDb = QSqlDatabase::database();
+
+        if (dbManager->createDatabase(&tempDb, connName))
+        {
+            QSqlQuery query(tempDb);
+            if (DatabaseManager::getPcpQuery(&query, clientId, type))
+            {
+                while (query.next())
+                {
+                    goal << query.value(0).toString();
+                    strategy << query.value(1).toString();
+                    date << query.value(2).toString();
+                }
+            }
+            tempDb.close();
+        }
+        else
+        {
+            tempDb.close();
+            conn = false;
+        }
+    } // Necessary braces: tempDb and query are destroyed because out of scope
+    QSqlDatabase::removeDatabase(connName);
+
+    emit DatabaseManager::getPcpData(goal, strategy, date, idx, conn);
+}
+
+bool DatabaseManager::getPcpQuery(QSqlQuery* query, QString curClientID, QString type) {
+    QString result = "SELECT rowId, Goal, Strategy, Date "
+                     "FROM Pcp "
+                     "WHERE ClientId = " + curClientID +
+                     " AND Type = '" + type + "'";
+    return query->exec(result);
 }
