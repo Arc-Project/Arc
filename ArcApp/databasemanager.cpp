@@ -2023,3 +2023,12 @@ QSqlQuery DatabaseManager::readNote(QString clientId) {
 
     return query;
 }
+
+QSqlQuery DatabaseManager::getProgramDesc(QString programcode){
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+
+    query.exec("SELECT Description FROM Program WHERE ProgramCode = '" + programcode + "'");
+    qDebug() << "SELECT Description FROM Program WHERE ProgramCode = '" + programcode + "'";
+    return query;
+}
