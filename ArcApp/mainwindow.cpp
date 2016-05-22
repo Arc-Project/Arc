@@ -239,7 +239,8 @@ void MainWindow::initCurrentWidget(int idx){
             on_checkBox_shift_auto_endtime_clicked(true);
              ReadCurrentShift();
              ui->checkBox_shift_auto_endtime->setChecked(true);
-
+             ui->shift_dayOpt->setCurrentIndex(0);
+             ui->shift_num->setCurrentIndex(0);
             break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
@@ -1688,7 +1689,7 @@ void MainWindow::getRegisterLogFields(QStringList* fieldList)
         middleName[0] = middleName[0].toUpper();
         fullName += QString(middleName + " ");
     }
-    
+
     QString action;
     if(registerType == NEWCLIENT || ui->button_register_client->text() == "Register")
         action = "Registered";
@@ -2093,7 +2094,7 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
                 QString balance = QString("%1%2").arg(results.value(i).toDouble() >= 0 ? "$" : "-$").
                     arg(QString::number(fabs(results.value(i).toDouble()), 'f', 2));
                 ui->tableWidget_search_client->
-                    setItem(row, i, new QTableWidgetItem(balance));                
+                    setItem(row, i, new QTableWidgetItem(balance));
             }
             else
             {
@@ -3441,7 +3442,7 @@ void MainWindow::on_pushButton_25_clicked()
 
 // program clicked + selected
 void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
-{    
+{
     if (!resettingfromcode) {
         if (index == lastprogramclicked) {
             return;
@@ -4138,7 +4139,7 @@ void MainWindow::resizeTableView(QTableView* tableView)
     if (diff > 0)
     {
         double sizeIncrease = diff / cols;
-        
+
         for (int i = 0; i < cols; ++i)
         {
             if (diff > currentWidth * 1.5f)
@@ -7590,8 +7591,8 @@ void MainWindow::updateList(QVector<QStringList>* day, QSqlQuery infoQuery){
     shiftSize = infoQuery.value("NumShifts").toInt();
     switch(shiftSize){
     case 5:
-        tempList << infoQuery.value(9).toString()
-                 << infoQuery.value(10).toString()
+        tempList << infoQuery.value(9).toTime().toString("h:mmAP")
+                 << infoQuery.value(10).toTime().toString("h:mmAP")
                  << widthCal((float)infoQuery.value(9).toTime().secsTo(infoQuery.value(10).toTime()));
         day->push_front(tempList);
 //        qDebug()<< infoQuery.value("DayOfWeek").toString()
@@ -7602,8 +7603,8 @@ void MainWindow::updateList(QVector<QStringList>* day, QSqlQuery infoQuery){
 
     case 4:
         tempList.clear();
-        tempList<< infoQuery.value(7).toString()
-                << infoQuery.value(8).toString()
+        tempList<< infoQuery.value(7).toTime().toString("h:mmAP")
+                << infoQuery.value(8).toTime().toString("h:mmAP")
                 << widthCal((float)infoQuery.value(7).toTime().secsTo(infoQuery.value(8).toTime()));
         day->push_front(tempList);
 //        qDebug()<< infoQuery.value("DayOfWeek").toString()
@@ -7614,8 +7615,8 @@ void MainWindow::updateList(QVector<QStringList>* day, QSqlQuery infoQuery){
 
     case 3:
         tempList.clear();
-        tempList << infoQuery.value(5).toString()
-                << infoQuery.value(6).toString()
+        tempList << infoQuery.value(5).toTime().toString("h:mmAP")
+                << infoQuery.value(6).toTime().toString("h:mmAP")
                 << widthCal((float)infoQuery.value(5).toTime().secsTo(infoQuery.value(6).toTime()));
         day->push_front(tempList);
 //        qDebug()<< infoQuery.value("DayOfWeek").toString()
@@ -7626,8 +7627,8 @@ void MainWindow::updateList(QVector<QStringList>* day, QSqlQuery infoQuery){
 
     case 2:
         tempList.clear();
-        tempList<< infoQuery.value(3).toString()
-                << infoQuery.value(4).toString()
+        tempList<< infoQuery.value(3).toTime().toString("h:mmAP")
+                << infoQuery.value(4).toTime().toString("h:mmAP")
                 << widthCal((float)infoQuery.value(3).toTime().secsTo(infoQuery.value(4).toTime()));
         day->push_front(tempList);
 //        qDebug()<< infoQuery.value("DayOfWeek").toString()
@@ -7638,8 +7639,8 @@ void MainWindow::updateList(QVector<QStringList>* day, QSqlQuery infoQuery){
 
     case 1:
         tempList.clear();
-        tempList<< infoQuery.value(1).toString()
-                << infoQuery.value(2).toString()
+        tempList<< infoQuery.value(1).toTime().toString("h:mmAP")
+                << infoQuery.value(2).toTime().toString("h:mmAP")
                 << widthCal((float)infoQuery.value(1).toTime().secsTo(infoQuery.value(2).toTime()));
         day->push_front(tempList);
 
