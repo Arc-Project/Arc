@@ -83,6 +83,8 @@ public:
     int currentrole = STANDARD;
     int currentshiftid = 0;
 
+    const QString versionNo = "0.70";
+
     bool resettingfromcode = false;
 
     bookingManager book;
@@ -639,6 +641,8 @@ private slots:
     void on_shiftReport_tabWidget_currentChanged(int index);
 
     void on_dailyReport_tabWidget_currentChanged(int index);
+
+    void on_actionAbout_triggered();
 
 private:
 
