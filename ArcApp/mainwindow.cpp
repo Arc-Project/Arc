@@ -307,9 +307,18 @@ DEV TESTING BUTTONS (START)
 ==============================================================================*/
 void MainWindow::on_actionDB_Connection_triggered()
 {
-    ui->transaction_tableView->setVisible(false);
-    ui->transaction_tableView->resizeColumnsToContents();
-    ui->transaction_tableView->setVisible(true);
+    QString firstName = ui->lineEdit_cl_fName->text();
+    QString middleName = ui->lineEdit_cl_mName->text();
+    QString lastName = ui->lineEdit_cl_lName->text();
+
+    if (!firstName.isEmpty())
+        firstName[0] = firstName[0].toUpper();
+    if (!middleName.isEmpty())
+        middleName[0] = middleName[0].toUpper();
+    if (!lastName.isEmpty())
+        lastName[0] = lastName[0].toUpper();
+
+    qDebug() << firstName << middleName << lastName;
 }
 
 void MainWindow::on_actionTest_Query_triggered()
@@ -1621,12 +1630,11 @@ void MainWindow::getListRegisterFields(QStringList* fieldList)
     QString lastName = ui->lineEdit_cl_lName->text();
 
     if (!firstName.isEmpty())
-        firstName[0].toUpper();
+        firstName[0] = firstName[0].toUpper();
     if (!middleName.isEmpty())
-        middleName[0].toUpper();
+        middleName[0] = middleName[0].toUpper();
     if (!lastName.isEmpty())
-        lastName[0].toUpper();
-
+        lastName[0] = lastName[0].toUpper();
 
     *fieldList << firstName
                << middleName
@@ -1653,7 +1661,27 @@ void MainWindow::getListRegisterFields(QStringList* fieldList)
 
 void MainWindow::getRegisterLogFields(QStringList* fieldList)
 {
-    QString fullName = ui->lineEdit_cl_fName->text() + " " + ui->lineEdit_cl_lName->text();
+    QString firstName = ui->lineEdit_cl_fName->text();
+    QString middleName = ui->lineEdit_cl_mName->text();
+    QString lastName = ui->lineEdit_cl_lName->text();
+    QString fullName = "";
+
+    if (!lastName.isEmpty())
+    {
+        lastName[0] = lastName[0].toUpper();
+        fullName += QString(lastName + ", ");
+    }
+    if (!firstName.isEmpty())
+    {
+        firstName[0] = firstName[0].toUpper();
+        fullName += QString(firstName + " ");
+    }
+    if (!middleName.isEmpty())
+    {
+        middleName[0] = middleName[0].toUpper();
+        fullName += QString(middleName + " ");
+    }
+    
     QString action;
     if(registerType == NEWCLIENT || ui->button_register_client->text() == "Register")
         action = "Registered";
