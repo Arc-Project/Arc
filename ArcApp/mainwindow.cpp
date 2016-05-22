@@ -1992,12 +1992,12 @@ void MainWindow::set_curClient_name(int nRow, int nCol){
 
     qDebug()<<"curClientName";
     //MAKE FULL NAME
-    if(fName!=NULL)
-        curClientName = QString(fName.toUpper());
-    if(lName!=NULL){
+    if(lName!=NULL)
+        curClientName = QString(lName.toUpper());
+    if(fName!=NULL){
         if(curClientName!="")
             curClientName += QString(", ");
-        curClientName += QString(lName.toUpper());
+        curClientName += QString(fName.toUpper());
     }
     if(mName!=NULL){
         if(curClientName!="")
@@ -2286,12 +2286,12 @@ void MainWindow::setSelectedClientInfo(){
     }
 
     //MAKE FULL NAME
-    if(curClient->fName!=NULL)
-        curClient->fullName = QString(curClient->fName);
-    if(curClient->lName!=NULL){
+    if(curClient->lName!=NULL)
+        curClient->fullName = QString(curClient->lName);
+    if(curClient->fName!=NULL){
         if(curClient->fullName!="")
             curClient->fullName += QString(", ");
-        curClient->fullName += QString(curClient->lName);
+        curClient->fullName += QString(curClient->fName);
     }
     if(curClient->mName!=NULL){
         if(curClient->fullName!="")
@@ -2331,7 +2331,7 @@ void MainWindow::initClTransactionTable(){
     ui->tableWidget_transaction->setColumnCount(8);
     ui->tableWidget_transaction->clear();
 
-    ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"TransType"<<"Amount"<<"Payment Type"<<"ChequeNo"<<"MSQ"<<"ChequeDate"<<"Employee");
+    ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"TransType"<<"Amount"<<"Payment Type"<<"Employee"<<"ChequeNo"<<"MSQ"<<"ChequeDate");
     ui->tableWidget_transaction->setMinimumHeight(30*6-1);
 
 }
@@ -2757,14 +2757,30 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
         x->setColumnWidth(2, width*0.16);
     }
 
+    //clear old data
+    ui->tw_caseFiles->clearContents();
+    ui->tw_caseFiles->setRowCount(0);
+    ui->le_caseFilter->clear();
+
     //get client id
     int nRow = ui->tableWidget_search_client->currentRow();
     if (nRow <0)
         return;
     curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
-    QString curFirstName = ui->tableWidget_search_client->item(nRow, 1)->text();
-    QString curMiddleName = ui->tableWidget_search_client->item(nRow, 2)->text().size() > 0 ? ui->tableWidget_search_client->item(nRow, 2)->text()+ " " : "";
-    QString curLastName = ui->tableWidget_search_client->item(nRow, 3)->text();
+    QString curFirstName = ui->tableWidget_search_client->item(nRow, 2)->text();
+    QString curMiddleName = ui->tableWidget_search_client->item(nRow, 3)->text().size() > 0 ? ui->tableWidget_search_client->item(nRow, 2)->text()+ " " : "";
+    QString curLastName = ui->tableWidget_search_client->item(nRow, 1)->text();
+
+    //if dir was saved
+    if (!ui->le_caseDir->text().isEmpty()){
+    QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+                          ui->tableWidget_search_client->item(nRow, 2)->text() + "*");
+
+    qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+                ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
+    ui->le_caseDir->setText(dir.path());
+    populate_tw_caseFiles(filter);
+    }
 
     qDebug() << "id displayed:" << idDisplayed;
     qDebug() << "id selected:" << curClientID;
@@ -3503,11 +3519,11 @@ void MainWindow::on_pushButton_3_clicked()
         mruDir.setValue(DEFAULT_DIR_KEY, tempDir);
         int nRow = ui->tableWidget_search_client->currentRow();
 
-        QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 3)->text() + ", " +
-                              ui->tableWidget_search_client->item(nRow, 1)->text() + "*");
+        QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+                              ui->tableWidget_search_client->item(nRow, 2)->text() + "*");
 
-        qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 3)->text() + ", " +
-                    ui->tableWidget_search_client->item(nRow, 1)->text() + "*";
+        qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+                    ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
         ui->le_caseDir->setText(dir.path());
         populate_tw_caseFiles(filter);
     }
@@ -3994,21 +4010,21 @@ void MainWindow::setupReportsScreen()
     ui->year_comboBox->setCurrentIndex(yearList.size() - 1);
 
     connect(&(checkoutReport->model), SIGNAL(modelDataUpdated(int, int)), this,
-        SLOT(on_modelDataUpdated(int, int)));
+        SLOT(on_modelDataUpdated(int, int)),Qt::QueuedConnection);
     connect(&(vacancyReport->model), SIGNAL(modelDataUpdated(int, int)), this,
-        SLOT(on_modelDataUpdated(int, int)));
+        SLOT(on_modelDataUpdated(int, int)),Qt::QueuedConnection);
     connect(&(lunchReport->model), SIGNAL(modelDataUpdated(int, int)), this,
-        SLOT(on_modelDataUpdated(int, int)));
+        SLOT(on_modelDataUpdated(int, int)),Qt::QueuedConnection);
     connect(&(wakeupReport->model), SIGNAL(modelDataUpdated(int, int)), this,
-        SLOT(on_modelDataUpdated(int, int)));
+        SLOT(on_modelDataUpdated(int, int)),Qt::QueuedConnection);
     connect(&(bookingReport->model), SIGNAL(modelDataUpdated(int, int)), this,
-        SLOT(on_modelDataUpdated(int, int)));
+        SLOT(on_modelDataUpdated(int, int)),Qt::QueuedConnection);
     connect(&(transactionReport->model), SIGNAL(modelDataUpdated(int, int)), this,
-        SLOT(on_modelDataUpdated(int, int)));
+        SLOT(on_modelDataUpdated(int, int)),Qt::QueuedConnection);
     connect(&(clientLogReport->model), SIGNAL(modelDataUpdated(int, int)), this,
-        SLOT(on_modelDataUpdated(int, int)));
+        SLOT(on_modelDataUpdated(int, int)),Qt::QueuedConnection);
     connect(&(otherReport->model), SIGNAL(modelDataUpdated(int, int)), this,
-        SLOT(on_modelDataUpdated(int, int)));
+        SLOT(on_modelDataUpdated(int, int)),Qt::QueuedConnection);
 }
 
 void MainWindow::on_modelDataUpdated(int reportType, int cols)
@@ -4016,41 +4032,38 @@ void MainWindow::on_modelDataUpdated(int reportType, int cols)
     switch(reportType)
     {
         case CHECKOUT_REPORT:
-            resizeTableView(ui->checkout_tableView, cols, QString("checkout"));
+            resizeTableView(ui->checkout_tableView);
             break;
         case VACANCY_REPORT:
-            resizeTableView(ui->vacancy_tableView, cols, QString("vacancy"));
+            resizeTableView(ui->vacancy_tableView);
             break;
         case LUNCH_REPORT:
-            resizeTableView(ui->lunch_tableView, cols, QString("lunch"));
+            resizeTableView(ui->lunch_tableView);
             break;
         case WAKEUP_REPORT:
-            resizeTableView(ui->wakeup_tableView, cols, QString("wakeup"));
+            resizeTableView(ui->wakeup_tableView);
             break;
         case BOOKING_REPORT:
-            resizeTableView(ui->booking_tableView, cols, QString("booking"));
+            resizeTableView(ui->booking_tableView);
             break;
         case TRANSACTION_REPORT:
-            resizeTableView(ui->transaction_tableView, cols, QString("transaction"));
+            resizeTableView(ui->transaction_tableView);
             break;
         case CLIENT_REPORT:
-            resizeTableView(ui->clientLog_tableView, cols, QString("client"));
+            resizeTableView(ui->clientLog_tableView);
             break;
         case OTHER_REPORT:
-            resizeTableView(ui->other_tableView, cols, QString("other"));
+            resizeTableView(ui->other_tableView);
     }
 }
 
-void MainWindow::resizeTableView(QTableView* tableView, int cols, QString type)
+void MainWindow::resizeTableView(QTableView* tableView)
 {
     tableView->setVisible(false);
     tableView->resizeColumnsToContents();
-    tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    tableView->setSelectionMode(QAbstractItemView::SingleSelection);
 
-    double width = tableView->size().width();
-    qDebug() << "report report type = " << type;
-    qDebug() << " width = " << width;
+    int cols = tableView->horizontalHeader()->count();
+    double width = tableView->horizontalHeader()->size().width();
     double currentWidth = 0;
     for (int i = 0; i < cols; ++i)
     {
@@ -4060,18 +4073,19 @@ void MainWindow::resizeTableView(QTableView* tableView, int cols, QString type)
     if (diff > 0)
     {
         double sizeIncrease = diff / cols;
+        
         for (int i = 0; i < cols; ++i)
         {
+            if (diff > currentWidth * 1.5f)
+            {
+                sizeIncrease = tableView->columnWidth(i) * 0.75f;
+            }
             tableView->setColumnWidth(i, tableView->columnWidth(i) + sizeIncrease);
         }
     }
-    
-
 
     tableView->setVisible(true);
 }
-
-
 
 void MainWindow::updateDailyReportTables(QDate date)
 {
@@ -6736,4 +6750,48 @@ void MainWindow::on_editCost_textChanged(const QString &arg1)
         ui->editRefundLabel->setText("Owed");
         ui->editRefundAmt->setText(QString::number(newCost - origCost, 'f', 2));
     }
+}
+void MainWindow::on_shiftReport_tabWidget_currentChanged(int index)
+{
+    switch (index)
+    {
+        case 0:
+            resizeTableView(ui->booking_tableView);
+            break;
+        case 1:
+            resizeTableView(ui->transaction_tableView);
+            break;
+        case 2:
+            resizeTableView(ui->clientLog_tableView);
+            break;
+        case 3:
+            resizeTableView(ui->other_tableView);
+    }
+}
+
+void MainWindow::on_dailyReport_tabWidget_currentChanged(int index)
+{
+    switch (index)
+    {
+        case 0:
+            resizeTableView(ui->checkout_tableView);
+            break;
+        case 1:
+            resizeTableView(ui->vacancy_tableView);
+            break;
+        case 2:
+            resizeTableView(ui->lunch_tableView);
+            break;
+        case 3:
+            resizeTableView(ui->wakeup_tableView);
+    }
+}
+
+void MainWindow::on_actionAbout_triggered()
+{
+    QMessageBox aboutBox;
+    aboutBox.setText("ARCWay Version " + versionNo);
+    aboutBox.setIcon(QMessageBox::Information);
+    aboutBox.exec();
+    qDebug() << "about clicked";
 }

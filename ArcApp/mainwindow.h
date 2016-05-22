@@ -83,6 +83,8 @@ public:
     int currentrole = STANDARD;
     int currentshiftid = 0;
 
+    const QString versionNo = "0.70";
+
     bool resettingfromcode = false;
 
     bookingManager book;
@@ -640,6 +642,11 @@ private slots:
     void on_shiftE4_timeChanged(const QTime &time);
 
     void on_editCost_textChanged(const QString &arg1);
+    void on_shiftReport_tabWidget_currentChanged(int index);
+
+    void on_dailyReport_tabWidget_currentChanged(int index);
+
+    void on_actionAbout_triggered();
 
 private:
 
@@ -671,7 +678,7 @@ private:
     void getCashFloat(QDate date, int shiftNo);
     void getMonthlyReport(int month, int year);
     void updateRestrictionTables();
-    void resizeTableView(QTableView* tableView, int cols, QString type);
+    void resizeTableView(QTableView* tableView);
 
 
 
