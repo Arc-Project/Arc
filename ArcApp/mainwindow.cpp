@@ -1350,7 +1350,8 @@ void MainWindow::populateConfirm(){
         ui->confirmTotalPaid->setText(QString::number(curBook->paidTotal, 'f', 2));
     }
 
-
+    ui->actionExport_to_PDF->setEnabled(true);
+    MainWindow::on_actionExport_to_PDF_triggered();
 }
 
 //void MainWindow::on_monthCheck_stateChanged(int arg1)
@@ -4455,48 +4456,13 @@ void MainWindow::on_btn_pcpKeySave_clicked()
 
 void MainWindow::on_actionPcptables_triggered()
 {
-//    QtRPT *report = new QtRPT(this);
-//    report->loadReport("clientList");
-//    report->recordCount << ui->tableWidget_search_client->rowCount();
-//    connect(report, SIGNAL(setValue(const int, const QString, const QString, const QString, const QString)),
-//           this, SLOT(setValue(const int, const QString, const QString, const QString, const QString)));
-//    report->printExec();
-
-//    for (int i = 0; i < checkoutReport->model.tableData->size(); ++i)
-//         qDebug() << checkoutReport->model.tableData->at(i);
-    int recNo = (int) qCeil(ui->te_notes->document()->lineCount()/30.0);
-
-    qDebug() << recNo;
-    QTextCursor *cursor = new QTextCursor(ui->te_notes->document());
-    qDebug() << "pos: " << cursor->position();
-    qDebug() << "anchor: " << cursor->anchor();
-    cursor->movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, (recNo-1) * 30);
-    qDebug() << "pos: " << cursor->position();
-    qDebug() << "anchor: " << cursor->anchor();
-    QString s;
-    for (int i = 0; i < 30; i++) {
-        cursor->movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
-        qDebug() << "pos: " << cursor->position();
-        qDebug() << "anchor: " << cursor->anchor();
-        s += cursor->selectedText() + "\r\n";
-        cursor->movePosition(QTextCursor::Down, QTextCursor::MoveAnchor);
-        cursor->movePosition(QTextCursor::StartOfLine, QTextCursor::MoveAnchor);
-    }
-
-//    for (auto it = s.begin(); it != s.end(); ++it) {
-//        s.replace("\u2029", '\n');
-//    }
-//    int j;
-
-//    qDebug() << u8"\u2029";
-//    while ((j = s.indexOf( QChar::ParagraphSeparator, j)) != -1) {
-//        s.replace(QChar::ParagraphSeparator, QString("\n"));
-//        qDebug() << "Found '\u2029' tag at index position" << j;
-//        ++j;
-//    }
-
-    qDebug() << s;
-
+    QString s = curBook->room;
+    QChar c = *s.rbegin();
+    qDebug() << c;
+    if (c == 'M')
+        qDebug() << "Mat";
+    else if (c == 'B')
+        qDebug() << "Bed";
 }
 
 void MainWindow::on_btn_pcpRelaUndo_clicked()
@@ -5161,6 +5127,12 @@ void MainWindow::on_actionExport_to_PDF_triggered()
         qDebug() << "record count: " << (int) qCeil(ui->te_notes->document()->lineCount()/30.0);
     }
 
+    // customer receipt
+    if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING) {
+        rptTemplate = ":/templates/pdf/staysummary.xml";
+        report->recordCount << 1;
+    }
+
     report->loadReport(rptTemplate);
 
     connect(report, SIGNAL(setValue(const int, const QString, QVariant&, const int)),
@@ -5204,6 +5176,11 @@ void MainWindow::setValue(const int recNo, const QString paramName, QVariant &pa
     // case files running notes
     if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == RUNNINGNOTE){
         printRunningNotes(recNo, paramName, paramValue, reportPage);
+    }
+
+    // customer receipt
+    if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING) {
+        printStaySummary(recNo, paramName, paramValue, reportPage);
     }
 }
 
@@ -5437,24 +5414,55 @@ void MainWindow::printRunningNotes(const int recNo, const QString paramName, QVa
 
     qDebug() << "recNo: " << recNo;
 
-//    qDebug() << "pos: " << cursor->position();
-//    qDebug() << "anchor: " << cursor->anchor();
     cursor->movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, recNo * 30);
-//    qDebug() << "pos: " << cursor->position();
-//    qDebug() << "anchor: " << cursor->anchor();
 
     for (int i = 0; i < 30; i++) {
         cursor->movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
-
-//        qDebug() << "pos: " << cursor->position();
-//        qDebug() << "anchor: " << cursor->anchor();
-
         s += cursor->selectedText() + "\r\n";
         if (!cursor->movePosition(QTextCursor::Down, QTextCursor::MoveAnchor)) break;
         cursor->movePosition(QTextCursor::StartOfLine, QTextCursor::MoveAnchor);
     }
     s.chop(2);
     paramValue = s;
+}
+
+void MainWindow::printStaySummary(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
+    Q_UNUSED(recNo);
+    Q_UNUSED(reportPage);
+
+    if (paramName == "lastFirst") {
+        paramValue = curClientName;
+
+    } else if (paramName == "start") {
+        paramValue = ui->confirmStart->text();
+
+    } else if (paramName == "end") {
+        paramValue = ui->confirmEnd->text();
+
+    } else if (paramName == "numNights") {
+        paramValue = ui->confirmLength->text();
+
+    } else if (paramName == "bedType") {
+        QString s = curBook->room;
+        QChar c = *s.rbegin();
+        if (c == 'M') paramValue = "Mat";
+        else if (c == 'B') paramValue = "Bed";
+
+    } else if (paramName == "roomNo") {
+        QString s = curBook->room;
+        QRegExp rx("[-]");
+        QStringList list = s.split(rx, QString::SkipEmptyParts);
+        paramValue = list.at(2);
+
+    } else if (paramName == "prog") {
+        paramValue = curBook->program;
+
+    } else if (paramName == "desc") {
+        QSqlQuery result = dbManager->getProgramDesc(curBook->program);
+        qDebug() << result.lastError();
+        while (result.next())
+            paramValue = result.value(0).toString();
+    }
 }
 
 void MainWindow::on_btn_createNewUser_3_clicked()
@@ -6671,4 +6679,9 @@ void MainWindow::on_actionAbout_triggered()
     aboutBox.setIcon(QMessageBox::Information);
     aboutBox.exec();
     qDebug() << "about clicked";
+}
+
+void MainWindow::on_editClient_returnPressed()
+{
+    MainWindow::on_editSearch_clicked();
 }
