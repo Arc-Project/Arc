@@ -127,6 +127,9 @@ public:
     void setStorageClient();
     void lockupShifts();
     void showShifts(int num);
+    bool getRoomCosts();
+    void setEditDayInfo(QDate date);
+    void calcEditRefund(QDate date);
     //COLIN END//////
 
     void updatemenuforuser();
@@ -636,12 +639,15 @@ private slots:
 
     void on_shiftE4_timeChanged(const QTime &time);
 
+    void on_editCost_textChanged(const QString &arg1);
+
 private:
 
     Ui::MainWindow *ui;
     MainWindow * mw;
     Booking * curBook;
-    bool setup;
+    bool setup, dateChanger;
+    double dCost, mCost, editExpected;
     transaction * trans;
     Client * curClient;
     QString curClientID, curClientName;

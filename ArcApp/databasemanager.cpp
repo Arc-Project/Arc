@@ -1717,7 +1717,7 @@ bool DatabaseManager::updateBalance(double d, QString id){
 QSqlQuery DatabaseManager::getNextBooking(QDate endDate, QString roomId){
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
-    QString q = "SELECT * FROM Booking WHERE StartDate >= '" + endDate.toString(Qt::ISODate) + "' AND SpaceId = '" + roomId + "'";
+    QString q = "SELECT * FROM Booking WHERE StartDate >= '" + endDate.toString(Qt::ISODate) + "' AND SpaceId = '" + roomId + "' ORDER BY StartDate ASC";
     query.exec(q);
     qDebug() << q;
     return query;
@@ -1804,10 +1804,11 @@ QSqlQuery DatabaseManager::getActiveBooking(QString user, bool userLook){
     QString date = QDate::currentDate().toString(Qt::ISODate);
     QString q;
     if(!userLook){
-         q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '" + date + "'";
+         q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '" + date + "' ORDER BY ClientName ASC";
     }
     else{
-         q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '" + date + "' AND ClientName LIKE '%" + user + "%'";
+         q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '"
+                 + date + "' AND ClientName LIKE '%" + user + "%' ORDER BY ClientName ASC";
 
     }
     qDebug() << q;

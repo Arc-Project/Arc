@@ -54,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setCentralWidget(ui->stackedWidget);
 
     ui->makeBookingButton->hide();
+    dateChanger = false;
     //mw = this;
 
     //default signal of stackedWidget
@@ -495,13 +496,29 @@ void MainWindow::on_editButton_clicked()
     curBook = new Booking();
     popBookFromRow();
     popClientFromId(curBook->clientId);
-    ui->stackedWidget->setCurrentIndex(EDITPAGE);
     ui->editUpdate->setEnabled(false);
     popEditPage();
     setBookSummary();
+    if(!getRoomCosts())
+        return;
+    setEditDayInfo(curBook->endDate);
+    ui->stackedWidget->setCurrentIndex(EDITPAGE);
     ui->editUpdate->setEnabled(false);
     setup = false;
 }
+bool MainWindow::getRoomCosts(){
+    dCost = 0;
+    mCost = 0;
+    editExpected = 0;
+    QSqlQuery result = dbManager->getRoomCosts(curBook->roomId);
+    if(!result.next())
+        return false;
+    dCost = result.value("cost").toString().toDouble();
+    mCost = result.value("Monthly").toString().toDouble();
+    editExpected = realCost(curBook->startDate, curBook->endDate, dCost, mCost);
+    return true;
+}
+
 void MainWindow::popClientFromId(QString id){
     QSqlQuery result;
     curClient = new Client();
@@ -732,7 +749,7 @@ void MainWindow::on_bookingSearchButton_clicked()
     QString program = ui->programDropdown->currentText();
 
     QSqlQuery result = dbManager->getCurrentBooking(ui->startDateEdit->date(), ui->endDateEdit->date(), program);
-    ui->bookCostLabel->setText("");
+    ui->bookCostLabel->setText("0");
    /* ui->bookingTable->setRowCount(0);
     ui->bookingTable->clear();
     ui->bookingTable->setHorizontalHeaderLabels(QStringList() << "Room #" << "Location" << "Program" << "Description" << "Cost" << "Monthly");
@@ -877,6 +894,8 @@ void MainWindow::setBookSummary(){
     ui->editLengthOfStay->setText(QString::number(curBook->stayLength));
     ui->editRoomLabel_2->setText(curBook->room);
     ui->editCost->setText(QString::number(curBook->cost, 'f', 2));
+
+
     //ui->editRefundAmt->setText(QString::number(ui->editOC->text().toDouble() - curBook->cost));
 
 }
@@ -1116,28 +1135,34 @@ void MainWindow::on_editDate_dateChanged(const QDate &date)
         ui->editUpdate->setEnabled(true);
 
     }
+
+    if(date < QDate::currentDate()){
+        ui->editDate->setDate(QDate::currentDate());
+
+    }
     ui->editRoom->setEnabled(false);
     QDate nextStart = date;
-
+    QDate comp;
     if(date > curBook->endDate){
         QSqlQuery result;
         result = dbManager->getNextBooking(curBook->endDate, curBook->roomId);
         int x = 0 ;
-        while(result.next()){
-            if(x == 0){
-                nextStart = QDate::fromString(result.value("StartDate").toString(), "yyyy-MM-dd");
-                if(nextStart > date)
-                    nextStart = date;
-            }
-            x++;
-        }
-        if(!x){
+        if(!result.next()){
             nextStart = date;
         }
+
+        else{
+            nextStart = QDate::fromString(result.value("StartDate").toString(), "yyyy-MM-dd");
+
+        }
+
         ui->editDate->setDate(nextStart);
     }
-    if(date < curBook->startDate){
-        ui->editDate->setDate(curBook->startDate);
+
+    editExpected = realCost(curBook->startDate, curBook->endDate, dCost, mCost);
+    setEditDayInfo(date);
+    if(curBook->cost != editExpected){
+
     }
 
     qDebug() << "Edit date called";
@@ -1155,9 +1180,98 @@ void MainWindow::on_editDate_dateChanged(const QDate &date)
 
 
     newCost = curBook->cost + refund;
-    ui->editCost->setText(QString::number(newCost));
+   // ui->editCost->setText(QString::number(newCost));
 
 
+
+}
+void MainWindow::setEditDayInfo(QDate date){
+    std::pair<int, int> stayDays, usedDays, notusedDays;
+    stayDays = monthDay(curBook->startDate, date);
+
+
+    if(curBook->startDate > QDate::currentDate()){
+        usedDays = std::make_pair(0,0);
+        notusedDays = monthDay(curBook->startDate, curBook->endDate);
+    }else{
+        usedDays = monthDay(curBook->startDate, QDate::currentDate());
+        notusedDays = monthDay(QDate::currentDate(), date);
+    }
+    int dLeft, mLeft;
+    mLeft = stayDays.first - usedDays.first;
+    dLeft = stayDays.second - usedDays.second;
+    if(dLeft < 0)
+        dLeft = 0;
+    notusedDays = monthDay(QDate::currentDate(), date);
+    ui->editDayUsed->setText(QString::number(usedDays.second));
+    ui->editMonthUsed->setText(QString::number(usedDays.first));
+    ui->editDaysRefunded->setText(QString::number(dLeft));
+    ui->editMonthsRefunded->setText(QString::number(mLeft));
+    ui->editDailyCost->setText(QString::number(dCost, 'f',2));
+    ui->editMonthlyCost->setText(QString::number(mCost,'f',2));
+    calcEditRefund(date);
+
+}
+
+void MainWindow::calcEditRefund(QDate date){
+    int dUsed, mUsed, mRefund, dRefund;
+    double adjustedDaily;
+    double totalCost, dayCost, monthCost;
+    std::pair<int, int> curLength = monthDay(curBook->startDate, date);
+
+    dUsed = ui->editDayUsed->text().toInt();
+    mUsed = ui->editMonthUsed->text().toInt();
+    dRefund = ui->editDaysRefunded->text().toInt();
+    mRefund = ui->editMonthsRefunded->text().toInt();
+
+    if(curBook->cost != editExpected){
+        if(curBook->cost > editExpected){
+            qDebug() << "Warning, booking more expensive than expected";
+        }
+       adjustedDaily = curBook->cost / curBook->stayLength;
+       int numDays = date.toJulianDay() - curBook->startDate.toJulianDay();
+       dayCost = numDays * adjustedDaily;
+       monthCost = 0;
+    }else{
+        dayCost = curLength.second * dCost;
+        if(dayCost > mCost)
+            dayCost = mCost;
+        monthCost = curLength.first * mCost;
+
+    }
+    double refundCost;
+    if(!checkNumber(ui->editCancel->text())){
+        refundCost = 0;
+    }
+    else{
+
+        refundCost = ui->editCancel->text().toDouble();
+    }
+    if(date > curBook->endDate){
+        refundCost = 0;
+    }
+    totalCost = curBook->cost - (dayCost + monthCost + refundCost);
+    double labelCost = dayCost + monthCost + refundCost;
+    if(curBook->endDate >= date){
+        if(totalCost < 0)
+            totalCost = 0;
+        if(labelCost > curBook->cost)
+            labelCost = curBook->cost;
+    }
+    if(totalCost < 0){
+        ui->editRefOwe->setText("Expected Amount Owed");
+        ui->editRefundLabel->setText("Amount Owed");
+        ui->editRefundAmt->setText(QString::number(totalCost * -1, 'f',2));
+        ui->editRefundAmount->setText(QString::number(totalCost * -1, 'f', 2));
+
+    }
+    else{
+        ui->editRefOwe->setText("Expected Refund Amount");
+        ui->editRefundLabel->setText("Refund Amount");
+        ui->editRefundAmt->setText(QString::number(totalCost, 'f',2));
+        ui->editRefundAmount->setText(QString::number(totalCost, 'f', 2));
+    }
+    ui->editCost->setText(QString::number(labelCost, 'f', 2));
 
 }
 
@@ -1180,43 +1294,22 @@ void MainWindow::on_editManagePayment_clicked()
 
 void MainWindow::on_editCost_textChanged()
 {
-    ui->editUpdate->setEnabled(true);
-    double newCost = ui->editCost->text().toDouble();
-    double refund = ui->editCancel->text().toDouble();
-    double origCost = ui->editOC->text().toDouble();
 
-    if(newCost < origCost){
-        ui->editRefundLabel->setText("Refund");
-        double realRefund = newCost - origCost + refund;
-
-        if(realRefund > 0)
-            realRefund = 0;
-        realRefund = realRefund * -1;
-        ui->editRefundAmt->setText(QString::number(realRefund, 'f', 2));
-    }
-    else{
-        ui->editRefundLabel->setText("Owed");
-        ui->editRefundAmt->setText(QString::number(newCost - origCost, 'f', 2));
-    }
 }
 
 void MainWindow::on_editCancel_textChanged()
 {
-    double newCost = ui->editCost->text().toDouble();
-    double refund = ui->editCancel->text().toDouble();
-    double origCost = ui->editOC->text().toDouble();
-    if(newCost < origCost){
-        ui->editRefundLabel->setText("Refund");
-        double realRefund = newCost - origCost + refund;
-        if(realRefund > 0)
-            realRefund = 0;
-        realRefund = realRefund * -1;
-        ui->editRefundAmt->setText(QString::number(realRefund, 'f', 2));
-    }
-    else{
-        ui->editRefundLabel->setText("Owed");
-        ui->editRefundAmt->setText(QString::number(newCost - origCost, 'f', 2));
-    }
+
+   if(!checkNumber(ui->editCancel->text())){
+       return;
+   }
+   double refundAmt = ui->editCancel->text().toDouble();
+   if(refundAmt < 0){
+        ui->editCancel->setText("0");
+        return;
+   }
+   dateChanger = true;
+   calcEditRefund(ui->editDate->date());
 }
 
 void MainWindow::on_editRoom_clicked()
@@ -6359,8 +6452,10 @@ double MainWindow::realCost(QDate start, QDate end, double daily, double monthly
     holdEnd = holdEnd.addMonths(1);
     if(holdEnd == start)
         days = 0;
-    else
-        days = holdEnd.toJulianDay() - start.toJulianDay();
+    else{
+        holdEnd = start.addMonths(months);
+        days = end.toJulianDay() - holdEnd.toJulianDay();
+    }
     dailyCost = days * daily;
     if(dailyCost > monthly){
         dailyCost = monthly;
@@ -6381,9 +6476,10 @@ std::pair<int,int> MainWindow::monthDay(QDate start, QDate end){
     holdEnd = holdEnd.addMonths(1);
     if(holdEnd == start)
         days = 0;
-    else
-        days = holdEnd.toJulianDay() - start.toJulianDay();
-
+    else{
+        holdEnd = start.addMonths(months);
+        days = end.toJulianDay() - holdEnd.toJulianDay();
+    }
     std::pair<int,int> p = std::make_pair(months, days);
     return p;
 }
@@ -6612,4 +6708,32 @@ void MainWindow::on_shiftE4_timeChanged(const QTime &time)
         return;
     }
     ui->shiftS5->setTime(time.addSecs(60));
+}
+
+void MainWindow::on_editCost_textChanged(const QString &arg1)
+{
+    if(dateChanger){
+        dateChanger = false;
+        return;
+    }
+    ui->editUpdate->setEnabled(true);
+    if(!checkNumber(arg1))
+        return;
+    double newCost = arg1.toDouble();
+    double refund = ui->editCancel->text().toDouble();
+    double origCost = ui->editOC->text().toDouble();
+
+    if(newCost < origCost){
+        ui->editRefundLabel->setText("Refund");
+        double realRefund = newCost - origCost + refund;
+
+        if(realRefund > 0)
+            realRefund = 0;
+        realRefund = realRefund * -1;
+        ui->editRefundAmt->setText(QString::number(realRefund, 'f', 2));
+    }
+    else{
+        ui->editRefundLabel->setText("Owed");
+        ui->editRefundAmt->setText(QString::number(newCost - origCost, 'f', 2));
+    }
 }
