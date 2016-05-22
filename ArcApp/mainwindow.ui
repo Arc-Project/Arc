@@ -13451,7 +13451,7 @@ QHeaderView{
                 </font>
                </property>
                <property name="text">
-                <string>Refund</string>
+                <string>Refund Amount</string>
                </property>
               </widget>
              </item>

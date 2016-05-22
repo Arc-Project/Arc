@@ -660,8 +660,8 @@ void MainWindow::on_cbox_payDateRange_activated(int index)
     QStringList heads;
     QStringList cols;
     QSqlQuery tempSql = dbManager->getTransactions(hold, endDate);
-    heads << "Date"  <<"First" << "Last" << "Amount" << "Type" << "Method" << "Notes"  << "" << "";
-    cols << "Date" <<"FirstName"<< "LastName"  << "Amount" << "TransType" << "Type" << "Notes" << "TransacId" << "ClientId";
+    heads << "Date"  <<"First" << "Last" << "Amount" << "Type" << "Method" << "Notes"  << "" << "" << "Employee Name";
+    cols << "Date" <<"FirstName"<< "LastName"  << "Amount" << "TransType" << "Type" << "Notes" << "TransacId" << "ClientId" << "EmpName";
     populateATable(ui->mpTable, heads, cols, tempSql, false);
     ui->mpTable->setColumnHidden(7, true);
     ui->mpTable->setColumnHidden(8, true);
