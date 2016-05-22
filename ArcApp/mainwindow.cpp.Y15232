@@ -7696,8 +7696,3 @@ void MainWindow::on_pushButton_newFeature_clicked()
 {
     ui->stackedWidget->setCurrentIndex(18);
 }
-
-void MainWindow::on_pushButton_back_to_clicked()
-{
-    ui->stackedWidget->setCurrentIndex(EDITSHIFT);
-}

@@ -49,6 +49,7 @@
 
 #include <QMainWindow>
 #include <QDebug>
+#include <QProgressBar>
 #include <utility>
 #include <QtConcurrent/QtConcurrent>
 #include "databasemanager.h"
@@ -138,6 +139,9 @@ public:
     void setStorageClient();
     void lockupShifts();
     void showShifts(int num);
+    bool getRoomCosts();
+    void setEditDayInfo(QDate date);
+    void calcEditRefund(QDate date);
     //COLIN END//////
 
     void updatemenuforuser();
@@ -588,6 +592,8 @@ private slots:
 
     void printRunningNotes(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
 
+    void printStaySummary(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
+
     void on_comboBox_3_currentTextChanged(const QString &arg1);
 
     void on_btn_saveShift_clicked();
@@ -647,11 +653,15 @@ private slots:
 
     void on_shiftE4_timeChanged(const QTime &time);
 
+    void on_editCost_textChanged(const QString &arg1);
     void on_shiftReport_tabWidget_currentChanged(int index);
 
     void on_dailyReport_tabWidget_currentChanged(int index);
 
     void on_actionAbout_triggered();
+
+    void on_editClient_returnPressed();
+
 
 
     //sHIFT CHECK
@@ -693,16 +703,22 @@ private slots:
 
     void on_pushButton_reload_clicked();
 
+    void on_pushButton_newFeature_clicked();
+
+    void on_pushButton_back_to_clicked();
+
 private:
 
     Ui::MainWindow *ui;
     MainWindow * mw;
     Booking * curBook;
-    bool setup;
+    bool setup, dateChanger;
+    double dCost, mCost, editExpected;
     transaction * trans;
     Client * curClient;
     QString curClientID, curClientName;
     bool editOverLap;
+    bool cNew, bNew, tNew;
     int numShift;
 
     bool caseWorkerUpdated = true;
