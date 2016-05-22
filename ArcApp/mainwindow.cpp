@@ -80,6 +80,8 @@ MainWindow::MainWindow(QWidget *parent) :
         SLOT(on_noDatabaseConnection()));
     connect(dbManager, SIGNAL(reconnectedToDatabase()), this,
         SLOT(on_reconnectedToDatabase()));
+    connect(dbManager, SIGNAL(getPcpData(QStringList,QStringList,QStringList,int)), this,
+        SLOT(populatePcpTable(QStringList, QStringList, QStringList, int)));
 
     curClient = 0;
     curBook = 0;
@@ -2817,11 +2819,11 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
     if (idDisplayed != curClientID) {
         idDisplayed = curClientID;
         ui->lbl_caseClientName->setText(curFirstName + " " + curMiddleName + curLastName + "'s Case Files");
-        populateCaseFiles();
+        QtConcurrent::run(this, retrievePcpData, QString("all"), -1);
     }
 }
 
-void MainWindow::populateCaseFiles(QString type, int tableId) {
+void MainWindow::retrievePcpData(QString type, int tableId) {
 
     //running notes
     ui->te_notes->clear();
@@ -2834,75 +2836,124 @@ void MainWindow::populateCaseFiles(QString type, int tableId) {
     //pcp tables
     int tableIdx = 0;
     if (type == "all") {
-
         for (auto x: pcpTypes) {
-            QString query = "SELECT rowId, Goal, Strategy, Date "
-                            "FROM Pcp "
-                            "WHERE ClientId = " + curClientID +
-                            " AND Type = '" + x + "'";
-            QSqlQuery result = dbManager->execQuery(query);
-            qDebug() << result.lastError();
-            int numRows = result.numRowsAffected();
-            auto table = (pcp_tables.at(tableIdx++));
+//            QString query = "SELECT rowId, Goal, Strategy, Date "
+//                            "FROM Pcp "
+//                            "WHERE ClientId = " + curClientID +
+//                            " AND Type = '" + x + "'";
+//            QSqlQuery result = dbManager->execQuery(query);
+            dbManager->readPcpThread(curClientID, x, tableIdx++);
+//            useProgressDialog("Loading personalized case plan tables...", QtConcurrent::run(dbManager, dbManager->readPcpThread, curClientID, x, tableIdx++));
 
-            //reset table
-            table->clearContents();
-            table->setMinimumHeight(73);
-            table->setMaximumHeight(1);
-            table->setMaximumHeight(16777215);
-            table->setRowCount(1);
+//            qDebug() << result.lastError();
+//            auto table = (pcp_tables.at(tableIdx++));
 
-            //set number of rows
-            for (int i = 0; i < numRows-1; i++) {
-                table->insertRow(0);
+//            populatePcpTable(table, result);
+//            QtConcurrent::run(this, populatePcpTable, table, result);
 
-                //set height of table
-                table->setMinimumHeight(table->minimumHeight() + 35);
-            }
+//            int numRows = result.numRowsAffected();
 
-            //populate table
-            while (result.next()){
-                for (int i = 0; i < 3; i++) {
-                    table->setItem(result.value(0).toString().toInt(), i, new QTableWidgetItem(result.value(i+1).toString()));
-                }
-            }
+
+//            //reset table
+//            table->clearContents();
+//            table->setMinimumHeight(73);
+//            table->setMaximumHeight(1);
+//            table->setMaximumHeight(16777215);
+//            table->setRowCount(1);
+
+//            //set number of rows
+//            for (int i = 0; i < numRows-1; i++) {
+//                table->insertRow(0);
+
+//                //set height of table
+//                table->setMinimumHeight(table->minimumHeight() + 35);
+//            }
+
+//            //populate table
+//            while (result.next()){
+//                for (int i = 0; i < 3; i++) {
+//                    table->setItem(result.value(0).toString().toInt(), i, new QTableWidgetItem(result.value(i+1).toString()));
+//                }
+//            }
         }
         return;
     } else {
 
-        QString query = "SELECT rowId, Goal, Strategy, Date "
-                        "FROM Pcp "
-                        "WHERE ClientId = " + curClientID +
-                        " AND Type = '" + type + "'";
-        QSqlQuery result = dbManager->execQuery(query);
+//        QString query = "SELECT rowId, Goal, Strategy, Date "
+//                        "FROM Pcp "
+//                        "WHERE ClientId = " + curClientID +
+//                        " AND Type = '" + type + "'";
+//        QSqlQuery result = dbManager->execQuery(query);
+//        qDebug() << result.lastError();
+//        auto table = (pcp_tables.at(tableId));
 
-        qDebug() << result.lastError();
-        int numRows = result.numRowsAffected();
-        auto table = (pcp_tables.at(tableId));
+//        populatePcpTable(table, result);
 
-        //reset table
-        table->clearContents();
-        table->setMinimumHeight(73);
-        table->setMaximumHeight(1);
-        table->setMaximumHeight(16777215);
-        table->setRowCount(1);
 
-        //set number of rows
-        for (int i = 0; i < numRows-1; i++) {
-            table->insertRow(0);
+//        int numRows = result.numRowsAffected();
 
-            //set height of table
-            table->setMinimumHeight(table->minimumHeight() + 35);
-        }
 
-        //populate table
-        while (result.next()){
-            for (int i = 0; i < 3; i++) {
-                table->setItem(result.value(0).toString().toInt(), i, new QTableWidgetItem(result.value(i+1).toString()));
-            }
-        }
+//        //reset table
+//        table->clearContents();
+//        table->setMinimumHeight(73);
+//        table->setMaximumHeight(1);
+//        table->setMaximumHeight(16777215);
+//        table->setRowCount(1);
+
+//        //set number of rows
+//        for (int i = 0; i < numRows-1; i++) {
+//            table->insertRow(0);
+
+//            //set height of table
+//            table->setMinimumHeight(table->minimumHeight() + 35);
+//        }
+
+//        //populate table
+//        while (result.next()){
+//            for (int i = 0; i < 3; i++) {
+//                table->setItem(result.value(0).toString().toInt(), i, new QTableWidgetItem(result.value(i+1).toString()));
+//            }
+//        }
     }
 }
+
+//void MainWindow::populatePcpTable(QTableWidget *table, QSqlQuery result){
+void MainWindow::populatePcpTable(QStringList goal, QStringList strategy, QStringList date, int tableIdx){
+    qDebug() << "populating pcp table " + tableIdx;
+
+    auto table = pcp_tables.at(tableIdx);
+
+//    int numRows = result.numRowsAffected();
+    int numRows = goal.count();
+
+    //reset table
+    table->clearContents();
+    table->setMinimumHeight(73);
+    table->setMaximumHeight(1);
+    table->setMaximumHeight(16777215);
+    table->setRowCount(1);
+
+    //set number of rows
+    for (int i = 0; i < numRows-1; i++) {
+        table->insertRow(0);
+
+        //set height of table
+        table->setMinimumHeight(table->minimumHeight() + 35);
+    }
+
+    //populate table
+//    while (result.next()){
+//        for (int i = 0; i < 3; i++) {
+//            table->setItem(result.value(0).toString().toInt(), i, new QTableWidgetItem(result.value(i+1).toString()));
+//        }
+//    }
+    for (int i = 0; i < numRows; i++) {
+        table->setItem(0, 0, new QTableWidgetItem(goal[i]));
+        table->setItem(0, 1, new QTableWidgetItem(strategy[i]));
+        table->setItem(0, 2, new QTableWidgetItem(date[i]));
+    }
+}
+
 //CASEFILE WIDGET CHANGE CONTROL
 void MainWindow::on_tabw_casefiles_currentChanged(int index)
 {
@@ -4591,73 +4642,73 @@ void MainWindow::on_actionPcptables_triggered()
 void MainWindow::on_btn_pcpRelaUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(0);
-    populateCaseFiles(pcpTypes.at(0), 0);
+    retrievePcpData(pcpTypes.at(0), 0);
 }
 
 void MainWindow::on_btn_pcpEduUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(1);
-    populateCaseFiles(pcpTypes.at(1), 1);
+    retrievePcpData(pcpTypes.at(1), 1);
 }
 
 void MainWindow::on_btn_pcpSubUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(2);
-    populateCaseFiles(pcpTypes.at(2), 2);
+    retrievePcpData(pcpTypes.at(2), 2);
 }
 
 void MainWindow::on_btn_pcpAccoUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(3);
-    populateCaseFiles(pcpTypes.at(3), 3);
+    retrievePcpData(pcpTypes.at(3), 3);
 }
 
 void MainWindow::on_btn_pcpLifeUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(4);
-    populateCaseFiles(pcpTypes.at(4), 4);
+    retrievePcpData(pcpTypes.at(4), 4);
 }
 
 void MainWindow::on_btn_pcpMentUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(5);
-    populateCaseFiles(pcpTypes.at(5), 5);
+    retrievePcpData(pcpTypes.at(5), 5);
 }
 
 void MainWindow::on_btn_pcpPhyUndo_2_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(6);
-    populateCaseFiles(pcpTypes.at(6), 6);
+    retrievePcpData(pcpTypes.at(6), 6);
 }
 
 void MainWindow::on_btn_pcpLegUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(7);
-    populateCaseFiles(pcpTypes.at(7), 7);
+    retrievePcpData(pcpTypes.at(7), 7);
 }
 
 void MainWindow::on_btn_pcpActUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(8);
-    populateCaseFiles(pcpTypes.at(8), 8);
+    retrievePcpData(pcpTypes.at(8), 8);
 }
 
 void MainWindow::on_btn_pcpTradUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(9);
-    populateCaseFiles(pcpTypes.at(9), 9);
+    retrievePcpData(pcpTypes.at(9), 9);
 }
 
 void MainWindow::on_btn_pcpOtherUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(10);
-    populateCaseFiles(pcpTypes.at(10), 10);
+    retrievePcpData(pcpTypes.at(10), 10);
 }
 
 void MainWindow::on_btn_pcpPplUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(11);
-    populateCaseFiles(pcpTypes.at(11), 11);
+    retrievePcpData(pcpTypes.at(11), 11);
 }
 
 void MainWindow::on_btn_notesSave_clicked()
