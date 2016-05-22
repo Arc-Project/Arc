@@ -60,5 +60,6 @@
         <file>pdf/restriction.xml</file>
         <file>pdf/monthly.xml</file>
         <file>pdf/running.xml</file>
+        <file>pdf/staysummary.xml</file>
     </qresource>
 </RCC>

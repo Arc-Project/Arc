@@ -174,6 +174,7 @@ public:
     QSqlQuery addNote(QString clientId, QString notes);
     QSqlQuery updateNote(QString clientId, QString notes);
     QSqlQuery readNote(QString clientId);
+    QSqlQuery getProgramDesc(QString programcode);
 
 signals:
     void dailyReportStatsChanged(QList<int> list, bool conn);

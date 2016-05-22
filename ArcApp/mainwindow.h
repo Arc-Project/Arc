@@ -579,6 +579,8 @@ private slots:
 
     void printRunningNotes(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
 
+    void printStaySummary(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
+
     void on_comboBox_3_currentTextChanged(const QString &arg1);
 
     void on_btn_saveShift_clicked();
@@ -643,6 +645,8 @@ private slots:
     void on_dailyReport_tabWidget_currentChanged(int index);
 
     void on_actionAbout_triggered();
+
+    void on_editClient_returnPressed();
 
 private:
 
