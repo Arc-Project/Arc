@@ -235,8 +235,11 @@ void MainWindow::initCurrentWidget(int idx){
             ui->actionExport_to_PDF->setEnabled(true);
             break;
         case 18:  //test shift report
-            showAllShiftEdit(false);
+            showAllShiftEdit(true);
+            on_checkBox_shift_auto_endtime_clicked(true);
              ReadCurrentShift();
+             ui->checkBox_shift_auto_endtime->setChecked(true);
+
             break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
@@ -6978,9 +6981,11 @@ void MainWindow::showAllShiftEdit(bool display)
 {
 
     qDebug()<<"SHOW SHIFT EDIT";
+
         ui->label_Shift_Index->setHidden(display);
         ui->label_Shift_Start->setHidden(display);
         ui->label_Shift_End->setHidden(display);
+        ui->checkBox_shift_auto_endtime->setHidden(display);
         ui->label_Shift1->setHidden(display);
         ui->shift1_S->setHidden(display);
         ui->shift1_E->setHidden(display);
@@ -7700,4 +7705,15 @@ void MainWindow::on_pushButton_newFeature_clicked()
 void MainWindow::on_pushButton_back_to_clicked()
 {
     ui->stackedWidget->setCurrentIndex(EDITSHIFT);
+}
+
+
+void MainWindow::on_checkBox_shift_auto_endtime_clicked(bool checked)
+{
+    ui->shift1_E->setDisabled(checked);
+
+    ui->shift2_E->setDisabled(checked);
+    ui->shift3_E->setDisabled(checked);
+    ui->shift4_E->setDisabled(checked);
+    ui->shift5_E->setDisabled(checked);
 }

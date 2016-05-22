@@ -707,6 +707,8 @@ private slots:
 
     void on_pushButton_back_to_clicked();
 
+    void on_checkBox_shift_auto_endtime_clicked(bool checked);
+
 private:
 
     Ui::MainWindow *ui;
