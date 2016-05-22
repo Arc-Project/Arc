@@ -36,9 +36,13 @@
 }
 
 QPushButton {
-                color: #670000;
-        border: 1px solid grey;
-                border-radius: 4px;
+    color: #670000;
+    border: 1px solid grey;
+    border-radius: 4px;
+}
+
+QPushButton:disabled{
+	 background-color: #eeeeee;
 }
 
 QPushButton:hover {
@@ -141,7 +145,7 @@ QDateEdit{
         border-radius: 4px;
 }
 
-QPlainTextEdit{
+QPlainTextEdit, QTextEdit{
         border: 1px solid grey;
         border-radius: 4px;
         background-color: palette(base);
@@ -180,7 +184,7 @@ QHeaderView{
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>11</number>
+       <number>7</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -2541,7 +2545,7 @@ QHeaderView{
       </widget>
       <widget class="QWidget" name="bookingLookup">
        <layout class="QGridLayout" name="gridLayout_21">
-        <item row="0" column="4">
+        <item row="0" column="5">
          <layout class="QVBoxLayout" name="verticalLayout_10">
           <item>
            <widget class="QLabel" name="label_20">
@@ -2553,7 +2557,7 @@ QHeaderView{
             </property>
             <property name="font">
              <font>
-              <pointsize>12</pointsize>
+              <pointsize>13</pointsize>
              </font>
             </property>
             <property name="text">
@@ -2584,13 +2588,13 @@ QHeaderView{
           </item>
          </layout>
         </item>
-        <item row="0" column="6">
+        <item row="0" column="7">
          <layout class="QVBoxLayout" name="verticalLayout_11">
           <item>
            <widget class="QLabel" name="label_82">
             <property name="font">
              <font>
-              <pointsize>12</pointsize>
+              <pointsize>13</pointsize>
              </font>
             </property>
             <property name="text">
@@ -2606,7 +2610,7 @@ QHeaderView{
                <widget class="QLabel" name="label_69">
                 <property name="font">
                  <font>
-                  <pointsize>12</pointsize>
+                  <pointsize>14</pointsize>
                  </font>
                 </property>
                 <property name="text">
@@ -2624,11 +2628,11 @@ QHeaderView{
                 </property>
                 <property name="font">
                  <font>
-                  <pointsize>12</pointsize>
+                  <pointsize>14</pointsize>
                  </font>
                 </property>
                 <property name="text">
-                 <string>numMonths</string>
+                 <string>0</string>
                 </property>
                </widget>
               </item>
@@ -2640,7 +2644,7 @@ QHeaderView{
                <widget class="QLabel" name="label_78">
                 <property name="font">
                  <font>
-                  <pointsize>12</pointsize>
+                  <pointsize>14</pointsize>
                  </font>
                 </property>
                 <property name="text">
@@ -2658,11 +2662,11 @@ QHeaderView{
                 </property>
                 <property name="font">
                  <font>
-                  <pointsize>12</pointsize>
+                  <pointsize>14</pointsize>
                  </font>
                 </property>
                 <property name="text">
-                 <string>numDays</string>
+                 <string>0</string>
                 </property>
                </widget>
               </item>
@@ -2674,7 +2678,7 @@ QHeaderView{
                <widget class="QLabel" name="label_79">
                 <property name="font">
                  <font>
-                  <pointsize>12</pointsize>
+                  <pointsize>14</pointsize>
                  </font>
                 </property>
                 <property name="text">
@@ -2692,11 +2696,11 @@ QHeaderView{
                 </property>
                 <property name="font">
                  <font>
-                  <pointsize>12</pointsize>
+                  <pointsize>14</pointsize>
                  </font>
                 </property>
                 <property name="text">
-                 <string>cost</string>
+                 <string>0</string>
                 </property>
                </widget>
               </item>
@@ -2712,7 +2716,7 @@ QHeaderView{
            <widget class="QLabel" name="label_2">
             <property name="font">
              <font>
-              <pointsize>12</pointsize>
+              <pointsize>13</pointsize>
              </font>
             </property>
             <property name="text">
@@ -2752,7 +2756,7 @@ QHeaderView{
            <widget class="QLabel" name="label_10">
             <property name="font">
              <font>
-              <pointsize>12</pointsize>
+              <pointsize>13</pointsize>
              </font>
             </property>
             <property name="text">
@@ -2783,44 +2787,7 @@ QHeaderView{
           </item>
          </layout>
         </item>
-        <item row="0" column="2">
-         <widget class="QPushButton" name="addMonth">
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>70</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Increment
-1 Month</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="8">
-         <widget class="QPushButton" name="bookingSearchButton">
-          <property name="minimumSize">
-           <size>
-            <width>130</width>
-            <height>35</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>14</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Search</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="8" colspan="2">
+        <item row="2" column="10" colspan="2">
          <widget class="QPushButton" name="makeBookingButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -2844,25 +2811,7 @@ QHeaderView{
           </property>
          </widget>
         </item>
-        <item row="0" column="9">
-         <widget class="QPushButton" name="pushButton_9">
-          <property name="minimumSize">
-           <size>
-            <width>130</width>
-            <height>35</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>14</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Clear</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" colspan="10">
+        <item row="1" column="0" colspan="12">
          <widget class="QTableWidget" name="bookingTable">
           <property name="font">
            <font>
@@ -2905,7 +2854,23 @@ QHeaderView{
           </column>
          </widget>
         </item>
-        <item row="0" column="3">
+        <item row="0" column="8">
+         <spacer name="horizontalSpacer_111">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Minimum</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="4">
          <spacer name="horizontalSpacer_13">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -2921,7 +2886,7 @@ QHeaderView{
           </property>
          </spacer>
         </item>
-        <item row="0" column="5">
+        <item row="0" column="6">
          <spacer name="horizontalSpacer_110">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -2937,21 +2902,113 @@ QHeaderView{
           </property>
          </spacer>
         </item>
-        <item row="0" column="7">
-         <spacer name="horizontalSpacer_111">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Minimum</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
+        <item row="0" column="2" colspan="2">
+         <layout class="QVBoxLayout" name="verticalLayout_12">
+          <item>
+           <widget class="QLabel" name="label_12">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="addMonth">
+            <property name="minimumSize">
+             <size>
+              <width>230</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Increment 1 Month</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="0" column="9">
+         <layout class="QVBoxLayout" name="verticalLayout_14">
+          <item>
+           <widget class="QLabel" name="label_84">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="bookingSearchButton">
+            <property name="minimumSize">
+             <size>
+              <width>130</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Search</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="0" column="10" colspan="2">
+         <layout class="QVBoxLayout" name="verticalLayout_15">
+          <item>
+           <widget class="QLabel" name="label_85">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_9">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>130</width>
+              <height>35</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>14</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Clear</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -3862,134 +3919,24 @@ QHeaderView{
       <widget class="QWidget" name="editUsers">
        <layout class="QGridLayout" name="gridLayout_20">
         <item row="0" column="0">
+         <spacer name="horizontalSpacer_116">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>150</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="1">
          <widget class="QWidget" name="wgd_editUserSearch" native="true">
           <layout class="QGridLayout" name="gridLayout_2">
-           <item row="0" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_12">
-             <item>
-              <widget class="QLabel" name="lbl_searchName">
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>Search Name:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="le_users">
-               <property name="minimumSize">
-                <size>
-                 <width>180</width>
-                 <height>28</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                </font>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="btn_searchUsers">
-               <property name="minimumSize">
-                <size>
-                 <width>80</width>
-                 <height>28</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>Search</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="btn_listAllUsers">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>80</width>
-                 <height>28</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>List All</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item row="2" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_13">
-             <item>
-              <spacer name="horizontalSpacer_11">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QPushButton" name="btn_displayUser">
-               <property name="minimumSize">
-                <size>
-                 <width>70</width>
-                 <height>28</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>Clear All</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pushButton_6">
-               <property name="minimumSize">
-                <size>
-                 <width>65</width>
-                 <height>28</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>Delete</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
            <item row="1" column="0">
             <widget class="QTableWidget" name="tableWidget_3">
              <property name="sizePolicy">
@@ -3997,6 +3944,11 @@ QHeaderView{
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
              </property>
              <property name="editTriggers">
               <set>QAbstractItemView::NoEditTriggers</set>
@@ -4027,10 +3979,136 @@ QHeaderView{
              </attribute>
             </widget>
            </item>
+           <item row="0" column="0">
+            <layout class="QHBoxLayout" name="horizontalLayout_12">
+             <item>
+              <widget class="QLabel" name="lbl_searchName">
+               <property name="font">
+                <font>
+                 <pointsize>15</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>Search Name:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="le_users">
+               <property name="minimumSize">
+                <size>
+                 <width>180</width>
+                 <height>35</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>10</pointsize>
+                </font>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btn_searchUsers">
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>35</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>Search</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btn_listAllUsers">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>35</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>List All</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="2" column="0">
+            <layout class="QHBoxLayout" name="horizontalLayout_13">
+             <item>
+              <spacer name="horizontalSpacer_11">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btn_displayUser">
+               <property name="minimumSize">
+                <size>
+                 <width>110</width>
+                 <height>35</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>Clear All</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_6">
+               <property name="minimumSize">
+                <size>
+                 <width>90</width>
+                 <height>35</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>Delete</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
           </layout>
          </widget>
         </item>
-        <item row="0" column="1">
+        <item row="0" column="2">
          <widget class="QWidget" name="wgd_editUserFields" native="true">
           <property name="minimumSize">
            <size>
@@ -4057,7 +4135,7 @@ QHeaderView{
                </property>
                <property name="font">
                 <font>
-                 <pointsize>12</pointsize>
+                 <pointsize>15</pointsize>
                  <weight>75</weight>
                  <bold>true</bold>
                 </font>
@@ -4096,12 +4174,12 @@ QHeaderView{
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>28</height>
+                   <height>35</height>
                   </size>
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <pointsize>15</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -4114,81 +4192,15 @@ QHeaderView{
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>28</height>
-                  </size>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="lbl_password">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>28</height>
+                   <height>35</height>
                   </size>
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <pointsize>14</pointsize>
                   </font>
                  </property>
-                 <property name="text">
-                  <string>Password:</string>
-                 </property>
                 </widget>
-               </item>
-               <item row="2" column="1">
-                <widget class="QLineEdit" name="le_password">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>28</height>
-                  </size>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="0">
-                <widget class="QLabel" name="lbl_role">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>28</height>
-                  </size>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>10</pointsize>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Role:</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="1">
-                <spacer name="verticalSpacer_4">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>40</height>
-                  </size>
-                 </property>
-                </spacer>
                </item>
                <item row="1" column="1">
                 <spacer name="verticalSpacer_5">
@@ -4203,17 +4215,139 @@ QHeaderView{
                  </property>
                 </spacer>
                </item>
-               <item row="4" column="1">
-                <widget class="QComboBox" name="comboBox">
+               <item row="2" column="0">
+                <widget class="QLabel" name="lbl_password">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>28</height>
+                   <height>35</height>
                   </size>
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <pointsize>15</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Password:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QLineEdit" name="le_password">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>35</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <spacer name="verticalSpacer_65">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item row="4" column="0">
+                <widget class="QLabel" name="label_8">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>35</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>15</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Employee Name:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="1">
+                <widget class="QLineEdit" name="lineEdit_EmpName">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>35</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
+                <spacer name="verticalSpacer_4">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item row="6" column="0">
+                <widget class="QLabel" name="lbl_role">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>35</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>15</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Role:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="1">
+                <widget class="QComboBox" name="comboBox">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>35</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
                   </font>
                  </property>
                  <property name="currentText">
@@ -4235,16 +4369,6 @@ QHeaderView{
                   </property>
                  </item>
                 </widget>
-               </item>
-               <item row="5" column="0">
-                <widget class="QLabel" name="label_8">
-                 <property name="text">
-                  <string>Employee Name:</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="1">
-                <widget class="QLineEdit" name="lineEdit_EmpName"/>
                </item>
               </layout>
              </item>
@@ -4304,13 +4428,13 @@ QHeaderView{
                 <widget class="QPushButton" name="btn_createNewUser">
                  <property name="minimumSize">
                   <size>
-                   <width>100</width>
-                   <height>28</height>
+                   <width>150</width>
+                   <height>35</height>
                   </size>
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <pointsize>14</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -4322,13 +4446,13 @@ QHeaderView{
                 <widget class="QPushButton" name="pushButton_4">
                  <property name="minimumSize">
                   <size>
-                   <width>60</width>
-                   <height>28</height>
+                   <width>100</width>
+                   <height>35</height>
                   </size>
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <pointsize>14</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -4343,11 +4467,27 @@ QHeaderView{
           </layout>
          </widget>
         </item>
+        <item row="0" column="3">
+         <spacer name="horizontalSpacer_117">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>150</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="editProgram">
        <layout class="QGridLayout" name="gridLayout_51">
-        <item row="0" column="0">
+        <item row="0" column="1">
          <widget class="QWidget" name="wgd_editUserSearch_2" native="true">
           <layout class="QGridLayout" name="gridLayout_3">
            <item row="0" column="0">
@@ -4356,7 +4496,7 @@ QHeaderView{
               <widget class="QLabel" name="lbl_searchName_2">
                <property name="font">
                 <font>
-                 <pointsize>10</pointsize>
+                 <pointsize>15</pointsize>
                 </font>
                </property>
                <property name="text">
@@ -4369,12 +4509,12 @@ QHeaderView{
                <property name="minimumSize">
                 <size>
                  <width>180</width>
-                 <height>28</height>
+                 <height>35</height>
                 </size>
                </property>
                <property name="font">
                 <font>
-                 <pointsize>10</pointsize>
+                 <pointsize>14</pointsize>
                 </font>
                </property>
               </widget>
@@ -4383,13 +4523,13 @@ QHeaderView{
               <widget class="QPushButton" name="btn_searchUsers_2">
                <property name="minimumSize">
                 <size>
-                 <width>60</width>
-                 <height>28</height>
+                 <width>95</width>
+                 <height>35</height>
                 </size>
                </property>
                <property name="font">
                 <font>
-                 <pointsize>10</pointsize>
+                 <pointsize>14</pointsize>
                 </font>
                </property>
                <property name="text">
@@ -4407,13 +4547,13 @@ QHeaderView{
                </property>
                <property name="minimumSize">
                 <size>
-                 <width>80</width>
-                 <height>28</height>
+                 <width>95</width>
+                 <height>35</height>
                 </size>
                </property>
                <property name="font">
                 <font>
-                 <pointsize>10</pointsize>
+                 <pointsize>14</pointsize>
                 </font>
                </property>
                <property name="text">
@@ -4480,7 +4620,33 @@ QHeaderView{
           </layout>
          </widget>
         </item>
-        <item row="0" column="1">
+        <item row="0" column="0">
+         <spacer name="horizontalSpacer_118">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="3">
+         <spacer name="horizontalSpacer_119">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="2">
          <widget class="QWidget" name="wgd_editUserFields_2" native="true">
           <property name="minimumSize">
            <size>
@@ -4489,34 +4655,6 @@ QHeaderView{
            </size>
           </property>
           <layout class="QGridLayout" name="gridLayout_24">
-           <item row="4" column="0">
-            <widget class="QTableWidget" name="availablebedslist">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>275</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="editTriggers">
-              <set>QAbstractItemView::NoEditTriggers</set>
-             </property>
-             <property name="selectionMode">
-              <enum>QAbstractItemView::SingleSelection</enum>
-             </property>
-             <property name="selectionBehavior">
-              <enum>QAbstractItemView::SelectRows</enum>
-             </property>
-             <attribute name="horizontalHeaderStretchLastSection">
-              <bool>true</bool>
-             </attribute>
-            </widget>
-           </item>
            <item row="4" column="1">
             <layout class="QVBoxLayout" name="verticalLayout_5">
              <item>
@@ -4553,29 +4691,58 @@ QHeaderView{
              </item>
             </layout>
            </item>
-           <item row="5" column="0" colspan="3">
-            <spacer name="horizontalSpacer_51">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_6">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
-             <property name="sizeHint" stdset="0">
+             <property name="minimumSize">
               <size>
-               <width>648</width>
-               <height>20</height>
+               <width>0</width>
+               <height>30</height>
               </size>
              </property>
-            </spacer>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_29">
              <property name="font">
               <font>
-               <pointsize>10</pointsize>
+               <pointsize>12</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
               </font>
              </property>
              <property name="text">
-              <string>Add Beds:</string>
+              <string>Program Information</string>
              </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QTableWidget" name="availablebedslist">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>275</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::SingleSelection</enum>
+             </property>
+             <property name="selectionBehavior">
+              <enum>QAbstractItemView::SelectRows</enum>
+             </property>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
             </widget>
            </item>
            <item row="4" column="2">
@@ -4606,29 +4773,28 @@ QHeaderView{
              </attribute>
             </widget>
            </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_6">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+           <item row="5" column="0" colspan="3">
+            <spacer name="horizontalSpacer_51">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
              </property>
-             <property name="minimumSize">
+             <property name="sizeHint" stdset="0">
               <size>
-               <width>0</width>
-               <height>30</height>
+               <width>648</width>
+               <height>20</height>
               </size>
              </property>
+            </spacer>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_29">
              <property name="font">
               <font>
-               <pointsize>12</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
+               <pointsize>10</pointsize>
               </font>
              </property>
              <property name="text">
-              <string>Program Information</string>
+              <string>Add Beds:</string>
              </property>
             </widget>
            </item>
@@ -4800,6 +4966,22 @@ QHeaderView{
              </item>
             </layout>
            </item>
+           <item row="1" column="0">
+            <spacer name="verticalSpacer_25">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Minimum</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
            <item row="2" column="0" colspan="3">
             <layout class="QFormLayout" name="formLayout_21">
              <property name="fieldGrowthPolicy">
@@ -4819,12 +5001,12 @@ QHeaderView{
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>28</height>
+                 <height>35</height>
                 </size>
                </property>
                <property name="font">
                 <font>
-                 <pointsize>10</pointsize>
+                 <pointsize>15</pointsize>
                 </font>
                </property>
                <property name="text">
@@ -4837,8 +5019,13 @@ QHeaderView{
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>28</height>
+                 <height>35</height>
                 </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
                </property>
               </widget>
              </item>
@@ -4853,12 +5040,12 @@ QHeaderView{
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>28</height>
+                 <height>0</height>
                 </size>
                </property>
                <property name="font">
                 <font>
-                 <pointsize>10</pointsize>
+                 <pointsize>15</pointsize>
                 </font>
                </property>
                <property name="text">
@@ -4874,25 +5061,14 @@ QHeaderView{
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="font">
+                <font>
+                 <pointsize>14</pointsize>
+                </font>
+               </property>
               </widget>
              </item>
             </layout>
-           </item>
-           <item row="1" column="0">
-            <spacer name="verticalSpacer_25">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Minimum</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
            </item>
           </layout>
          </widget>
@@ -5098,8 +5274,8 @@ QHeaderView{
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>632</width>
-                 <height>1325</height>
+                 <width>718</width>
+                 <height>1381</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -11431,7 +11607,7 @@ QHeaderView{
                    </property>
                    <property name="sizeHint" stdset="0">
                     <size>
-                     <width>5</width>
+                     <width>30</width>
                      <height>20</height>
                     </size>
                    </property>
@@ -11590,7 +11766,7 @@ QHeaderView{
                    </property>
                    <property name="sizeHint" stdset="0">
                     <size>
-                     <width>5</width>
+                     <width>30</width>
                      <height>20</height>
                     </size>
                    </property>
@@ -15466,7 +15642,7 @@ QHeaderView{
      <x>0</x>
      <y>0</y>
      <width>1625</width>
-     <height>23</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="font">
