@@ -2001,6 +2001,9 @@ void MainWindow::on_pushButton_search_client_clicked()
 
     useProgressDialog("Search Client "+clientName,  QtConcurrent::run(this, &searchClientListThread));
     statusBar()->showMessage(QString("Found " + QString::number(maxClient) + " Clients"), 5000);
+
+    MainWindow::resizeTableView(ui->tableWidget_search_client);
+
     connect(ui->tableWidget_search_client, SIGNAL(cellClicked(int,int)), this, SLOT(set_curClient_name(int,int)),Qt::UniqueConnection);
     connect(ui->tableWidget_search_client, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(selected_client_info(int,int)),Qt::UniqueConnection);
 }
@@ -2083,6 +2086,7 @@ void MainWindow::set_curClient_name(int nRow, int nCol){
 void MainWindow::setup_searchClientTable(QSqlQuery results){
     //initClientLookupInfo();
 
+
     ui->tableWidget_search_client->setRowCount(0);
      int colCnt = results.record().count();
     ui->tableWidget_search_client->setColumnCount(colCnt);
@@ -2114,6 +2118,7 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
 
     maxClient = row;
     //ui->tableWidget_search_client->show();
+    ui->tableWidget_search_client->setColumnHidden(0, true);
 
 }
 
@@ -4122,14 +4127,20 @@ void MainWindow::resizeTableView(QTableView* tableView)
     int cols = tableView->horizontalHeader()->count();
     double width = tableView->horizontalHeader()->size().width();
     double currentWidth = 0;
+    int hiddenColCount = 0;
     for (int i = 0; i < cols; ++i)
     {
-        currentWidth +=  tableView->columnWidth(i);
+        double colWidth = tableView->columnWidth(i);
+        if (colWidth == 0)
+        {
+            hiddenColCount++;
+        }
+        currentWidth +=  colWidth;
     }
     double diff = width - currentWidth;
     if (diff > 0)
     {
-        double sizeIncrease = diff / cols;
+        double sizeIncrease = diff / (cols - hiddenColCount);
 
         for (int i = 0; i < cols; ++i)
         {
@@ -4137,7 +4148,10 @@ void MainWindow::resizeTableView(QTableView* tableView)
             {
                 sizeIncrease = tableView->columnWidth(i) * 0.75f;
             }
-            tableView->setColumnWidth(i, tableView->columnWidth(i) + sizeIncrease);
+            if (tableView->columnWidth(i) != 0)
+            {
+                tableView->setColumnWidth(i, tableView->columnWidth(i) + sizeIncrease);    
+            }
         }
     }
 
