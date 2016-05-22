@@ -7758,3 +7758,9 @@ void MainWindow::on_checkBox_shift_auto_endtime_clicked(bool checked)
     ui->shift4_E->setDisabled(checked);
     ui->shift5_E->setDisabled(checked);
 }
+
+void MainWindow::on_pushButton_clicked()
+{
+    int index = ui->cbox_payDateRange->currentIndex();
+    MainWindow::on_cbox_payDateRange_activated(index);
+}

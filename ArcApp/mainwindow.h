@@ -716,6 +716,8 @@ private slots:
 
     void reloadPcpTable(int table);
 
+    void on_pushButton_clicked();
+
 private:
 
     Ui::MainWindow *ui;
