@@ -41,6 +41,7 @@
 
 #include <QMainWindow>
 #include <QDebug>
+#include <QProgressBar>
 #include <utility>
 #include <QtConcurrent/QtConcurrent>
 #include "databasemanager.h"

@@ -279,6 +279,9 @@ void MainWindow::on_editbookButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(EDITBOOKING);
     addHistory(MAINMENU);
+
+    on_editSearch_clicked();
+
     qDebug() << "pushed page " << MAINMENU;
 }
 
@@ -1493,6 +1496,7 @@ void MainWindow::on_EditProgramButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(EDITPROGRAM);
     addHistory(ADMINPAGE);
+    on_btn_listAllUsers_2_clicked();
     qDebug() << "pushed page " << ADMINPAGE;
 
 }
@@ -3408,9 +3412,9 @@ void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
             return;
         }
     }
-        ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
-        ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
-        ui->lbl_editProgWarning->setText("Please hold while we set your beds");
+        ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Space Code");
+        ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Space Code");
+        ui->lbl_editProgWarning->setText("Please hold while we set your spaces");
         qApp->processEvents();
 
         ui->availablebedslist->clear();
@@ -3419,8 +3423,8 @@ void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
         ui->assignedbedslist->clear();
         ui->assignedbedslist->setRowCount(0);
 
-        ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
-        ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+        ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Space Code");
+        ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Space Code");
 
         // populate the fields on the right
         QString pcode = ui->tableWidget_2->model()->data(ui->tableWidget_2->model()->index(index.row(), 0)).toString();
@@ -3454,8 +3458,8 @@ void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
                 x++;
             }
         }
-        ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
-        ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+        ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Space Code");
+        ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Space Code");
         qApp->processEvents();
 
     //    QStandardItemModel* availmodel = new QStandardItemModel();
@@ -3501,8 +3505,8 @@ void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
                   x++;
               }
           }
-          ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
-          ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Bed Code");
+          ui->availablebedslist->setHorizontalHeaderLabels(QStringList() << "Space Code");
+          ui->assignedbedslist->setHorizontalHeaderLabels(QStringList() << "Space Code");
           ui->lbl_editProgWarning->setText("");
 
     //    int numrowsassigned = assignedspaces.numRowsAffected();
