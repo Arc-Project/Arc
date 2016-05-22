@@ -2827,6 +2827,14 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
         x->setColumnWidth(0, width*0.41);
         x->setColumnWidth(1, width*0.41);
         x->setColumnWidth(2, width*0.16);
+
+        //reset table
+        qDebug() << "resetting pcp table ";
+        x->clearContents();
+        x->setMinimumHeight(73);
+        x->setMaximumHeight(1);
+        x->setMaximumHeight(16777215);
+        x->setRowCount(1);
     }
 
     //clear old data
@@ -2854,25 +2862,20 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
     populate_tw_caseFiles(filter);
     }
 
-    qDebug() << "id displayed:" << idDisplayed;
-    qDebug() << "id selected:" << curClientID;
-    if (idDisplayed != curClientID) {
-        idDisplayed = curClientID;
-        ui->lbl_caseClientName->setText(curFirstName + " " + curMiddleName + curLastName + "'s Case Files");
+    ui->lbl_caseClientName->setText(curFirstName + " " + curMiddleName + curLastName + "'s Case Files");
 //        QtConcurrent::run(this, retrievePcpData, QString("all"), -1);
-        useProgressDialog("Loading PCP tables...", QtConcurrent::run(this, retrievePcpData, QString("all"), -1));
+    useProgressDialog("Loading PCP tables...", QtConcurrent::run(this, retrievePcpData, QString("all"), -1));
 //        retrievePcpData();
-    }
-}
-void MainWindow::retrievePcpData(QString type, int tableId) {
-    Q_UNUSED(tableId);
-    //running notes
-    ui->te_notes->clear();
+
+    //running notes: move to another function
     QSqlQuery noteResult = dbManager->readNote(curClientID);
     qDebug() << noteResult.lastError();
     while (noteResult.next()) {
         ui->te_notes->document()->setPlainText(noteResult.value(0).toString());
     }
+}
+void MainWindow::retrievePcpData(QString type, int tableId) {
+    Q_UNUSED(tableId);
 
     //pcp tables
     int tableIdx = 0;
@@ -2965,17 +2968,11 @@ void MainWindow::populatePcpTable(QStringList goal, QStringList strategy, QStrin
         return;
     }
     auto table = pcp_tables.at(tableIdx);
+    qDebug() << "operating on table " << tableIdx;
 
 //    int numRows = result.numRowsAffected();
     int numRows = goal.count();
-
-    //reset table
-    qDebug() << "resetting pcp table " << tableIdx;
-    table->clearContents();
-    table->setMinimumHeight(73);
-    table->setMaximumHeight(1);
-    table->setMaximumHeight(16777215);
-    table->setRowCount(1);
+    qDebug() << "row count: " << numRows;
 
     //set number of rows
     qDebug() << "setting number of rows and resizing table height";
@@ -3822,6 +3819,7 @@ void MainWindow::initPcp(){
                     "other",
                     "people"
                 };
+
 }
 
 void MainWindow::on_btn_pcpRela_clicked()

@@ -2095,9 +2095,9 @@ void DatabaseManager::readPcpThread(QString clientId, QString type, int idx)
             {
                 while (query.next())
                 {
-                    goal << query.value(0).toString();
-                    strategy << query.value(1).toString();
-                    date << query.value(2).toString();
+                    goal << query.value(1).toString();
+                    strategy << query.value(2).toString();
+                    date << query.value(3).toString();
                 }
             }
             tempDb.close();
