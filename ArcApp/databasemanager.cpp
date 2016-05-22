@@ -480,7 +480,7 @@ QSqlQuery DatabaseManager::searchClientList(QString ClientName){
     else{
         if(ClientName ==""){
             qDebug()<<"DB no name";
-            searchQuery+= QString("WHERE NOT FirstName = 'anonymous' ");
+            searchQuery+= QString("WHERE NOT ISNULL(FirstName, '') = 'anonymous' ");
         }else
             qDebug()<<"Wrong name";
     }
