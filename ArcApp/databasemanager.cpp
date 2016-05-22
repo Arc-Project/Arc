@@ -2022,3 +2022,32 @@ QSqlQuery DatabaseManager::readNote(QString clientId) {
 
     return query;
 }
+
+
+//SHIFT QUERY
+bool DatabaseManager::updateShift(QString queryStr, QStringList *shiftList){
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    query.prepare(queryStr);
+    qDebug()<<"UPDATE SHIFT "<< queryStr;
+    for (int i = 0; i < shiftList->size(); ++i)
+    {
+        if (shiftList->at(i) != NULL)
+        {
+            qDebug()<<"["<<i<<"] : "<<shiftList->at(i);
+            query.addBindValue(shiftList->at(i));
+        }
+        else
+        {
+            query.addBindValue(QVariant(QVariant::String));
+        }
+    }
+
+
+
+    if (query.exec())
+    {
+        return true;
+    }
+    return false;
+}

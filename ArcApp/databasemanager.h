@@ -175,6 +175,9 @@ public:
     QSqlQuery updateNote(QString clientId, QString notes);
     QSqlQuery readNote(QString clientId);
 
+    //Shift table
+    bool updateShift(QString query, QStringList *shiftList);
+
 signals:
     void dailyReportStatsChanged(QList<int> list, bool conn);
     void shiftReportStatsChanged(QStringList list, bool conn);
