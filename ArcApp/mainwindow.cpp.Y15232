@@ -235,11 +235,8 @@ void MainWindow::initCurrentWidget(int idx){
             ui->actionExport_to_PDF->setEnabled(true);
             break;
         case 18:  //test shift report
-            showAllShiftEdit(true);
-            on_checkBox_shift_auto_endtime_clicked(true);
+            showAllShiftEdit(false);
              ReadCurrentShift();
-             ui->checkBox_shift_auto_endtime->setChecked(true);
-
             break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
@@ -314,18 +311,9 @@ DEV TESTING BUTTONS (START)
 ==============================================================================*/
 void MainWindow::on_actionDB_Connection_triggered()
 {
-    QString firstName = ui->lineEdit_cl_fName->text();
-    QString middleName = ui->lineEdit_cl_mName->text();
-    QString lastName = ui->lineEdit_cl_lName->text();
-
-    if (!firstName.isEmpty())
-        firstName[0] = firstName[0].toUpper();
-    if (!middleName.isEmpty())
-        middleName[0] = middleName[0].toUpper();
-    if (!lastName.isEmpty())
-        lastName[0] = lastName[0].toUpper();
-
-    qDebug() << firstName << middleName << lastName;
+    ui->transaction_tableView->setVisible(false);
+    ui->transaction_tableView->resizeColumnsToContents();
+    ui->transaction_tableView->setVisible(true);
 }
 
 void MainWindow::on_actionTest_Query_triggered()
@@ -1637,11 +1625,12 @@ void MainWindow::getListRegisterFields(QStringList* fieldList)
     QString lastName = ui->lineEdit_cl_lName->text();
 
     if (!firstName.isEmpty())
-        firstName[0] = firstName[0].toUpper();
+        firstName[0].toUpper();
     if (!middleName.isEmpty())
-        middleName[0] = middleName[0].toUpper();
+        middleName[0].toUpper();
     if (!lastName.isEmpty())
-        lastName[0] = lastName[0].toUpper();
+        lastName[0].toUpper();
+
 
     *fieldList << firstName
                << middleName
@@ -1668,27 +1657,7 @@ void MainWindow::getListRegisterFields(QStringList* fieldList)
 
 void MainWindow::getRegisterLogFields(QStringList* fieldList)
 {
-    QString firstName = ui->lineEdit_cl_fName->text();
-    QString middleName = ui->lineEdit_cl_mName->text();
-    QString lastName = ui->lineEdit_cl_lName->text();
-    QString fullName = "";
-
-    if (!lastName.isEmpty())
-    {
-        lastName[0] = lastName[0].toUpper();
-        fullName += QString(lastName + ", ");
-    }
-    if (!firstName.isEmpty())
-    {
-        firstName[0] = firstName[0].toUpper();
-        fullName += QString(firstName + " ");
-    }
-    if (!middleName.isEmpty())
-    {
-        middleName[0] = middleName[0].toUpper();
-        fullName += QString(middleName + " ");
-    }
-    
+    QString fullName = ui->lineEdit_cl_fName->text() + " " + ui->lineEdit_cl_lName->text();
     QString action;
     if(registerType == NEWCLIENT || ui->button_register_client->text() == "Register")
         action = "Registered";
@@ -7009,11 +6978,9 @@ void MainWindow::showAllShiftEdit(bool display)
 {
 
     qDebug()<<"SHOW SHIFT EDIT";
-
         ui->label_Shift_Index->setHidden(display);
         ui->label_Shift_Start->setHidden(display);
         ui->label_Shift_End->setHidden(display);
-        ui->checkBox_shift_auto_endtime->setHidden(display);
         ui->label_Shift1->setHidden(display);
         ui->shift1_S->setHidden(display);
         ui->shift1_E->setHidden(display);
@@ -7728,20 +7695,4 @@ void MainWindow::on_pushButton_reload_clicked()
 void MainWindow::on_pushButton_newFeature_clicked()
 {
     ui->stackedWidget->setCurrentIndex(18);
-}
-
-void MainWindow::on_pushButton_back_to_clicked()
-{
-    ui->stackedWidget->setCurrentIndex(EDITSHIFT);
-}
-
-
-void MainWindow::on_checkBox_shift_auto_endtime_clicked(bool checked)
-{
-    ui->shift1_E->setDisabled(checked);
-
-    ui->shift2_E->setDisabled(checked);
-    ui->shift3_E->setDisabled(checked);
-    ui->shift4_E->setDisabled(checked);
-    ui->shift5_E->setDisabled(checked);
 }
