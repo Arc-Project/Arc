@@ -176,6 +176,9 @@ public:
     QSqlQuery readNote(QString clientId);
     QSqlQuery getProgramDesc(QString programcode);
 
+    //Shift table
+    bool updateShift(QString query, QStringList *shiftList);
+
 signals:
     void dailyReportStatsChanged(QList<int> list, bool conn);
     void shiftReportStatsChanged(QStringList list, bool conn);
