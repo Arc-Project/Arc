@@ -170,11 +170,12 @@ public:
     QSqlQuery deleteSpace(QString buildingno, QString floorno, QString roomno, QString spaceno);
     QSqlQuery updateSpaceProgram(QString spaceid, QString program);
     QSqlQuery addPcp(int rowid, QString clientId, QString type, QString goal, QString strategy, QString date);
-    QSqlQuery deletePcpRow(int rowId, QString type);
     QSqlQuery addNote(QString clientId, QString notes);
     QSqlQuery updateNote(QString clientId, QString notes);
     QSqlQuery readNote(QString clientId);
     QSqlQuery getProgramDesc(QString programcode);
+    void readPcpThread(QString clientId, QString type, int idx);
+    bool getPcpQuery(QSqlQuery* query, QString curClientID, QString type);
 
     //Shift table
     bool updateShift(QString query, QStringList *shiftList);
@@ -189,6 +190,7 @@ signals:
     void noDatabaseConnection(QSqlDatabase* database);
     void noDatabaseConnection();
     void reconnectedToDatabase();
+    void getPcpData(QStringList goal, QStringList strategy, QStringList date, int idx,  bool conn);
 
 private:
     QSqlDatabase db = QSqlDatabase::database();

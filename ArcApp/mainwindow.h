@@ -72,6 +72,7 @@
 #include "storage.h"
 #include <QPointer>
 #include "worker.h"
+#include <QTextBlock>
 
 namespace Ui {
 class MainWindow;
@@ -401,7 +402,9 @@ private slots:
 
     void on_btn_pcpKey_clicked();
 
-    void populateCaseFiles(QString type = "all", int tableId = -1);
+    void retrievePcpData(QString type = "all", int tableId = -1);
+
+    void populatePcpTable(QStringList goal, QStringList strategy, QStringList date, int tableIdx, bool conn);
 
     void insertPcp(QTableWidget *tw, QString type);
 
@@ -708,6 +711,10 @@ private slots:
     void on_pushButton_back_to_clicked();
 
     void on_checkBox_shift_auto_endtime_clicked(bool checked);
+
+    void resetPcpTable(QTableWidget* table);
+
+    void reloadPcpTable(int table);
 
 private:
 
