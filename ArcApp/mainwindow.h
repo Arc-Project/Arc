@@ -663,6 +663,7 @@ private:
     Client * curClient;
     QString curClientID, curClientName;
     bool editOverLap;
+    bool cNew, bNew, tNew;
     int numShift;
 
     bool caseWorkerUpdated = true;
