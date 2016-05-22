@@ -52,7 +52,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     setCentralWidget(ui->stackedWidget);
-
+    cNew= false;
+    bNew= false;
+    tNew= false;
     ui->makeBookingButton->hide();
     dateChanger = false;
     //mw = this;
@@ -119,6 +121,18 @@ void MainWindow::initCurrentWidget(int idx){
         case MAINMENU:  //WIDGET 0
             curClientID = "";
             curClientName = "";
+            if(cNew){
+                delete(curClient);
+                cNew = false;
+            }
+            if(bNew){
+                delete(curBook);
+                bNew = false;
+            }
+            if(tNew){
+                delete(trans);
+                tNew = false;
+            }
             registerType = NOREGISTER;
             ui->actionExport_to_PDF->setEnabled(false);
             break;
@@ -380,6 +394,7 @@ void MainWindow::on_lunchCheck_clicked()
 void MainWindow::on_paymentButton_2_clicked()
 {
     trans = new transaction();
+    tNew = true;
     trans->paidToday = 0;
     double owed;
     //owed = curBook->cost;
@@ -494,6 +509,7 @@ void MainWindow::on_editButton_clicked()
     ui->editDate->setEnabled(true);
     ui->editRoom->setEnabled(true);
     curBook = new Booking();
+    bNew = true;
     popBookFromRow();
     popClientFromId(curBook->clientId);
     ui->editUpdate->setEnabled(false);
@@ -522,6 +538,7 @@ bool MainWindow::getRoomCosts(){
 void MainWindow::popClientFromId(QString id){
     QSqlQuery result;
     curClient = new Client();
+    cNew = true;
 
     result = dbManager->pullClient(id);
     result.seek(0, false);
@@ -846,6 +863,7 @@ void MainWindow::on_makeBookingButton_clicked()
 //    int rowNum = ui->bookingTable->columnCount();
     QStringList data;
     curBook = new Booking;
+    bNew = true;
     setBooking(row);
     ui->stackedWidget->setCurrentIndex(BOOKINGPAGE);
     populateBooking();
@@ -1028,6 +1046,7 @@ void MainWindow::on_btn_payDelete_clicked()
         if(index == -1)
             return;
         transaction * t = new transaction();
+        tNew = true;
         t->chequeNo = "";
         AddMSD * amd = new AddMSD(this,t);
         amd->exec();
@@ -1054,7 +1073,9 @@ void MainWindow::on_btn_payDelete_clicked()
 
 void MainWindow::handleNewPayment(int row){
     curClient = new Client();
+    cNew = true;
     trans = new transaction();
+    tNew = true;
     curClient->clientId = ui->mpTable->item(row,4)->text();
     QString balanceString = ui->mpTable->item(row, 3)->text();
     balanceString.replace("$", "");
@@ -1074,6 +1095,7 @@ void MainWindow::updateCheque(int row, QString chequeNo){
     double retAmt = ui->mpTable->item(row, 3)->text().toDouble();
     QString clientId = ui->mpTable->item(row, 5)->text();
     curClient = new Client();
+    cNew = true;
     popClientFromId(clientId);
     double curBal = curClient->balance + retAmt;
     if(dbManager->setPaid(transId, chequeNo )){
@@ -1092,6 +1114,7 @@ void MainWindow::getTransactionFromRow(int row){
     double retAmt = ui->mpTable->item(row, 3)->text().toDouble();
     QString clientId = ui->mpTable->item(row, 8)->text();
     curClient = new Client();
+    cNew = true;
     popClientFromId(clientId);
     double curBal = curClient->balance;
 
@@ -1278,6 +1301,7 @@ void MainWindow::calcEditRefund(QDate date){
 void MainWindow::on_editManagePayment_clicked()
 {
     trans = new transaction();
+    tNew = true;
     double owed;
 
     owed = ui->editRefundAmt->text().toDouble();
@@ -2254,6 +2278,7 @@ void MainWindow::addInfoPic(QImage img){
 void MainWindow::setSelectedClientInfo(){
     //transacTotal
     curClient = new Client();
+    cNew = true;
     int nRow = ui->tableWidget_search_client->currentRow();
     if (nRow <0){
         if(curClientID == NULL){
@@ -4455,6 +4480,7 @@ void MainWindow::on_pushButton_processPaymeent_clicked()
     qDebug()<<"push processPayment";
     setSelectedClientInfo();
     trans = new transaction();
+    tNew = true;
     QString note = "";
     payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true, usernameLoggedIn, QString::number(currentshiftid));
     pay->exec();
@@ -6317,6 +6343,7 @@ void MainWindow::on_editRemoveCheque_clicked()
     double retAmt = ui->mpTable->item(row, 3)->text().toDouble();
     QString clientId = ui->mpTable->item(row, 5)->text();
     curClient = new Client();
+    cNew = true;
     popClientFromId(clientId);
     double curBal = curClient->balance + retAmt;
     if(!dbManager->setPaid(transId, chequeNo )){
@@ -6428,6 +6455,7 @@ void MainWindow::on_editDelete_clicked()
         return;
     ui->editDelete->setEnabled(false);
     curBook = new Booking();
+    bNew = true;
     popBookFromRow();
     QSqlQuery result = dbManager->getBalance(curBook->clientId);
     if(!result.next()){
