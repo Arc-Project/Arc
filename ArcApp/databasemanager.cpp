@@ -1457,7 +1457,8 @@ bool DatabaseManager::getMonthlyReportQuery(QSqlQuery* queryResults, int month, 
 bool DatabaseManager::getYellowRestrictionQuery(QSqlQuery* queryResults)
 {
     QString queryString =
-        QString("SELECT (LastName + ', ' + FirstName + ' ' + MiddleName) ")
+        QString("SELECT CASE WHEN ISNULL(LastName, '') = '' THEN '' ELSE LastName + ', ' END ")
+        + QString("+ ISNULL(FirstName, '') + ' ' + ISNULL(MiddleName, '')" )
         + QString("FROM Client Where Status = 'Yellow'");
     return queryResults->exec(queryString);
 }
@@ -1465,7 +1466,8 @@ bool DatabaseManager::getYellowRestrictionQuery(QSqlQuery* queryResults)
 bool DatabaseManager::getRedRestrictionQuery(QSqlQuery* queryResults)
 {
     QString queryString =
-        QString("SELECT (LastName + ', ' + FirstName + ' ' + MiddleName) ")
+        QString("SELECT CASE WHEN ISNULL(LastName, '') = '' THEN '' ELSE LastName + ', ' END ")
+        + QString("+ ISNULL(FirstName, '') + ' ' + ISNULL(MiddleName, '')" )
         + QString("FROM Client Where Status = 'Red'");
     return queryResults->exec(queryString);
 }
