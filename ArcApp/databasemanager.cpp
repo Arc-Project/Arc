@@ -1457,7 +1457,8 @@ bool DatabaseManager::getMonthlyReportQuery(QSqlQuery* queryResults, int month, 
 bool DatabaseManager::getYellowRestrictionQuery(QSqlQuery* queryResults)
 {
     QString queryString =
-        QString("SELECT (LastName + ', ' + FirstName + ' ' + MiddleName) ")
+        QString("SELECT CASE WHEN ISNULL(LastName, '') = '' THEN '' ELSE LastName + ', ' END ")
+        + QString("+ ISNULL(FirstName, '') + ' ' + ISNULL(MiddleName, '')" )
         + QString("FROM Client Where Status = 'Yellow'");
     return queryResults->exec(queryString);
 }
@@ -1465,7 +1466,8 @@ bool DatabaseManager::getYellowRestrictionQuery(QSqlQuery* queryResults)
 bool DatabaseManager::getRedRestrictionQuery(QSqlQuery* queryResults)
 {
     QString queryString =
-        QString("SELECT (LastName + ', ' + FirstName + ' ' + MiddleName) ")
+        QString("SELECT CASE WHEN ISNULL(LastName, '') = '' THEN '' ELSE LastName + ', ' END ")
+        + QString("+ ISNULL(FirstName, '') + ' ' + ISNULL(MiddleName, '')" )
         + QString("FROM Client Where Status = 'Red'");
     return queryResults->exec(queryString);
 }
@@ -2024,6 +2026,7 @@ QSqlQuery DatabaseManager::readNote(QString clientId) {
     return query;
 }
 
+
 QSqlQuery DatabaseManager::getProgramDesc(QString programcode){
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
@@ -2031,4 +2034,33 @@ QSqlQuery DatabaseManager::getProgramDesc(QString programcode){
     query.exec("SELECT Description FROM Program WHERE ProgramCode = '" + programcode + "'");
     qDebug() << "SELECT Description FROM Program WHERE ProgramCode = '" + programcode + "'";
     return query;
+
+}
+
+//SHIFT QUERY
+bool DatabaseManager::updateShift(QString queryStr, QStringList *shiftList){
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    query.prepare(queryStr);
+    qDebug()<<"UPDATE SHIFT "<< queryStr;
+    for (int i = 0; i < shiftList->size(); ++i)
+    {
+        if (shiftList->at(i) != NULL)
+        {
+            qDebug()<<"["<<i<<"] : "<<shiftList->at(i);
+            query.addBindValue(shiftList->at(i));
+        }
+        else
+        {
+            query.addBindValue(QVariant(QVariant::String));
+        }
+    }
+
+
+
+    if (query.exec())
+    {
+        return true;
+    }
+    return false;
 }

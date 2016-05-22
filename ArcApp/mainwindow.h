@@ -39,6 +39,14 @@
 #define BOOKINGHISTORY		2
 #define TRANSACTIONHISTORY	3
 
+#define     SUN     1
+#define     MON     2
+#define     TUE     3
+#define     WED     4
+#define     THUR    5
+#define     FRI     6
+#define     SAT     7
+
 #include <QMainWindow>
 #include <QDebug>
 #include <QProgressBar>
@@ -48,6 +56,7 @@
 #include "bookingmanager.h"
 #include <QTableWidgetItem>
 #include <QMap>
+#include <QTimeEdit>
 #include "loginprompt.h"
 #include "booking.h"
 #include "transaction.h"
@@ -653,6 +662,53 @@ private slots:
 
     void on_editClient_returnPressed();
 
+
+
+    //sHIFT CHECK
+    void showAllShiftEdit(bool display = false);
+    void initTime();
+    void changeTimeSet(QTimeEdit* endUI, QTime time);
+    void readShiftDb(QString day);
+
+    void changeUI();
+    void shiftReportInit(bool noShow);
+    void updateList(QVector<QStringList> *day);
+    void updateList(QVector<QStringList> *day, QSqlQuery infoQuery);
+    void ReadCurrentShift();
+    void getShiftList(QStringList *shiftList);
+    void EditShiftInfo();
+
+    QString widthCal(float duration);
+    void initTimeLine(int dayOpt);
+
+    void on_shift_num_currentIndexChanged(int index);
+
+    void on_shift_dayOpt_currentIndexChanged(const QString &arg1);
+
+    void on_shift1_S_editingFinished();
+
+    void on_shift2_S_editingFinished();
+
+    void on_shift3_S_editingFinished();
+
+    void on_shift4_S_editingFinished();
+
+    void on_shift5_S_editingFinished();
+
+    void on_pushButton_shift_save_clicked();
+
+    //shift edit finished
+
+
+
+    void on_pushButton_reload_clicked();
+
+    void on_pushButton_newFeature_clicked();
+
+    void on_pushButton_back_to_clicked();
+
+    void on_checkBox_shift_auto_endtime_clicked(bool checked);
+
 private:
 
     Ui::MainWindow *ui;
@@ -673,6 +729,15 @@ private:
 
     QDir dir;
     
+    //SHIFT CHANGE
+    QString selectedDay;
+    int     selectedDayIdx;
+    int     shiftSize;
+    //QVector<TimeModel> *mon,*tue,*wed,*thur,*fri,*sat,*sun;
+    QVector<QStringList> mon,tue,wed,thur,fri,sat,sun;
+    bool shiftExist;
+
+
     /*==========================================================================
     REPORTS - private
     ==========================================================================*/
