@@ -6663,3 +6663,12 @@ void MainWindow::on_dailyReport_tabWidget_currentChanged(int index)
             resizeTableView(ui->wakeup_tableView);
     }
 }
+
+void MainWindow::on_actionAbout_triggered()
+{
+    QMessageBox aboutBox;
+    aboutBox.setText("ARCWay Version " + versionNo);
+    aboutBox.setIcon(QMessageBox::Information);
+    aboutBox.exec();
+    qDebug() << "about clicked";
+}
