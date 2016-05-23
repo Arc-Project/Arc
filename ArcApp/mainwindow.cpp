@@ -2712,7 +2712,7 @@ void MainWindow::on_btn_createNewUser_clicked()
             QStandardItemModel * model = new QStandardItemModel(0,0);
             model->clear();
             ui->tableWidget_3->clear();
-            ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+            //ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
             ui->tableWidget_3->setColumnCount(4);
             ui->tableWidget_3->setRowCount(0);
             ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
@@ -2724,6 +2724,7 @@ void MainWindow::on_btn_createNewUser_clicked()
             ui->lineEdit_EmpName->setText("");
 
             on_btn_listAllUsers_clicked();
+            resizeTableView(ui->tableWidget_3);
         } else {
             ui->lbl_editUserWarning->setText("Something went wrong - please try again");
         }
@@ -2761,7 +2762,7 @@ void MainWindow::on_btn_listAllUsers_clicked()
 {
     ui->tableWidget_3->setRowCount(0);
     ui->tableWidget_3->clear();
-    ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+    //ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
 
     QSqlQuery result = dbManager->execQuery("SELECT Username, Password, Role, EmpName FROM Employee");
 
@@ -2781,6 +2782,7 @@ void MainWindow::on_btn_listAllUsers_clicked()
         }
         x++;
     }
+    resizeTableView(ui->tableWidget_3);
 }
 
 void MainWindow::on_btn_searchUsers_clicked()
@@ -2788,7 +2790,7 @@ void MainWindow::on_btn_searchUsers_clicked()
     QString ename = ui->le_users->text();
     ui->tableWidget_3->setRowCount(0);
     ui->tableWidget_3->clear();
-    ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+    //ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
 
     QSqlQuery result = dbManager->execQuery("SELECT Username, Password, Role, EmpName FROM Employee WHERE Username LIKE '%"+ ename +"%'");
 
@@ -2808,6 +2810,7 @@ void MainWindow::on_btn_searchUsers_clicked()
         }
         x++;
     }
+    resizeTableView(ui->tableWidget_3);
 
 
 //    QSqlQuery results = dbManager->execQuery("SELECT Username, Password, Role FROM Employee WHERE Username LIKE '%"+ ename +"%'");
@@ -3129,7 +3132,7 @@ void MainWindow::on_pushButton_4_clicked()
             QStandardItemModel * model = new QStandardItemModel(0,0);
             model->clear();
             ui->tableWidget_3->clear();
-            ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+            //ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
             ui->tableWidget_3->setColumnCount(4);
             ui->tableWidget_3->setRowCount(0);
             ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
@@ -3141,6 +3144,7 @@ void MainWindow::on_pushButton_4_clicked()
             ui->le_users->setText("");
 
             on_btn_listAllUsers_clicked();
+            resizeTableView(ui->tableWidget_3);
         } else {
             ui->lbl_editUserWarning->setText("Something went wrong - Please try again");
         }
@@ -3158,7 +3162,7 @@ void MainWindow::on_btn_displayUser_clicked()
     QStandardItemModel * model = new QStandardItemModel(0,0);
     model->clear();
     ui->tableWidget_3->clear();
-    ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+    //ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
     ui->tableWidget_3->setColumnCount(4);
     ui->tableWidget_3->setRowCount(0);
     ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
@@ -3168,6 +3172,7 @@ void MainWindow::on_btn_displayUser_clicked()
     ui->le_password->setText("");
     ui->lineEdit_EmpName->setText("");
     ui->le_users->setText("");
+    resizeTableView(ui->tableWidget_3);
 }
 
 void MainWindow::on_tableWidget_3_clicked(const QModelIndex &index)
@@ -3231,7 +3236,7 @@ void MainWindow::on_pushButton_6_clicked()
             QStandardItemModel * model = new QStandardItemModel(0,0);
             model->clear();
             ui->tableWidget_3->clear();
-            ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+            //ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
             ui->tableWidget_3->setColumnCount(4);
             ui->tableWidget_3->setRowCount(0);
             ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
@@ -3243,6 +3248,7 @@ void MainWindow::on_pushButton_6_clicked()
             ui->le_users->setText("");
 
             on_btn_listAllUsers_clicked();
+            resizeTableView(ui->tableWidget_3);
         } else {
             ui->lbl_editUserWarning->setText("Employee Not Found");
         }
@@ -3327,13 +3333,13 @@ void MainWindow::on_btn_listAllUsers_2_clicked()
 {
     ui->tableWidget_2->setRowCount(0);
     ui->tableWidget_2->clear();
-    ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
+    //ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
 
     QSqlQuery result = dbManager->execQuery("SELECT ProgramCode, Description FROM Program");
 
     int numCols = result.record().count();
     ui->tableWidget_2->setColumnCount(numCols);
-    ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Program Code" << "Description");
+    ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Code" << "Description");
     int x = 0;
     int qt = result.size();
     qDebug() << qt;
@@ -3347,6 +3353,7 @@ void MainWindow::on_btn_listAllUsers_2_clicked()
         }
         x++;
     }
+    resizeTableView(ui->tableWidget_2);
 }
 
 // search programs by code
@@ -3355,7 +3362,7 @@ void MainWindow::on_btn_searchUsers_2_clicked()
     QString ename = ui->le_users_2->text();
     ui->tableWidget_2->setRowCount(0);
     ui->tableWidget_2->clear();
-    ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
+    //ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
 
     QSqlQuery result = dbManager->execQuery("SELECT ProgramCode, Description FROM Program WHERE ProgramCode LIKE '%"+ ename +"%'");
 
@@ -3375,6 +3382,7 @@ void MainWindow::on_btn_searchUsers_2_clicked()
         }
         x++;
     }
+    resizeTableView(ui->tableWidget_2);
 }
 
 // delete program
