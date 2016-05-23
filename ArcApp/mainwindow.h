@@ -720,6 +720,8 @@ private slots:
 
     void addCurrencyToTableWidget(QTableWidget* table, int col);
 
+    void createTextReceipt();
+
 private:
 
     Ui::MainWindow *ui;

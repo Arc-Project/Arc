@@ -4637,14 +4637,21 @@ void MainWindow::on_btn_pcpKeySave_clicked()
 
 void MainWindow::on_actionPcptables_triggered()
 {
-    QString s = curBook->room;
-/*    QChar c = *s.rbegin();
-    qDebug() << c;
-    if (c == 'M')
-        qDebug() << "Mat";
-    else if (c == 'B')
-        qDebug() << "Bed";
-        */
+//    qDebug() << QDateTime::currentDateTime().toTime_t();
+//    qDebug() << QDateTime::currentDateTime();
+//    qDebug() << QDateTime::currentDateTimeUtc();
+//    qDebug() << QDateTime::fromTime_t(QDateTime::currentDateTime().toTime_t());
+//    qDebug() << QDateTime::currentDateTime().date();
+//    qDebug() << QDateTime::currentDateTime().time().toString();
+
+    int year = QDateTime::currentDateTime().date().year();
+    int month = QDateTime::currentDateTime().date().month();
+    int day = QDateTime::currentDateTime().date().day();
+    QTime time = QDateTime::currentDateTime().time();
+
+//    qDebug() << year.toString() << month.toString() << day.toString() << time.toString();
+    qDebug() << QString(year) + QString(month) + QString(day) + time.toString();
+
 }
 
 void MainWindow::reloadPcpTable(int table){
@@ -7791,4 +7798,17 @@ void MainWindow::addCurrencyToTableWidget(QTableWidget* table, int col){
         QString value = table->item(row, col)->text();
         table->setItem(row, col, new QTableWidgetItem("$"+value));
     }
+}
+
+void MainWindow::createTextReceipt(){
+//    QString timestamp = QDateTime::toTime_t();
+//    QFile file("out.txt");
+//    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+//                               "/home/jana/untitled.png",
+//                               tr("Images (*.png *.xpm *.jpg)"));
+//    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+//        return;
+
+//    QTextStream out(&file);
+//    out << "The magic number is: " << 49 << "\n";
 }
