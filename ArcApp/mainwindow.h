@@ -716,6 +716,10 @@ private slots:
 
     void reloadPcpTable(int table);
 
+    void on_btnViewTranns_clicked();
+
+    void addCurrencyToTableWidget(QTableWidget* table, int col);
+
 private:
 
     Ui::MainWindow *ui;
