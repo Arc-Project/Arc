@@ -198,7 +198,7 @@ QHeaderView{
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>10</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -8667,6 +8667,19 @@ QHeaderView{
              </property>
             </widget>
            </item>
+           <item row="4" column="0">
+            <spacer name="verticalSpacer_27">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
            <item row="1" column="0">
             <widget class="QPushButton" name="button_cl_takePic">
              <property name="sizePolicy">
@@ -8692,17 +8705,22 @@ QHeaderView{
             </widget>
            </item>
            <item row="3" column="0">
-            <spacer name="verticalSpacer_27">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
+            <widget class="QPushButton" name="button_cl_uploadpic">
+             <property name="minimumSize">
               <size>
-               <width>20</width>
-               <height>40</height>
+               <width>0</width>
+               <height>35</height>
               </size>
              </property>
-            </spacer>
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Upload Photo</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -18842,7 +18860,7 @@ QHeaderView{
      <x>0</x>
      <y>0</y>
      <width>1625</width>
-     <height>29</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="font">

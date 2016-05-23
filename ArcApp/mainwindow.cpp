@@ -1637,6 +1637,34 @@ void MainWindow::on_button_cl_takePic_clicked()
     camDialog->show();
 }
 
+//delete client picture
+void MainWindow::on_button_cl_delPic_clicked()
+{
+    QGraphicsScene *scene = new QGraphicsScene();
+    scene->clear();
+    profilePic = (QImage)NULL;
+    ui->graphicsView_cl_pic->setScene(scene);
+
+    //delete picture function to database
+
+}
+//upload picture from file
+void MainWindow::on_button_cl_uploadpic_clicked()
+{
+    QString strFilePath = MainWindow::browse();
+
+    if (!strFilePath.isEmpty())
+    {
+        QImage img(strFilePath);
+        profilePic = img.scaledToWidth(300);
+        addPic(profilePic);
+    }
+    else
+    {
+        qDebug() << "Empty file path";
+    }
+}
+
 /*------------------------------------------------------------------
   add picture into graphicview (after taking picture in pic dialog
   ------------------------------------------------------------------*/
@@ -1652,16 +1680,7 @@ void MainWindow::addPic(QImage pict){
     ui->graphicsView_cl_pic->show();
 }
 
-void MainWindow::on_button_cl_delPic_clicked()
-{
-    QGraphicsScene *scene = new QGraphicsScene();
-    scene->clear();
-    profilePic = (QImage)NULL;
-    ui->graphicsView_cl_pic->setScene(scene);
 
-    //delete picture function to database
-
-}
 
 void MainWindow::on_button_clear_client_regForm_clicked()
 {
@@ -1872,7 +1891,7 @@ void MainWindow::on_button_register_client_clicked()
 
             if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
             {
-                statusBar()->showMessage("Client Registered Sucessfully.");
+                statusBar()->showMessage("Client Registered Sucessfully.", 5000);
                 qDebug() << "Client registered successfully";
 
                 clear_client_register_form();
@@ -1880,7 +1899,7 @@ void MainWindow::on_button_register_client_clicked()
             }
             else
             {
-                statusBar()->showMessage("Register Failed. Check information.");
+                statusBar()->showMessage("Register Failed. Check information.", 5000);
                 qDebug() << "Could not register client";
             }
         }
@@ -7636,3 +7655,4 @@ void MainWindow::addCurrencyNoSignToTableWidget(QTableWidget* table, int col){
         table->setItem(row, col, new QTableWidgetItem(value));
     }
 }
+
