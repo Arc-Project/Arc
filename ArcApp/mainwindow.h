@@ -18,6 +18,7 @@
 #define EDITPAGE            14
 #define EDITSHIFT           15
 #define STORAGEPAGE         16
+
 #define DAILYREPORT         0
 #define SHIFTREPORT         1
 #define FLOATCOUNT          2
@@ -676,7 +677,7 @@ private slots:
     void changeUI();
     void shiftReportInit(int dayType);
     void updateList(QVector<QStringList> *day, QSqlQuery infoQuery);
-    void ReadCurrentShift();
+    void ReadCurrentShift(QString day = "");
     void getShiftList(QStringList *shiftList);
     void EditShiftInfo();
 
@@ -696,17 +697,14 @@ private slots:
 
     void on_pushButton_shift_save_clicked();
 
+    void on_checkBox_shift_auto_endtime_clicked(bool checked);
+
     //shift edit finished
 
 
-
-    void on_pushButton_reload_clicked();
-
     void on_pushButton_newFeature_clicked();
 
-    void on_pushButton_back_to_clicked();
 
-    void on_checkBox_shift_auto_endtime_clicked(bool checked);
 
     void resetPcpTable(QTableWidget* table);
 

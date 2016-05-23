@@ -245,13 +245,14 @@ void MainWindow::initCurrentWidget(int idx){
             MainWindow::updateRestrictionTables();
             ui->actionExport_to_PDF->setEnabled(true);
             break;
-        case 18:  //test shift report
+        case EDITSHIFT:  //WIDGET15
             showAllShiftEdit(true);
             on_checkBox_shift_auto_endtime_clicked(true);
              ReadCurrentShift();
              ui->checkBox_shift_auto_endtime->setChecked(true);
              ui->shift_dayOpt->setCurrentIndex(0);
              ui->shift_num->setCurrentIndex(0);
+             ui->pushButton_shift_save->setEnabled(false);
             break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
@@ -6936,17 +6937,18 @@ void MainWindow::on_editClient_returnPressed()
 /*============================================================
  * SHIFT CHANGE
  * ===========================================================*/
-
 void MainWindow::on_shift_dayOpt_currentIndexChanged(const QString &arg1)
 {
     shiftExist = false;
     selectedDayIdx = ui->shift_dayOpt->currentIndex();
     if(arg1 ==""){
         ui->shift_num->setEnabled(false);
+        ui->pushButton_shift_save->setEnabled(false);
         selectedDay ="";
         return;
     }
     ui->shift_num->setEnabled(true);
+    ui->pushButton_shift_save->setEnabled(true);
     showAllShiftEdit(true);
     qDebug()<<"shifDay CurrentIndexChaged" << arg1;
     selectedDay = arg1;
@@ -6954,9 +6956,7 @@ void MainWindow::on_shift_dayOpt_currentIndexChanged(const QString &arg1)
 
     qDebug()<<"SELECTED DAY"<<selectedDay<<selectedDayIdx;
     readShiftDb(selectedDay);
-    //useProgressDialog("Read current shift", QtConcurrent::run(this,readShiftDb, selectedDay));
-    //readShiftDb(selectedDay);
-    //ui->shift_num->setCurrentIndex(shiftSize);
+
 
 
 }
@@ -7108,17 +7108,6 @@ void MainWindow::initTime(){
     QTime timeSet;
     timeSet.setHMS(0,0,0);
     ui->shift1_S->setTime(timeSet);
-    ui->shift2_S->setTime(timeSet);
-    ui->shift3_S->setTime(timeSet);
-    ui->shift4_S->setTime(timeSet);
-    ui->shift5_S->setTime(timeSet);
-
-    timeSet.setHMS(23,59,0);
-    ui->shift1_E->setTime(timeSet);
-    ui->shift2_E->setTime(timeSet);
-    ui->shift3_E->setTime(timeSet);
-    ui->shift4_E->setTime(timeSet);
-    ui->shift5_E->setTime(timeSet);
 }
 
 
@@ -7353,7 +7342,7 @@ void MainWindow::changeUI(){
     }
 
 }
-
+//initialize shift summary label
 void MainWindow::shiftReportInit(int dayType){
     switch(dayType){
         case SUN:
@@ -7411,7 +7400,7 @@ void MainWindow::shiftReportInit(int dayType){
 void MainWindow::on_pushButton_shift_save_clicked()
 {
     EditShiftInfo();
-    ReadCurrentShift();
+    ReadCurrentShift(selectedDay);
 }
 
 void MainWindow::EditShiftInfo(){
@@ -7419,17 +7408,20 @@ void MainWindow::EditShiftInfo(){
     getShiftList(&shiftValueList);
     if(!dbManager->updateShift(shiftExist, selectedDay, &shiftValueList))
     {
-        qDebug()<<"Shift update fail";
+        statusBar()->showMessage(selectedDay + " NOT CHANGED. TRY AGAIN.", 10000);
         return;
     }
     shiftExist = true;
     qDebug()<<"SHIFT UPDATE SUCCESS";
+    statusBar()->showMessage(selectedDay + " SHIFT UPDATE SUCCESS", 10000);
 
 }
 
-void MainWindow::ReadCurrentShift(){
+//read shift information
+void MainWindow::ReadCurrentShift(QString readDay){
     QString readShift = "SELECT * FROM Shift";
-    QSqlQuery readShiftQ = dbManager->execQuery(readShift);
+ //   QSqlQuery readShiftQ = dbManager->execQuery(readShift);
+    QSqlQuery readShiftQ = dbManager->getShiftInfoDaily(readDay);
     while(readShiftQ.next()){
         QString dayTag = readShiftQ.value("DayOfWeek").toString();
         qDebug()<<"DAY IS " << dayTag;
@@ -7453,6 +7445,7 @@ void MainWindow::ReadCurrentShift(){
 
 }
 
+// get shift time to update database
 void MainWindow::getShiftList(QStringList *shiftList){
     qDebug()<<"get shift list. shift Size "<<shiftSize;
     if(!shiftExist)
@@ -7462,28 +7455,33 @@ void MainWindow::getShiftList(QStringList *shiftList){
         *shiftList << ui->shift1_S->time().toString()
                    << ui->shift1_E->time().toString();
     }
+
     if(shiftSize >= 2){
         *shiftList << ui->shift2_S->time().toString()
                    << ui->shift2_E->time().toString();
     }
+
     if(shiftSize >= 3 ){
         *shiftList << ui->shift3_S->time().toString()
                    << ui->shift3_E->time().toString();
     }
+
     if(shiftSize >= 4 ){
         *shiftList << ui->shift4_S->time().toString()
                    << ui->shift4_E->time().toString();
     }
+
     if(shiftSize >= 5){
         *shiftList << ui->shift5_S->time().toString()
                    << ui->shift5_E->time().toString();
     }
+
+    //left of empty slots
     for(int i = shiftSize; i < 5; i++)
     {
         *shiftList <<""<<"";
     }
     *shiftList << QString::number(shiftSize);
-
 
 }
 
@@ -7499,44 +7497,24 @@ void MainWindow::updateList(QVector<QStringList>* day, QSqlQuery infoQuery){
         tempList << infoQuery.value(9).toTime().toString("h:mmAP")
                  << infoQuery.value(10).toTime().toString("h:mmAP");
         day->push_front(tempList);
-//        qDebug()<< infoQuery.value("DayOfWeek").toString()
-//                << infoQuery.value("NumShifts").toString()
-//                << infoQuery.value(9).toString()
-//                << infoQuery.value(10).toString()
-//                << widthCal((float)infoQuery.value(9).toTime().secsTo(infoQuery.value(10).toTime()));
 
     case 4:
         tempList.clear();
         tempList<< infoQuery.value(7).toTime().toString("h:mmAP")
                 << infoQuery.value(8).toTime().toString("h:mmAP");
         day->push_front(tempList);
-//        qDebug()<< infoQuery.value("DayOfWeek").toString()
-//                << infoQuery.value("NumShifts").toString()
-//                << infoQuery.value(7).toString()
-//                << infoQuery.value(8).toString()
-//                << widthCal((float)infoQuery.value(7).toTime().secsTo(infoQuery.value(8).toTime()));
 
     case 3:
         tempList.clear();
         tempList << infoQuery.value(5).toTime().toString("h:mmAP")
                 << infoQuery.value(6).toTime().toString("h:mmAP");
         day->push_front(tempList);
-//        qDebug()<< infoQuery.value("DayOfWeek").toString()
-//                << infoQuery.value("NumShifts").toString()
-//                << infoQuery.value(5).toString()
-//                << infoQuery.value(6).toString()
-//                << widthCal((float)infoQuery.value(5).toTime().secsTo(infoQuery.value(6).toTime()));
 
     case 2:
         tempList.clear();
         tempList<< infoQuery.value(3).toTime().toString("h:mmAP")
                 << infoQuery.value(4).toTime().toString("h:mmAP");
         day->push_front(tempList);
-//        qDebug()<< infoQuery.value("DayOfWeek").toString()
-//                << infoQuery.value("NumShifts").toString()
-//                << infoQuery.value(3).toString()
-//                << infoQuery.value(4).toString()
-//                << widthCal((float)infoQuery.value(3).toTime().secsTo(infoQuery.value(4).toTime()));
 
     case 1:
         tempList.clear();
@@ -7544,20 +7522,8 @@ void MainWindow::updateList(QVector<QStringList>* day, QSqlQuery infoQuery){
                 << infoQuery.value(2).toTime().toString("h:mmAP");
         day->push_front(tempList);
 
-//        qDebug()<< infoQuery.value("DayOfWeek").toString()
-//                << infoQuery.value("NumShifts").toString()
-//                << infoQuery.value(1).toString()
-//                << infoQuery.value(2).toString()
-//                << widthCal((float)infoQuery.value(1).toTime().secsTo(infoQuery.value(2).toTime()));
-
     }
 
-}
-
-
-void MainWindow::on_pushButton_reload_clicked()
-{
-    ReadCurrentShift();
 }
 
 //WILLBE DELETED AFTER TESTING
@@ -7566,21 +7532,21 @@ void MainWindow::on_pushButton_newFeature_clicked()
     ui->stackedWidget->setCurrentIndex(18);
 }
 
-void MainWindow::on_pushButton_back_to_clicked()
-{
-    ui->stackedWidget->setCurrentIndex(EDITSHIFT);
-}
-
 
 void MainWindow::on_checkBox_shift_auto_endtime_clicked(bool checked)
 {
     ui->shift1_E->setDisabled(checked);
-
     ui->shift2_E->setDisabled(checked);
     ui->shift3_E->setDisabled(checked);
     ui->shift4_E->setDisabled(checked);
     ui->shift5_E->setDisabled(checked);
 }
+/*---------------------------------------------------------------------------
+ * EDIT SHIFT FINISHED(EUNWON)
+ *============================================================================*/
+
+
+
 
 void MainWindow::on_btnViewTranns_clicked()
 {
