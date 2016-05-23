@@ -18,6 +18,7 @@
 #define EDITPAGE            14
 #define EDITSHIFT           15
 #define STORAGEPAGE         16
+
 #define DAILYREPORT         0
 #define SHIFTREPORT         1
 #define FLOATCOUNT          2
