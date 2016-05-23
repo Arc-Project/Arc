@@ -179,6 +179,7 @@ public:
 
     //Shift table
     bool updateShift(QString query, QStringList *shiftList);
+    QSqlQuery getShiftInfoDaily(QString day = "");
 
 signals:
     void dailyReportStatsChanged(QList<int> list, bool conn);
