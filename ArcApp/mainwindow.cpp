@@ -6536,6 +6536,10 @@ void MainWindow::on_editDelete_clicked()
     curBal += curBook->cost;
     if(!dbManager->updateBalance(curBal, curBook->clientId))
         qDebug() << "Error updating balance";
+    if(!dbManager->removeLunches(curBook->startDate, curBook->clientId))
+        qDebug() << "Error remiving lunches";
+    if(!dbManager->deleteWakeups(curBook->startDate, curBook->clientId))
+        qDebug() << "Error removing wakeups";
     ui->editLookupTable->removeRow(row);
     ui->editDelete->setEnabled(true);
 }
