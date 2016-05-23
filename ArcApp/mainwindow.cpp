@@ -2606,33 +2606,33 @@ void MainWindow::initClientLookupInfo(){
         ui->pushButton_CaseFiles->setVisible(false);
         ui->pushButton_processPaymeent->setVisible(false);
         ui->pushButton_bookRoom->setVisible(true);
-        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
-        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_brpp->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+        ui->hs_ppcf->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_cfec->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
         break;
     case PAYMENTPAGE:
         ui->pushButton_CaseFiles->setVisible(false);
         ui->pushButton_bookRoom->setVisible(false);
         ui->pushButton_processPaymeent->setVisible(true);
-        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
-        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_brpp->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_ppcf->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+        ui->hs_cfec->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
         break;
     case CASEFILE:
         ui->pushButton_CaseFiles->setVisible(true);
         ui->pushButton_bookRoom->setVisible(false);
         ui->pushButton_processPaymeent->setVisible(false);
-        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+        ui->hs_brpp->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_ppcf->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_cfec->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
         break;
     case CLIENTLOOKUP:
         ui->pushButton_CaseFiles->setVisible(true);
         ui->pushButton_processPaymeent->setVisible(true);
         ui->pushButton_bookRoom->setVisible(true);
-        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_brpp->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_ppcf->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_cfec->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
         ui->horizontalLayout_15->update();
         break;
     }
