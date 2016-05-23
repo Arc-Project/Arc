@@ -6953,19 +6953,20 @@ void MainWindow::on_shift_num_currentIndexChanged(int index)
     showAllShiftEdit(false);
 
     switch(index){
-        case 0:
+        case 0:  //no selection
             ui->label_Shift_Index->hide();
             ui->label_Shift_Start->hide();
             ui->label_Shift_End->hide();
+            ui->checkBox_shift_auto_endtime->hide();
             ui->label_Shift1->hide();
             ui->shift1_S->hide();
             ui->shift1_E->hide();
-        case 1:
+        case 1:  //select 1
             ui->label_Shift2->hide();
             ui->shift2_S->hide();
             ui->shift2_E->hide();
 
-        case 2:
+        case 2: //select 2
             ui->label_Shift3->hide();
             ui->shift3_S->hide();
             ui->shift3_E->hide();
@@ -6981,7 +6982,7 @@ void MainWindow::on_shift_num_currentIndexChanged(int index)
             ui->shift5_E->hide();
     }
 
-    for(int i = 0; i < index; i++){
+    for(int i = 1; i < index; i++){
             startTime.setHMS(TimeGap*i,0,0);
             endTime.setHMS(TimeGap*i-1,59,0);
 
@@ -7291,11 +7292,7 @@ void MainWindow::changeUI(){
 //            qDebug()<<"thur1:" << thur.at(0).at(2) <<thur.at(0).at(2).toDouble();
             ui->label_shift_thur1->setMaximumWidth(800*thur.at(0).at(2).toDouble());
             ui->label_shift_thur1->setText(thur.at(0).at(0));
-
-
         }
-
-
 
     }
     if(!fri.empty()){
@@ -7419,6 +7416,7 @@ void MainWindow::shiftReportInit(bool noShow){
 
 void MainWindow::on_pushButton_shift_save_clicked()
 {
+    /*
     switch(selectedDayIdx){
     case SUN:
         updateList(&sun);
@@ -7442,6 +7440,7 @@ void MainWindow::on_pushButton_shift_save_clicked()
         updateList(&sat);
         break;
     }
+    */
     EditShiftInfo();
     ReadCurrentShift();
 }
@@ -7495,7 +7494,6 @@ void MainWindow::ReadCurrentShift(){
             updateList(&fri,readShiftQ);
         else if(dayTag == "Saturday")
             updateList(&sat,readShiftQ);
-
     }
     changeUI();
 
@@ -7534,6 +7532,7 @@ void MainWindow::getShiftList(QStringList *shiftList){
 
 
 }
+
 //justUpdate
 void MainWindow::updateList(QVector<QStringList>* day){
     if(day->size() != 0)
