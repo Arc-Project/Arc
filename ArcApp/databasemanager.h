@@ -150,6 +150,9 @@ public:
     bool removeStorage(QString storeId);
     bool deleteBooking(QString id);
     QSqlQuery getRole(QString empName);
+    double getBookingCost(QString bookId);
+    double getDoubleBalance(QString clientId);
+
 
     //END COLIN STUFF///////////////////////////////////////////////////////
     void print();
