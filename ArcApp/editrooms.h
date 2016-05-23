@@ -33,6 +33,11 @@ public:
     void setNewPrice(int row);
     bool doMessageBox(QString message);
     void updateClient(int row);
+    std::pair<int,int> monthDay(QDate start, QDate end);
+    void setDailyCost();
+    double getRealCost(Booking * cur, Booking * swap, bool discount, double discAmt);
+    double quickCost(std::pair<int,int> p, double daily, double monthly);
+
 
 private slots:
     void on_editProgram_currentIndexChanged(const QString &arg1);

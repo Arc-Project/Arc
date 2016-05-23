@@ -180,6 +180,15 @@ QSqlQuery DatabaseManager::getRole(QString empName){
     query.exec(q);
     return query;
 }
+double DatabaseManager::getBookingCost(QString bookId){
+    QSqlQuery query(db);
+    QString q = "SELECT Cost from Booking WHERE BookingId = ' "+ bookId + "'";
+    query.exec(q);
+    if(!query.next())
+        return 0;
+    double realCost = query.value("Cost").toString().toDouble();
+    return realCost;
+}
 
 QSqlQuery DatabaseManager::execQuery(QString queryString)
 {
@@ -1080,12 +1089,21 @@ QSqlQuery DatabaseManager::getSwapBookings(QDate start, QDate end, QString progr
                 " WHERE EndDate > '" + start.toString(Qt::ISODate) + "' AND StartDate <= '" + end.toString(Qt::ISODate)
             +"' AND EndDate <= '" + maxSwap +"' GROUP BY SpaceId ) AS T LEFT JOIN (SELECT * FROM Space) AS S on S.SpaceId = T.SpaceId" +
             " JOIN ( SELECT * FROM Booking WHERE EndDate > '" + start.toString(Qt::ISODate) + "' AND StartDate <= '" + end.toString(Qt::ISODate)
-            +"' AND EndDate <= '" + maxSwap +"') V on T.SpaceId = V.SpaceId WHERE C = 1 AND BookingId != '" + curBook + "'" ;
+            +"' AND EndDate <= '" + maxSwap +"') V on T.SpaceId = V.SpaceId WHERE C = 1 AND BookingId != '" + curBook + "' AND EndDate > '" + QDate::currentDate().toString(Qt::ISODate) + "'" ;
     //AND ProgramCodes ='" + program + "' AND BookingId != '" + curBook + "'";
 
     query.exec(q);
     qDebug() << q;
     return query;
+}
+double DatabaseManager::getDoubleBalance(QString clientId){
+    QSqlQuery query(db);
+    QString q = "SELECT Balance FROM Client WHERE ClientId='" + clientId + "'";
+    query.exec(q);
+    if(!query.next()){
+        return -1;
+    }
+    return query.value("Balance").toString().toDouble();
 }
 
 bool DatabaseManager::getShiftReportTransactionQuery(QSqlQuery* queryResults,
