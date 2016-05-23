@@ -720,7 +720,7 @@ private slots:
 
     void addCurrencyToTableWidget(QTableWidget* table, int col);
 
-    void createTextReceipt(QString totalCost, QString payType, QString payTotal, QString start, QString end, QString length, bool stay);
+    void createTextReceipt(QString totalCost, QString payType, QString payTotal, QString start, QString end, QString length, bool stay, bool refund);
 
     void on_actionReceipt_triggered();
 

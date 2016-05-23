@@ -43,6 +43,7 @@ bool loaded = false;
 QString idDisplayed;
 
 QString transType;
+bool isRefund = false;
 
 QProgressDialog* dialog;
 
@@ -1520,8 +1521,9 @@ void MainWindow::populateConfirm(){
 
     ui->actionExport_to_PDF->setEnabled(true);
     MainWindow::on_actionExport_to_PDF_triggered();
+    isRefund = curBook->paidTotal < 0;
     createTextReceipt(ui->confirmCost->text(), transType, ui->confirmTotalPaid->text(), curBook->stringStart,
-                      curBook->stringEnd, ui->confirmLength->text(), true);
+                      curBook->stringEnd, ui->confirmLength->text(), true, isRefund);
 }
 
 //void MainWindow::on_monthCheck_stateChanged(int arg1)
@@ -2409,10 +2411,6 @@ void MainWindow::setSelectedClientInfo(){
     qDebug()<<"ID: " << curClientID << curClient->clientId;
     qDebug()<<"NAME: " << curClient->fullName;
     qDebug()<<"Balance: " << curClient->balance;
-
-    ui->stackedWidget->setCurrentIndex(BOOKINGLOOKUP);
-
-
 }
 
 //search transaction list when click transaction list
@@ -4568,6 +4566,10 @@ void MainWindow::on_pushButton_processPaymeent_clicked()
     payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true, usernameLoggedIn, QString::number(currentshiftid));
     pay->exec();
     delete(pay);
+
+    //text receipt
+    isRefund = trans->transType == "Refund" ? true : false;
+    createTextReceipt(QString::number(trans->amount),trans->type,QString::number(trans->paidToday),QString(),QString(),QString(),false,isRefund);
 }
 
 void MainWindow::insertPcp(QTableWidget *tw, QString type){
@@ -7804,14 +7806,18 @@ void MainWindow::addCurrencyToTableWidget(QTableWidget* table, int col){
     }
 }
 
-void MainWindow::createTextReceipt(QString totalCost, QString payType, QString payTotal, QString start, QString end, QString length, bool stay){
+void MainWindow::createTextReceipt(QString totalCost, QString payType, QString payTotal,
+                                   QString start, QString end, QString length, bool stay, bool refund){
     QString timestamp = QDate::currentDate().toString("yyyyMMdd") + QTime::currentTime().toString("hhmmss");
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
                                "/receipt_" + timestamp + ".txt",
                                tr("Text File (*.txt)"));
     QFile file(fileName);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)){
+        statusBar()->showMessage(tr("Receipt file save failed. Please try saving again or saving to another directory."));
         return;
+    }
+
 
     QTextStream out(&file);
     out << "Salvation Army ARC\n"
@@ -7820,16 +7826,23 @@ void MainWindow::createTextReceipt(QString totalCost, QString payType, QString p
            "www.victoriaarc.org\n"
            "**********************************\n"
            "\n"
+           "\n";
+           if (stay){
+               out << "Stay                     $"+totalCost+"\n"
+               "" + start + " - " + end + "\n"
+               "" + length +" nights\n";
+            } else {
+               out << "\n\n\n";
+           }
+           out << "\n"
            "\n"
-           "Stay                     $"+totalCost+"\n"
-           "" + start + " - " + end + "\n"
-           "" + length +" nights\n"
            "\n"
            "\n"
-           "\n"
-           "\n"
-           "________________________________\n"
-           "Payment Type: " + payType + "\n"
+           "_________________________________\n";
+           if (refund) {
+               out << "Refund:                       Yes\n";
+           }
+           out << "Payment Type: " + payType + "\n"
            "Payment Total:           $"+payTotal+"\n"
            "\n"
            "\n"
@@ -7839,13 +7852,19 @@ void MainWindow::createTextReceipt(QString totalCost, QString payType, QString p
            "\n"
            "\n"
            "Thank you for your custom";
+           statusBar()->showMessage(tr("Receipt file saved!"));
 }
 
 void MainWindow::on_actionReceipt_triggered()
 {
     if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING) {
         createTextReceipt(ui->confirmCost->text(), transType, ui->confirmTotalPaid->text(), curBook->stringStart,
-                          curBook->stringEnd, ui->confirmLength->text(), true);
+                          curBook->stringEnd, ui->confirmLength->text(), true, isRefund);
+    }
+
+    if (ui->stackedWidget->currentIndex() == CLIENTLOOKUP) {
+        createTextReceipt(QString::number(trans->amount),trans->type,QString::number(trans->paidToday),QString(),QString(),QString(),false,isRefund);
+    }
 }
 
 void MainWindow::addCurrencyNoSignToTableWidget(QTableWidget* table, int col){
