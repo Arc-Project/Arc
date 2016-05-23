@@ -769,6 +769,8 @@ void MainWindow::on_editSearch_clicked()
     addCurrencyToTableWidget(ui->editLookupTable, 5);
     //dbManager->printAll(result);
 
+    MainWindow::resizeTableView(ui->editLookupTable);
+
 
 
 
@@ -1945,7 +1947,7 @@ void MainWindow::defaultRegisterOptions(){
 void MainWindow::on_button_cancel_client_register_clicked()
 {
     clear_client_register_form();
-    ui->stackedWidget->setCurrentIndex(MAINMENU);
+    ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
 }
 
 /*=============================================================================
@@ -6423,6 +6425,7 @@ void MainWindow::on_editRemoveCheque_clicked()
 void MainWindow::on_storage_clicked()
 {
     ui->stackedWidget->setCurrentIndex(STORAGEPAGE);
+    MainWindow::on_storesearch_clicked();
 }
 
 void MainWindow::on_storesearch_clicked()
@@ -6432,10 +6435,12 @@ void MainWindow::on_storesearch_clicked()
     QStringList header, cols;
     header << "Name" << "Date" << "Items" << "" << "";
     cols   << "StorageUserName" << "StorageDate" << "StorageItems" << "ClientId" << "StorageId";
-    populateATable(ui->storageTable,header,cols, result, true);
+    populateATable(ui->storageTable,header,cols, result, false);
+    ui->storageTable->setColumnHidden(2, true);
     ui->storageTable->setColumnHidden(3, true);
     ui->storageTable->setColumnHidden(4, true);
 
+    MainWindow::resizeTableView(ui->storageTable);
 }
 
 void MainWindow::on_confirmStorage_clicked()
