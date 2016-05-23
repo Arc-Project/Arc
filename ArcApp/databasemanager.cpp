@@ -2072,9 +2072,21 @@ QSqlQuery DatabaseManager::getProgramDesc(QString programcode){
 }
 
 //SHIFT QUERY
-bool DatabaseManager::updateShift(QString queryStr, QStringList *shiftList){
+bool DatabaseManager::updateShift(bool shiftExist, QString selectedDay, QStringList *shiftList){
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
+    QString queryStr;
+    if(!shiftExist)
+        queryStr = "INSERT INTO Shift VALUES(?,?,?, ?,?,?,?,?,?,?,?,?)";
+    else{
+
+        queryStr = "UPDATE Shift SET ";
+        for (int i =1; i <6; i++){
+            queryStr += QString("StartTimeShift"+QString::number(i)+" = ?, EndTimeShift"+QString::number(i)+" = ?, ");
+
+        }
+        queryStr += QString("NumShifts = ? WHERE DayOfWeek = '" + selectedDay +"'");
+    }
     query.prepare(queryStr);
     qDebug()<<"UPDATE SHIFT "<< queryStr;
     for (int i = 0; i < shiftList->size(); ++i)
@@ -2097,6 +2109,17 @@ bool DatabaseManager::updateShift(QString queryStr, QStringList *shiftList){
         return true;
     }
     return false;
+}
+
+QSqlQuery DatabaseManager::getShiftInfoDaily(QString day)
+{
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    QString queryStr = "SELECT * FROM Shift ";
+    if(day != "")
+        queryStr += "WHERE DayOfWeek = '" + day + "'";
+    query.exec(queryStr);
+    return query;
 }
 
 void DatabaseManager::readPcpThread(QString clientId, QString type, int idx)

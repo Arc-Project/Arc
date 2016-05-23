@@ -18,6 +18,7 @@
 #define EDITPAGE            14
 #define EDITSHIFT           15
 #define STORAGEPAGE         16
+
 #define DAILYREPORT         0
 #define SHIFTREPORT         1
 #define FLOATCOUNT          2
@@ -672,17 +673,13 @@ private slots:
     void initTime();
     void changeTimeSet(QTimeEdit* endUI, QTime time);
     void readShiftDb(QString day);
-
+    void setShiftTimeDialog(bool resetTime);
     void changeUI();
-    void shiftReportInit(bool noShow);
-    void updateList(QVector<QStringList> *day);
+    void shiftReportInit(int dayType);
     void updateList(QVector<QStringList> *day, QSqlQuery infoQuery);
     void ReadCurrentShift();
     void getShiftList(QStringList *shiftList);
     void EditShiftInfo();
-
-    QString widthCal(float duration);
-    void initTimeLine(int dayOpt);
 
     void on_shift_num_currentIndexChanged(int index);
 
@@ -719,6 +716,12 @@ private slots:
     void on_btnViewTranns_clicked();
 
     void addCurrencyToTableWidget(QTableWidget* table, int col);
+
+    void createTextReceipt(QString totalCost, QString payType, QString payTotal, QString start, QString end, QString length, bool stay, bool refund);
+
+    void on_actionReceipt_triggered();
+
+    void addCurrencyNoSignToTableWidget(QTableWidget* table, int col);
 
 private:
 

@@ -181,7 +181,8 @@ public:
     bool getPcpQuery(QSqlQuery* query, QString curClientID, QString type);
 
     //Shift table
-    bool updateShift(QString query, QStringList *shiftList);
+    bool updateShift(bool shiftExist, QString selectedDay, QStringList *shiftList);
+    QSqlQuery getShiftInfoDaily(QString day = "");
 
 signals:
     void dailyReportStatsChanged(QList<int> list, bool conn);
