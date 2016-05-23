@@ -1001,9 +1001,16 @@ void MainWindow::on_editUpdate_clicked()
     curBook->stayLength = curBook->endDate.toJulianDay() - curBook->startDate.toJulianDay();
     dbManager->addHistoryFromId(curBook->bookID, userLoggedIn, QString::number(currentshiftid), "EDIT");
 }
+
 bool MainWindow::doMessageBox(QString message){
+    QString tmpStyleSheet=this->styleSheet();
+    this->setStyleSheet("");
+
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, "Confirm", message, QMessageBox::Yes | QMessageBox::No);
+    
+    this->setStyleSheet(tmpStyleSheet);
+    
     if(reply == QMessageBox::Yes){
         return true;
     }

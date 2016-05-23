@@ -144,8 +144,14 @@ void payment::on_paymentBox_accepted()
 
 }
 bool payment::doMessageBox(QString message){
+    QString tmpStyleSheet=this->styleSheet();
+    this->setStyleSheet("");
+    
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, "Confirm", message, QMessageBox::Yes | QMessageBox::No);
+    
+    this->setStyleSheet(tmpStyleSheet);
+    
     if(reply == QMessageBox::Yes){
         return true;
     }
@@ -311,7 +317,7 @@ void payment::on_btn_ok_clicked()
 
         return;
     }
-    if(doMessageBox("Adding payment, this is permenant, confirm?")){
+    if(doMessageBox("Adding payment, this is permanent, confirm?")){
 
         payment::on_addPaymentButton_clicked();
         close();
