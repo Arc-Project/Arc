@@ -50,6 +50,10 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    qRegisterMetaType<QVector<int>>("QVector<int>");
+    qRegisterMetaType<QTextBlock>("QTextBlock");
+    qRegisterMetaType<QTextCursor>("QTextCursor");
+    qRegisterMetaType<Qt::Orientation>("Qt::Orientation");
     ui->setupUi(this);
     setCentralWidget(ui->stackedWidget);
     cNew= false;
@@ -80,6 +84,8 @@ MainWindow::MainWindow(QWidget *parent) :
         SLOT(on_noDatabaseConnection()));
     connect(dbManager, SIGNAL(reconnectedToDatabase()), this,
         SLOT(on_reconnectedToDatabase()));
+    connect(dbManager, SIGNAL(getPcpData(QStringList,QStringList,QStringList,int,bool)), this,
+        SLOT(populatePcpTable(QStringList, QStringList, QStringList, int, bool)));
 
     curClient = 0;
     curBook = 0;
@@ -521,6 +527,7 @@ void MainWindow::clearTable(QTableWidget * table){
 
 void MainWindow::on_editButton_clicked()
 {
+    addHistory(EDITBOOKING);
     setup = true;
     int row = ui->editLookupTable->selectionModel()->currentIndex().row();
     if(row == - 1){
@@ -609,7 +616,12 @@ void MainWindow::popBookFromRow(){
     if(row == - 1){
         return;
     }
-    curBook->cost = ui->editLookupTable->item(row,5)->text().toDouble();
+    QString cost = ui->editLookupTable->item(row,5)->text();
+    if (cost.at(0) == '$') {
+        curBook->cost = cost.right(cost.length()-1).toDouble();
+    } else {
+        curBook->cost = cost.toDouble();
+    }
     curBook->stringStart = ui->editLookupTable->item(row, 2)->text();
     curBook->startDate = QDate::fromString(curBook->stringStart, "yyyy-MM-dd");
     curBook->stringEnd = ui->editLookupTable->item(row, 3)->text();
@@ -753,7 +765,11 @@ void MainWindow::on_editSearch_clicked()
     ui->editLookupTable->hideColumn(7);
     ui->editLookupTable->hideColumn(8);
     ui->editLookupTable->hideColumn(9);
+
+    addCurrencyToTableWidget(ui->editLookupTable, 5);
     //dbManager->printAll(result);
+
+    MainWindow::resizeTableView(ui->editLookupTable);
 
 
 
@@ -811,11 +827,12 @@ void MainWindow::on_bookingSearchButton_clicked()
     }
 */
     QStringList headers, cols;
-    headers << "Room#" << "Program" << " Type" << "Daily Cost" << "Monthly Cost" << "";
+    headers << "Space #" << "Program" << " Type" << "Daily Cost" << "Monthly Cost" << "";
     cols << "SpaceCode" << "ProgramCodes" << "type" << "cost" << "Monthly" << "SpaceId";
     populateATable(ui->bookingTable, headers, cols, result,false);
     ui->bookingTable->setColumnHidden(5, true);
     ui->makeBookingButton->show();
+    resizeTableView(ui->bookingTable);
 }
 //PARAMS - The table, list of headers, list of table column names, the sqlquery result, STRETCH - stretch mode true/false
 void MainWindow::populateATable(QTableWidget * table, QStringList headers, QStringList items, QSqlQuery result, bool stretch){
@@ -926,7 +943,7 @@ void MainWindow::setBookSummary(){
     int length = end.toJulianDay() - curBook->startDate.toJulianDay();
     curBook->endDate = end;
     curBook->stayLength = length;
-    ui->editCostLabel->setText(QString::number(curBook->cost, 'f', 2));
+    ui->editCostLabel->setText("$"+QString::number(curBook->cost, 'f', 2));
     curBook->monthly == true ? ui->editMonthly->setText("Yes") : ui->editMonthly->setText("No");
     ui->editProgramLabel->setText(curBook->program);
     ui->editLengthOfStay->setText(QString::number(curBook->stayLength));
@@ -1176,7 +1193,7 @@ void MainWindow::on_editDate_dateChanged(const QDate &date)
         ui->editLunches->setEnabled(false);
         ui->editWakeup->setEnabled(false);
         ui->editUpdate->setEnabled(true);
-
+        statusBar()->showMessage(tr("Room change, edit lunches and edit wakeups disabled because dates changed. Reload this page to edit these."), 10000);
     }
 
     if(date < QDate::currentDate()){
@@ -1184,6 +1201,7 @@ void MainWindow::on_editDate_dateChanged(const QDate &date)
 
     }
     ui->editRoom->setEnabled(false);
+
     QDate nextStart = date;
     QDate comp;
     if(date > curBook->endDate){
@@ -1250,8 +1268,8 @@ void MainWindow::setEditDayInfo(QDate date){
     ui->editMonthUsed->setText(QString::number(usedDays.first));
     ui->editDaysRefunded->setText(QString::number(dLeft));
     ui->editMonthsRefunded->setText(QString::number(mLeft));
-    ui->editDailyCost->setText(QString::number(dCost, 'f',2));
-    ui->editMonthlyCost->setText(QString::number(mCost,'f',2));
+    ui->editDailyCost->setText("$"+QString::number(dCost, 'f',2));
+    ui->editMonthlyCost->setText("$"+QString::number(mCost,'f',2));
     calcEditRefund(date);
 
 }
@@ -1305,14 +1323,14 @@ void MainWindow::calcEditRefund(QDate date){
         ui->editRefOwe->setText("Expected Amount Owed");
         ui->editRefundLabel->setText("Amount Owed");
         ui->editRefundAmt->setText(QString::number(totalCost * -1, 'f',2));
-        ui->editRefundAmount->setText(QString::number(totalCost * -1, 'f', 2));
+        ui->editRefundAmount->setText("-$"+QString::number(totalCost * -1, 'f', 2));
 
     }
     else{
         ui->editRefOwe->setText("Expected Refund Amount");
         ui->editRefundLabel->setText("Refund Amount");
         ui->editRefundAmt->setText(QString::number(totalCost, 'f',2));
-        ui->editRefundAmount->setText(QString::number(totalCost, 'f', 2));
+        ui->editRefundAmount->setText("$"+QString::number(totalCost, 'f', 2));
     }
     ui->editCost->setText(QString::number(labelCost, 'f', 2));
 
@@ -1930,7 +1948,7 @@ void MainWindow::defaultRegisterOptions(){
 void MainWindow::on_button_cancel_client_register_clicked()
 {
     clear_client_register_form();
-    ui->stackedWidget->setCurrentIndex(MAINMENU);
+    ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
 }
 
 /*=============================================================================
@@ -1995,6 +2013,9 @@ void MainWindow::on_pushButton_search_client_clicked()
 
     useProgressDialog("Search Client "+clientName,  QtConcurrent::run(this, &searchClientListThread));
     statusBar()->showMessage(QString("Found " + QString::number(maxClient) + " Clients"), 5000);
+
+    MainWindow::resizeTableView(ui->tableWidget_search_client);
+
     connect(ui->tableWidget_search_client, SIGNAL(cellClicked(int,int)), this, SLOT(set_curClient_name(int,int)),Qt::UniqueConnection);
     connect(ui->tableWidget_search_client, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(selected_client_info(int,int)),Qt::UniqueConnection);
 }
@@ -2012,6 +2033,7 @@ void MainWindow::on_checkBox_search_anonymous_clicked(bool checked)
     if(checked){
         QSqlQuery resultQ = dbManager->searchClientList("anonymous");
         setup_searchClientTable(resultQ);
+        resizeTableView(ui->tableWidget_search_client);
      //  ui->lineEdit_search_clientName->
     }
     else
@@ -2028,7 +2050,7 @@ void MainWindow::initClientLookupTable(){
     ui->tableWidget_search_client->setColumnCount(6);
     ui->tableWidget_search_client->clear();
 
-    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"FirstName"<<"Middle Initial"<<"LastName"<<"DateOfBirth"<<"Balance");
+    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"First Name"<<"Middle Name"<<"Last Name"<<"DateOfBirth"<<"Balance");
 
 
 
@@ -2077,6 +2099,7 @@ void MainWindow::set_curClient_name(int nRow, int nCol){
 void MainWindow::setup_searchClientTable(QSqlQuery results){
     //initClientLookupInfo();
 
+
     ui->tableWidget_search_client->setRowCount(0);
      int colCnt = results.record().count();
     ui->tableWidget_search_client->setColumnCount(colCnt);
@@ -2108,6 +2131,7 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
 
     maxClient = row;
     //ui->tableWidget_search_client->show();
+    ui->tableWidget_search_client->setColumnHidden(0, true);
 
 }
 
@@ -2136,6 +2160,7 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
             if(ui->tableWidget_transaction->rowCount()>= transacTotal)
                 ui->pushButton_cl_trans_more->setEnabled(false);
             qDebug()<<"client Transaction list";
+            resizeTableView(ui->tableWidget_transaction);
             newTrans = false;
             break;
 
@@ -2152,6 +2177,7 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
              //bookHistoryFuture.waitForFinished();
              if(ui->tableWidget_booking->rowCount() >= bookingTotal)
                  ui->pushButton_cl_book_more->setEnabled(false);
+             resizeTableView(ui->tableWidget_booking);
              newHistory = false;
              break;
     case 3:
@@ -2384,9 +2410,9 @@ void MainWindow::searchTransaction(QString clientId){
     qDebug()<<"############CHECK TRANS QUERY";
     displayTransaction(transQuery, ui->tableWidget_transaction);
 
-    QString totalNum= (transacTotal == 0)? "-" :
+    QString totalNum= (transacTotal == 0)? "0 / 0" :
                      (QString::number(ui->tableWidget_transaction->rowCount()) + " / " + QString::number(transacTotal));
-    ui->label_cl_trans_total_num->setText(totalNum + " Transaction");
+    ui->label_cl_trans_total_num->setText(totalNum + " Transaction(s)");
 
     qDebug()<<"FINE FOR SEARCH clientTransaction";
 }
@@ -2397,7 +2423,7 @@ void MainWindow::initClTransactionTable(){
     ui->tableWidget_transaction->setColumnCount(8);
     ui->tableWidget_transaction->clear();
 
-    ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"TransType"<<"Amount"<<"Payment Type"<<"Employee"<<"ChequeNo"<<"MSQ"<<"ChequeDate");
+    ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Type"<<"Amount"<<"Payment"<<"Employee"<<"Cheque No"<<"MSD"<<"Cheque Date");
     ui->tableWidget_transaction->setMinimumHeight(30*6-1);
 
 }
@@ -2444,6 +2470,7 @@ void MainWindow::on_pushButton_cl_trans_more_clicked()
     searchTransaction(curClientID);
     if(ui->tableWidget_transaction->rowCount() >= transacTotal)
         ui->pushButton_cl_trans_more->setEnabled(false);
+    resizeTableView(ui->tableWidget_transaction);
 }
 
 //search booking history when click booking history tab
@@ -2454,9 +2481,9 @@ void MainWindow::searchBookHistory(QString clientId){
     displayBookHistory(bookingQuery, ui->tableWidget_booking);
    // dbManager->printAll(bookingQuery);
 
-    QString totalNum = (bookingTotal == 0)? "-" :
+    QString totalNum = (bookingTotal == 0)? "0 / 0" :
                         QString::number(ui->tableWidget_booking->rowCount()) + " / " + QString::number(bookingTotal);
-    ui->label_cl_booking_total_num->setText(totalNum + " Booking");
+    ui->label_cl_booking_total_num->setText(totalNum + " Booking(s)");
 }
 
 //initialize client booking history table in client info tab
@@ -2464,7 +2491,7 @@ void MainWindow::initClBookHistoryTable(){
     ui->tableWidget_booking->setRowCount(0);
     ui->tableWidget_booking->setColumnCount(6);
     ui->tableWidget_booking->clear();
-    ui->tableWidget_booking->setHorizontalHeaderLabels(QStringList()<<"Reserved Date"<<"Program Code"<<"Start Date"<< "End Date"<<"Cost"<<"Bed Number");
+    ui->tableWidget_booking->setHorizontalHeaderLabels(QStringList()<<"Booking Date"<<"Program"<<"Start Date"<< "End Date"<<"Cost"<<"Space No");
     ui->tableWidget_booking->setMinimumHeight(30*6-1);
 }
 
@@ -2508,6 +2535,7 @@ void MainWindow::on_pushButton_cl_book_more_clicked()
     searchBookHistory(curClientID);
     if(ui->tableWidget_booking->rowCount() >= bookingTotal )
         ui->pushButton_cl_book_more->setEnabled(false);
+    resizeTableView(ui->tableWidget_booking);
 }
 
 //DELETE CLIENT INFORMATION FIELDS
@@ -2584,33 +2612,33 @@ void MainWindow::initClientLookupInfo(){
         ui->pushButton_CaseFiles->setVisible(false);
         ui->pushButton_processPaymeent->setVisible(false);
         ui->pushButton_bookRoom->setVisible(true);
-        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
-        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_brpp->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+        ui->hs_ppcf->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_cfec->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
         break;
     case PAYMENTPAGE:
         ui->pushButton_CaseFiles->setVisible(false);
         ui->pushButton_bookRoom->setVisible(false);
         ui->pushButton_processPaymeent->setVisible(true);
-        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
-        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_brpp->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_ppcf->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+        ui->hs_cfec->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
         break;
     case CASEFILE:
         ui->pushButton_CaseFiles->setVisible(true);
         ui->pushButton_bookRoom->setVisible(false);
         ui->pushButton_processPaymeent->setVisible(false);
-        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+        ui->hs_brpp->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_ppcf->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_cfec->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
         break;
     case CLIENTLOOKUP:
         ui->pushButton_CaseFiles->setVisible(true);
         ui->pushButton_processPaymeent->setVisible(true);
         ui->pushButton_bookRoom->setVisible(true);
-        ui->horizontalSpacer_79->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_80->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->horizontalSpacer_81->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_brpp->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_ppcf->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_cfec->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
         ui->horizontalLayout_15->update();
         break;
     }
@@ -2821,6 +2849,8 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
         x->setColumnWidth(0, width*0.41);
         x->setColumnWidth(1, width*0.41);
         x->setColumnWidth(2, width*0.16);
+
+        resetPcpTable(x);
     }
 
     //clear old data
@@ -2848,97 +2878,78 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
     populate_tw_caseFiles(filter);
     }
 
-    qDebug() << "id displayed:" << idDisplayed;
-    qDebug() << "id selected:" << curClientID;
-    if (idDisplayed != curClientID) {
-        idDisplayed = curClientID;
-        ui->lbl_caseClientName->setText(curFirstName + " " + curMiddleName + curLastName + "'s Case Files");
-        populateCaseFiles();
-    }
-}
+    ui->lbl_caseClientName->setText(curFirstName + " " + curMiddleName + curLastName + "'s Case Files");
+//        QtConcurrent::run(this, retrievePcpData, QString("all"), -1);
+    useProgressDialog("Loading PCP tables...", QtConcurrent::run(this, retrievePcpData, QString("all"), -1));
+//        retrievePcpData();
 
-void MainWindow::populateCaseFiles(QString type, int tableId) {
-
-    //running notes
-    ui->te_notes->clear();
+    //running notes: move to another function
     QSqlQuery noteResult = dbManager->readNote(curClientID);
     qDebug() << noteResult.lastError();
-    while (noteResult.next()) {
-        ui->te_notes->document()->setPlainText(noteResult.value(0).toString());
-    }
+    ui->te_notes->document()->clear();
+    noteResult.next();
+    ui->te_notes->document()->setPlainText(noteResult.value(0).toString());
 
-    //pcp tables
+}
+
+void MainWindow::resetPcpTable(QTableWidget* table){
+    //reset table
+    qDebug() << "resetting pcp table ";
+    table->clearContents();
+    table->setMinimumHeight(73);
+    table->setMaximumHeight(1);
+    table->setMaximumHeight(16777215);
+    table->setRowCount(1);
+}
+
+void MainWindow::retrievePcpData(QString type, int tableId) {
     int tableIdx = 0;
     if (type == "all") {
-
         for (auto x: pcpTypes) {
-            QString query = "SELECT rowId, Goal, Strategy, Date "
-                            "FROM Pcp "
-                            "WHERE ClientId = " + curClientID +
-                            " AND Type = '" + x + "'";
-            QSqlQuery result = dbManager->execQuery(query);
-            qDebug() << result.lastError();
-            int numRows = result.numRowsAffected();
-            auto table = (pcp_tables.at(tableIdx++));
-
-            //reset table
-            table->clearContents();
-            table->setMinimumHeight(73);
-            table->setMaximumHeight(1);
-            table->setMaximumHeight(16777215);
-            table->setRowCount(1);
-
-            //set number of rows
-            for (int i = 0; i < numRows-1; i++) {
-                table->insertRow(0);
-
-                //set height of table
-                table->setMinimumHeight(table->minimumHeight() + 35);
-            }
-
-            //populate table
-            while (result.next()){
-                for (int i = 0; i < 3; i++) {
-                    table->setItem(result.value(0).toString().toInt(), i, new QTableWidgetItem(result.value(i+1).toString()));
-                }
-            }
+            dbManager->readPcpThread(curClientID, x, tableIdx++);
         }
-        return;
     } else {
-
-        QString query = "SELECT rowId, Goal, Strategy, Date "
-                        "FROM Pcp "
-                        "WHERE ClientId = " + curClientID +
-                        " AND Type = '" + type + "'";
-        QSqlQuery result = dbManager->execQuery(query);
-
-        qDebug() << result.lastError();
-        int numRows = result.numRowsAffected();
-        auto table = (pcp_tables.at(tableId));
-
-        //reset table
-        table->clearContents();
-        table->setMinimumHeight(73);
-        table->setMaximumHeight(1);
-        table->setMaximumHeight(16777215);
-        table->setRowCount(1);
-
-        //set number of rows
-        for (int i = 0; i < numRows-1; i++) {
-            table->insertRow(0);
-
-            //set height of table
-            table->setMinimumHeight(table->minimumHeight() + 35);
-        }
-
-        //populate table
-        while (result.next()){
-            for (int i = 0; i < 3; i++) {
-                table->setItem(result.value(0).toString().toInt(), i, new QTableWidgetItem(result.value(i+1).toString()));
-            }
-        }
+        dbManager->readPcpThread(curClientID, type, tableId);
     }
 }
+
+//void MainWindow::populatePcpTable(QTableWidget *table, QSqlQuery result){
+void MainWindow::populatePcpTable(QStringList goal, QStringList strategy, QStringList date, int tableIdx, bool conn){
+    if (!conn) {
+        qDebug() << "db connection failed";
+        return;
+    }
+    auto table = pcp_tables.at(tableIdx);
+    qDebug() << "operating on table " << tableIdx;
+
+//    int numRows = result.numRowsAffected();
+    int numRows = goal.count();
+    qDebug() << "row count: " << numRows;
+
+    //set number of rows
+    qDebug() << "setting number of rows and resizing table height";
+    for (int i = 0; i < numRows-1; i++) {
+        table->insertRow(0);
+
+        //set height of table
+        table->setMinimumHeight(table->minimumHeight() + 35);
+    }
+
+    //populate table
+//    while (result.next()){
+//        for (int i = 0; i < 3; i++) {
+//            table->setItem(result.value(0).toString().toInt(), i, new QTableWidgetItem(result.value(i+1).toString()));
+//        }
+//    }
+    qDebug() << "populating pcp table " + tableIdx;
+    for (int i = 0; i < numRows; i++) {
+        table->setItem(i, 0, new QTableWidgetItem(goal[i]));
+        table->setItem(i, 1, new QTableWidgetItem(strategy[i]));
+        table->setItem(i, 2, new QTableWidgetItem(date[i]));
+        qDebug() << i+1 << " rows populated";
+    }
+}
+
 //CASEFILE WIDGET CHANGE CONTROL
 void MainWindow::on_tabw_casefiles_currentChanged(int index)
 {
@@ -3583,15 +3594,16 @@ void MainWindow::on_pushButton_3_clicked()
     if (!tempDir.isEmpty()) {
         dir = tempDir;
         mruDir.setValue(DEFAULT_DIR_KEY, tempDir);
-        int nRow = ui->tableWidget_search_client->currentRow();
+//        int nRow = ui->tableWidget_search_client->currentRow();
 
-        QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
-                              ui->tableWidget_search_client->item(nRow, 2)->text() + "*");
+//        QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+//                              ui->tableWidget_search_client->item(nRow, 2)->text() + "*");
 
-        qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
-                    ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
+//        qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+//                    ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
         ui->le_caseDir->setText(dir.path());
-        populate_tw_caseFiles(filter);
+//        populate_tw_caseFiles(filter);
+        populate_tw_caseFiles();
     }
     connect(ui->tw_caseFiles, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(on_tw_caseFiles_cellDoubleClicked(int,int)), Qt::UniqueConnection);
 }
@@ -3760,6 +3772,7 @@ void MainWindow::initPcp(){
                     "other",
                     "people"
                 };
+
 }
 
 void MainWindow::on_btn_pcpRela_clicked()
@@ -4131,14 +4144,20 @@ void MainWindow::resizeTableView(QTableView* tableView)
     int cols = tableView->horizontalHeader()->count();
     double width = tableView->horizontalHeader()->size().width();
     double currentWidth = 0;
+    int hiddenColCount = 0;
     for (int i = 0; i < cols; ++i)
     {
-        currentWidth +=  tableView->columnWidth(i);
+        double colWidth = tableView->columnWidth(i);
+        if (colWidth == 0)
+        {
+            hiddenColCount++;
+        }
+        currentWidth +=  colWidth;
     }
     double diff = width - currentWidth;
     if (diff > 0)
     {
-        double sizeIncrease = diff / cols;
+        double sizeIncrease = diff / (cols - hiddenColCount);
 
         for (int i = 0; i < cols; ++i)
         {
@@ -4146,7 +4165,10 @@ void MainWindow::resizeTableView(QTableView* tableView)
             {
                 sizeIncrease = tableView->columnWidth(i) * 0.75f;
             }
-            tableView->setColumnWidth(i, tableView->columnWidth(i) + sizeIncrease);
+            if (tableView->columnWidth(i) != 0)
+            {
+                tableView->setColumnWidth(i, tableView->columnWidth(i) + sizeIncrease);    
+            }
         }
     }
 
@@ -4479,6 +4501,12 @@ void MainWindow::on_actionBack_triggered()
         forwardStack.push(ui->stackedWidget->currentIndex());
         ui->stackedWidget->setCurrentIndex(page);
         ui->actionForward->setEnabled(true);
+
+        switch(page) {
+        case EDITBOOKING:
+            on_editSearch_clicked();
+            break;
+        }
     }
 }
 
@@ -4546,8 +4574,8 @@ void MainWindow::insertPcp(QTableWidget *tw, QString type){
 
               }
         }
-        QSqlQuery delResult = dbManager->deletePcpRow(i, type);
-        qDebug() << delResult.lastError();
+//        QSqlQuery delResult = dbManager->deletePcpRow(i, type);
+//        qDebug() << delResult.lastError();
         QSqlQuery addResult = dbManager->addPcp(i, curClientID, type, goal, strategy, date);
         qDebug() << addResult.lastError();
     }
@@ -4625,76 +4653,82 @@ void MainWindow::on_actionPcptables_triggered()
         */
 }
 
+void MainWindow::reloadPcpTable(int table){
+    resetPcpTable(pcp_tables.at(table));
+    useProgressDialog("Loading PCP tables...", QtConcurrent::run(this, retrievePcpData, pcpTypes.at(table), table));
+}
+
 void MainWindow::on_btn_pcpRelaUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(0);
-    populateCaseFiles(pcpTypes.at(0), 0);
+//    retrievePcpData(pcpTypes.at(0), 0);
+    reloadPcpTable(0);
 }
 
 void MainWindow::on_btn_pcpEduUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(1);
-    populateCaseFiles(pcpTypes.at(1), 1);
+    reloadPcpTable(1);
 }
 
 void MainWindow::on_btn_pcpSubUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(2);
-    populateCaseFiles(pcpTypes.at(2), 2);
+    reloadPcpTable(2);
 }
 
 void MainWindow::on_btn_pcpAccoUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(3);
-    populateCaseFiles(pcpTypes.at(3), 3);
+    reloadPcpTable(3);
 }
 
 void MainWindow::on_btn_pcpLifeUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(4);
-    populateCaseFiles(pcpTypes.at(4), 4);
+    reloadPcpTable(4);
 }
 
 void MainWindow::on_btn_pcpMentUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(5);
-    populateCaseFiles(pcpTypes.at(5), 5);
+    reloadPcpTable(5);
 }
 
 void MainWindow::on_btn_pcpPhyUndo_2_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(6);
-    populateCaseFiles(pcpTypes.at(6), 6);
+    reloadPcpTable(6);
 }
 
 void MainWindow::on_btn_pcpLegUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(7);
-    populateCaseFiles(pcpTypes.at(7), 7);
+    reloadPcpTable(7);
 }
 
 void MainWindow::on_btn_pcpActUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(8);
-    populateCaseFiles(pcpTypes.at(8), 8);
+    reloadPcpTable(8);
 }
 
 void MainWindow::on_btn_pcpTradUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(9);
-    populateCaseFiles(pcpTypes.at(9), 9);
+    reloadPcpTable(9);
 }
 
 void MainWindow::on_btn_pcpOtherUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(10);
-    populateCaseFiles(pcpTypes.at(10), 10);
+    reloadPcpTable(10);
 }
 
 void MainWindow::on_btn_pcpPplUndo_clicked()
 {
     qDebug() << "resetting table " << pcpTypes.at(11);
-    populateCaseFiles(pcpTypes.at(11), 11);
+    reloadPcpTable(11);
 }
 
 void MainWindow::on_btn_notesSave_clicked()
@@ -4711,7 +4745,6 @@ void MainWindow::on_btn_notesSave_clicked()
         qDebug() << result2.lastError();
 
     }
-
 }
 
 void MainWindow::on_btn_notesUndo_clicked()
@@ -6060,14 +6093,15 @@ void MainWindow::on_pushButton_15_clicked()
 
 void MainWindow::on_chk_filter_clicked()
 {
-    if (!ui->chk_filter->isChecked()){
-        QStringList filter;
-        populate_tw_caseFiles(filter);
-    } else {
+    if (ui->chk_filter->isChecked()){
         int nRow = ui->tableWidget_search_client->currentRow();
 
-        QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 3)->text() + ", " +
-                              ui->tableWidget_search_client->item(nRow, 1)->text() + "*");
+        QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+                              ui->tableWidget_search_client->item(nRow, 2)->text() + "*");
+        qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " + ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
+        populate_tw_caseFiles(filter);
+    } else {
+        QStringList filter;
         populate_tw_caseFiles(filter);
     }
 }
@@ -6397,6 +6431,7 @@ void MainWindow::on_editRemoveCheque_clicked()
 void MainWindow::on_storage_clicked()
 {
     ui->stackedWidget->setCurrentIndex(STORAGEPAGE);
+    MainWindow::on_storesearch_clicked();
 }
 
 void MainWindow::on_storesearch_clicked()
@@ -6406,10 +6441,12 @@ void MainWindow::on_storesearch_clicked()
     QStringList header, cols;
     header << "Name" << "Date" << "Items" << "" << "";
     cols   << "StorageUserName" << "StorageDate" << "StorageItems" << "ClientId" << "StorageId";
-    populateATable(ui->storageTable,header,cols, result, true);
+    populateATable(ui->storageTable,header,cols, result, false);
+    ui->storageTable->setColumnHidden(2, true);
     ui->storageTable->setColumnHidden(3, true);
     ui->storageTable->setColumnHidden(4, true);
 
+    MainWindow::resizeTableView(ui->storageTable);
 }
 
 void MainWindow::on_confirmStorage_clicked()
@@ -7745,4 +7782,18 @@ void MainWindow::on_checkBox_shift_auto_endtime_clicked(bool checked)
     ui->shift3_E->setDisabled(checked);
     ui->shift4_E->setDisabled(checked);
     ui->shift5_E->setDisabled(checked);
+}
+
+void MainWindow::on_btnViewTranns_clicked()
+{
+    int index = ui->cbox_payDateRange->currentIndex();
+    MainWindow::on_cbox_payDateRange_activated(index);
+}
+
+void MainWindow::addCurrencyToTableWidget(QTableWidget* table, int col){
+    int numRows = table->rowCount();
+    for (int row = 0; row < numRows; ++row) {
+        QString value = table->item(row, col)->text();
+        table->setItem(row, col, new QTableWidgetItem("$"+value));
+    }
 }
