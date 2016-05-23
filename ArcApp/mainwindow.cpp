@@ -185,6 +185,8 @@ void MainWindow::initCurrentWidget(int idx){
             popManagePayment();
 
             ui->editRemoveCheque->setHidden(true);
+            ui->cbox_payDateRange->setCurrentIndex(1);
+            MainWindow::on_cbox_payDateRange_activated(1);
 
             break;
         case ADMINPAGE: //WIDGET 5
@@ -711,11 +713,16 @@ void MainWindow::on_cbox_payDateRange_activated(int index)
     QStringList heads;
     QStringList cols;
     QSqlQuery tempSql = dbManager->getTransactions(hold, endDate);
-    heads << "Date"  <<"First" << "Last" << "Amount" << "Type" << "Method" << "Notes"  << "" << "" << "Employee Name";
+    heads << "Date"  <<"First Name" << "Last Name" << "Amount" << "Type" << "Method" << "Notes"  << "" << "" << "Employee Name";
     cols << "Date" <<"FirstName"<< "LastName"  << "Amount" << "TransType" << "Type" << "Notes" << "TransacId" << "ClientId" << "EmpName";
     populateATable(ui->mpTable, heads, cols, tempSql, false);
+    addCurrencyNoSignToTableWidget(ui->mpTable, 3);
+    ui->mpTable->setColumnHidden(4, false);
+    ui->mpTable->setColumnHidden(5, false);
+    ui->mpTable->setColumnHidden(6, false);
     ui->mpTable->setColumnHidden(7, true);
     ui->mpTable->setColumnHidden(8, true);
+    resizeTableView(ui->mpTable);
 
 }
 
@@ -730,9 +737,10 @@ void MainWindow::on_btn_payListAllUsers_clicked()
     QSqlQuery tempSql = dbManager->getOwingClients();
     heads << "First" << "Last" << "DOB" << "Balance" << "";
     cols << "FirstName" << "LastName" << "Dob" << "Balance" << "ClientId";
-    ui->mpTable->setColumnHidden(4, true);
+    ui->mpTable->setColumnHidden(4, true);  
     populateATable(ui->mpTable, heads, cols, tempSql, false);
-
+    addCurrencyNoSignToTableWidget(ui->mpTable, 3);
+    resizeTableView(ui->mpTable);
 }
 
 void MainWindow::on_editSearch_clicked()
@@ -761,7 +769,7 @@ void MainWindow::on_editSearch_clicked()
 
     QStringList headers;
     QStringList cols;
-    headers << "Client" << "Room" << "Start" << "End" << "Program" << "Cost" << "Monthly" << "" << "" << "";
+    headers << "Client" << "Space #" << "Start Date" << "End Date" << "Program" << "Cost" << "Monthly" << "" << "" << "";
     cols << "ClientName" << "SpaceCode" << "StartDate" << "EndDate" << "ProgramCode" << "Cost" << "Monthly" << "BookingId" << "ClientId" << "SpaceId";
     populateATable(ui->editLookupTable, headers, cols, result, false);
     ui->editLookupTable->hideColumn(7);
@@ -1184,8 +1192,11 @@ void MainWindow::on_btn_payOutstanding_clicked()
     headers << "Date" << "First" << "Last" << "Amount" << "Notes" << "" << "";
     cols << "Date" << "FirstName" << "LastName" << "Amount" << "Notes" << "ClientId" << "TransacId";
     populateATable(ui->mpTable, headers, cols, result, false);
+    addCurrencyNoSignToTableWidget(ui->mpTable, 3);
+    ui->mpTable->setColumnHidden(4, false);
     ui->mpTable->setColumnHidden(6, true);
     ui->mpTable->setColumnHidden(5, true);
+    resizeTableView(ui->mpTable);
 }
 
 
@@ -6401,6 +6412,7 @@ void MainWindow::updatemenuforuser() {
     //display logged in user and current shift in status bar
     lbl_curUser = new QLabel("Logged in as: " + usernameLoggedIn + "  ");
     // lbl_curShift = new QLabel("Shift Number: " + currentshiftid);
+    lbl_curUser->setStyleSheet("font-size: 12pt");   
     statusBar()->addPermanentWidget(lbl_curUser);
     // statusBar()->addPermanentWidget(lbl_curShift);
 }
@@ -6983,19 +6995,20 @@ void MainWindow::on_shift_num_currentIndexChanged(int index)
     showAllShiftEdit(false);
 
     switch(index){
-        case 0:
+        case 0:  //no selection
             ui->label_Shift_Index->hide();
             ui->label_Shift_Start->hide();
             ui->label_Shift_End->hide();
+            ui->checkBox_shift_auto_endtime->hide();
             ui->label_Shift1->hide();
             ui->shift1_S->hide();
             ui->shift1_E->hide();
-        case 1:
+        case 1:  //select 1
             ui->label_Shift2->hide();
             ui->shift2_S->hide();
             ui->shift2_E->hide();
 
-        case 2:
+        case 2: //select 2
             ui->label_Shift3->hide();
             ui->shift3_S->hide();
             ui->shift3_E->hide();
@@ -7011,7 +7024,7 @@ void MainWindow::on_shift_num_currentIndexChanged(int index)
             ui->shift5_E->hide();
     }
 
-    for(int i = 0; i < index; i++){
+    for(int i = 1; i < index; i++){
             startTime.setHMS(TimeGap*i,0,0);
             endTime.setHMS(TimeGap*i-1,59,0);
 
@@ -7321,11 +7334,7 @@ void MainWindow::changeUI(){
 //            qDebug()<<"thur1:" << thur.at(0).at(2) <<thur.at(0).at(2).toDouble();
             ui->label_shift_thur1->setMaximumWidth(800*thur.at(0).at(2).toDouble());
             ui->label_shift_thur1->setText(thur.at(0).at(0));
-
-
         }
-
-
 
     }
     if(!fri.empty()){
@@ -7449,6 +7458,7 @@ void MainWindow::shiftReportInit(bool noShow){
 
 void MainWindow::on_pushButton_shift_save_clicked()
 {
+    /*
     switch(selectedDayIdx){
     case SUN:
         updateList(&sun);
@@ -7472,6 +7482,7 @@ void MainWindow::on_pushButton_shift_save_clicked()
         updateList(&sat);
         break;
     }
+    */
     EditShiftInfo();
     ReadCurrentShift();
 }
@@ -7525,7 +7536,6 @@ void MainWindow::ReadCurrentShift(){
             updateList(&fri,readShiftQ);
         else if(dayTag == "Saturday")
             updateList(&sat,readShiftQ);
-
     }
     changeUI();
 
@@ -7564,6 +7574,7 @@ void MainWindow::getShiftList(QStringList *shiftList){
 
 
 }
+
 //justUpdate
 void MainWindow::updateList(QVector<QStringList>* day){
     if(day->size() != 0)
@@ -7787,7 +7798,8 @@ void MainWindow::on_btnViewTranns_clicked()
 void MainWindow::addCurrencyToTableWidget(QTableWidget* table, int col){
     int numRows = table->rowCount();
     for (int row = 0; row < numRows; ++row) {
-        QString value = table->item(row, col)->text();
+        QString value = QString::number(table->item(row, col)->text().toFloat(), 'f', 2);
+        //QString value = table->item(row, col)->text();
         table->setItem(row, col, new QTableWidgetItem("$"+value));
     }
 }
@@ -7834,5 +7846,13 @@ void MainWindow::on_actionReceipt_triggered()
     if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING) {
         createTextReceipt(ui->confirmCost->text(), transType, ui->confirmTotalPaid->text(), curBook->stringStart,
                           curBook->stringEnd, ui->confirmLength->text(), true);
+}
+
+void MainWindow::addCurrencyNoSignToTableWidget(QTableWidget* table, int col){
+    int numRows = table->rowCount();
+    for (int row = 0; row < numRows; ++row) {
+        QString value = QString::number(table->item(row, col)->text().toFloat(), 'f', 2);
+        //QString value = table->item(row, col)->text();
+        table->setItem(row, col, new QTableWidgetItem(value));
     }
 }

@@ -724,6 +724,8 @@ private slots:
 
     void on_actionReceipt_triggered();
 
+    void addCurrencyNoSignToTableWidget(QTableWidget* table, int col);
+
 private:
 
     Ui::MainWindow *ui;
