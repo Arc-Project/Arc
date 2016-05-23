@@ -7415,11 +7415,12 @@ void MainWindow::EditShiftInfo(){
     getShiftList(&shiftValueList);
     if(!dbManager->updateShift(shiftExist, selectedDay, &shiftValueList))
     {
-        qDebug()<<"Shift update fail";
+        statusBar()->showMessage(selectedDay + " NOT CHANGED. TRY AGAIN.", 10000);
         return;
     }
     shiftExist = true;
     qDebug()<<"SHIFT UPDATE SUCCESS";
+    statusBar()->showMessage(selectedDay + " SHIFT UPDATE SUCCESS", 10000);
 
 }
 
