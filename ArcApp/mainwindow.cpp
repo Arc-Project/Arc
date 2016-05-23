@@ -7483,43 +7483,6 @@ void MainWindow::getShiftList(QStringList *shiftList){
 
 }
 
-//justUpdate
-void MainWindow::updateList(QVector<QStringList>* day){
-    if(day->size() != 0)
-        day->clear();
-    QStringList tempList;
-    switch(shiftSize){
-    case 4:
-        tempList<<selectedDay<<"5"<<ui->shift5_S->text()<<ui->shift5_E->text()
-                 <<widthCal(((float)ui->shift5_S->time().secsTo(ui->shift5_E->time())));
-        day->push_front(tempList);
-    case 3:
-        tempList.clear();
-        tempList<<selectedDay<<"4"<<ui->shift4_S->text()<<ui->shift4_E->text()
-               <<widthCal(((float)ui->shift4_S->time().secsTo(ui->shift4_E->time())));
-        day->push_front(tempList);
-
-    case 2:
-        tempList.clear();
-        tempList<<selectedDay<<"3"<<ui->shift3_S->text()<<ui->shift3_E->text()
-               <<widthCal(((float)ui->shift3_S->time().secsTo(ui->shift3_E->time())));
-        day->push_front(tempList);
-
-    case 1:
-        tempList.clear();
-        tempList<<selectedDay<<"2"<<ui->shift2_S->text()<<ui->shift2_E->text()
-               <<widthCal(((float)ui->shift2_S->time().secsTo(ui->shift2_E->time())));
-        day->push_front(tempList);
-
-    case 0:
-        tempList.clear();
-        tempList<<selectedDay<<"1"<<ui->shift1_S->text()<<ui->shift1_E->text()
-               <<widthCal(((float)ui->shift1_S->time().secsTo(ui->shift1_E->time())));
-        day->push_front(tempList);
-
-    }
-
-}
 //update using query
 void MainWindow::updateList(QVector<QStringList>* day, QSqlQuery infoQuery){
     if(day->size() != 0)
