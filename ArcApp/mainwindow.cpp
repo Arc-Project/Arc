@@ -714,6 +714,7 @@ void MainWindow::on_cbox_payDateRange_activated(int index)
     heads << "Date"  <<"First Name" << "Last Name" << "Amount" << "Type" << "Method" << "Notes"  << "" << "" << "Employee Name";
     cols << "Date" <<"FirstName"<< "LastName"  << "Amount" << "TransType" << "Type" << "Notes" << "TransacId" << "ClientId" << "EmpName";
     populateATable(ui->mpTable, heads, cols, tempSql, false);
+    addCurrencyNoSignToTableWidget(ui->mpTable, 3);
     ui->mpTable->setColumnHidden(4, false);
     ui->mpTable->setColumnHidden(5, false);
     ui->mpTable->setColumnHidden(6, false);
@@ -736,6 +737,7 @@ void MainWindow::on_btn_payListAllUsers_clicked()
     cols << "FirstName" << "LastName" << "Dob" << "Balance" << "ClientId";
     ui->mpTable->setColumnHidden(4, true);  
     populateATable(ui->mpTable, heads, cols, tempSql, false);
+    addCurrencyNoSignToTableWidget(ui->mpTable, 3);
     resizeTableView(ui->mpTable);
 }
 
@@ -1188,6 +1190,7 @@ void MainWindow::on_btn_payOutstanding_clicked()
     headers << "Date" << "First" << "Last" << "Amount" << "Notes" << "" << "";
     cols << "Date" << "FirstName" << "LastName" << "Amount" << "Notes" << "ClientId" << "TransacId";
     populateATable(ui->mpTable, headers, cols, result, false);
+    addCurrencyNoSignToTableWidget(ui->mpTable, 3);
     ui->mpTable->setColumnHidden(4, false);
     ui->mpTable->setColumnHidden(6, true);
     ui->mpTable->setColumnHidden(5, true);
@@ -7798,7 +7801,17 @@ void MainWindow::on_btnViewTranns_clicked()
 void MainWindow::addCurrencyToTableWidget(QTableWidget* table, int col){
     int numRows = table->rowCount();
     for (int row = 0; row < numRows; ++row) {
-        QString value = table->item(row, col)->text();
+        QString value = QString::number(table->item(row, col)->text().toFloat(), 'f', 2);
+        //QString value = table->item(row, col)->text();
         table->setItem(row, col, new QTableWidgetItem("$"+value));
+    }
+}
+
+void MainWindow::addCurrencyNoSignToTableWidget(QTableWidget* table, int col){
+    int numRows = table->rowCount();
+    for (int row = 0; row < numRows; ++row) {
+        QString value = QString::number(table->item(row, col)->text().toFloat(), 'f', 2);
+        //QString value = table->item(row, col)->text();
+        table->setItem(row, col, new QTableWidgetItem(value));
     }
 }
