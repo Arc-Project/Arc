@@ -185,6 +185,7 @@ QHeaderView{
         background-color: palette(base);
 }
 */
+
 </string>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -3716,7 +3717,7 @@ QHeaderView{
                </layout>
               </item>
               <item row="0" column="1">
-               <widget class="QPushButton" name="pushButton">
+               <widget class="QPushButton" name="btnViewTranns">
                 <property name="minimumSize">
                  <size>
                   <width>70</width>
