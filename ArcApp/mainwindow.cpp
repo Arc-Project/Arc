@@ -527,6 +527,7 @@ void MainWindow::clearTable(QTableWidget * table){
 
 void MainWindow::on_editButton_clicked()
 {
+    addHistory(EDITBOOKING);
     setup = true;
     int row = ui->editLookupTable->selectionModel()->currentIndex().row();
     if(row == - 1){
@@ -615,7 +616,12 @@ void MainWindow::popBookFromRow(){
     if(row == - 1){
         return;
     }
-    curBook->cost = ui->editLookupTable->item(row,5)->text().toDouble();
+    QString cost = ui->editLookupTable->item(row,5)->text();
+    if (cost.at(0) == '$') {
+        curBook->cost = cost.right(cost.length()-1).toDouble();
+    } else {
+        curBook->cost = cost.toDouble();
+    }
     curBook->stringStart = ui->editLookupTable->item(row, 2)->text();
     curBook->startDate = QDate::fromString(curBook->stringStart, "yyyy-MM-dd");
     curBook->stringEnd = ui->editLookupTable->item(row, 3)->text();
@@ -759,6 +765,8 @@ void MainWindow::on_editSearch_clicked()
     ui->editLookupTable->hideColumn(7);
     ui->editLookupTable->hideColumn(8);
     ui->editLookupTable->hideColumn(9);
+
+    addCurrencyToTableWidget(ui->editLookupTable, 5);
     //dbManager->printAll(result);
 
     MainWindow::resizeTableView(ui->editLookupTable);
@@ -934,7 +942,7 @@ void MainWindow::setBookSummary(){
     int length = end.toJulianDay() - curBook->startDate.toJulianDay();
     curBook->endDate = end;
     curBook->stayLength = length;
-    ui->editCostLabel->setText(QString::number(curBook->cost, 'f', 2));
+    ui->editCostLabel->setText("$"+QString::number(curBook->cost, 'f', 2));
     curBook->monthly == true ? ui->editMonthly->setText("Yes") : ui->editMonthly->setText("No");
     ui->editProgramLabel->setText(curBook->program);
     ui->editLengthOfStay->setText(QString::number(curBook->stayLength));
@@ -1184,7 +1192,7 @@ void MainWindow::on_editDate_dateChanged(const QDate &date)
         ui->editLunches->setEnabled(false);
         ui->editWakeup->setEnabled(false);
         ui->editUpdate->setEnabled(true);
-
+        statusBar()->showMessage(tr("Room change, edit lunches and edit wakeups disabled because dates changed. Reload this page to edit these."), 10000);
     }
 
     if(date < QDate::currentDate()){
@@ -1192,6 +1200,7 @@ void MainWindow::on_editDate_dateChanged(const QDate &date)
 
     }
     ui->editRoom->setEnabled(false);
+
     QDate nextStart = date;
     QDate comp;
     if(date > curBook->endDate){
@@ -1258,8 +1267,8 @@ void MainWindow::setEditDayInfo(QDate date){
     ui->editMonthUsed->setText(QString::number(usedDays.first));
     ui->editDaysRefunded->setText(QString::number(dLeft));
     ui->editMonthsRefunded->setText(QString::number(mLeft));
-    ui->editDailyCost->setText(QString::number(dCost, 'f',2));
-    ui->editMonthlyCost->setText(QString::number(mCost,'f',2));
+    ui->editDailyCost->setText("$"+QString::number(dCost, 'f',2));
+    ui->editMonthlyCost->setText("$"+QString::number(mCost,'f',2));
     calcEditRefund(date);
 
 }
@@ -1313,14 +1322,14 @@ void MainWindow::calcEditRefund(QDate date){
         ui->editRefOwe->setText("Expected Amount Owed");
         ui->editRefundLabel->setText("Amount Owed");
         ui->editRefundAmt->setText(QString::number(totalCost * -1, 'f',2));
-        ui->editRefundAmount->setText(QString::number(totalCost * -1, 'f', 2));
+        ui->editRefundAmount->setText("-$"+QString::number(totalCost * -1, 'f', 2));
 
     }
     else{
         ui->editRefOwe->setText("Expected Refund Amount");
         ui->editRefundLabel->setText("Refund Amount");
         ui->editRefundAmt->setText(QString::number(totalCost, 'f',2));
-        ui->editRefundAmount->setText(QString::number(totalCost, 'f', 2));
+        ui->editRefundAmount->setText("$"+QString::number(totalCost, 'f', 2));
     }
     ui->editCost->setText(QString::number(labelCost, 'f', 2));
 
@@ -4486,6 +4495,12 @@ void MainWindow::on_actionBack_triggered()
         forwardStack.push(ui->stackedWidget->currentIndex());
         ui->stackedWidget->setCurrentIndex(page);
         ui->actionForward->setEnabled(true);
+
+        switch(page) {
+        case EDITBOOKING:
+            on_editSearch_clicked();
+            break;
+        }
     }
 }
 
@@ -7761,4 +7776,18 @@ void MainWindow::on_checkBox_shift_auto_endtime_clicked(bool checked)
     ui->shift3_E->setDisabled(checked);
     ui->shift4_E->setDisabled(checked);
     ui->shift5_E->setDisabled(checked);
+}
+
+void MainWindow::on_btnViewTranns_clicked()
+{
+    int index = ui->cbox_payDateRange->currentIndex();
+    MainWindow::on_cbox_payDateRange_activated(index);
+}
+
+void MainWindow::addCurrencyToTableWidget(QTableWidget* table, int col){
+    int numRows = table->rowCount();
+    for (int row = 0; row < numRows; ++row) {
+        QString value = table->item(row, col)->text();
+        table->setItem(row, col, new QTableWidgetItem("$"+value));
+    }
 }
