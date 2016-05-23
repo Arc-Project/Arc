@@ -5171,6 +5171,7 @@ void MainWindow::on_editLunches_clicked()
     }else{
        mc = new MyCalendar(this, QDate::currentDate(), curBook->endDate, curClient,1, curBook->room);
     }
+       mc->setWindowTitle("Edit Lunches");
        mc->exec();
        delete(mc);
 }
@@ -5186,6 +5187,7 @@ void MainWindow::on_editWakeup_clicked()
 
         mc = new MyCalendar(this, QDate::currentDate(),curBook->endDate, curClient,2,  curBook->room);
     }
+        mc->setWindowTitle("Edit Wakeups");
         mc->exec();
         delete(mc);
 }

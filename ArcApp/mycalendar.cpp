@@ -17,18 +17,20 @@ MyCalendar::MyCalendar(QWidget *parent,  QDate start, QDate end, Client *client,
     sDate = start;
     eDate = end;
     roomId = room;
-    oneL = QColor(220,20,190);
-    twoL = QColor(15,40,225);
+    oneL = QColor(255, 153, 204);
+    twoL = QColor(102, 179, 255);
     noL = QColor(255,255,255);
     ui->setupUi(this);
     populateCells();
 
     if(mode == 1){
         ui->calendarTime->setHidden(true);
+        ui->grpWakeup->setHidden(true);
     }
     if(mode == 2){
         ui->calOne->setHidden(true);
         ui->calTwo->setHidden(true);
+        ui->grpLunch->setHidden(true);
     }
     for(int i = 0; i < 70; i++){
         lunchDays[i] = 0;
