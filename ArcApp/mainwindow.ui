@@ -14803,7 +14803,20 @@ QHeaderView{
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_23">
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_110"/>
+              <spacer name="horizontalSpacer_77">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Preferred</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
              </item>
              <item>
               <widget class="QLabel" name="label_84">
@@ -14898,6 +14911,8 @@ QHeaderView{
                <property name="font">
                 <font>
                  <pointsize>12</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
                 </font>
                </property>
                <property name="text">
@@ -14963,7 +14978,7 @@ QHeaderView{
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>40</width>
+                 <width>20</width>
                  <height>20</height>
                 </size>
                </property>
@@ -15006,10 +15021,12 @@ QHeaderView{
                <property name="font">
                 <font>
                  <pointsize>12</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
                 </font>
                </property>
                <property name="text">
-                <string>Shift Number</string>
+                <string>Shift No</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -15033,6 +15050,8 @@ QHeaderView{
                <property name="font">
                 <font>
                  <pointsize>12</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
                 </font>
                </property>
                <property name="text">
@@ -15062,6 +15081,8 @@ QHeaderView{
                  <property name="font">
                   <font>
                    <pointsize>12</pointsize>
+                   <weight>75</weight>
+                   <bold>true</bold>
                   </font>
                  </property>
                  <property name="text">
@@ -15090,6 +15111,22 @@ QHeaderView{
             </layout>
            </item>
            <item>
+            <spacer name="verticalSpacer_shiftL01">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Minimum</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>10</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <layout class="QHBoxLayout" name="shiftEdit1">
              <item>
               <widget class="QLabel" name="label_Shift1">
@@ -15114,7 +15151,7 @@ QHeaderView{
                 <string>1st  </string>
                </property>
                <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                <set>Qt::AlignCenter</set>
                </property>
               </widget>
              </item>
@@ -15176,6 +15213,22 @@ QHeaderView{
             </layout>
            </item>
            <item>
+            <spacer name="verticalSpacer_shiftL02">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Minimum</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>10</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <layout class="QHBoxLayout" name="shiftEdit2">
              <item>
               <widget class="QLabel" name="label_Shift2">
@@ -15200,7 +15253,7 @@ QHeaderView{
                 <string>2nd  </string>
                </property>
                <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                <set>Qt::AlignCenter</set>
                </property>
               </widget>
              </item>
@@ -15262,6 +15315,22 @@ QHeaderView{
             </layout>
            </item>
            <item>
+            <spacer name="verticalSpacer_shiftL03">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Preferred</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>10</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <layout class="QHBoxLayout" name="shiftEdit3">
              <item>
               <widget class="QLabel" name="label_Shift3">
@@ -15286,7 +15355,7 @@ QHeaderView{
                 <string>3rd  </string>
                </property>
                <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                <set>Qt::AlignCenter</set>
                </property>
               </widget>
              </item>
@@ -15348,6 +15417,22 @@ QHeaderView{
             </layout>
            </item>
            <item>
+            <spacer name="verticalSpacer_shiftL04">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Preferred</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>10</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <layout class="QHBoxLayout" name="shiftEdit4">
              <item>
               <widget class="QLabel" name="label_Shift4">
@@ -15372,7 +15457,7 @@ QHeaderView{
                 <string>4th  </string>
                </property>
                <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                <set>Qt::AlignCenter</set>
                </property>
               </widget>
              </item>
@@ -15434,6 +15519,22 @@ QHeaderView{
             </layout>
            </item>
            <item>
+            <spacer name="verticalSpacer_shiftL05">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Preferred</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>10</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <layout class="QHBoxLayout" name="shiftEdit5">
              <item>
               <widget class="QLabel" name="label_Shift5">
@@ -15458,7 +15559,7 @@ QHeaderView{
                 <string>5th  </string>
                </property>
                <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                <set>Qt::AlignCenter</set>
                </property>
               </widget>
              </item>
@@ -15520,7 +15621,7 @@ QHeaderView{
             </layout>
            </item>
            <item>
-            <spacer name="verticalSpacer_66">
+            <spacer name="verticalSpacer_shiftL06">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
@@ -15590,7 +15691,7 @@ QHeaderView{
             </layout>
            </item>
            <item>
-            <spacer name="verticalSpacer_67">
+            <spacer name="verticalSpacer_shiftL07">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
@@ -15710,7 +15811,7 @@ QHeaderView{
                 </spacer>
                </item>
                <item>
-                <widget class="QLabel" name="label_87">
+                <widget class="QLabel" name="label_shiftList_Sun">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -15755,7 +15856,7 @@ QHeaderView{
                 </spacer>
                </item>
                <item>
-                <widget class="QLabel" name="label_88">
+                <widget class="QLabel" name="label_shiftList_Mon">
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
@@ -15794,7 +15895,7 @@ QHeaderView{
                 </spacer>
                </item>
                <item>
-                <widget class="QLabel" name="label_90">
+                <widget class="QLabel" name="label_shiftList_Tue">
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
@@ -15833,7 +15934,7 @@ QHeaderView{
                 </spacer>
                </item>
                <item>
-                <widget class="QLabel" name="label_91">
+                <widget class="QLabel" name="label_shiftList_Wed">
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
@@ -15872,7 +15973,7 @@ QHeaderView{
                 </spacer>
                </item>
                <item>
-                <widget class="QLabel" name="label_92">
+                <widget class="QLabel" name="label_shiftList_Thur">
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
@@ -15911,7 +16012,7 @@ QHeaderView{
                 </spacer>
                </item>
                <item>
-                <widget class="QLabel" name="label_93">
+                <widget class="QLabel" name="label_shiftList_Fri">
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
@@ -15950,7 +16051,7 @@ QHeaderView{
                 </spacer>
                </item>
                <item>
-                <widget class="QLabel" name="label_94">
+                <widget class="QLabel" name="label_shiftList_Sat">
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
