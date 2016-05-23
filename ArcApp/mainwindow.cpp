@@ -6597,7 +6597,7 @@ void MainWindow::on_editDelete_clicked()
         doMessageBox("Admin only feature");
         return;
     }
-    if(!doMessageBox("Deleting is permenant, and no refund is given. Continue?"))
+    if(!doMessageBox("Deleting is permenant, booking cost is refunded. Continue?"))
         return;
     int row = ui->editLookupTable->selectionModel()->currentIndex().row();
     if(row == -1)
