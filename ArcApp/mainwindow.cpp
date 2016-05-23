@@ -4824,7 +4824,7 @@ void MainWindow::on_btn_searchUsers_3_clicked()
     ui->tableWidget_5->clear();
     ui->tableWidget_5->horizontalHeader()->setStretchLastSection(true);
 
-    QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, cost, Monthly FROM Space WHERE SpaceCode LIKE '%"+ ename +"%'");
+    QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, cost, Monthly FROM Space WHERE SpaceCode LIKE '%"+ ename +"%' ORDER BY SpaceCode");
 
 //    int numCols = result.record().count();
     ui->tableWidget_5->setColumnCount(8);
@@ -6597,7 +6597,7 @@ void MainWindow::on_editDelete_clicked()
         doMessageBox("Admin only feature");
         return;
     }
-    if(!doMessageBox("Deleting is permenant, and no refund is given. Continue?"))
+    if(!doMessageBox("Deleting is permenant, booking cost is refunded. Continue?"))
         return;
     int row = ui->editLookupTable->selectionModel()->currentIndex().row();
     if(row == -1)

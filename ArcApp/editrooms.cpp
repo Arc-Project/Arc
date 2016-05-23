@@ -147,7 +147,7 @@ void EditRooms::searchAvailable(QString program){
     result = dbManager->getCurrentBooking(curBook->startDate, curBook->endDate, program);
     QStringList headers;
     QStringList col;
-    headers << "Room#" <<  "Program" << "Type" << "Cost" << "Monthly" << "";
+    headers << "Space #" <<  "Program" << "Type" << "Daily" << "Monthly" << "";
     col << "SpaceCode" << "ProgramCodes" << "type" << "cost" << "Monthly" << "SpaceId";
 
     populateATable(ui->editRoom,headers, col, result, false);
@@ -242,7 +242,7 @@ void EditRooms::on_editSwap_clicked()
     result = dbManager->getSwapBookings(curBook->startDate, curBook->endDate, curBook->program, nextStart.toString(Qt::ISODate), curBook->bookID);
     QStringList headers;
     QStringList col;
-    headers << "Room#" <<  "Program" << "Type" << "Cost" << "Monthly" << "Current Occupant" << "" << "" << "Client Name" << "" << "" << "" << "";
+    headers << "Space #" <<  "Program" << "Type" << "Daily" << "Monthly" << "Current Occupant" << "" << "" << "Client Name" << "" << "" << "" << "";
     col << "SpaceCode" << "ProgramCodes" << "type" << "cost" << "Monthly" << "ClientName" << "BookingId" << "SpaceId" << "ClientId" <<
          "SpaceId" << "StartDate" << "EndDate" << "Cost";
     populateATable(ui->editRoom,headers, col, result, false);

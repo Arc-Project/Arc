@@ -5434,7 +5434,7 @@ QHeaderView{
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>620</width>
+                 <width>1266</width>
                  <height>1294</height>
                 </rect>
                </property>
@@ -12793,7 +12793,7 @@ QHeaderView{
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                    </property>
                    <property name="maximum">
-                    <double>999.990000000000009</double>
+                    <double>99999.990000000005239</double>
                    </property>
                   </widget>
                  </item>
@@ -12852,7 +12852,7 @@ QHeaderView{
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                    </property>
                    <property name="maximum">
-                    <double>999.990000000000009</double>
+                    <double>99999.990000000005239</double>
                    </property>
                   </widget>
                  </item>
