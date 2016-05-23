@@ -681,8 +681,6 @@ private slots:
     void getShiftList(QStringList *shiftList);
     void EditShiftInfo();
 
-    QString widthCal(float duration);
-
     void on_shift_num_currentIndexChanged(int index);
 
     void on_shift_dayOpt_currentIndexChanged(const QString &arg1);
