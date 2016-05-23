@@ -183,6 +183,8 @@ void MainWindow::initCurrentWidget(int idx){
             popManagePayment();
 
             ui->editRemoveCheque->setHidden(true);
+            ui->cbox_payDateRange->setCurrentIndex(1);
+            MainWindow::on_cbox_payDateRange_activated(1);
 
             break;
         case ADMINPAGE: //WIDGET 5
@@ -712,8 +714,12 @@ void MainWindow::on_cbox_payDateRange_activated(int index)
     heads << "Date"  <<"First" << "Last" << "Amount" << "Type" << "Method" << "Notes"  << "" << "" << "Employee Name";
     cols << "Date" <<"FirstName"<< "LastName"  << "Amount" << "TransType" << "Type" << "Notes" << "TransacId" << "ClientId" << "EmpName";
     populateATable(ui->mpTable, heads, cols, tempSql, false);
+    ui->mpTable->setColumnHidden(4, false);
+    ui->mpTable->setColumnHidden(5, false);
+    ui->mpTable->setColumnHidden(6, false);
     ui->mpTable->setColumnHidden(7, true);
     ui->mpTable->setColumnHidden(8, true);
+    resizeTableView(ui->mpTable);
 
 }
 
@@ -728,9 +734,9 @@ void MainWindow::on_btn_payListAllUsers_clicked()
     QSqlQuery tempSql = dbManager->getOwingClients();
     heads << "First" << "Last" << "DOB" << "Balance" << "";
     cols << "FirstName" << "LastName" << "Dob" << "Balance" << "ClientId";
-    ui->mpTable->setColumnHidden(4, true);
+    ui->mpTable->setColumnHidden(4, true);  
     populateATable(ui->mpTable, heads, cols, tempSql, false);
-
+    resizeTableView(ui->mpTable);
 }
 
 void MainWindow::on_editSearch_clicked()
@@ -1182,8 +1188,10 @@ void MainWindow::on_btn_payOutstanding_clicked()
     headers << "Date" << "First" << "Last" << "Amount" << "Notes" << "" << "";
     cols << "Date" << "FirstName" << "LastName" << "Amount" << "Notes" << "ClientId" << "TransacId";
     populateATable(ui->mpTable, headers, cols, result, false);
+    ui->mpTable->setColumnHidden(4, false);
     ui->mpTable->setColumnHidden(6, true);
     ui->mpTable->setColumnHidden(5, true);
+    resizeTableView(ui->mpTable);
 }
 
 
