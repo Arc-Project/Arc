@@ -827,11 +827,12 @@ void MainWindow::on_bookingSearchButton_clicked()
     }
 */
     QStringList headers, cols;
-    headers << "Room#" << "Program" << " Type" << "Daily Cost" << "Monthly Cost" << "";
+    headers << "Space #" << "Program" << " Type" << "Daily Cost" << "Monthly Cost" << "";
     cols << "SpaceCode" << "ProgramCodes" << "type" << "cost" << "Monthly" << "SpaceId";
     populateATable(ui->bookingTable, headers, cols, result,false);
     ui->bookingTable->setColumnHidden(5, true);
     ui->makeBookingButton->show();
+    resizeTableView(ui->bookingTable);
 }
 //PARAMS - The table, list of headers, list of table column names, the sqlquery result, STRETCH - stretch mode true/false
 void MainWindow::populateATable(QTableWidget * table, QStringList headers, QStringList items, QSqlQuery result, bool stretch){
@@ -2032,6 +2033,7 @@ void MainWindow::on_checkBox_search_anonymous_clicked(bool checked)
     if(checked){
         QSqlQuery resultQ = dbManager->searchClientList("anonymous");
         setup_searchClientTable(resultQ);
+        resizeTableView(ui->tableWidget_search_client);
      //  ui->lineEdit_search_clientName->
     }
     else
@@ -2048,7 +2050,7 @@ void MainWindow::initClientLookupTable(){
     ui->tableWidget_search_client->setColumnCount(6);
     ui->tableWidget_search_client->clear();
 
-    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"FirstName"<<"Middle Initial"<<"LastName"<<"DateOfBirth"<<"Balance");
+    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"First Name"<<"Middle Name"<<"Last Name"<<"DateOfBirth"<<"Balance");
 
 
 
@@ -2158,6 +2160,7 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
             if(ui->tableWidget_transaction->rowCount()>= transacTotal)
                 ui->pushButton_cl_trans_more->setEnabled(false);
             qDebug()<<"client Transaction list";
+            resizeTableView(ui->tableWidget_transaction);
             newTrans = false;
             break;
 
@@ -2174,6 +2177,7 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
              //bookHistoryFuture.waitForFinished();
              if(ui->tableWidget_booking->rowCount() >= bookingTotal)
                  ui->pushButton_cl_book_more->setEnabled(false);
+             resizeTableView(ui->tableWidget_booking);
              newHistory = false;
              break;
     case 3:
@@ -2406,9 +2410,9 @@ void MainWindow::searchTransaction(QString clientId){
     qDebug()<<"############CHECK TRANS QUERY";
     displayTransaction(transQuery, ui->tableWidget_transaction);
 
-    QString totalNum= (transacTotal == 0)? "-" :
+    QString totalNum= (transacTotal == 0)? "0 / 0" :
                      (QString::number(ui->tableWidget_transaction->rowCount()) + " / " + QString::number(transacTotal));
-    ui->label_cl_trans_total_num->setText(totalNum + " Transaction");
+    ui->label_cl_trans_total_num->setText(totalNum + " Transaction(s)");
 
     qDebug()<<"FINE FOR SEARCH clientTransaction";
 }
@@ -2419,7 +2423,7 @@ void MainWindow::initClTransactionTable(){
     ui->tableWidget_transaction->setColumnCount(8);
     ui->tableWidget_transaction->clear();
 
-    ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"TransType"<<"Amount"<<"Payment Type"<<"Employee"<<"ChequeNo"<<"MSQ"<<"ChequeDate");
+    ui->tableWidget_transaction->setHorizontalHeaderLabels(QStringList()<<"Date"<<"Type"<<"Amount"<<"Payment"<<"Employee"<<"Cheque No"<<"MSD"<<"Cheque Date");
     ui->tableWidget_transaction->setMinimumHeight(30*6-1);
 
 }
@@ -2466,6 +2470,7 @@ void MainWindow::on_pushButton_cl_trans_more_clicked()
     searchTransaction(curClientID);
     if(ui->tableWidget_transaction->rowCount() >= transacTotal)
         ui->pushButton_cl_trans_more->setEnabled(false);
+    resizeTableView(ui->tableWidget_transaction);
 }
 
 //search booking history when click booking history tab
@@ -2476,9 +2481,9 @@ void MainWindow::searchBookHistory(QString clientId){
     displayBookHistory(bookingQuery, ui->tableWidget_booking);
    // dbManager->printAll(bookingQuery);
 
-    QString totalNum = (bookingTotal == 0)? "-" :
+    QString totalNum = (bookingTotal == 0)? "0 / 0" :
                         QString::number(ui->tableWidget_booking->rowCount()) + " / " + QString::number(bookingTotal);
-    ui->label_cl_booking_total_num->setText(totalNum + " Booking");
+    ui->label_cl_booking_total_num->setText(totalNum + " Booking(s)");
 }
 
 //initialize client booking history table in client info tab
@@ -2486,7 +2491,7 @@ void MainWindow::initClBookHistoryTable(){
     ui->tableWidget_booking->setRowCount(0);
     ui->tableWidget_booking->setColumnCount(6);
     ui->tableWidget_booking->clear();
-    ui->tableWidget_booking->setHorizontalHeaderLabels(QStringList()<<"Reserved Date"<<"Program Code"<<"Start Date"<< "End Date"<<"Cost"<<"Bed Number");
+    ui->tableWidget_booking->setHorizontalHeaderLabels(QStringList()<<"Booking Date"<<"Program"<<"Start Date"<< "End Date"<<"Cost"<<"Space No");
     ui->tableWidget_booking->setMinimumHeight(30*6-1);
 }
 
@@ -2530,6 +2535,7 @@ void MainWindow::on_pushButton_cl_book_more_clicked()
     searchBookHistory(curClientID);
     if(ui->tableWidget_booking->rowCount() >= bookingTotal )
         ui->pushButton_cl_book_more->setEnabled(false);
+    resizeTableView(ui->tableWidget_booking);
 }
 
 //DELETE CLIENT INFORMATION FIELDS
@@ -6536,18 +6542,14 @@ void MainWindow::on_editDelete_clicked()
     curBook = new Booking();
     bNew = true;
     popBookFromRow();
-    QSqlQuery result = dbManager->getBalance(curBook->clientId);
-    if(!result.next()){
-        ui->editDelete->setEnabled(true);
-        return;
-    }
-    double curBal = result.value("Balance").toString().toDouble();
+
     if(!dbManager->deleteBooking(curBook->bookID)){
         qDebug() << "Error deleting booking";
     }
-    curBal += curBook->cost;
-    if(!dbManager->updateBalance(curBal, curBook->clientId))
-        qDebug() << "Error updating balance";
+    if(!dbManager->removeLunchesMulti(curBook->startDate, curBook->clientId))
+        qDebug() << "Error remiving lunches";
+    if(!dbManager->deleteWakeupsMulti(curBook->startDate, curBook->clientId))
+        qDebug() << "Error removing wakeups";
     ui->editLookupTable->removeRow(row);
     ui->editDelete->setEnabled(true);
 }
