@@ -5190,23 +5190,28 @@ void MainWindow::on_confirmAddWake_clicked()
 
 void MainWindow::on_editLunches_clicked()
 {
+    QString tmpStyleSheet = MainWindow::styleSheet();
+    MainWindow::setStyleSheet("");
 
     ui->editUpdate->setEnabled(true);
     MyCalendar* mc;
     if(QDate::currentDate() < curBook->startDate){
         mc = new MyCalendar(this, curBook->startDate, curBook->endDate, curClient,1, curBook->room);
-
-
     }else{
        mc = new MyCalendar(this, QDate::currentDate(), curBook->endDate, curClient,1, curBook->room);
     }
        mc->setWindowTitle("Edit Lunches");
        mc->exec();
        delete(mc);
+
+    MainWindow::setStyleSheet(tmpStyleSheet);
 }
 
 void MainWindow::on_editWakeup_clicked()
 {
+    QString tmpStyleSheet = MainWindow::styleSheet();
+    MainWindow::setStyleSheet("");
+
     ui->editUpdate->setEnabled(true);
     MyCalendar* mc;
     if(QDate::currentDate() < curBook->startDate){
@@ -5219,6 +5224,8 @@ void MainWindow::on_editWakeup_clicked()
         mc->setWindowTitle("Edit Wakeups");
         mc->exec();
         delete(mc);
+
+    MainWindow::setStyleSheet(tmpStyleSheet);
 }
 
 void MainWindow::on_actionQuit_triggered()
