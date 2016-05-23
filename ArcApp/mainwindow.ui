@@ -5479,8 +5479,8 @@ QHeaderView{
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>1266</width>
-                 <height>1294</height>
+                 <width>1195</width>
+                 <height>1381</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -9257,7 +9257,7 @@ QHeaderView{
              <item row="0" column="1">
               <widget class="QStackedWidget" name="swdg_reports">
                <property name="currentIndex">
-                <number>1</number>
+                <number>0</number>
                </property>
                <widget class="QWidget" name="page_3">
                 <layout class="QGridLayout" name="gridLayout_34">
@@ -13592,8 +13592,8 @@ QHeaderView{
           <property name="font">
            <font>
             <pointsize>15</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
+            <weight>50</weight>
+            <bold>false</bold>
            </font>
           </property>
           <property name="title">
@@ -14112,8 +14112,8 @@ QHeaderView{
           <property name="font">
            <font>
             <pointsize>15</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
+            <weight>50</weight>
+            <bold>false</bold>
            </font>
           </property>
           <property name="title">
