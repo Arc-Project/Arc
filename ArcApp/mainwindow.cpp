@@ -7846,6 +7846,7 @@ void MainWindow::on_actionReceipt_triggered()
     if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING) {
         createTextReceipt(ui->confirmCost->text(), transType, ui->confirmTotalPaid->text(), curBook->stringStart,
                           curBook->stringEnd, ui->confirmLength->text(), true);
+    }
 }
 
 void MainWindow::addCurrencyNoSignToTableWidget(QTableWidget* table, int col){
