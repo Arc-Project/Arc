@@ -2054,9 +2054,21 @@ QSqlQuery DatabaseManager::getProgramDesc(QString programcode){
 }
 
 //SHIFT QUERY
-bool DatabaseManager::updateShift(QString queryStr, QStringList *shiftList){
+bool DatabaseManager::updateShift(bool shiftExist, QString selectedDay, QStringList *shiftList){
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
+    QString queryStr;
+    if(!shiftExist)
+        queryStr = "INSERT INTO Shift VALUES(?,?,?, ?,?,?,?,?,?,?,?,?)";
+    else{
+
+        queryStr = "UPDATE Shift SET ";
+        for (int i =1; i <6; i++){
+            queryStr += QString("StartTimeShift"+QString::number(i)+" = ?, EndTimeShift"+QString::number(i)+" = ?, ");
+
+        }
+        queryStr += QString("NumShifts = ? WHERE DayOfWeek = '" + selectedDay +"'");
+    }
     query.prepare(queryStr);
     qDebug()<<"UPDATE SHIFT "<< queryStr;
     for (int i = 0; i < shiftList->size(); ++i)

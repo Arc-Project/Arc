@@ -682,7 +682,6 @@ private slots:
     void EditShiftInfo();
 
     QString widthCal(float duration);
-    void initTimeLine(int dayOpt);
 
     void on_shift_num_currentIndexChanged(int index);
 
