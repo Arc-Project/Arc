@@ -222,8 +222,10 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case CLIENTREGISTER:    //WIDGET 10
             if((registerType == EDITCLIENT || registerType == DELETECLIENT)
-                    && (currentrole == CASEWORKER || currentrole == ADMIN))
+                    && (currentrole == CASEWORKER || currentrole == ADMIN)){
                 ui->button_delete_client->show();
+                ui->button_delete_client->setEnabled(true);
+            }
             else
                 ui->button_delete_client->hide();
 
@@ -1990,7 +1992,7 @@ void MainWindow::on_button_delete_client_clicked()
     }
     if(ui->lineEdit_cl_fName->text().toLower() == "anonymous" || ui->lineEdit_cl_lName->text().toLower() == "anonymous"){
         statusBar()->showMessage("Cannot Delete anonymous.", 5000);
-        ui->button_delete_client->hide();
+        ui->button_delete_client->setEnabled(false);
         return;
     }
     deleteClient();
@@ -6948,11 +6950,11 @@ void MainWindow::on_shift_dayOpt_currentIndexChanged(const QString &arg1)
     ui->shift_num->setEnabled(true);
     ui->pushButton_shift_save->setEnabled(true);
     showAllShiftEdit(true);
-    qDebug()<<"shifDay CurrentIndexChaged" << arg1;
+//    qDebug()<<"shifDay CurrentIndexChaged" << arg1;
     selectedDay = arg1;
     shiftSize = 0;
 
-    qDebug()<<"SELECTED DAY"<<selectedDay<<selectedDayIdx;
+//    qDebug()<<"SELECTED DAY"<<selectedDay<<selectedDayIdx;
     readShiftDb(selectedDay);
 
 
@@ -6960,28 +6962,25 @@ void MainWindow::on_shift_dayOpt_currentIndexChanged(const QString &arg1)
 }
 
 void MainWindow::readShiftDb(QString day){
-    qDebug()<<"READ shift DB" << day;
+//    qDebug()<<"READ shift DB" << day;
     QSqlQuery dailyShift = dbManager->getShiftInfoDaily(day);
 
     //dbManager->printAll(dailyShift);
     while(dailyShift.next()){
-        qDebug()<<"Check Query";
+//        qDebug()<<"Check Query";
         shiftSize = dailyShift.value("NumShifts").toInt();
-        qDebug()<<"shiftSize"<<shiftSize;
+//        qDebug()<<"shiftSize"<<shiftSize;
         ui->shift_num->setCurrentIndex(shiftSize);
         setShiftTimeDialog(false);
         shiftExist = true;
         switch(shiftSize){
             case 5:
-                qDebug()<<"SHIFT 5: "<<dailyShift.value("StartTimeShift5").toString();
                 ui->shift5_S->setTime(dailyShift.value("StartTimeShift5").toTime());
                 ui->shift5_E->setTime(dailyShift.value("EndTimeShift5").toTime());
             case 4:
-                qDebug()<<"SHIFT 4: "<<dailyShift.value("StartTimeShift4").toString();
                 ui->shift4_S->setTime(dailyShift.value("StartTimeShift4").toTime());
                 ui->shift4_E->setTime(dailyShift.value("EndTimeShift4").toTime());
             case 3:
-                qDebug()<<"SHIFT 3: "<<dailyShift.value("StartTimeShift3").toTime();
                 ui->shift3_S->setTime(dailyShift.value("StartTimeShift3").toTime());
                 ui->shift3_E->setTime(dailyShift.value("EndTimeShift3").toTime());
             case 2:
@@ -6999,7 +6998,6 @@ void MainWindow::readShiftDb(QString day){
 
 void MainWindow::on_shift_num_currentIndexChanged(int index)
 {
-    qDebug()<<"Shiftnum"<<QString::number(index);
     shiftSize = index;
     setShiftTimeDialog(true);
 }
@@ -7007,8 +7005,6 @@ void MainWindow::on_shift_num_currentIndexChanged(int index)
 
 void MainWindow::setShiftTimeDialog(bool resetTime){
     QTime startTime, endTime;
-    qDebug()<<"Shiftnum"<<shiftSize;
-
     double TimeGap = (double)24/(shiftSize);
     startTime.setHMS(TimeGap,0,0);
     endTime.setHMS(TimeGap-1,59,0);
@@ -7047,8 +7043,10 @@ void MainWindow::setShiftTimeDialog(bool resetTime){
             ui->shift5_S->hide();
             ui->shift5_E->hide();
     }
+
     if(!resetTime)
         return;
+
     //change time automatically
     for(int i = 1; i < shiftSize; i++){
             startTime.setHMS(TimeGap*i,0,0);
@@ -7395,6 +7393,7 @@ void MainWindow::shiftReportInit(int dayType){
     }
 }
 
+//SAVE client info
 void MainWindow::on_pushButton_shift_save_clicked()
 {
     EditShiftInfo();
@@ -7412,6 +7411,7 @@ void MainWindow::EditShiftInfo(){
     shiftExist = true;
     qDebug()<<"SHIFT UPDATE SUCCESS";
     statusBar()->showMessage(selectedDay + " SHIFT UPDATE SUCCESS", 10000);
+    ui->label_shiftList_Mon->setAutoFillBackground(true);
 
 }
 
