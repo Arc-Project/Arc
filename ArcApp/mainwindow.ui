@@ -5487,8 +5487,8 @@ QHeaderView{
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>1195</width>
-                 <height>1381</height>
+                 <width>1266</width>
+                 <height>1294</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -12846,7 +12846,7 @@ QHeaderView{
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                    </property>
                    <property name="maximum">
-                    <double>999.990000000000009</double>
+                    <double>99999.990000000005239</double>
                    </property>
                   </widget>
                  </item>
@@ -12905,7 +12905,7 @@ QHeaderView{
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                    </property>
                    <property name="maximum">
-                    <double>999.990000000000009</double>
+                    <double>99999.990000000005239</double>
                    </property>
                   </widget>
                  </item>

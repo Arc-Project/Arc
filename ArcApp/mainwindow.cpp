@@ -4824,7 +4824,7 @@ void MainWindow::on_btn_searchUsers_3_clicked()
     ui->tableWidget_5->clear();
     ui->tableWidget_5->horizontalHeader()->setStretchLastSection(true);
 
-    QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, cost, Monthly FROM Space WHERE SpaceCode LIKE '%"+ ename +"%'");
+    QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, cost, Monthly FROM Space WHERE SpaceCode LIKE '%"+ ename +"%' ORDER BY SpaceCode");
 
 //    int numCols = result.record().count();
     ui->tableWidget_5->setColumnCount(8);
