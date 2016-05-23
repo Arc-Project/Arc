@@ -42,6 +42,7 @@ QVector<QString> pcpTypes;
 bool loaded = false;
 QString idDisplayed;
 
+QString transType;
 
 QProgressDialog* dialog;
 
@@ -141,6 +142,7 @@ void MainWindow::initCurrentWidget(int idx){
             }
             registerType = NOREGISTER;
             ui->actionExport_to_PDF->setEnabled(false);
+            transType = "";
             break;
         case CLIENTLOOKUP:  //WIDGET 1
             curClientName="";
@@ -445,7 +447,7 @@ void MainWindow::on_paymentButton_2_clicked()
         ui->bookLabelPaid->setText("Total Paid:");
         ui->bookAmtPaid->setText(QString::number(totalPaid, 'f', 2));
     }
-
+    transType = trans->type;
 }
 void MainWindow::on_startDateEdit_dateChanged()
 {
@@ -1518,6 +1520,8 @@ void MainWindow::populateConfirm(){
 
     ui->actionExport_to_PDF->setEnabled(true);
     MainWindow::on_actionExport_to_PDF_triggered();
+    createTextReceipt(ui->confirmCost->text(), transType, ui->confirmTotalPaid->text(), curBook->stringStart,
+                      curBook->stringEnd, ui->confirmLength->text(), true);
 }
 
 //void MainWindow::on_monthCheck_stateChanged(int arg1)
@@ -4654,14 +4658,7 @@ void MainWindow::on_btn_pcpKeySave_clicked()
 
 void MainWindow::on_actionPcptables_triggered()
 {
-    QString s = curBook->room;
-/*    QChar c = *s.rbegin();
-    qDebug() << c;
-    if (c == 'M')
-        qDebug() << "Mat";
-    else if (c == 'B')
-        qDebug() << "Bed";
-        */
+//    MainWindow::createTextReceipt(QString totalCost, QString payType, QString payTotal, QString start, QString end, QString length, bool stay);
 }
 
 void MainWindow::reloadPcpTable(int table){
@@ -7805,6 +7802,50 @@ void MainWindow::addCurrencyToTableWidget(QTableWidget* table, int col){
         //QString value = table->item(row, col)->text();
         table->setItem(row, col, new QTableWidgetItem("$"+value));
     }
+}
+
+void MainWindow::createTextReceipt(QString totalCost, QString payType, QString payTotal, QString start, QString end, QString length, bool stay){
+    QString timestamp = QDate::currentDate().toString("yyyyMMdd") + QTime::currentTime().toString("hhmmss");
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+                               "/receipt_" + timestamp + ".txt",
+                               tr("Text File (*.txt)"));
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        return;
+
+    QTextStream out(&file);
+    out << "Salvation Army ARC\n"
+           "525 Johnson St, Victoria BC V8W 1M2\n"
+           "250-384-3396\n"
+           "www.victoriaarc.org\n"
+           "**********************************\n"
+           "\n"
+           "\n"
+           "Stay                     $"+totalCost+"\n"
+           "" + start + " - " + end + "\n"
+           "" + length +" nights\n"
+           "\n"
+           "\n"
+           "\n"
+           "\n"
+           "________________________________\n"
+           "Payment Type: " + payType + "\n"
+           "Payment Total:           $"+payTotal+"\n"
+           "\n"
+           "\n"
+           "**********************************\n"
+           "Date: " + QDate::currentDate().toString("yyyy-MM-dd") + " Time: " + QTime::currentTime().toString("H:mm AP") + "\n"
+           "Receipt No: "+timestamp+"\n"
+           "\n"
+           "\n"
+           "Thank you for your custom";
+}
+
+void MainWindow::on_actionReceipt_triggered()
+{
+    if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING) {
+        createTextReceipt(ui->confirmCost->text(), transType, ui->confirmTotalPaid->text(), curBook->stringStart,
+                          curBook->stringEnd, ui->confirmLength->text(), true);
 }
 
 void MainWindow::addCurrencyNoSignToTableWidget(QTableWidget* table, int col){
