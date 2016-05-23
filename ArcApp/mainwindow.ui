@@ -198,7 +198,7 @@ QHeaderView{
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>18</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -3861,6 +3861,11 @@ QHeaderView{
            </item>
            <item row="1" column="0" colspan="3">
             <widget class="QTableWidget" name="mpTable">
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
              <property name="sortingEnabled">
               <bool>true</bool>
              </property>
@@ -5474,8 +5479,8 @@ QHeaderView{
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>620</width>
-                 <height>1294</height>
+                 <width>1195</width>
+                 <height>1381</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -18686,7 +18691,7 @@ QHeaderView{
      <x>0</x>
      <y>0</y>
      <width>1625</width>
-     <height>23</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="font">
@@ -18747,9 +18752,17 @@ QHeaderView{
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuExport">
+    <property name="title">
+     <string>Export</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionReceipt"/>
+   </widget>
    <addaction name="menuFle"/>
    <addaction name="menuHelp"/>
    <addaction name="menuFor_Testing"/>
+   <addaction name="menuExport"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="font">
@@ -18942,6 +18955,11 @@ QHeaderView{
   <action name="actionReconnect_to_Database">
    <property name="text">
     <string>Reconnect to Database</string>
+   </property>
+  </action>
+  <action name="actionReceipt">
+   <property name="text">
+    <string>Receipt</string>
    </property>
   </action>
  </widget>
