@@ -5407,8 +5407,8 @@ QHeaderView{
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>1246</width>
-                 <height>1325</height>
+                 <width>1195</width>
+                 <height>1381</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -18619,7 +18619,7 @@ QHeaderView{
      <x>0</x>
      <y>0</y>
      <width>1625</width>
-     <height>23</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="font">
@@ -18680,9 +18680,17 @@ QHeaderView{
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuExport">
+    <property name="title">
+     <string>Export</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionReceipt"/>
+   </widget>
    <addaction name="menuFle"/>
    <addaction name="menuHelp"/>
    <addaction name="menuFor_Testing"/>
+   <addaction name="menuExport"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="font">
@@ -18875,6 +18883,11 @@ QHeaderView{
   <action name="actionReconnect_to_Database">
    <property name="text">
     <string>Reconnect to Database</string>
+   </property>
+  </action>
+  <action name="actionReceipt">
+   <property name="text">
+    <string>Receipt</string>
    </property>
   </action>
  </widget>
