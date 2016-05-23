@@ -198,7 +198,7 @@ QHeaderView{
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -2994,19 +2994,6 @@ QHeaderView{
       </widget>
       <widget class="QWidget" name="bookingPage">
        <layout class="QGridLayout" name="gridLayout_80">
-        <item row="0" column="1">
-         <spacer name="verticalSpacer_21">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>90</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
         <item row="1" column="1" colspan="5">
          <widget class="QLabel" name="label_83">
           <property name="font">
@@ -3020,6 +3007,19 @@ QHeaderView{
            <string>Booking Confirmation</string>
           </property>
          </widget>
+        </item>
+        <item row="0" column="1">
+         <spacer name="verticalSpacer_21">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>90</height>
+           </size>
+          </property>
+         </spacer>
         </item>
         <item row="2" column="2">
          <spacer name="verticalSpacer_20">
@@ -3229,7 +3229,7 @@ QHeaderView{
              </font>
             </property>
             <property name="text">
-             <string>Room:</string>
+             <string>Space No:</string>
             </property>
            </widget>
           </item>
@@ -3337,6 +3337,9 @@ QHeaderView{
               <property name="text">
                <string>$0.00</string>
               </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
              </widget>
             </item>
             <item row="1" column="0">
@@ -3369,20 +3372,23 @@ QHeaderView{
               </property>
               <property name="minimumSize">
                <size>
-                <width>0</width>
+                <width>100</width>
                 <height>35</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
-                <width>16777215</width>
+                <width>100</width>
                 <height>16777215</height>
                </size>
               </property>
               <property name="font">
                <font>
-                <pointsize>10</pointsize>
+                <pointsize>14</pointsize>
                </font>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
@@ -3488,15 +3494,15 @@ QHeaderView{
           </item>
          </layout>
         </item>
-        <item row="4" column="3">
-         <spacer name="horizontalSpacer_14">
+        <item row="6" column="5">
+         <spacer name="verticalSpacer_19">
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Vertical</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>238</width>
-            <height>20</height>
+            <width>20</width>
+            <height>90</height>
            </size>
           </property>
          </spacer>
@@ -3514,36 +3520,21 @@ QHeaderView{
           </property>
          </spacer>
         </item>
-        <item row="6" column="5">
-         <spacer name="verticalSpacer_19">
+        <item row="4" column="3">
+         <spacer name="horizontalSpacer_14">
           <property name="orientation">
-           <enum>Qt::Vertical</enum>
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Minimum</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>20</width>
-            <height>90</height>
+            <width>100</width>
+            <height>20</height>
            </size>
           </property>
          </spacer>
-        </item>
-        <item row="7" column="4" colspan="2">
-         <widget class="QPushButton" name="makeBookingButton_2">
-          <property name="minimumSize">
-           <size>
-            <width>130</width>
-            <height>35</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>14</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Confirm Booking</string>
-          </property>
-         </widget>
         </item>
         <item row="8" column="4">
          <spacer name="verticalSpacer_18">
@@ -3557,6 +3548,28 @@ QHeaderView{
            </size>
           </property>
          </spacer>
+        </item>
+        <item row="7" column="5">
+         <layout class="QHBoxLayout" name="horizontalLayout_93">
+          <item>
+           <widget class="QPushButton" name="makeBookingButton_2">
+            <property name="minimumSize">
+             <size>
+              <width>130</width>
+              <height>70</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>18</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Confirm Booking</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -5394,7 +5407,7 @@ QHeaderView{
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>632</width>
+                 <width>1246</width>
                  <height>1325</height>
                 </rect>
                </property>
@@ -13025,6 +13038,9 @@ QHeaderView{
             <property name="text">
              <string>TextLabel</string>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
            </widget>
           </item>
           <item row="4" column="0">
@@ -13063,6 +13079,9 @@ QHeaderView{
             <property name="text">
              <string>TextLabel</string>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
            </widget>
           </item>
           <item row="5" column="0">
@@ -13100,6 +13119,9 @@ QHeaderView{
             </property>
             <property name="text">
              <string>TextLabel</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -13225,7 +13247,7 @@ QHeaderView{
              </font>
             </property>
             <property name="text">
-             <string>Room:</string>
+             <string>Space No:</string>
             </property>
            </widget>
           </item>
@@ -13263,7 +13285,7 @@ QHeaderView{
              </font>
             </property>
             <property name="text">
-             <string>Nights:</string>
+             <string>Number of Nights:</string>
             </property>
            </widget>
           </item>
@@ -13408,9 +13430,12 @@ QHeaderView{
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Minimum</enum>
+          </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>228</width>
+            <width>100</width>
             <height>20</height>
            </size>
           </property>
@@ -14085,7 +14110,7 @@ QHeaderView{
                 </font>
                </property>
                <property name="text">
-                <string>Room</string>
+                <string>Space No</string>
                </property>
               </widget>
              </item>

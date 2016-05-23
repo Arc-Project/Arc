@@ -6535,18 +6535,14 @@ void MainWindow::on_editDelete_clicked()
     curBook = new Booking();
     bNew = true;
     popBookFromRow();
-    QSqlQuery result = dbManager->getBalance(curBook->clientId);
-    if(!result.next()){
-        ui->editDelete->setEnabled(true);
-        return;
-    }
-    double curBal = result.value("Balance").toString().toDouble();
+
     if(!dbManager->deleteBooking(curBook->bookID)){
         qDebug() << "Error deleting booking";
     }
-    curBal += curBook->cost;
-    if(!dbManager->updateBalance(curBal, curBook->clientId))
-        qDebug() << "Error updating balance";
+    if(!dbManager->removeLunchesMulti(curBook->startDate, curBook->clientId))
+        qDebug() << "Error remiving lunches";
+    if(!dbManager->deleteWakeupsMulti(curBook->startDate, curBook->clientId))
+        qDebug() << "Error removing wakeups";
     ui->editLookupTable->removeRow(row);
     ui->editDelete->setEnabled(true);
 }
