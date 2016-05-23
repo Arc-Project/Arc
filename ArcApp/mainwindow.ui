@@ -198,7 +198,7 @@ QHeaderView{
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -1843,7 +1843,7 @@ QHeaderView{
                       <property name="minimumSize">
                        <size>
                         <width>150</width>
-                        <height>0</height>
+                        <height>20</height>
                        </size>
                       </property>
                       <property name="font">
@@ -1888,7 +1888,7 @@ QHeaderView{
                       <property name="minimumSize">
                        <size>
                         <width>150</width>
-                        <height>0</height>
+                        <height>20</height>
                        </size>
                       </property>
                       <property name="font">
@@ -1933,7 +1933,7 @@ QHeaderView{
                       <property name="minimumSize">
                        <size>
                         <width>150</width>
-                        <height>0</height>
+                        <height>20</height>
                        </size>
                       </property>
                       <property name="font">
@@ -1978,7 +1978,7 @@ QHeaderView{
                       <property name="minimumSize">
                        <size>
                         <width>150</width>
-                        <height>0</height>
+                        <height>20</height>
                        </size>
                       </property>
                       <property name="font">

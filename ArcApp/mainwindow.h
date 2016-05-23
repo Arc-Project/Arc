@@ -675,14 +675,10 @@ private slots:
     void setShiftTimeDialog(bool resetTime);
     void changeUI();
     void shiftReportInit(int dayType);
-    void updateList(QVector<QStringList> *day);
     void updateList(QVector<QStringList> *day, QSqlQuery infoQuery);
     void ReadCurrentShift();
     void getShiftList(QStringList *shiftList);
     void EditShiftInfo();
-
-    QString widthCal(float duration);
-    void initTimeLine(int dayOpt);
 
     void on_shift_num_currentIndexChanged(int index);
 
