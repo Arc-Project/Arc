@@ -246,7 +246,9 @@ void EditRooms::on_editSwap_clicked()
     col << "SpaceCode" << "ProgramCodes" << "type" << "cost" << "Monthly" << "ClientName" << "BookingId" << "SpaceId" << "ClientId" <<
          "SpaceId" << "StartDate" << "EndDate" << "Cost";
     populateATable(ui->editRoom,headers, col, result, false);
+    ui->editRoom->setColumnWidth(5, 300);
     ui->editRoom->setColumnHidden(8, true);
+    ui->editRoom->setColumnHidden(6, true);
     ui->editRoom->setColumnHidden(5, false);
     ui->editRoom->setColumnHidden(7, true);
     ui->editRoom->setColumnHidden(9, true);
@@ -335,7 +337,7 @@ void EditRooms::setNewPrice(int row){
     double curExpected;
     std::pair<int,int> curStay;
     double dayCost, monthCost;
-    double curDiscount;
+    double curDiscount =1;
     bool curDisc = false;
     curStay = monthDay(curBook->startDate, curBook->endDate);
     dayCost = curBook->costDaily * curStay.second;
@@ -391,6 +393,8 @@ void EditRooms::calcCosts(){
     double curDiscount, swapDiscount;
     double curAlready, swapAlready;
     bool curDisc = false;
+    curDiscount = 1;
+    swapDiscount = 1;
     bool swapDisc = false;
     curStay = monthDay(curBook->startDate, curBook->endDate);
     swapStay = monthDay(swapBook->startDate, swapBook->endDate);
@@ -416,6 +420,8 @@ void EditRooms::calcCosts(){
         }
         else{
             curDiscount = curBook->cost / curExpected;
+            if(curDiscount > 1)
+                curDiscount = 1;
         }
         curDisc = true;
 
@@ -432,6 +438,8 @@ void EditRooms::calcCosts(){
         }
         else{
             swapDiscount = swapBook->cost / swapExpected;
+            if(swapDiscount > 1)
+                swapDiscount = 1;
         }
         swapDisc = true;
     }
@@ -465,20 +473,20 @@ double EditRooms::getRealCost(Booking * cur, Booking * swap, bool discount, doub
     }
     timePerc = timeSpent / stayLen;
     invPerc = 1 - timePerc;
-    if(discount){
-        dailyDiscCost = discAmt * swap->costDaily;
-        totalCost = dailyDiscCost * stayLen;
-        totalCost *= invPerc;
-        totalCost += cur->cost * timePerc;
+    //if(discount){
+      //  dailyDiscCost = discAmt * swap->costDaily;
+       // totalCost = dailyDiscCost * stayLen;
+       // totalCost *= invPerc;
+        //totalCost += cur->cost * timePerc;
 
-    }
-    else{
+    //}
+   // else{
         std::pair<int,int> stayStuff = monthDay(cur->startDate, cur->endDate);
         totalCost = quickCost(stayStuff, swap->costDaily, swap->costMonthly);
-        totalCost *= invPerc;
+        totalCost *= invPerc * discAmt;
         totalCost += timePerc * cur->cost;
 
-    }
+    //}
     return totalCost;
 
 }

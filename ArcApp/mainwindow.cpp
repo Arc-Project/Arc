@@ -1300,6 +1300,7 @@ void MainWindow::calcEditRefund(QDate date){
     int dUsed, mUsed, mRefund, dRefund;
     double adjustedDaily;
     double totalCost, dayCost, monthCost;
+    double refAmt = 1;
     std::pair<int, int> curLength = monthDay(curBook->startDate, date);
 
     dUsed = ui->editDayUsed->text().toInt();
@@ -1311,17 +1312,30 @@ void MainWindow::calcEditRefund(QDate date){
         if(curBook->cost > editExpected){
             qDebug() << "Warning, booking more expensive than expected";
         }
-       adjustedDaily = curBook->cost / curBook->stayLength;
+      /* adjustedDaily = curBook->cost / curBook->stayLength;
        int numDays = date.toJulianDay() - curBook->startDate.toJulianDay();
        dayCost = numDays * adjustedDaily;
        monthCost = 0;
-    }else{
-        dayCost = curLength.second * dCost;
-        if(dayCost > mCost)
-            dayCost = mCost;
-        monthCost = curLength.first * mCost;
+       */
+        if(curBook->cost == 0){
+            refAmt = 0;
+        }
+        else if(editExpected == 0){
+            refAmt = 1;
+        }
+        else{
+            refAmt = curBook->cost / editExpected;
+            if(refAmt > 1)
+                refAmt = 1;
+        }
 
     }
+    dayCost = curLength.second * dCost;
+    if(dayCost > mCost)
+        dayCost = mCost;
+    monthCost = curLength.first * mCost;
+
+
     double refundCost;
     if(!checkNumber(ui->editCancel->text())){
         refundCost = 0;
@@ -1333,8 +1347,8 @@ void MainWindow::calcEditRefund(QDate date){
     if(date > curBook->endDate){
         refundCost = 0;
     }
-    totalCost = curBook->cost - (dayCost + monthCost + refundCost);
-    double labelCost = dayCost + monthCost + refundCost;
+    totalCost = curBook->cost - ((dayCost + monthCost) * refAmt + refundCost);
+    double labelCost = (dayCost + monthCost) * refAmt + refundCost;
     if(curBook->endDate >= date){
         if(totalCost < 0)
             totalCost = 0;
@@ -1345,17 +1359,17 @@ void MainWindow::calcEditRefund(QDate date){
         ui->editRefOwe->setText("Expected Amount Owed");
         ui->editRefundLabel->setText("Amount Owed");
         ui->editRefundAmt->setText(QString::number(totalCost * -1, 'f',2));
-        ui->editRefundAmount->setText("-$"+QString::number(totalCost * -1, 'f', 2));
-
+        ui->editRefundAmount->setText("$"+QString::number(totalCost * -1, 'f', 2));
     }
     else{
         ui->editRefOwe->setText("Expected Refund Amount");
         ui->editRefundLabel->setText("Refund Amount");
         ui->editRefundAmt->setText(QString::number(totalCost, 'f',2));
         ui->editRefundAmount->setText("$"+QString::number(totalCost, 'f', 2));
-    }
-    ui->editCost->setText(QString::number(labelCost, 'f', 2));
 
+    }
+
+    ui->editCost->setText(QString::number(labelCost, 'f', 2));
 }
 
 void MainWindow::on_editManagePayment_clicked()
@@ -6554,6 +6568,15 @@ void MainWindow::on_editDelete_clicked()
     curBook = new Booking();
     bNew = true;
     popBookFromRow();
+    QSqlQuery result = dbManager->getBalance(curBook->clientId);
+    if(!result.next()){
+        return;
+    }
+    double curBal = result.value("Balance").toString().toDouble();
+    double bCost = dbManager->getBookingCost(curBook->bookID);
+    curBal -= bCost;
+    if(!dbManager->updateBalance(bCost, curBook->clientId))
+            qDebug() << "Error updating balance";
 
     if(!dbManager->deleteBooking(curBook->bookID)){
         qDebug() << "Error deleting booking";
