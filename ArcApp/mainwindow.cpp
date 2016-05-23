@@ -932,7 +932,7 @@ void MainWindow::setBookSummary(){
     int length = end.toJulianDay() - curBook->startDate.toJulianDay();
     curBook->endDate = end;
     curBook->stayLength = length;
-    ui->editCostLabel->setText(QString::number(curBook->cost, 'f', 2));
+    ui->editCostLabel->setText("$"+QString::number(curBook->cost, 'f', 2));
     curBook->monthly == true ? ui->editMonthly->setText("Yes") : ui->editMonthly->setText("No");
     ui->editProgramLabel->setText(curBook->program);
     ui->editLengthOfStay->setText(QString::number(curBook->stayLength));
@@ -1256,8 +1256,8 @@ void MainWindow::setEditDayInfo(QDate date){
     ui->editMonthUsed->setText(QString::number(usedDays.first));
     ui->editDaysRefunded->setText(QString::number(dLeft));
     ui->editMonthsRefunded->setText(QString::number(mLeft));
-    ui->editDailyCost->setText(QString::number(dCost, 'f',2));
-    ui->editMonthlyCost->setText(QString::number(mCost,'f',2));
+    ui->editDailyCost->setText("$"+QString::number(dCost, 'f',2));
+    ui->editMonthlyCost->setText("$"+QString::number(mCost,'f',2));
     calcEditRefund(date);
 
 }
@@ -1311,14 +1311,14 @@ void MainWindow::calcEditRefund(QDate date){
         ui->editRefOwe->setText("Expected Amount Owed");
         ui->editRefundLabel->setText("Amount Owed");
         ui->editRefundAmt->setText(QString::number(totalCost * -1, 'f',2));
-        ui->editRefundAmount->setText(QString::number(totalCost * -1, 'f', 2));
+        ui->editRefundAmount->setText("-$"+QString::number(totalCost * -1, 'f', 2));
 
     }
     else{
         ui->editRefOwe->setText("Expected Refund Amount");
         ui->editRefundLabel->setText("Refund Amount");
         ui->editRefundAmt->setText(QString::number(totalCost, 'f',2));
-        ui->editRefundAmount->setText(QString::number(totalCost, 'f', 2));
+        ui->editRefundAmount->setText("$"+QString::number(totalCost, 'f', 2));
     }
     ui->editCost->setText(QString::number(labelCost, 'f', 2));
 
