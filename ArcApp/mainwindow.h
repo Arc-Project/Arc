@@ -672,9 +672,9 @@ private slots:
     void initTime();
     void changeTimeSet(QTimeEdit* endUI, QTime time);
     void readShiftDb(QString day);
-
+    void setShiftTimeDialog(bool resetTime);
     void changeUI();
-    void shiftReportInit(bool noShow);
+    void shiftReportInit(int dayType);
     void updateList(QVector<QStringList> *day);
     void updateList(QVector<QStringList> *day, QSqlQuery infoQuery);
     void ReadCurrentShift();
@@ -719,6 +719,10 @@ private slots:
     void on_btnViewTranns_clicked();
 
     void addCurrencyToTableWidget(QTableWidget* table, int col);
+
+    void createTextReceipt(QString totalCost, QString payType, QString payTotal, QString start, QString end, QString length, bool stay);
+
+    void on_actionReceipt_triggered();
 
     void addCurrencyNoSignToTableWidget(QTableWidget* table, int col);
 

@@ -42,6 +42,7 @@ QVector<QString> pcpTypes;
 bool loaded = false;
 QString idDisplayed;
 
+QString transType;
 
 QProgressDialog* dialog;
 
@@ -141,6 +142,7 @@ void MainWindow::initCurrentWidget(int idx){
             }
             registerType = NOREGISTER;
             ui->actionExport_to_PDF->setEnabled(false);
+            transType = "";
             break;
         case CLIENTLOOKUP:  //WIDGET 1
             curClientName="";
@@ -445,7 +447,7 @@ void MainWindow::on_paymentButton_2_clicked()
         ui->bookLabelPaid->setText("Total Paid:");
         ui->bookAmtPaid->setText(QString::number(totalPaid, 'f', 2));
     }
-
+    transType = trans->type;
 }
 void MainWindow::on_startDateEdit_dateChanged()
 {
@@ -1525,6 +1527,8 @@ void MainWindow::populateConfirm(){
 
     ui->actionExport_to_PDF->setEnabled(true);
     MainWindow::on_actionExport_to_PDF_triggered();
+    createTextReceipt(ui->confirmCost->text(), transType, ui->confirmTotalPaid->text(), curBook->stringStart,
+                      curBook->stringEnd, ui->confirmLength->text(), true);
 }
 
 //void MainWindow::on_monthCheck_stateChanged(int arg1)
@@ -4661,14 +4665,7 @@ void MainWindow::on_btn_pcpKeySave_clicked()
 
 void MainWindow::on_actionPcptables_triggered()
 {
-    QString s = curBook->room;
-/*    QChar c = *s.rbegin();
-    qDebug() << c;
-    if (c == 'M')
-        qDebug() << "Mat";
-    else if (c == 'B')
-        qDebug() << "Bed";
-        */
+//    MainWindow::createTextReceipt(QString totalCost, QString payType, QString payTotal, QString start, QString end, QString length, bool stay);
 }
 
 void MainWindow::reloadPcpTable(int table){
@@ -6953,30 +6950,36 @@ void MainWindow::on_shift_dayOpt_currentIndexChanged(const QString &arg1)
 
     qDebug()<<"SELECTED DAY"<<selectedDay<<selectedDayIdx;
     readShiftDb(selectedDay);
-    ui->shift_num->setCurrentIndex(shiftSize);
+    //useProgressDialog("Read current shift", QtConcurrent::run(this,readShiftDb, selectedDay));
+    //readShiftDb(selectedDay);
+    //ui->shift_num->setCurrentIndex(shiftSize);
 
 
 }
 
 void MainWindow::readShiftDb(QString day){
     qDebug()<<"READ shift DB" << day;
-    QString query = QString("SELECT * FROM Shift ")
-                  + QString("WHERE DayOfWeek = '") + day + "'";
-    QSqlQuery dailyShift = dbManager->execQuery(query);
-    on_shift_num_currentIndexChanged(shiftSize);
+    QSqlQuery dailyShift = dbManager->getShiftInfoDaily(day);
+
     //dbManager->printAll(dailyShift);
     while(dailyShift.next()){
         qDebug()<<"Check Query";
-        shiftSize = dailyShift.value(11).toInt();
+        shiftSize = dailyShift.value("NumShifts").toInt();
+        qDebug()<<"shiftSize"<<shiftSize;
+        ui->shift_num->setCurrentIndex(shiftSize);
+        setShiftTimeDialog(false);
         shiftExist = true;
-        switch(numShift){
+        switch(shiftSize){
             case 5:
+                qDebug()<<"SHIFT 5: "<<dailyShift.value("StartTimeShift5").toString();
                 ui->shift5_S->setTime(dailyShift.value("StartTimeShift5").toTime());
                 ui->shift5_E->setTime(dailyShift.value("EndTimeShift5").toTime());
             case 4:
+                qDebug()<<"SHIFT 4: "<<dailyShift.value("StartTimeShift4").toString();
                 ui->shift4_S->setTime(dailyShift.value("StartTimeShift4").toTime());
                 ui->shift4_E->setTime(dailyShift.value("EndTimeShift4").toTime());
             case 3:
+                qDebug()<<"SHIFT 3: "<<dailyShift.value("StartTimeShift3").toTime();
                 ui->shift3_S->setTime(dailyShift.value("StartTimeShift3").toTime());
                 ui->shift3_E->setTime(dailyShift.value("EndTimeShift3").toTime());
             case 2:
@@ -6988,15 +6991,21 @@ void MainWindow::readShiftDb(QString day){
                 ui->shift1_E->setTime(dailyShift.value("EndTimeShift1").toTime());
         }
     }
+    qDebug()<<" DB READ DONE";
 
 }
 
 void MainWindow::on_shift_num_currentIndexChanged(int index)
 {
-    QTime startTime, endTime;
     qDebug()<<"Shiftnum"<<QString::number(index);
     shiftSize = index;
-    double TimeGap = (double)24/(index);
+    setShiftTimeDialog(true);
+}
+void MainWindow::setShiftTimeDialog(bool resetTime){
+    QTime startTime, endTime;
+    qDebug()<<"Shiftnum"<<shiftSize;
+
+    double TimeGap = (double)24/(shiftSize);
     startTime.setHMS(TimeGap,0,0);
     endTime.setHMS(TimeGap-1,59,0);
 //    qDebug()<<"Time Gap: "<< QString::number(TimeGap)<<QString::number(TimeGap,'f',2)
@@ -7004,7 +7013,8 @@ void MainWindow::on_shift_num_currentIndexChanged(int index)
     initTime();
     showAllShiftEdit(false);
 
-    switch(index){
+
+    switch(shiftSize){
         case 0:  //no selection
             ui->label_Shift_Index->hide();
             ui->label_Shift_Start->hide();
@@ -7033,8 +7043,10 @@ void MainWindow::on_shift_num_currentIndexChanged(int index)
             ui->shift5_S->hide();
             ui->shift5_E->hide();
     }
-
-    for(int i = 1; i < index; i++){
+    if(!resetTime)
+        return;
+    //change time automatically
+    for(int i = 1; i < shiftSize; i++){
             startTime.setHMS(TimeGap*i,0,0);
             endTime.setHMS(TimeGap*i-1,59,0);
 
@@ -7128,51 +7140,26 @@ void MainWindow::on_shift2_S_editingFinished()
 {
     QTime time = ui->shift2_S->time();
     changeTimeSet(ui->shift1_E, time);
-/*    if(ui->shift2_E->time() < ui->shift2_S->time()){
-        qDebug()<<"SHIFT 2 END IS FASTER";
-        time.setHMS(time.hour()+1, 0, 0);
-        changeTimeSet(ui->shift2_E, time);
-    }
-    */
 }
 
 void MainWindow::on_shift3_S_editingFinished()
 {
     QTime time = ui->shift3_S->time();
     changeTimeSet(ui->shift2_E, time);
-    /*
-    if(ui->shift3_E->time() < ui->shift3_S->time()){
-        qDebug()<<"SHIFT 3 END IS FASTER";
-        time.setHMS(time.hour()+1, 0, 0);
-        changeTimeSet(ui->shift3_E, time);
-    }
-    */
+
 }
 
 void MainWindow::on_shift4_S_editingFinished()
 {
     QTime time = ui->shift4_S->time();
     changeTimeSet(ui->shift3_E, time);
-    /*
-    if(ui->shift4_E->time() < ui->shift4_S->time()){
-        qDebug()<<"SHIFT 4 END IS FASTER";
-        time.setHMS(time.hour()+1, 0, 0);
-        changeTimeSet(ui->shift4_E, time);
-    }
-*/
+
 }
 
 void MainWindow::on_shift5_S_editingFinished()
 {
     QTime time = ui->shift5_S->time();
     changeTimeSet(ui->shift4_E, time);
-/*
-    if(ui->shift5_E->time() < ui->shift5_S->time()){
-        qDebug()<<"SHIFT 5 END IS FASTER";
-        time.setHMS(time.hour()+1, 0, 0);
-        changeTimeSet(ui->shift5_E, time);
-    }
-    */
 }
 
 void MainWindow::changeUI(){
@@ -7180,64 +7167,60 @@ void MainWindow::changeUI(){
     int cnt;
     if(!sun.empty()){
         qDebug()<<"sunDAY not empty";
-        initTimeLine(SUN);
+        shiftReportInit(SUN);
         cnt = sun.size();
         switch(cnt){
         case 5:
-
- //           qDebug()<<"sun5"<<sun.at(4).at(1)<< sun.at(4).at(2);
-            ui->label_shift_sun5->setMaximumWidth(800*sun.at(4).at(2).toDouble());
+            ui->label_shift_sun5->show();//setMaximumWidth(800*sun.at(4).at(2).toDouble());
             ui->label_shift_sun5->setText(sun.at(4).at(0));
 
         case 4:
- //           qDebug()<<"sun4:" << sun.at(3).at(2) <<sun.at(3).at(2).toDouble();
-            ui->label_shift_sun4->setMaximumWidth(800*sun.at(3).at(2).toDouble());
+            ui->label_shift_sun4->show();//setMaximumWidth(800*sun.at(3).at(2).toDouble());
             ui->label_shift_sun4->setText(sun.at(3).at(0));
 
         case 3:
- //           qDebug()<<"sun3:" << sun.at(2).at(2) <<sun.at(2).at(2).toDouble();
-            ui->label_shift_sun3->setMaximumWidth(800*sun.at(2).at(2).toDouble());
+            ui->label_shift_sun3->show();//setMaximumWidth(800*sun.at(2).at(2).toDouble());
             ui->label_shift_sun3->setText(sun.at(2).at(0));
 
         case 2:
  //           qDebug()<<"sun2:" << sun.at(1).at(2) <<sun.at(1).at(2).toDouble();
-            ui->label_shift_sun2->setMaximumWidth(800*sun.at(1).at(2).toDouble());
+            ui->label_shift_sun2->show();//setMaximumWidth(800*sun.at(1).at(2).toDouble());
             ui->label_shift_sun2->setText(sun.at(1).at(0));
 
         case 1:
  //           qDebug()<<"sun1:" << sun.at(0).at(2) <<sun.at(0).at(2).toDouble();
-            ui->label_shift_sun1->setMaximumWidth(800*sun.at(0).at(2).toDouble());
+            ui->label_shift_sun1->show();//setMaximumWidth(800*sun.at(0).at(2).toDouble());
             ui->label_shift_sun1->setText(sun.at(0).at(0));
         }
 
     }
     if(!mon.empty()){
         qDebug()<<"MONDAY not empty";
-        initTimeLine(MON);
+        shiftReportInit(MON);
         switch(mon.size()){
         case 5:
 //            qDebug()<<mon.at(4).at(2);
-            ui->label_shift_mon5->setMaximumWidth(800*mon.at(4).at(2).toDouble());
+            ui->label_shift_mon5->show();//setMaximumWidth(800*mon.at(4).at(2).toDouble());
             ui->label_shift_mon5->setText(mon.at(4).at(0));
 
         case 4:
  //           qDebug()<<"Mon4:" << mon.at(3).at(2) <<mon.at(3).at(2).toDouble();
-            ui->label_shift_mon4->setMaximumWidth(800*mon.at(3).at(2).toDouble());
+            ui->label_shift_mon4->show();//setMaximumWidth(800*mon.at(3).at(2).toDouble());
             ui->label_shift_mon4->setText(mon.at(3).at(0));
 
         case 3:
 //            qDebug()<<"Mon3:" << mon.at(2).at(2) <<mon.at(2).at(2).toDouble();
-            ui->label_shift_mon3->setMaximumWidth(800*mon.at(2).at(2).toDouble());
+            ui->label_shift_mon3->show();//setMaximumWidth(800*mon.at(2).at(2).toDouble());
             ui->label_shift_mon3->setText(mon.at(2).at(0));
 
         case 2:
 //            qDebug()<<"Mon2:" << mon.at(1).at(2) <<mon.at(1).at(2).toDouble();
-            ui->label_shift_mon2->setMaximumWidth(800*mon.at(1).at(2).toDouble());
+            ui->label_shift_mon2->show();//setMaximumWidth(800*mon.at(1).at(2).toDouble());
             ui->label_shift_mon2->setText(mon.at(1).at(0));
 
         case 1:
 //            qDebug()<<"Mon1:" << mon.at(0).at(2) <<mon.at(0).at(2).toDouble();
-            ui->label_shift_mon1->setMaximumWidth(800*mon.at(0).at(2).toDouble());
+            ui->label_shift_mon1->show();//setMaximumWidth(800*mon.at(0).at(2).toDouble());
             ui->label_shift_mon1->setText(mon.at(0).at(0));
 
 
@@ -7248,31 +7231,31 @@ void MainWindow::changeUI(){
     }
     if(!tue.empty()){
 //        qDebug()<<"tueDAY not empty";
-        initTimeLine(TUE);
+        shiftReportInit(TUE);
         switch(tue.size()){
         case 5:
 //            qDebug()<<tue.at(4).at(2);
-            ui->label_shift_tue5->setMaximumWidth(800*tue.at(4).at(2).toDouble());
+            ui->label_shift_tue5->show();//setMaximumWidth(800*tue.at(4).at(2).toDouble());
             ui->label_shift_tue5->setText(tue.at(4).at(0));
 
         case 4:
  //           qDebug()<<"tue4:" << tue.at(3).at(2) <<tue.at(3).at(2).toDouble();
-            ui->label_shift_tue4->setMaximumWidth(800*tue.at(3).at(2).toDouble());
+            ui->label_shift_tue4->show();//setMaximumWidth(800*tue.at(3).at(2).toDouble());
             ui->label_shift_tue4->setText(tue.at(3).at(0));
 
         case 3:
 //            qDebug()<<"tue3:" << tue.at(2).at(2) <<tue.at(2).at(2).toDouble();
-            ui->label_shift_tue3->setMaximumWidth(800*tue.at(2).at(2).toDouble());
+            ui->label_shift_tue3->show();//setMaximumWidth(800*tue.at(2).at(2).toDouble());
             ui->label_shift_tue3->setText(tue.at(2).at(0));
 
         case 2:
 //            qDebug()<<"tue2:" << tue.at(1).at(2) <<tue.at(1).at(2).toDouble();
-            ui->label_shift_tue2->setMaximumWidth(800*tue.at(1).at(2).toDouble());
+            ui->label_shift_tue2->show();//setMaximumWidth(800*tue.at(1).at(2).toDouble());
             ui->label_shift_tue2->setText(tue.at(1).at(0));
 
         case 1:
  //           qDebug()<<"tue1:" << tue.at(0).at(2) <<tue.at(0).at(2).toDouble();
-            ui->label_shift_tue1->setMaximumWidth(800*tue.at(0).at(2).toDouble());
+            ui->label_shift_tue1->show();//setMaximumWidth(800*tue.at(0).at(2).toDouble());
             ui->label_shift_tue1->setText(tue.at(0).at(0));
 
 
@@ -7283,31 +7266,31 @@ void MainWindow::changeUI(){
     }
     if(!wed.empty()){
 //        qDebug()<<"wedDAY not empty";
-        initTimeLine(WED);
+        shiftReportInit(WED);
         switch(wed.size()){
         case 5:
 //            qDebug()<<wed.at(4).at(2);
-            ui->label_shift_wed5->setMaximumWidth(800*wed.at(4).at(2).toDouble());
+            ui->label_shift_wed5->show();//setMaximumWidth(800*wed.at(4).at(2).toDouble());
             ui->label_shift_wed5->setText(wed.at(4).at(0));
 
         case 4:
  //           qDebug()<<"wed4:" << wed.at(3).at(2) <<wed.at(3).at(2).toDouble();
-            ui->label_shift_wed4->setMaximumWidth(800*wed.at(3).at(2).toDouble());
+            ui->label_shift_wed4->show();//setMaximumWidth(800*wed.at(3).at(2).toDouble());
             ui->label_shift_wed4->setText(wed.at(3).at(0));
 
         case 3:
 //            qDebug()<<"wed3:" << wed.at(2).at(2) <<wed.at(2).at(2).toDouble();
-            ui->label_shift_wed3->setMaximumWidth(800*wed.at(2).at(2).toDouble());
+            ui->label_shift_wed3->show();//setMaximumWidth(800*wed.at(2).at(2).toDouble());
             ui->label_shift_wed3->setText(wed.at(2).at(0));
 
         case 2:
 //            qDebug()<<"wed2:" << wed.at(1).at(2) <<wed.at(1).at(2).toDouble();
-            ui->label_shift_wed2->setMaximumWidth(800*wed.at(1).at(2).toDouble());
+            ui->label_shift_wed2->show();//setMaximumWidth(800*wed.at(1).at(2).toDouble());
             ui->label_shift_wed2->setText(wed.at(1).at(0));
 
         case 1:
 //            qDebug()<<"wed1:" << wed.at(0).at(2) <<wed.at(0).at(2).toDouble();
-            ui->label_shift_wed1->setMaximumWidth(800*wed.at(0).at(2).toDouble());
+            ui->label_shift_wed1->show();//setMaximumWidth(800*wed.at(0).at(2).toDouble());
             ui->label_shift_wed1->setText(wed.at(0).at(0));
 
 
@@ -7318,62 +7301,62 @@ void MainWindow::changeUI(){
     }
     if(!thur.empty()){
 //        qDebug()<<"thurDAY not empty";
-        initTimeLine(THUR);
+        shiftReportInit(THUR);
         switch(thur.size()){
         case 5:
 //            qDebug()<<thur.at(4).at(2);
-            ui->label_shift_thur5->setMaximumWidth(800*thur.at(4).at(2).toDouble());
+            ui->label_shift_thur5->show();//setMaximumWidth(800*thur.at(4).at(2).toDouble());
             ui->label_shift_thur5->setText(thur.at(4).at(0));
 
         case 4:
 //            qDebug()<<"thur4:" << thur.at(3).at(2) <<thur.at(3).at(2).toDouble();
-            ui->label_shift_thur4->setMaximumWidth(800*thur.at(3).at(2).toDouble());
+            ui->label_shift_thur4->show();//setMaximumWidth(800*thur.at(3).at(2).toDouble());
             ui->label_shift_thur4->setText(thur.at(3).at(0));
 
         case 3:
 //            qDebug()<<"thur3:" << thur.at(2).at(2) <<thur.at(2).at(2).toDouble();
-            ui->label_shift_thur3->setMaximumWidth(800*thur.at(2).at(2).toDouble());
+            ui->label_shift_thur3->show();//setMaximumWidth(800*thur.at(2).at(2).toDouble());
             ui->label_shift_thur3->setText(thur.at(2).at(0));
 
         case 2:
 //            qDebug()<<"thur2:" << thur.at(1).at(2) <<thur.at(1).at(2).toDouble();
-            ui->label_shift_thur2->setMaximumWidth(800*thur.at(1).at(2).toDouble());
+            ui->label_shift_thur2->show();//setMaximumWidth(800*thur.at(1).at(2).toDouble());
             ui->label_shift_thur2->setText(thur.at(1).at(0));
 
         case 1:
 //            qDebug()<<"thur1:" << thur.at(0).at(2) <<thur.at(0).at(2).toDouble();
-            ui->label_shift_thur1->setMaximumWidth(800*thur.at(0).at(2).toDouble());
+            ui->label_shift_thur1->show();//setMaximumWidth(800*thur.at(0).at(2).toDouble());
             ui->label_shift_thur1->setText(thur.at(0).at(0));
         }
 
     }
     if(!fri.empty()){
         qDebug()<<"FRIDAY not empty";
-        initTimeLine(FRI);
+        shiftReportInit(FRI);//initTimeLine(FRI);
         switch(fri.size()){
         case 5:
 //            qDebug()<<fri.at(4).at(2);
-            ui->label_shift_fri5->setMaximumWidth(800*fri.at(4).at(2).toDouble());
+            ui->label_shift_fri5->show();//->setMaximumWidth(800*fri.at(4).at(2).toDouble());
             ui->label_shift_fri5->setText(fri.at(4).at(0));
 
         case 4:
 //            qDebug()<<"fri4:" << fri.at(3).at(2) <<fri.at(3).at(2).toDouble();
-            ui->label_shift_fri4->setMaximumWidth(800*fri.at(3).at(2).toDouble());
+            ui->label_shift_fri4->show();//->setMaximumWidth(800*fri.at(3).at(2).toDouble());
             ui->label_shift_fri4->setText(fri.at(3).at(0));
 
         case 3:
 //            qDebug()<<"fri3:" << fri.at(2).at(2) <<fri.at(2).at(2).toDouble();
-            ui->label_shift_fri3->setMaximumWidth(800*fri.at(2).at(2).toDouble());
+            ui->label_shift_fri3->show();//->setMaximumWidth(800*fri.at(2).at(2).toDouble());
             ui->label_shift_fri3->setText(fri.at(2).at(0));
 
         case 2:
 //            qDebug()<<"fri2:" << fri.at(1).at(2) <<fri.at(1).at(2).toDouble();
-            ui->label_shift_fri2->setMaximumWidth(800*fri.at(1).at(2).toDouble());
+            ui->label_shift_fri2->show();//->setMaximumWidth(800*fri.at(1).at(2).toDouble());
             ui->label_shift_fri2->setText(fri.at(1).at(0));
 
         case 1:
 //            qDebug()<<"fri1:" << fri.at(0).at(2) <<fri.at(0).at(2).toDouble();
-            ui->label_shift_fri1->setMaximumWidth(800*fri.at(0).at(2).toDouble());
+            ui->label_shift_fri1->show();//->setMaximumWidth(800*fri.at(0).at(2).toDouble());
             ui->label_shift_fri1->setText(fri.at(0).at(0));
 
 
@@ -7384,31 +7367,36 @@ void MainWindow::changeUI(){
     }
     if(!sat.empty()){
         qDebug()<<"SATDAY not empty";
-        initTimeLine(SAT);
+        shiftReportInit(SAT);
         switch(sat.size()){
         case 5:
 //            qDebug()<<sat.at(4).at(2);
-            ui->label_shift_sat5->setMaximumWidth(800*sat.at(4).at(2).toDouble());
+            ui->label_shift_sat5->show();
+//            ui->label_shift_sat5->setMaximumWidth(800*sat.at(4).at(2).toDouble());
             ui->label_shift_sat5->setText(sat.at(4).at(0));
 
         case 4:
 //            qDebug()<<"sat4:" << sat.at(3).at(2) <<sat.at(3).at(2).toDouble();
-            ui->label_shift_sat4->setMaximumWidth(800*sat.at(3).at(2).toDouble());
+            ui->label_shift_sat4->show();
+//            ui->label_shift_sat4->setMaximumWidth(800*sat.at(3).at(2).toDouble());
             ui->label_shift_sat4->setText(sat.at(3).at(0));
 
         case 3:
 //            qDebug()<<"sat3:" << sat.at(2).at(2) <<sat.at(2).at(2).toDouble();
-            ui->label_shift_sat3->setMaximumWidth(800*sat.at(2).at(2).toDouble());
+            ui->label_shift_sat3->show();
+//            ui->label_shift_sat3->setMaximumWidth(800*sat.at(2).at(2).toDouble());
             ui->label_shift_sat3->setText(sat.at(2).at(0));
 
         case 2:
 //            qDebug()<<"sat2:" << sat.at(1).at(2) <<sat.at(1).at(2).toDouble();
-            ui->label_shift_sat2->setMaximumWidth(800*sat.at(1).at(2).toDouble());
+            ui->label_shift_sat2->show();
+//            ui->label_shift_sat2->setMaximumWidth(800*sat.at(1).at(2).toDouble());
             ui->label_shift_sat2->setText(sat.at(1).at(0));
 
         case 1:
 //            qDebug()<<"sat1:" << sat.at(0).at(2) <<sat.at(0).at(2).toDouble();
-            ui->label_shift_sat1->setMaximumWidth(800*sat.at(0).at(2).toDouble());
+            ui->label_shift_sat1->show();
+//            ui->label_shift_sat1->setMaximumWidth(800*sat.at(0).at(2).toDouble());
             ui->label_shift_sat1->setText(sat.at(0).at(0));
 
 
@@ -7420,79 +7408,62 @@ void MainWindow::changeUI(){
 
 }
 
-void MainWindow::shiftReportInit(bool noShow){
-    ui->label_shift_sun1->setHidden(noShow);
-    ui->label_shift_sun2->setHidden(noShow);
-    ui->label_shift_sun3->setHidden(noShow);
-    ui->label_shift_sun4->setHidden(noShow);
-    ui->label_shift_sun5->setHidden(noShow);
-
-    ui->label_shift_mon1->setHidden(noShow);
-    ui->label_shift_mon2->setHidden(noShow);
-    ui->label_shift_mon3->setHidden(noShow);
-    ui->label_shift_mon4->setHidden(noShow);
-    ui->label_shift_mon5->setHidden(noShow);
-
-    ui->label_shift_tue1->setHidden(noShow);
-    ui->label_shift_tue2->setHidden(noShow);
-    ui->label_shift_tue3->setHidden(noShow);
-    ui->label_shift_tue4->setHidden(noShow);
-    ui->label_shift_tue5->setHidden(noShow);
-
-    ui->label_shift_wed1->setHidden(noShow);
-    ui->label_shift_wed2->setHidden(noShow);
-    ui->label_shift_wed3->setHidden(noShow);
-    ui->label_shift_wed4->setHidden(noShow);
-    ui->label_shift_wed5->setHidden(noShow);
-
-    ui->label_shift_thur1->setHidden(noShow);
-    ui->label_shift_thur2->setHidden(noShow);
-    ui->label_shift_thur3->setHidden(noShow);
-    ui->label_shift_thur4->setHidden(noShow);
-    ui->label_shift_thur5->setHidden(noShow);
-
-    ui->label_shift_fri1->setHidden(noShow);
-    ui->label_shift_fri2->setHidden(noShow);
-    ui->label_shift_fri3->setHidden(noShow);
-    ui->label_shift_fri4->setHidden(noShow);
-    ui->label_shift_fri5->setHidden(noShow);
-
-
-    ui->label_shift_sat1->setHidden(noShow);
-    ui->label_shift_sat2->setHidden(noShow);
-    ui->label_shift_sat3->setHidden(noShow);
-    ui->label_shift_sat4->setHidden(noShow);
-    ui->label_shift_sat5->setHidden(noShow);
-
+void MainWindow::shiftReportInit(int dayType){
+    switch(dayType){
+        case SUN:
+            ui->label_shift_sun1->hide();//setHidden(noShow);
+            ui->label_shift_sun2->hide();//setHidden(noShow);
+            ui->label_shift_sun3->hide();//setHidden(noShow);
+            ui->label_shift_sun4->hide();//setHidden(noShow);
+            ui->label_shift_sun5->hide();//setHidden(noShow);
+            break;
+        case MON:
+            ui->label_shift_mon1->hide();//setHidden(noShow);
+            ui->label_shift_mon2->hide();//setHidden(noShow);
+            ui->label_shift_mon3->hide();//setHidden(noShow);
+            ui->label_shift_mon4->hide();//setHidden(noShow);
+            ui->label_shift_mon5->hide();//setHidden(noShow);
+            break;
+        case TUE:
+            ui->label_shift_tue1->hide();//setHidden(noShow);
+            ui->label_shift_tue2->hide();//setHidden(noShow);
+            ui->label_shift_tue3->hide();//setHidden(noShow);
+            ui->label_shift_tue4->hide();//setHidden(noShow);
+            ui->label_shift_tue5->hide();//setHidden(noShow);
+            break;
+        case WED:
+            ui->label_shift_wed1->hide();//setHidden(noShow);
+            ui->label_shift_wed2->hide();//setHidden(noShow);
+            ui->label_shift_wed3->hide();//setHidden(noShow);
+            ui->label_shift_wed4->hide();//setHidden(noShow);
+            ui->label_shift_wed5->hide();//setHidden(noShow);
+            break;
+        case THUR:
+            ui->label_shift_thur1->hide();//setHidden(noShow);
+            ui->label_shift_thur2->hide();//setHidden(noShow);
+            ui->label_shift_thur3->hide();//setHidden(noShow);
+            ui->label_shift_thur4->hide();//setHidden(noShow);
+            ui->label_shift_thur5->hide();//setHidden(noShow);
+            break;
+        case FRI:
+            ui->label_shift_fri1->hide();//->setHidden(noShow);
+            ui->label_shift_fri2->hide();//setHidden(noShow);
+            ui->label_shift_fri3->hide();//setHidden(noShow);
+            ui->label_shift_fri4->hide();//setHidden(noShow);
+            ui->label_shift_fri5->hide();//setHidden(noShow);
+            break;
+        case SAT:
+            ui->label_shift_sat1->hide();//setHidden(noShow);
+            ui->label_shift_sat2->hide();//setHidden(noShow);
+            ui->label_shift_sat3->hide();//setHidden(noShow);
+            ui->label_shift_sat4->hide();//setHidden(noShow);
+            ui->label_shift_sat5->hide();//setHidden(noShow);
+            break;
+    }
 }
 
 void MainWindow::on_pushButton_shift_save_clicked()
 {
-    /*
-    switch(selectedDayIdx){
-    case SUN:
-        updateList(&sun);
-        break;
-    case MON:
-        updateList(&mon);
-        break;
-    case TUE:
-        updateList(&tue);
-        break;
-    case WED:
-        updateList(&wed);
-        break;
-    case THUR:
-        updateList(&thur);
-        break;
-    case FRI:
-        updateList(&fri);
-        break;
-    case SAT:
-        updateList(&sat);
-        break;
-    }
-    */
     EditShiftInfo();
     ReadCurrentShift();
 }
@@ -7759,11 +7730,11 @@ void MainWindow::initTimeLine(int dayOpt){
         ui->label_shift_fri5->setMaximumWidth(0);//->setHidden(hide);
         break;
         case SAT:
-        ui->label_shift_sat1->setMaximumWidth(0);//->setHidden(hide);
-        ui->label_shift_sat2->setMaximumWidth(0);//->setHidden(hide);
-        ui->label_shift_sat3->setMaximumWidth(0);//->setHidden(hide);
-        ui->label_shift_sat4->setMaximumWidth(0);//->setHidden(hide);
-        ui->label_shift_sat5->setMaximumWidth(0);//->setHidden(hide);
+        ui->label_shift_sat1->hide();//setHidden(true);//setMaximumWidth(0);//
+        ui->label_shift_sat2->hide();//setHidden(true);//setMaximumWidth(0);//->setHidden(hide);
+        ui->label_shift_sat3->setHidden(true);//setMaximumWidth(0);//->setHidden(hide);
+        ui->label_shift_sat4->setHidden(true);//setMaximumWidth(0);//->setHidden(hide);
+        ui->label_shift_sat5->setHidden(true);//setMaximumWidth(0);//->setHidden(hide);
         break;
 
     }
@@ -7811,6 +7782,51 @@ void MainWindow::addCurrencyToTableWidget(QTableWidget* table, int col){
         QString value = QString::number(table->item(row, col)->text().toFloat(), 'f', 2);
         //QString value = table->item(row, col)->text();
         table->setItem(row, col, new QTableWidgetItem("$"+value));
+    }
+}
+
+void MainWindow::createTextReceipt(QString totalCost, QString payType, QString payTotal, QString start, QString end, QString length, bool stay){
+    QString timestamp = QDate::currentDate().toString("yyyyMMdd") + QTime::currentTime().toString("hhmmss");
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+                               "/receipt_" + timestamp + ".txt",
+                               tr("Text File (*.txt)"));
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        return;
+
+    QTextStream out(&file);
+    out << "Salvation Army ARC\n"
+           "525 Johnson St, Victoria BC V8W 1M2\n"
+           "250-384-3396\n"
+           "www.victoriaarc.org\n"
+           "**********************************\n"
+           "\n"
+           "\n"
+           "Stay                     $"+totalCost+"\n"
+           "" + start + " - " + end + "\n"
+           "" + length +" nights\n"
+           "\n"
+           "\n"
+           "\n"
+           "\n"
+           "________________________________\n"
+           "Payment Type: " + payType + "\n"
+           "Payment Total:           $"+payTotal+"\n"
+           "\n"
+           "\n"
+           "**********************************\n"
+           "Date: " + QDate::currentDate().toString("yyyy-MM-dd") + " Time: " + QTime::currentTime().toString("H:mm AP") + "\n"
+           "Receipt No: "+timestamp+"\n"
+           "\n"
+           "\n"
+           "Thank you for your custom";
+}
+
+void MainWindow::on_actionReceipt_triggered()
+{
+    if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING) {
+        createTextReceipt(ui->confirmCost->text(), transType, ui->confirmTotalPaid->text(), curBook->stringStart,
+                          curBook->stringEnd, ui->confirmLength->text(), true);
     }
 }
 

@@ -2081,6 +2081,17 @@ bool DatabaseManager::updateShift(QString queryStr, QStringList *shiftList){
     return false;
 }
 
+QSqlQuery DatabaseManager::getShiftInfoDaily(QString day)
+{
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    QString queryStr = "SELECT * FROM Shift ";
+    if(day != "")
+        queryStr += "WHERE DayOfWeek = '" + day + "'";
+    query.exec(queryStr);
+    return query;
+}
+
 void DatabaseManager::readPcpThread(QString clientId, QString type, int idx)
 {
     QString connName = QString::number(dbManager->getDbCounter());
