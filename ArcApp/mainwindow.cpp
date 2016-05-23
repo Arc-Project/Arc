@@ -711,7 +711,7 @@ void MainWindow::on_cbox_payDateRange_activated(int index)
     QStringList heads;
     QStringList cols;
     QSqlQuery tempSql = dbManager->getTransactions(hold, endDate);
-    heads << "Date"  <<"First" << "Last" << "Amount" << "Type" << "Method" << "Notes"  << "" << "" << "Employee Name";
+    heads << "Date"  <<"First Name" << "Last Name" << "Amount" << "Type" << "Method" << "Notes"  << "" << "" << "Employee Name";
     cols << "Date" <<"FirstName"<< "LastName"  << "Amount" << "TransType" << "Type" << "Notes" << "TransacId" << "ClientId" << "EmpName";
     populateATable(ui->mpTable, heads, cols, tempSql, false);
     ui->mpTable->setColumnHidden(4, false);
@@ -765,7 +765,7 @@ void MainWindow::on_editSearch_clicked()
 
     QStringList headers;
     QStringList cols;
-    headers << "Client" << "Room" << "Start" << "End" << "Program" << "Cost" << "Monthly" << "" << "" << "";
+    headers << "Client" << "Space #" << "Start Date" << "End Date" << "Program" << "Cost" << "Monthly" << "" << "" << "";
     cols << "ClientName" << "SpaceCode" << "StartDate" << "EndDate" << "ProgramCode" << "Cost" << "Monthly" << "BookingId" << "ClientId" << "SpaceId";
     populateATable(ui->editLookupTable, headers, cols, result, false);
     ui->editLookupTable->hideColumn(7);
@@ -6412,6 +6412,7 @@ void MainWindow::updatemenuforuser() {
     //display logged in user and current shift in status bar
     lbl_curUser = new QLabel("Logged in as: " + usernameLoggedIn + "  ");
     // lbl_curShift = new QLabel("Shift Number: " + currentshiftid);
+    lbl_curUser->setStyleSheet("font-size: 12pt");   
     statusBar()->addPermanentWidget(lbl_curUser);
     // statusBar()->addPermanentWidget(lbl_curShift);
 }
