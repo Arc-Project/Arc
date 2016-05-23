@@ -198,7 +198,7 @@ QHeaderView{
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>18</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -16792,7 +16792,7 @@ QHeaderView{
            </property>
            <property name="sizeHint" stdset="0">
             <size>
-             <width>70</width>
+             <width>100</width>
              <height>20</height>
             </size>
            </property>

@@ -252,6 +252,7 @@ void MainWindow::initCurrentWidget(int idx){
              ui->checkBox_shift_auto_endtime->setChecked(true);
              ui->shift_dayOpt->setCurrentIndex(0);
              ui->shift_num->setCurrentIndex(0);
+             ui->pushButton_shift_save->setEnabled(false);
             break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
@@ -6941,10 +6942,12 @@ void MainWindow::on_shift_dayOpt_currentIndexChanged(const QString &arg1)
     selectedDayIdx = ui->shift_dayOpt->currentIndex();
     if(arg1 ==""){
         ui->shift_num->setEnabled(false);
+        ui->pushButton_shift_save->setEnabled(false);
         selectedDay ="";
         return;
     }
     ui->shift_num->setEnabled(true);
+    ui->pushButton_shift_save->setEnabled(true);
     showAllShiftEdit(true);
     qDebug()<<"shifDay CurrentIndexChaged" << arg1;
     selectedDay = arg1;
@@ -6952,9 +6955,7 @@ void MainWindow::on_shift_dayOpt_currentIndexChanged(const QString &arg1)
 
     qDebug()<<"SELECTED DAY"<<selectedDay<<selectedDayIdx;
     readShiftDb(selectedDay);
-    //useProgressDialog("Read current shift", QtConcurrent::run(this,readShiftDb, selectedDay));
-    //readShiftDb(selectedDay);
-    //ui->shift_num->setCurrentIndex(shiftSize);
+
 
 
 }
