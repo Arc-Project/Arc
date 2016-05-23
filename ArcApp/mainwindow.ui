@@ -3794,6 +3794,11 @@ QHeaderView{
            </item>
            <item row="1" column="0" colspan="3">
             <widget class="QTableWidget" name="mpTable">
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
              <property name="sortingEnabled">
               <bool>true</bool>
              </property>
