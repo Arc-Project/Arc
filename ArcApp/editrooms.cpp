@@ -23,8 +23,22 @@ EditRooms::EditRooms(QWidget *parent, Booking * curBook, QString empId, QString 
     swapClient = new Client();
     swapBook = new Booking();
     setCurbook();
+    setDailyCost();
 
 }
+void EditRooms::setDailyCost(){
+    QSqlQuery result = dbManager->getRoomCosts(curBook->roomId);
+    if(!result.next()){
+        doMessageBox("The current room is not found, all cost calculations will be invalid");
+        curBook->costDaily = 0;
+        curBook->costMonthly = 0;
+    }
+    curBook->costDaily = result.value("cost").toString().toDouble();
+    curBook->costMonthly = result.value("Monthly").toString().toDouble();
+
+    curClient->balance = dbManager->getDoubleBalance(curBook->clientId);
+}
+
 EditRooms::~EditRooms()
 {
     delete ui;
@@ -103,6 +117,25 @@ void EditRooms::hideSwap(){
 
 
 }
+std::pair<int,int> EditRooms::monthDay(QDate start, QDate end){
+    int days, months, totalDays;
+    months = 0;
+    totalDays = end.toJulianDay() - start.toJulianDay();
+    QDate holdEnd;
+    holdEnd = end;
+    while((holdEnd = holdEnd.addMonths(-1)) >= start)
+        months++;
+    holdEnd = holdEnd.addMonths(1);
+    if(holdEnd == start)
+        days = 0;
+    else{
+        holdEnd = start.addMonths(months);
+        days = end.toJulianDay() - holdEnd.toJulianDay();
+    }
+    std::pair<int,int> p = std::make_pair(months, days);
+    return p;
+}
+
 
 void EditRooms::searchAvailable(QString program){
     swapping = false;
@@ -213,7 +246,8 @@ void EditRooms::on_editSwap_clicked()
     col << "SpaceCode" << "ProgramCodes" << "type" << "cost" << "Monthly" << "ClientName" << "BookingId" << "SpaceId" << "ClientId" <<
          "SpaceId" << "StartDate" << "EndDate" << "Cost";
     populateATable(ui->editRoom,headers, col, result, false);
-    ui->editRoom->setColumnHidden(6, true);
+    ui->editRoom->setColumnHidden(8, true);
+    ui->editRoom->setColumnHidden(5, false);
     ui->editRoom->setColumnHidden(7, true);
     ui->editRoom->setColumnHidden(9, true);
     ui->editRoom->setColumnHidden(10, true);
@@ -279,7 +313,6 @@ void EditRooms::popSwapClient(int row){
     swapBook->bookID = fastQuery.at(startPoint + 6);
     swapBook->clientId = fastQuery.at(startPoint + 8);
     QString cost = fastQuery.at(startPoint +  12);
-    swapBook->cost =  cost.toDouble();
     cost = fastQuery.at(startPoint + 3);
     swapBook->costDaily = cost.toDouble();
     swapBook->endDate = QDate::fromString(fastQuery.at(startPoint + 11), "yyyy-MM-dd");
@@ -291,27 +324,51 @@ void EditRooms::popSwapClient(int row){
     swapClient->clientId = fastQuery.at(startPoint + 8);
     swapClient->fullName = fastQuery.at(startPoint + 5);
     swapBook->costMonthly = fastQuery.at(startPoint + 4).toDouble();
-    double posCost = fastQuery.at(startPoint + 4).toDouble();
-    if(swapBook->cost == posCost){
-        swapBook->monthly = true;
-    }
-    else
-        swapBook->monthly = false;
+    swapBook->cost = dbManager->getBookingCost(swapBook->bookID);
+
 
 }
 void EditRooms::setNewPrice(int row){
     double cost = ui->editRoom->item(row, 3)->text().toDouble();
     double monthly = ui->editRoom->item(row, 4)->text().toDouble();
-    ui->curProgram->setText(ui->editRoom->item(row,1 )->text());
-    cost *= curBook->stayLength;
-    if(!curBook->monthly){
-        ui->curAdjust->setText(QString::number(cost, 'f' ,2));
-        ui->curFinal->setText(QString::number(cost, 'f', 2));
+    double curCost;
+    double curExpected;
+    std::pair<int,int> curStay;
+    double dayCost, monthCost;
+    double curDiscount;
+    bool curDisc = false;
+    curStay = monthDay(curBook->startDate, curBook->endDate);
+    dayCost = curBook->costDaily * curStay.second;
+    if(dayCost > curBook->costMonthly)
+        dayCost = curBook->costMonthly;
+    monthCost = curBook->costMonthly * curStay.first;
+    curExpected = dayCost + monthCost;
+    if(curBook->cost != curExpected){
+        ui->editWarnLabel->setText("WARNING: Booking includes discount or non standard rate, check pricing calculations");
+        ui->editWarnLabel->setHidden(false);
+        if(curBook->cost == 0){
+            curDiscount = 0;
+        }
+        else if(curExpected == 0){
+            curDiscount = 1;
+
+        }
+        else{
+            curDiscount = curBook->cost / curExpected;
+        }
+        curDisc = true;
+
     }
     else{
-        ui->curFinal->setText(QString::number(monthly, 'f', 2));
-        ui->curAdjust->setText(QString::number(monthly, 'f', 2));
+        ui->editWarnLabel->setHidden(true);
     }
+    Booking temp;
+    temp.costMonthly = monthly;
+    temp.costDaily = cost;
+    curCost = getRealCost(curBook, &temp, curDisc, curDiscount);
+    ui->curFinal->setText(QString::number(curCost,'f',2));
+    ui->curAdjust->setText(QString::number(curCost, 'f',2));
+
 }
 
 void EditRooms::displaySwapClient(){
@@ -327,34 +384,120 @@ void EditRooms::displaySwapClient(){
 }
 void EditRooms::calcCosts(){
     double curCost, swapCost;
-    if(curBook->monthly)
-        curCost = swapBook->costMonthly;
-    else
-        curCost = swapBook->costDaily * curBook->stayLength;
+    double curExpected, swapExpected;
+    std::pair<int,int> curStay;
+    std::pair<int,int> swapStay;
+    double dayCost, monthCost;
+    double curDiscount, swapDiscount;
+    double curAlready, swapAlready;
+    bool curDisc = false;
+    bool swapDisc = false;
+    curStay = monthDay(curBook->startDate, curBook->endDate);
+    swapStay = monthDay(swapBook->startDate, swapBook->endDate);
+    dayCost = curBook->costDaily * curStay.second;
+    if(dayCost > curBook->costMonthly)
+        dayCost = curBook->costMonthly;
+    monthCost = curBook->costMonthly * curStay.first;
+    curExpected = dayCost + monthCost;
+    dayCost = swapBook->costDaily * swapStay.second;
+    if(dayCost > swapBook->costMonthly)
+        dayCost = swapBook->costMonthly;
+    monthCost = swapBook->costMonthly * swapStay.first;
+    swapExpected = dayCost + monthCost;
+    if(curBook->cost != curExpected){
+        ui->editWarnLabel->setText("WARNING: Booking includes discount or non standard rate, check pricing calculations");
+        ui->editWarnLabel->setHidden(false);
+        if(curBook->cost == 0){
+            curDiscount = 0;
+        }
+        else if(curExpected == 0){
+            curDiscount = 1;
 
-    QSqlQuery result;
-    result = dbManager->getRoomCosts(curBook->roomId);
-    result.next();
-    double cost = result.value("cost").toString().toDouble();
-    result = dbManager->getBooking(swapBook->bookID);
-    if(!result.next())
-        qDebug() << "Error getting swap booking";
-    QString m = result.value("Monthly").toString();
-    double monthly = m.toDouble();
-    QString c = result.value("Cost").toString();
-    swapBook->cost = c.toDouble();
-    m == "YES" ? swapBook->monthly = true : swapBook->monthly = false;
-    if(swapBook->monthly)
-        swapCost = monthly;
-    else{
-        swapCost = swapBook->stayLength * cost;
+        }
+        else{
+            curDiscount = curBook->cost / curExpected;
+        }
+        curDisc = true;
+
     }
+    if(swapBook->cost != swapExpected){
+        ui->editWarnLabel->setText("WARNING: Booking includes discount or non standard rate, check pricing calculations");
+        ui->editWarnLabel->setHidden(false);
+        if(swapBook->cost == 0){
+            swapDiscount = 0;
+        }
+        else if(swapExpected == 0){
+            swapDiscount = 1;
+
+        }
+        else{
+            swapDiscount = swapBook->cost / swapExpected;
+        }
+        swapDisc = true;
+    }
+    if(swapBook->cost == swapExpected && curBook->cost == curExpected){
+        ui->editWarnLabel->setHidden(true);
+    }
+    curCost = getRealCost(curBook, swapBook, curDisc, curDiscount);
+    swapCost = getRealCost(swapBook, curBook, swapDisc, swapDiscount);
+
+
 
     ui->swapAdjust->setText(QString::number(swapCost, 'f', 2));
     ui->curAdjust->setText(QString::number(curCost, 'f', 2));
     ui->swapFinal->setText(QString::number(swapCost,'f', 2));
     ui->curFinal->setText(QString::number(curCost, 'f', 2));
 }
+double EditRooms::getRealCost(Booking * cur, Booking * swap, bool discount, double discAmt){
+    double timeSpent;
+    double timePerc, invPerc;
+    double dailyDiscCost;
+    double totalCost;
+    double retCost;
+    double stayLen = cur->endDate.toJulianDay() - cur->startDate.toJulianDay();
+    if(cur->startDate > QDate::currentDate()){
+        timeSpent = 0;
+    }else{
+        timeSpent = QDate::currentDate().toJulianDay() - cur->startDate.toJulianDay();
+        if(cur->endDate == QDate::currentDate())
+            timeSpent--;
+
+    }
+    timePerc = timeSpent / stayLen;
+    invPerc = 1 - timePerc;
+    if(discount){
+        dailyDiscCost = discAmt * swap->costDaily;
+        totalCost = dailyDiscCost * stayLen;
+        totalCost *= invPerc;
+        totalCost += cur->cost * timePerc;
+
+    }
+    else{
+        std::pair<int,int> stayStuff = monthDay(cur->startDate, cur->endDate);
+        totalCost = quickCost(stayStuff, swap->costDaily, swap->costMonthly);
+        totalCost *= invPerc;
+        totalCost += timePerc * cur->cost;
+
+    }
+    return totalCost;
+
+}
+double EditRooms::quickCost(std::pair<int,int> p, double daily, double monthly){
+    int days, months;
+    double dailyCost, totalCost;
+    days = p.second;
+    months = p.first;
+    dailyCost = days * daily;
+    if(dailyCost > monthly){
+        dailyCost = monthly;
+    }
+
+    totalCost = monthly * months + dailyCost;
+    return totalCost;
+
+
+}
+
 bool EditRooms::doMessageBox(QString message){
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, "Confirm", message, QMessageBox::Yes | QMessageBox::No);
@@ -428,12 +571,12 @@ void EditRooms::on_editOkButton_clicked()
                 curBook->room = swapBook->room;
                 curBook->roomId = swapBook->roomId;
                 if(swapDiff != 0){
-
                     dbManager->updateBalance(swapClient->balance, swapClient->clientId);
                 }
                 if(curDiff != 0){
                     dbManager->updateBalance(curClient->balance, curClient->clientId);
                 }
+
 
             }
             else{
