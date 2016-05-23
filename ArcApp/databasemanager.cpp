@@ -171,6 +171,7 @@ void DatabaseManager::printAll(QSqlQuery queryResults)
 bool DatabaseManager::deleteBooking(QString id){
     QSqlQuery query(db);
     QString q = "DELETE FROM Booking WHERE BookingId ='" + id + "'";
+    qDebug() << q;
     return query.exec(q);
 }
 QSqlQuery DatabaseManager::getRole(QString empName){
