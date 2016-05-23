@@ -222,8 +222,10 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case CLIENTREGISTER:    //WIDGET 10
             if((registerType == EDITCLIENT || registerType == DELETECLIENT)
-                    && (currentrole == CASEWORKER || currentrole == ADMIN))
+                    && (currentrole == CASEWORKER || currentrole == ADMIN)){
                 ui->button_delete_client->show();
+                ui->button_delete_client->setEnabled(true);
+            }
             else
                 ui->button_delete_client->hide();
 
@@ -1649,6 +1651,34 @@ void MainWindow::on_button_cl_takePic_clicked()
     camDialog->show();
 }
 
+//delete client picture
+void MainWindow::on_button_cl_delPic_clicked()
+{
+    QGraphicsScene *scene = new QGraphicsScene();
+    scene->clear();
+    profilePic = (QImage)NULL;
+    ui->graphicsView_cl_pic->setScene(scene);
+
+    //delete picture function to database
+
+}
+//upload picture from file
+void MainWindow::on_button_cl_uploadpic_clicked()
+{
+    QString strFilePath = MainWindow::browse();
+
+    if (!strFilePath.isEmpty())
+    {
+        QImage img(strFilePath);
+        profilePic = img.scaledToWidth(300);
+        addPic(profilePic);
+    }
+    else
+    {
+        qDebug() << "Empty file path";
+    }
+}
+
 /*------------------------------------------------------------------
   add picture into graphicview (after taking picture in pic dialog
   ------------------------------------------------------------------*/
@@ -1664,16 +1694,7 @@ void MainWindow::addPic(QImage pict){
     ui->graphicsView_cl_pic->show();
 }
 
-void MainWindow::on_button_cl_delPic_clicked()
-{
-    QGraphicsScene *scene = new QGraphicsScene();
-    scene->clear();
-    profilePic = (QImage)NULL;
-    ui->graphicsView_cl_pic->setScene(scene);
 
-    //delete picture function to database
-
-}
 
 void MainWindow::on_button_clear_client_regForm_clicked()
 {
@@ -1884,7 +1905,7 @@ void MainWindow::on_button_register_client_clicked()
 
             if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
             {
-                statusBar()->showMessage("Client Registered Sucessfully.");
+                statusBar()->showMessage("Client Registered Sucessfully.", 5000);
                 qDebug() << "Client registered successfully";
 
                 clear_client_register_form();
@@ -1892,7 +1913,7 @@ void MainWindow::on_button_register_client_clicked()
             }
             else
             {
-                statusBar()->showMessage("Register Failed. Check information.");
+                statusBar()->showMessage("Register Failed. Check information.", 5000);
                 qDebug() << "Could not register client";
             }
         }
@@ -2004,7 +2025,7 @@ void MainWindow::on_button_delete_client_clicked()
     }
     if(ui->lineEdit_cl_fName->text().toLower() == "anonymous" || ui->lineEdit_cl_lName->text().toLower() == "anonymous"){
         statusBar()->showMessage("Cannot Delete anonymous.", 5000);
-        ui->button_delete_client->hide();
+        ui->button_delete_client->setEnabled(false);
         return;
     }
     deleteClient();
@@ -2726,7 +2747,7 @@ void MainWindow::on_btn_createNewUser_clicked()
             QStandardItemModel * model = new QStandardItemModel(0,0);
             model->clear();
             ui->tableWidget_3->clear();
-            ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+            //ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
             ui->tableWidget_3->setColumnCount(4);
             ui->tableWidget_3->setRowCount(0);
             ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
@@ -2738,6 +2759,7 @@ void MainWindow::on_btn_createNewUser_clicked()
             ui->lineEdit_EmpName->setText("");
 
             on_btn_listAllUsers_clicked();
+            resizeTableView(ui->tableWidget_3);
         } else {
             ui->lbl_editUserWarning->setText("Something went wrong - please try again");
         }
@@ -2775,7 +2797,7 @@ void MainWindow::on_btn_listAllUsers_clicked()
 {
     ui->tableWidget_3->setRowCount(0);
     ui->tableWidget_3->clear();
-    ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+    //ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
 
     QSqlQuery result = dbManager->execQuery("SELECT Username, Password, Role, EmpName FROM Employee");
 
@@ -2795,6 +2817,7 @@ void MainWindow::on_btn_listAllUsers_clicked()
         }
         x++;
     }
+    resizeTableView(ui->tableWidget_3);
 }
 
 void MainWindow::on_btn_searchUsers_clicked()
@@ -2802,7 +2825,7 @@ void MainWindow::on_btn_searchUsers_clicked()
     QString ename = ui->le_users->text();
     ui->tableWidget_3->setRowCount(0);
     ui->tableWidget_3->clear();
-    ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+    //ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
 
     QSqlQuery result = dbManager->execQuery("SELECT Username, Password, Role, EmpName FROM Employee WHERE Username LIKE '%"+ ename +"%'");
 
@@ -2822,6 +2845,7 @@ void MainWindow::on_btn_searchUsers_clicked()
         }
         x++;
     }
+    resizeTableView(ui->tableWidget_3);
 
 
 //    QSqlQuery results = dbManager->execQuery("SELECT Username, Password, Role FROM Employee WHERE Username LIKE '%"+ ename +"%'");
@@ -3143,7 +3167,7 @@ void MainWindow::on_pushButton_4_clicked()
             QStandardItemModel * model = new QStandardItemModel(0,0);
             model->clear();
             ui->tableWidget_3->clear();
-            ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+            //ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
             ui->tableWidget_3->setColumnCount(4);
             ui->tableWidget_3->setRowCount(0);
             ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
@@ -3155,6 +3179,7 @@ void MainWindow::on_pushButton_4_clicked()
             ui->le_users->setText("");
 
             on_btn_listAllUsers_clicked();
+            resizeTableView(ui->tableWidget_3);
         } else {
             ui->lbl_editUserWarning->setText("Something went wrong - Please try again");
         }
@@ -3172,7 +3197,7 @@ void MainWindow::on_btn_displayUser_clicked()
     QStandardItemModel * model = new QStandardItemModel(0,0);
     model->clear();
     ui->tableWidget_3->clear();
-    ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+    //ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
     ui->tableWidget_3->setColumnCount(4);
     ui->tableWidget_3->setRowCount(0);
     ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
@@ -3182,6 +3207,7 @@ void MainWindow::on_btn_displayUser_clicked()
     ui->le_password->setText("");
     ui->lineEdit_EmpName->setText("");
     ui->le_users->setText("");
+    resizeTableView(ui->tableWidget_3);
 }
 
 void MainWindow::on_tableWidget_3_clicked(const QModelIndex &index)
@@ -3245,7 +3271,7 @@ void MainWindow::on_pushButton_6_clicked()
             QStandardItemModel * model = new QStandardItemModel(0,0);
             model->clear();
             ui->tableWidget_3->clear();
-            ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+            //ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
             ui->tableWidget_3->setColumnCount(4);
             ui->tableWidget_3->setRowCount(0);
             ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
@@ -3257,6 +3283,7 @@ void MainWindow::on_pushButton_6_clicked()
             ui->le_users->setText("");
 
             on_btn_listAllUsers_clicked();
+            resizeTableView(ui->tableWidget_3);
         } else {
             ui->lbl_editUserWarning->setText("Employee Not Found");
         }
@@ -3341,13 +3368,13 @@ void MainWindow::on_btn_listAllUsers_2_clicked()
 {
     ui->tableWidget_2->setRowCount(0);
     ui->tableWidget_2->clear();
-    ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
+    //ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
 
     QSqlQuery result = dbManager->execQuery("SELECT ProgramCode, Description FROM Program");
 
     int numCols = result.record().count();
     ui->tableWidget_2->setColumnCount(numCols);
-    ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Program Code" << "Description");
+    ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Code" << "Description");
     int x = 0;
     int qt = result.size();
     qDebug() << qt;
@@ -3361,6 +3388,7 @@ void MainWindow::on_btn_listAllUsers_2_clicked()
         }
         x++;
     }
+    resizeTableView(ui->tableWidget_2);
 }
 
 // search programs by code
@@ -3369,7 +3397,7 @@ void MainWindow::on_btn_searchUsers_2_clicked()
     QString ename = ui->le_users_2->text();
     ui->tableWidget_2->setRowCount(0);
     ui->tableWidget_2->clear();
-    ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
+    //ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
 
     QSqlQuery result = dbManager->execQuery("SELECT ProgramCode, Description FROM Program WHERE ProgramCode LIKE '%"+ ename +"%'");
 
@@ -3389,6 +3417,7 @@ void MainWindow::on_btn_searchUsers_2_clicked()
         }
         x++;
     }
+    resizeTableView(ui->tableWidget_2);
 }
 
 // delete program
@@ -5175,22 +5204,28 @@ void MainWindow::on_confirmAddWake_clicked()
 
 void MainWindow::on_editLunches_clicked()
 {
+    QString tmpStyleSheet = MainWindow::styleSheet();
+    MainWindow::setStyleSheet("");
 
     ui->editUpdate->setEnabled(true);
     MyCalendar* mc;
     if(QDate::currentDate() < curBook->startDate){
         mc = new MyCalendar(this, curBook->startDate, curBook->endDate, curClient,1, curBook->room);
-
-
     }else{
        mc = new MyCalendar(this, QDate::currentDate(), curBook->endDate, curClient,1, curBook->room);
     }
+       mc->setWindowTitle("Edit Lunches");
        mc->exec();
        delete(mc);
+
+    MainWindow::setStyleSheet(tmpStyleSheet);
 }
 
 void MainWindow::on_editWakeup_clicked()
 {
+    QString tmpStyleSheet = MainWindow::styleSheet();
+    MainWindow::setStyleSheet("");
+
     ui->editUpdate->setEnabled(true);
     MyCalendar* mc;
     if(QDate::currentDate() < curBook->startDate){
@@ -5200,8 +5235,11 @@ void MainWindow::on_editWakeup_clicked()
 
         mc = new MyCalendar(this, QDate::currentDate(),curBook->endDate, curClient,2,  curBook->room);
     }
+        mc->setWindowTitle("Edit Wakeups");
         mc->exec();
         delete(mc);
+
+    MainWindow::setStyleSheet(tmpStyleSheet);
 }
 
 void MainWindow::on_actionQuit_triggered()
@@ -6971,11 +7009,11 @@ void MainWindow::on_shift_dayOpt_currentIndexChanged(const QString &arg1)
     ui->shift_num->setEnabled(true);
     ui->pushButton_shift_save->setEnabled(true);
     showAllShiftEdit(true);
-    qDebug()<<"shifDay CurrentIndexChaged" << arg1;
+//    qDebug()<<"shifDay CurrentIndexChaged" << arg1;
     selectedDay = arg1;
     shiftSize = 0;
 
-    qDebug()<<"SELECTED DAY"<<selectedDay<<selectedDayIdx;
+//    qDebug()<<"SELECTED DAY"<<selectedDay<<selectedDayIdx;
     readShiftDb(selectedDay);
 
 
@@ -6983,28 +7021,25 @@ void MainWindow::on_shift_dayOpt_currentIndexChanged(const QString &arg1)
 }
 
 void MainWindow::readShiftDb(QString day){
-    qDebug()<<"READ shift DB" << day;
+//    qDebug()<<"READ shift DB" << day;
     QSqlQuery dailyShift = dbManager->getShiftInfoDaily(day);
 
     //dbManager->printAll(dailyShift);
     while(dailyShift.next()){
-        qDebug()<<"Check Query";
+//        qDebug()<<"Check Query";
         shiftSize = dailyShift.value("NumShifts").toInt();
-        qDebug()<<"shiftSize"<<shiftSize;
+//        qDebug()<<"shiftSize"<<shiftSize;
         ui->shift_num->setCurrentIndex(shiftSize);
         setShiftTimeDialog(false);
         shiftExist = true;
         switch(shiftSize){
             case 5:
-                qDebug()<<"SHIFT 5: "<<dailyShift.value("StartTimeShift5").toString();
                 ui->shift5_S->setTime(dailyShift.value("StartTimeShift5").toTime());
                 ui->shift5_E->setTime(dailyShift.value("EndTimeShift5").toTime());
             case 4:
-                qDebug()<<"SHIFT 4: "<<dailyShift.value("StartTimeShift4").toString();
                 ui->shift4_S->setTime(dailyShift.value("StartTimeShift4").toTime());
                 ui->shift4_E->setTime(dailyShift.value("EndTimeShift4").toTime());
             case 3:
-                qDebug()<<"SHIFT 3: "<<dailyShift.value("StartTimeShift3").toTime();
                 ui->shift3_S->setTime(dailyShift.value("StartTimeShift3").toTime());
                 ui->shift3_E->setTime(dailyShift.value("EndTimeShift3").toTime());
             case 2:
@@ -7022,7 +7057,6 @@ void MainWindow::readShiftDb(QString day){
 
 void MainWindow::on_shift_num_currentIndexChanged(int index)
 {
-    qDebug()<<"Shiftnum"<<QString::number(index);
     shiftSize = index;
     setShiftTimeDialog(true);
 }
@@ -7030,8 +7064,6 @@ void MainWindow::on_shift_num_currentIndexChanged(int index)
 
 void MainWindow::setShiftTimeDialog(bool resetTime){
     QTime startTime, endTime;
-    qDebug()<<"Shiftnum"<<shiftSize;
-
     double TimeGap = (double)24/(shiftSize);
     startTime.setHMS(TimeGap,0,0);
     endTime.setHMS(TimeGap-1,59,0);
@@ -7070,8 +7102,10 @@ void MainWindow::setShiftTimeDialog(bool resetTime){
             ui->shift5_S->hide();
             ui->shift5_E->hide();
     }
+
     if(!resetTime)
         return;
+
     //change time automatically
     for(int i = 1; i < shiftSize; i++){
             startTime.setHMS(TimeGap*i,0,0);
@@ -7418,6 +7452,7 @@ void MainWindow::shiftReportInit(int dayType){
     }
 }
 
+//SAVE client info
 void MainWindow::on_pushButton_shift_save_clicked()
 {
     EditShiftInfo();
@@ -7435,6 +7470,7 @@ void MainWindow::EditShiftInfo(){
     shiftExist = true;
     qDebug()<<"SHIFT UPDATE SUCCESS";
     statusBar()->showMessage(selectedDay + " SHIFT UPDATE SUCCESS", 10000);
+    ui->label_shiftList_Mon->setAutoFillBackground(true);
 
 }
 
@@ -7657,3 +7693,4 @@ void MainWindow::addCurrencyNoSignToTableWidget(QTableWidget* table, int col){
         table->setItem(row, col, new QTableWidgetItem(value));
     }
 }
+

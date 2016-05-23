@@ -720,6 +720,8 @@ private slots:
 
     void addCurrencyNoSignToTableWidget(QTableWidget* table, int col);
 
+    void on_button_cl_uploadpic_clicked();
+
 private:
 
     Ui::MainWindow *ui;
