@@ -192,7 +192,7 @@ QHeaderView{
     <item row="0" column="1">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>16</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -7736,6 +7736,11 @@ QHeaderView{
        <layout class="QGridLayout" name="gridLayout_60">
         <item row="1" column="0" colspan="7">
          <widget class="QTableWidget" name="editLookupTable">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
           <property name="sizeAdjustPolicy">
            <enum>QAbstractScrollArea::AdjustToContents</enum>
           </property>
@@ -7788,7 +7793,7 @@ QHeaderView{
            </font>
           </property>
           <property name="text">
-           <string>Display Bookings</string>
+           <string>Search Bookings</string>
           </property>
          </widget>
         </item>

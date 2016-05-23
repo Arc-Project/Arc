@@ -761,6 +761,8 @@ void MainWindow::on_editSearch_clicked()
     ui->editLookupTable->hideColumn(9);
     //dbManager->printAll(result);
 
+    MainWindow::resizeTableView(ui->editLookupTable);
+
 
 
 
@@ -6418,9 +6420,11 @@ void MainWindow::on_storesearch_clicked()
     header << "Name" << "Date" << "Items" << "" << "";
     cols   << "StorageUserName" << "StorageDate" << "StorageItems" << "ClientId" << "StorageId";
     populateATable(ui->storageTable,header,cols, result, true);
+    ui->storageTable->setColumnHidden(2, true);
     ui->storageTable->setColumnHidden(3, true);
     ui->storageTable->setColumnHidden(4, true);
 
+    MainWindow::resizeTableView(ui->storageTable);
 }
 
 void MainWindow::on_confirmStorage_clicked()
