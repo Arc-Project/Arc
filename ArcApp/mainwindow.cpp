@@ -245,7 +245,7 @@ void MainWindow::initCurrentWidget(int idx){
             MainWindow::updateRestrictionTables();
             ui->actionExport_to_PDF->setEnabled(true);
             break;
-        case 18:  //test shift report
+        case EDITSHIFT:  //WIDGET15
             showAllShiftEdit(true);
             on_checkBox_shift_auto_endtime_clicked(true);
              ReadCurrentShift();
