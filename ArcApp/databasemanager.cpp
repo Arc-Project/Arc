@@ -1858,7 +1858,7 @@ QSqlQuery DatabaseManager::getAvailableBeds(QString pcode) {
     query.exec("SELECT b.BuildingNo, f.FloorNo, r.RoomNo, s.SpaceId, s.SpaceNo, s.type, s.cost, s.Monthly, s.ProgramCodes "
                "FROM Space s INNER JOIN Room r ON s.RoomId = r.RoomId INNER JOIN Floor f ON r.FloorId = f.FloorId "
                "INNER JOIN Building b ON f.BuildingId = b.BuildingId "
-               "WHERE s.ProgramCodes NOT LIKE '%" + pcode + "%'");
+               "WHERE s.ProgramCodes NOT LIKE '%" + pcode + "%' ORDER BY s.SpaceCode");
 
     // qDebug() << ":" + pcode+ ":";
 
@@ -1872,7 +1872,7 @@ QSqlQuery DatabaseManager::getAssignedBeds(QString pcode) {
     query.exec("SELECT b.BuildingNo, f.FloorNo, r.RoomNo, s.SpaceId, s.SpaceNo, s.type, s.cost, s.Monthly, s.ProgramCodes "
                "FROM Space s INNER JOIN Room r ON s.RoomId = r.RoomId INNER JOIN Floor f ON r.FloorId = f.FloorId "
                "INNER JOIN Building b ON f.BuildingId = b.BuildingId "
-               "WHERE s.ProgramCodes LIKE '%" + pcode + "%'");
+               "WHERE s.ProgramCodes LIKE '%" + pcode + "%' ORDER BY s.SpaceCode");
 
     return query;
 }
