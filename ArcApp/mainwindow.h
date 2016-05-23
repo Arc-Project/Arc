@@ -720,6 +720,8 @@ private slots:
 
     void addCurrencyToTableWidget(QTableWidget* table, int col);
 
+    void addCurrencyNoSignToTableWidget(QTableWidget* table, int col);
+
 private:
 
     Ui::MainWindow *ui;
