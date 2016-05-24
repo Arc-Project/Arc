@@ -184,6 +184,7 @@ private slots:
     void on_editDate_dateChanged(const QDate &date);
     void on_btn_payOutstanding_clicked();
     void on_editUpdate_clicked();
+    void doAlert(QString message);
 
     //END COLIN///////////////////////////////////////////
 
