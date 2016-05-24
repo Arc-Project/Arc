@@ -1450,8 +1450,11 @@ void MainWindow::on_pushButton_bookRoom_clicked()
         return;
     }
     if(!dbManager->isBanned(curClient->clientId)){
+        doMessageBox("User is currently restricted. Continue anyways?");
+        /*
         if(!doMessageBox("User is currently restricted. Continue anyways?"))
             return;
+            */
     }
     /*
     curClient = new Client();
