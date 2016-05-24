@@ -219,6 +219,7 @@ void MainWindow::initCurrentWidget(int idx){
             ui->editLookupTable->clear();
             ui->editLookupTable->setRowCount(0);
             //initcode
+            ui->actionExport_to_PDF->setEnabled(true);
             break;
         case CLIENTREGISTER:    //WIDGET 10
             if((registerType == EDITCLIENT || registerType == DELETECLIENT)
@@ -535,6 +536,7 @@ void MainWindow::clearTable(QTableWidget * table){
 
 void MainWindow::on_editButton_clicked()
 {
+    ui->actionExport_to_PDF->setEnabled(false);
     addHistory(EDITBOOKING);
     setup = true;
     int row = ui->editLookupTable->selectionModel()->currentIndex().row();
@@ -5437,6 +5439,12 @@ void MainWindow::on_actionExport_to_PDF_triggered()
         report->recordCount << 1;
     }
 
+    // registry
+    if (ui->stackedWidget->currentIndex() == EDITBOOKING) {
+        rptTemplate = ":/templates/pdf/registry.xml";
+        report->recordCount << ui->editLookupTable->rowCount();
+    }
+
     report->loadReport(rptTemplate);
 
     connect(report, SIGNAL(setValue(const int, const QString, QVariant&, const int)),
@@ -5485,6 +5493,11 @@ void MainWindow::setValue(const int recNo, const QString paramName, QVariant &pa
     // customer receipt
     if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING) {
         printStaySummary(recNo, paramName, paramValue, reportPage);
+    }
+
+    // registry
+    if (ui->stackedWidget->currentIndex() == EDITBOOKING) {
+        printRegistry(recNo, paramName, paramValue, reportPage);
     }
 }
 
@@ -5672,7 +5685,6 @@ void MainWindow::printMonthlyReport(const int recNo, const QString paramName, QV
     }
 }
 
-
 void MainWindow::printRestrictionReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage){
     Q_UNUSED(paramName);
     if (reportPage == 0) {
@@ -5747,11 +5759,18 @@ void MainWindow::printStaySummary(const int recNo, const QString paramName, QVar
         paramValue = ui->confirmLength->text();
 
     } else if (paramName == "bedType") {
+        QString bedString;
         QString s = curBook->room;
-/*        QChar c = *s.rbegin();
-        if (c == 'M') paramValue = "Mat";
-        else if (c == 'B') paramValue = "Bed";
-*/
+        QChar c = *(s.end()-1);
+        qDebug() << "last char" << c;
+        if (c == 'M') bedString.append("Mat ");
+        else if (c == 'B') bedString.append("Bed ");
+
+        QStringList pieces = curBook->room.split( "-" );
+        bedString.append(pieces.value( pieces.length() - 1));
+        bedString.chop(1);
+        paramValue = bedString;
+
     } else if (paramName == "roomNo") {
         QString s = curBook->room;
         QRegExp rx("[-]");
@@ -5766,6 +5785,36 @@ void MainWindow::printStaySummary(const int recNo, const QString paramName, QVar
         qDebug() << result.lastError();
         while (result.next())
             paramValue = result.value(0).toString();
+    } else if (paramName == "desc") {
+        QSqlQuery result = dbManager->getProgramDesc(curBook->program);
+        qDebug() << result.lastError();
+        while (result.next())
+        paramValue = result.value(0).toString();
+    }
+}
+
+void MainWindow::printRegistry(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
+    if (paramName == "client") {
+        if (ui->editLookupTable->item(recNo, 0) == 0 ) return;
+         paramValue = ui->editLookupTable->item(recNo, 0)->text();
+    } else if (paramName == "space") {
+        if (ui->editLookupTable->item(recNo, 1) == 0 ) return;
+         paramValue = ui->editLookupTable->item(recNo, 1)->text();
+    } else if (paramName == "start") {
+        if (ui->editLookupTable->item(recNo, 2) == 0 ) return;
+         paramValue = ui->editLookupTable->item(recNo, 2)->text();
+    } else if (paramName == "end") {
+        if (ui->editLookupTable->item(recNo, 3) == 0 ) return;
+         paramValue = ui->editLookupTable->item(recNo, 0)->text();
+    } else if (paramName == "prog"){
+        if (ui->editLookupTable->item(recNo, 4) == 0 ) return;
+         paramValue = ui->editLookupTable->item(recNo, 1)->text();
+    } else if (paramName == "cost"){
+        if (ui->editLookupTable->item(recNo, 5) == 0 ) return;
+         paramValue = ui->editLookupTable->item(recNo, 1)->text();
+    } else if (paramName == "rate"){
+        if (ui->editLookupTable->item(recNo, 6) == 0 ) return;
+         paramValue = ui->editLookupTable->item(recNo, 1)->text();
     }
 }
 
@@ -7679,7 +7728,7 @@ void MainWindow::createTextReceipt(QString totalCost, QString payType, QString p
                                tr("Text File (*.txt)"));
     QFile file(fileName);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)){
-        statusBar()->showMessage(tr("Receipt file save failed. Please try saving again or saving to another directory."));
+        statusBar()->showMessage(tr("Receipt file save failed. Please try saving again or saving to another directory."), 4000);
         return;
     }
 
@@ -7717,7 +7766,7 @@ void MainWindow::createTextReceipt(QString totalCost, QString payType, QString p
            "\n"
            "\n"
            "Thank you for your custom";
-           statusBar()->showMessage(tr("Receipt file saved!"));
+           statusBar()->showMessage(tr("Receipt file saved!"), 4000);
 }
 
 void MainWindow::on_actionReceipt_triggered()
