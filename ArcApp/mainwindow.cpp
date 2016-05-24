@@ -1447,6 +1447,10 @@ void MainWindow::on_pushButton_bookRoom_clicked()
         doAlert("Client already has an active booking");
         return;
     }
+    if(!dbManager->isBanned(curClient->clientId)){
+        if(!doMessageBox("User is currently restricted. Continue anyways?"))
+            return;
+    }
     /*
     curClient = new Client();
     int nRow = ui->tableWidget_search_client->currentRow();
@@ -2929,6 +2933,10 @@ void MainWindow::on_tableWidget_3_doubleClicked(const QModelIndex &index)
 
 void MainWindow::on_pushButton_CaseFiles_clicked()
 {
+    if (currentrole == STANDARD) {
+        return;
+    }
+
     addHistory(CLIENTLOOKUP);
     qDebug()<<"push casefile";
     setSelectedClientInfo();

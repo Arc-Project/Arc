@@ -121,6 +121,20 @@ QSqlQuery DatabaseManager::selectAll(QString tableName)
     query.exec("SELECT * FROM " + tableName);
     return query;
 }
+bool DatabaseManager::isBanned(QString clientId){
+    QSqlQuery query(db);
+    QString q = "SELECT Status FROM Client WHERE ClientId ='" + clientId + "'";
+    if(!query.exec(q)){
+        return false;
+    }
+    if(!query.next())
+        return false;
+    QString code = query.value("Status").toString();
+    if(code == "Red")
+        return false;
+    return true;
+
+}
 
 void DatabaseManager::reconnectToDatabase()
 {
