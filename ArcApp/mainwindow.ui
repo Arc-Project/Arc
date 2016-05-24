@@ -208,7 +208,7 @@ QHeaderView{
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>15</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_55">
@@ -219,16 +219,22 @@ QHeaderView{
             <layout class="QHBoxLayout" name="horizontalLayout_17">
              <item>
               <widget class="QPushButton" name="caseButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="minimumSize">
                 <size>
-                 <width>290</width>
-                 <height>250</height>
+                 <width>0</width>
+                 <height>0</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>1200</width>
-                 <height>264</height>
+                 <width>16777215</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="font">
@@ -245,16 +251,22 @@ QHeaderView{
              </item>
              <item>
               <widget class="QPushButton" name="adminButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="minimumSize">
                 <size>
-                 <width>290</width>
-                 <height>151</height>
+                 <width>0</width>
+                 <height>0</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>600</width>
-                 <height>264</height>
+                 <width>16777215</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="font">
@@ -275,16 +287,22 @@ QHeaderView{
             <layout class="QHBoxLayout" name="horizontalLayout_79">
              <item>
               <widget class="QPushButton" name="editbookButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="minimumSize">
                 <size>
-                 <width>350</width>
-                 <height>151</height>
+                 <width>0</width>
+                 <height>0</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>437</width>
-                 <height>264</height>
+                 <width>16777215</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="font">
@@ -301,16 +319,22 @@ QHeaderView{
              </item>
              <item>
               <widget class="QPushButton" name="paymentButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="minimumSize">
                 <size>
-                 <width>350</width>
-                 <height>250</height>
+                 <width>0</width>
+                 <height>0</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>437</width>
-                 <height>264</height>
+                 <width>16777215</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="font">
@@ -328,16 +352,22 @@ Payment</string>
              </item>
              <item>
               <widget class="QPushButton" name="reportsButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="minimumSize">
                 <size>
-                 <width>350</width>
-                 <height>151</height>
+                 <width>0</width>
+                 <height>0</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>437</width>
-                 <height>264</height>
+                 <width>16777215</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="font">
@@ -358,16 +388,22 @@ Payment</string>
             <layout class="QHBoxLayout" name="horizontalLayout_80">
              <item>
               <widget class="QPushButton" name="clientButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="minimumSize">
                 <size>
-                 <width>290</width>
-                 <height>250</height>
+                 <width>0</width>
+                 <height>0</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>600</width>
-                 <height>264</height>
+                 <width>16777215</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="font">
@@ -385,21 +421,21 @@ Payment</string>
              <item>
               <widget class="QPushButton" name="bookButton">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
                <property name="minimumSize">
                 <size>
-                 <width>290</width>
-                 <height>151</height>
+                 <width>0</width>
+                 <height>0</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>600</width>
-                 <height>264</height>
+                 <width>16777215</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="font">
@@ -424,9 +460,12 @@ Payment</string>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
+            <width>300</width>
             <height>20</height>
            </size>
           </property>
@@ -436,6 +475,9 @@ Payment</string>
          <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Minimum</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -450,6 +492,9 @@ Payment</string>
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Minimum</enum>
+          </property>
           <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
@@ -463,9 +508,12 @@ Payment</string>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
+            <width>300</width>
             <height>20</height>
            </size>
           </property>
@@ -5441,7 +5489,7 @@ Payment</string>
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>620</width>
+                 <width>1262</width>
                  <height>1294</height>
                 </rect>
                </property>
