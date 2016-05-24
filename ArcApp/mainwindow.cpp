@@ -1447,8 +1447,9 @@ void MainWindow::on_pushButton_bookRoom_clicked()
     if(!dbManager->checkDoubleBook(curClient->clientId))
     {
 
-        doAlert("Client already has an active booking");
-        return;
+        //doAlert("Client already has an active booking");
+        if(!doMessageBox("Client has a current booking. Are you sure you wish to make another?"))
+            return;
     }
     if(!dbManager->isBanned(curClient->clientId)){
         if(!doMessageBox("User is currently restricted. Continue anyways?"))
