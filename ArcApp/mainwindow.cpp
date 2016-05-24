@@ -2896,6 +2896,10 @@ void MainWindow::on_tableWidget_3_doubleClicked(const QModelIndex &index)
 
 void MainWindow::on_pushButton_CaseFiles_clicked()
 {
+    if (currentrole == STANDARD) {
+        return;
+    }
+
     addHistory(CLIENTLOOKUP);
     qDebug()<<"push casefile";
     setSelectedClientInfo();

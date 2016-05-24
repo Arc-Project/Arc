@@ -2141,7 +2141,6 @@ QHeaderView{
            <zorder>textEdit_cl_info_comment</zorder>
            <zorder>groupBox_cl_info_personal</zorder>
            <zorder>groupBox</zorder>
-           <zorder>horizontalLayoutWidget</zorder>
            <zorder>verticalSpacer_39</zorder>
            <zorder>verticalSpacer_7</zorder>
            <zorder>verticalSpacer_10</zorder>
@@ -5434,7 +5433,7 @@ QHeaderView{
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>1266</width>
+                 <width>620</width>
                  <height>1294</height>
                 </rect>
                </property>
