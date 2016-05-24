@@ -161,9 +161,6 @@ void MainWindow::initCurrentWidget(int idx){
             ui->pushButton_search_client->setEnabled(true);
             //initimageview
             ui->actionExport_to_PDF->setEnabled(false);
-            ui->hs_brpp->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
-            ui->hs_ppcf->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
-            ui->hs_cfec->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
             break;
         case BOOKINGLOOKUP: //WIDGET 2
             qDebug()<<"###BOOKING LOOKUP Client INFO###";
@@ -2263,14 +2260,22 @@ void MainWindow::initClientLookupInfo(){
     }
     qDebug()<<"START HIDE BUTTON SETTUP";
     //hide buttons for different workflows
+
+            //     ui->hs_brpp->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
+            // ui->hs_ppcf->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
+            // ui->hs_cfec->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
     switch (workFlow){
     case BOOKINGPAGE:
         ui->pushButton_CaseFiles->setVisible(false);
         ui->pushButton_processPaymeent->setVisible(false);
         ui->pushButton_bookRoom->setVisible(true);
-        ui->hs_brpp->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
-        ui->hs_ppcf->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->hs_cfec->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_brpp->changeSize(13,20,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_ppcf->changeSize(0,0,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_cfec->changeSize(0,0,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        
+        // ui->hs_brpp->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+        // ui->hs_ppcf->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        // ui->hs_cfec->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
         break;
     case PAYMENTPAGE:
         ui->pushButton_CaseFiles->setVisible(false);
@@ -2292,9 +2297,9 @@ void MainWindow::initClientLookupInfo(){
         ui->pushButton_CaseFiles->setVisible(true);
         ui->pushButton_processPaymeent->setVisible(true);
         ui->pushButton_bookRoom->setVisible(true);
-        ui->hs_brpp->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->hs_ppcf->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->hs_cfec->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_brpp->changeSize(13,20,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_ppcf->changeSize(13,20,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_cfec->changeSize(13,20,QSizePolicy::Fixed,QSizePolicy::Fixed);
         ui->horizontalLayout_15->update();
         break;
     }
@@ -3439,7 +3444,7 @@ void MainWindow::on_btn_searchUsers_2_clicked()
 
     int numCols = result.record().count();
     ui->tableWidget_2->setColumnCount(numCols);
-    ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Program Code" << "Description");
+    ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Code" << "Description");
     int x = 0;
     int qt = result.size();
     qDebug() << qt;
@@ -6477,12 +6482,12 @@ void MainWindow::updatemenuforuser() {
 
     if (roleq.value(0).toString() == "STANDARD") {
         QSizePolicy sp_retain = ui->caseButton->sizePolicy();
-        sp_retain.setRetainSizeWhenHidden(true);
+        //sp_retain.setRetainSizeWhenHidden(true);
         ui->caseButton->setSizePolicy(sp_retain);
         ui->caseButton->hide();
 
         QSizePolicy sp_retain2 = ui->caseButton->sizePolicy();
-        sp_retain2.setRetainSizeWhenHidden(true);
+        //sp_retain2.setRetainSizeWhenHidden(true);
         ui->adminButton->setSizePolicy(sp_retain2);
         ui->adminButton->hide();
 
@@ -6492,7 +6497,7 @@ void MainWindow::updatemenuforuser() {
         currentrole = STANDARD;
     } else if (roleq.value(0).toString() == "CASE WORKER") {
         QSizePolicy sp_retain = ui->caseButton->sizePolicy();
-        sp_retain.setRetainSizeWhenHidden(true);
+        //sp_retain.setRetainSizeWhenHidden(true);
         ui->adminButton->setSizePolicy(sp_retain);
         ui->adminButton->hide();
 
