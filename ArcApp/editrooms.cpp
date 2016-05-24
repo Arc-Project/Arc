@@ -141,7 +141,7 @@ void EditRooms::searchAvailable(QString program){
     swapping = false;
     addQuery = false;
     hideSwap();
-    ui->editMoveType->setText("Move to Free Room");
+    ui->editMoveType->setText("Moving current client to an unoccupied room");
 
     QSqlQuery result;
     result = dbManager->getCurrentBooking(curBook->startDate, curBook->endDate, program);
@@ -224,7 +224,7 @@ void EditRooms::on_editSwap_clicked()
 {
     showSwap();
     addQuery = true;
-    ui->editMoveType->setText("Moving to Occupied Room");
+    ui->editMoveType->setText("Moving current client to an occupied room");
     QSqlQuery result;
     result = dbManager->getNextBooking(curBook->endDate, curBook->roomId);
     int x = 0;
