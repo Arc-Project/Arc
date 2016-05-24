@@ -154,7 +154,7 @@ public:
     double getBookingCost(QString bookId);
     double getDoubleBalance(QString clientId);
     bool checkDoubleBook(QString clientId);
-
+    bool isBanned(QString clientId);
     //END COLIN STUFF///////////////////////////////////////////////////////
     void print();
     QSqlQuery loginSelect(QString username, QString password);
