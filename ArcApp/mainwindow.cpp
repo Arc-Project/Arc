@@ -6256,9 +6256,9 @@ void MainWindow::on_chk_filter_clicked()
     if (ui->chk_filter->isChecked()){
         int nRow = ui->tableWidget_search_client->currentRow();
 
-        QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+        QStringList filter = (QStringList() << ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
                               ui->tableWidget_search_client->item(nRow, 2)->text() + "*");
-        qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " + ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
+        qDebug() << ui->tableWidget_search_client->item(nRow, 1)->text() + ", " + ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
         populate_tw_caseFiles(filter);
     } else {
         QStringList filter;
