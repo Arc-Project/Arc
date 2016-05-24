@@ -1428,12 +1428,28 @@ void MainWindow::on_editRoom_clicked()
     delete(edit);
 
 }
+void MainWindow::doAlert(QString message){
+    QString tmpStyleSheet=this->styleSheet();
+    this->setStyleSheet("");
+
+    QMessageBox::question(this, "Alert", message, QMessageBox::Ok);
+
+    this->setStyleSheet(tmpStyleSheet);
+
+
+}
 
 void MainWindow::on_pushButton_bookRoom_clicked()
 {
     addHistory(CLIENTLOOKUP);
     qDebug()<<"push book room";
     setSelectedClientInfo();
+    if(!dbManager->checkDoubleBook(curClient->clientId))
+    {
+
+        doAlert("Client already has an active booking");
+        return;
+    }
     /*
     curClient = new Client();
     int nRow = ui->tableWidget_search_client->currentRow();
@@ -1632,437 +1648,6 @@ void MainWindow::on_reportsButton_clicked()
     }
 }
 
-
-/*===================================================================
-  REGISTRATION PAGE
-  ===================================================================*/
-
-void MainWindow::getCurrentClientId(){
-    int nRow = ui->tableWidget_search_client->currentRow();
-    if (nRow <0)
-        return;
-    curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
-
-}
-
-//Client Regiter widget [TAKE A PICTURE] button
-void MainWindow::on_button_cl_takePic_clicked()
-{
-    TakePhoto *camDialog = new TakePhoto();
-
-    connect(camDialog, SIGNAL(showPic(QImage)), this, SLOT(addPic(QImage)));
-    camDialog->show();
-}
-
-//delete client picture
-void MainWindow::on_button_cl_delPic_clicked()
-{
-    QGraphicsScene *scene = new QGraphicsScene();
-    scene->clear();
-    profilePic = (QImage)NULL;
-    ui->graphicsView_cl_pic->setScene(scene);
-
-    //delete picture function to database
-
-}
-//upload picture from file
-void MainWindow::on_button_cl_uploadpic_clicked()
-{
-    QString strFilePath = MainWindow::browse();
-
-    if (!strFilePath.isEmpty())
-    {
-        QImage img(strFilePath);
-        profilePic = img.scaledToWidth(300);
-        addPic(profilePic);
-    }
-    else
-    {
-        qDebug() << "Empty file path";
-    }
-}
-
-/*------------------------------------------------------------------
-  add picture into graphicview (after taking picture in pic dialog
-  ------------------------------------------------------------------*/
-void MainWindow::addPic(QImage pict){
-
-  //  qDebug()<<"ADDPIC";
-    profilePic = pict.copy();
-    QPixmap item = QPixmap::fromImage(pict);
-    QPixmap scaled = QPixmap(item.scaledToWidth((int)(ui->graphicsView_cl_pic->width()*0.9), Qt::SmoothTransformation));
-    QGraphicsScene *scene = new QGraphicsScene();
-    scene->addPixmap(QPixmap(scaled));
-    ui->graphicsView_cl_pic->setScene(scene);
-    ui->graphicsView_cl_pic->show();
-}
-
-
-
-void MainWindow::on_button_clear_client_regForm_clicked()
-{
-    clear_client_register_form();
-}
-void MainWindow::on_checkBox_cl_dob_no_clicked(bool checked)
-{
-        ui->dateEdit_cl_dob->setEnabled(!checked);
-}
-
-void MainWindow::getListRegisterFields(QStringList* fieldList)
-{
-    QString caseWorkerId = QString::number(caseWorkerList.value(ui->comboBox_cl_caseWorker->currentText()));
-    if(caseWorkerId == "0")
-        caseWorkerId = "";
-
-    QString firstName = ui->lineEdit_cl_fName->text();
-    QString middleName = ui->lineEdit_cl_mName->text();
-    QString lastName = ui->lineEdit_cl_lName->text();
-
-    if (!firstName.isEmpty())
-        firstName[0] = firstName[0].toUpper();
-    if (!middleName.isEmpty())
-        middleName[0] = middleName[0].toUpper();
-    if (!lastName.isEmpty())
-        lastName[0] = lastName[0].toUpper();
-
-    *fieldList << firstName
-               << middleName
-               << lastName
-               << (ui->checkBox_cl_dob_no->isChecked()? "" : ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd"))
-               << ui->lineEdit_cl_SIN->text()
-               << ui->lineEdit_cl_GANum->text()
-               << caseWorkerId   //QString::number(caseWorkerList.value(ui->comboBox_cl_caseWorker->currentText())) //grab value from case worker dropdown I don't know how to do it
-               << ui->dateEdit_cl_rulesign->date().toString("yyyy-MM-dd")
-               << ui->lineEdit_cl_nok_name->text()
-               << ui->lineEdit_cl_nok_relationship->text()
-               << ui->lineEdit_cl_nok_loc->text()
-               << ui->lineEdit_cl_nok_ContactNo->text()
-               << ui->lineEdit_cl_phys_name->text()
-               << ui->lineEdit_cl_phys_ContactNo->text()
-               << ui->lineEdit_cl_supporter_Name->text()
-               << ui->lineEdit_cl_supporter_ContactNo->text()
-               << ui->lineEdit_cl_supporter2_Name->text()
-               << ui->lineEdit_cl_supporter2_ContactNo->text()
-               << ui->comboBox_cl_status->currentText() //grab value from status dropdown
-               << ui->plainTextEdit_cl_comments->toPlainText();
-
-}
-
-void MainWindow::getRegisterLogFields(QStringList* fieldList)
-{
-    QString firstName = ui->lineEdit_cl_fName->text();
-    QString middleName = ui->lineEdit_cl_mName->text();
-    QString lastName = ui->lineEdit_cl_lName->text();
-    QString fullName = "";
-
-    if (!lastName.isEmpty())
-    {
-        lastName[0] = lastName[0].toUpper();
-        fullName += QString(lastName + ", ");
-    }
-    if (!firstName.isEmpty())
-    {
-        firstName[0] = firstName[0].toUpper();
-        fullName += QString(firstName + " ");
-    }
-    if (!middleName.isEmpty())
-    {
-        middleName[0] = middleName[0].toUpper();
-        fullName += QString(middleName + " ");
-    }
-
-    QString action;
-    if(registerType == NEWCLIENT || ui->button_register_client->text() == "Register")
-        action = "Registered";
-    else if(registerType == EDITCLIENT)
-        action = "Updated";
-    else if(registerType == DELETECLIENT)
-        action = "Deleted";
-    else
-        return;
-
-    *fieldList << fullName
-               << action
-               << QDate::currentDate().toString("yyyy-MM-dd")
-               << QString::number(currentshiftid) // get shift number
-               << QTime::currentTime().toString("hh:mm:ss")
-               << usernameLoggedIn; //employee name
-
-}
-
-void MainWindow::clear_client_register_form(){
-    ui->lineEdit_cl_fName->clear();
-    ui->lineEdit_cl_mName->clear();
-    ui->lineEdit_cl_lName->clear();
-    ui->lineEdit_cl_SIN->clear();
-    ui->lineEdit_cl_GANum->clear();
-    ui->comboBox_cl_caseWorker->setCurrentIndex(0);
-    ui->lineEdit_cl_nok_name->clear();
-    ui->lineEdit_cl_nok_relationship->clear();
-    ui->lineEdit_cl_nok_loc->clear();
-    ui->lineEdit_cl_nok_ContactNo->clear();
-    ui->lineEdit_cl_phys_name->clear();
-    ui->lineEdit_cl_phys_ContactNo->clear();
-    ui->lineEdit_cl_supporter_Name->clear();
-    ui->lineEdit_cl_supporter_ContactNo->clear();
-    ui->lineEdit_cl_supporter2_Name->clear();
-    ui->lineEdit_cl_supporter2_ContactNo->clear();
-
-    ui->comboBox_cl_status->setCurrentIndex(0);
-    ui->plainTextEdit_cl_comments->clear();
-    QDate defaultDob= QDate::fromString("1990-01-01","yyyy-MM-dd");
-    ui->dateEdit_cl_dob->setDate(defaultDob);
-    ui->checkBox_cl_dob_no->setChecked(false);
-    ui->dateEdit_cl_dob->setEnabled(true);
-    ui->dateEdit_cl_rulesign->setDate(QDate::currentDate());
-
-    QPalette pal;
-    pal.setColor(QPalette::Normal, QPalette::WindowText, Qt::black);
-    ui->label_cl_fName->setPalette(pal);
-    ui->label_cl_mName->setPalette(pal);
-    ui->label_cl_lName->setPalette(pal);
-
-
-    on_button_cl_delPic_clicked();
-}
-
-//read client information to edit
-void MainWindow::read_curClient_Information(QString ClientId){
-//    QString searchClientQ = "SELECT * FROM Client WHERE ClientId = "+ ClientId;
-//    qDebug()<<"SEARCH QUERY: " + searchClientQ;
-   // QSqlQuery clientInfo = dbManager->execQuery("SELECT * FROM Client WHERE ClientId = "+ ClientId);
-    QSqlQuery clientInfo = dbManager->searchTableClientInfo("Client", ClientId);
-//    dbManager->printAll(clientInfo);
-    clientInfo.next();
-
-    //input currentValue;
-
-    qDebug()<<"FNAme: "<<clientInfo.value(1).toString()<<"MNAme: "<<clientInfo.value(2).toString()<<"LNAME: "<<clientInfo.value(3).toString();
-    qDebug()<<"DOB: "<<clientInfo.value(4).toString() <<"GANUM: "<<clientInfo.value(6).toString()<<"SIN: "<<clientInfo.value(7).toString();
-
-    ui->lineEdit_cl_fName->setText(clientInfo.value(1).toString());
-
-    ui->lineEdit_cl_mName->setText(clientInfo.value(2).toString());
-    ui->lineEdit_cl_lName->setText(clientInfo.value(3).toString());
-
-    if(clientInfo.value(4).toString() == ""){
-        ui->checkBox_cl_dob_no->setChecked(true);
-        ui->dateEdit_cl_dob->setEnabled(false);
-    }
-    else{
-        ui->checkBox_cl_dob_no->setChecked(false);
-        ui->dateEdit_cl_dob->setEnabled(true);
-        ui->dateEdit_cl_dob->setDate(QDate::fromString(clientInfo.value(4).toString(),"yyyy-MM-dd"));
-    }
-    //balnace?
-    QString caseWorkerName = caseWorkerList.key(clientInfo.value(21).toInt());
-    ui->comboBox_cl_caseWorker->setCurrentText(caseWorkerName);
-    ui->lineEdit_cl_SIN->setText(clientInfo.value(6).toString());
-    ui->lineEdit_cl_GANum->setText(clientInfo.value(7).toString());
-    ui->dateEdit_cl_rulesign->setDate(QDate::fromString(clientInfo.value(8).toString(),"yyyy-MM-dd"));
-
-    //NEXT OF KIN FIELD
-    ui->lineEdit_cl_nok_name->setText(clientInfo.value(9).toString());
-    ui->lineEdit_cl_nok_relationship->setText(clientInfo.value(10).toString());
-    ui->lineEdit_cl_nok_loc->setText(clientInfo.value(11).toString());
-    ui->lineEdit_cl_nok_ContactNo->setText(clientInfo.value(12).toString());
-
-    //Physician
-    ui->lineEdit_cl_phys_name->setText(clientInfo.value(13).toString());
-    ui->lineEdit_cl_phys_ContactNo->setText(clientInfo.value(14).toString());
-
-    //Supporter
-    ui->lineEdit_cl_supporter_Name->setText(clientInfo.value(15).toString());
-    ui->lineEdit_cl_supporter_ContactNo->setText(clientInfo.value(16).toString());
-    ui->lineEdit_cl_supporter2_Name->setText(clientInfo.value(22).toString());
-    ui->lineEdit_cl_supporter2_ContactNo->setText(clientInfo.value(23).toString());
-
-    ui->comboBox_cl_status->setCurrentText(clientInfo.value(17).toString());
-
-    //comments
-    ui->plainTextEdit_cl_comments->clear();
-    ui->plainTextEdit_cl_comments->setPlainText(clientInfo.value(18).toString());
-
-
-    //picture
-    QByteArray data = clientInfo.value(20).toByteArray();
-    QImage profile = QImage::fromData(data, "PNG");
-    addPic(profile);
-
-}
-
-//Client information input and register click
-void MainWindow::on_button_register_client_clicked()
-{
-
-    if (MainWindow::check_client_register_form())
-    {
-        QStringList registerFieldList, logFieldList;
-        MainWindow::getListRegisterFields(&registerFieldList);
-        MainWindow::getRegisterLogFields(&logFieldList);
-        if(!dbManager->insertClientLog(&logFieldList))
-            return;
-
-        if(registerType == NEWCLIENT || ui->label_cl_infoedit_title->text() == "Register Client")
-        {
-
-            if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
-            {
-                statusBar()->showMessage("Client Registered Sucessfully.", 5000);
-                qDebug() << "Client registered successfully";
-
-                clear_client_register_form();
-                ui->stackedWidget->setCurrentIndex(1);
-            }
-            else
-            {
-                statusBar()->showMessage("Register Failed. Check information.", 5000);
-                qDebug() << "Could not register client";
-            }
-        }
-        else if(registerType == EDITCLIENT)
-        {
-            if (dbManager->updateClientWithPic(&registerFieldList, curClientID, &profilePic))
-            {
-                statusBar()->showMessage("Client information updated Sucessfully.");
-                qDebug() << "Client info edit successfully";
-                clear_client_register_form();
-                ui->stackedWidget->setCurrentIndex(1);
-            }
-            else
-            {
-                statusBar()->showMessage("Register Failed. Check information.");
-                qDebug() << "Could not edit client info";
-            }
-        }
-        else
-            return;
-
-    }
-    else
-    {
-        statusBar()->showMessage("Register Failed. Check information.");
-        qDebug() << "Register form check was false";
-    }
-}
-
-
-//check if the value is valid or not
-bool MainWindow::check_client_register_form(){
-    if(ui->lineEdit_cl_fName->text().isEmpty()
-            && ui->lineEdit_cl_mName->text().isEmpty()
-            && ui->lineEdit_cl_lName->text().isEmpty()){
-        statusBar()->showMessage(QString("Please Enter Name of Clients"), 5000);
-        QPalette pal;
-        pal.setColor(QPalette::Normal, QPalette::WindowText, Qt::red);
-        ui->label_cl_fName->setPalette(pal);
-        ui->label_cl_mName->setPalette(pal);
-        ui->label_cl_lName->setPalette(pal);
-        return false;
-    }
-
-    return true;
-}
-
-void MainWindow::getCaseWorkerList(){
-    QString caseWorkerquery = "SELECT Username, EmpId FROM Employee WHERE (Role = 'CASE WORKER' OR Role = 'ADMIN') ORDER BY Username";
-    QSqlQuery caseWorkers = dbManager->execQuery(caseWorkerquery);
-    //dbManager->printAll(caseWorkers);
-    caseWorkerList.clear();
-    while(caseWorkers.next()){
-        qDebug()<<"CASEWORKER: " <<caseWorkers.value(0).toString() << caseWorkers.value(1).toString();
-        if(!caseWorkerList.contains(caseWorkers.value(0).toString())){
-            qDebug()<<"no info of "<<caseWorkers.value(0).toString();
-            caseWorkerList.insert(caseWorkers.value(0).toString(), caseWorkers.value(1).toInt());
-       }
-    }
-}
-
-void MainWindow::defaultRegisterOptions(){
-    //add caseWorker Name
-
-    if(ui->comboBox_cl_caseWorker->findText("NONE")==-1){
-        ui->comboBox_cl_caseWorker->addItem("NONE");
-    }
-
-    if(caseWorkerUpdated){
-      if(ui->comboBox_cl_caseWorker->count() != caseWorkerList.count()+1){
-          qDebug()<<"CASE WORKER LIST UPDATE";
-          ui->comboBox_cl_caseWorker->clear();
-          ui->comboBox_cl_caseWorker->addItem("NONE");
-          QMap<QString, int>::const_iterator it = caseWorkerList.constBegin();
-          while(it != caseWorkerList.constEnd()){
-            if(ui->comboBox_cl_caseWorker->findText(it.key())== -1){
-                ui->comboBox_cl_caseWorker->addItem(it.key());
-            }
-            ++it;
-          }
-        }
-        caseWorkerUpdated = false;
-    }
-    if(ui->comboBox_cl_status->findText("Green")==-1){
-        ui->comboBox_cl_status->addItem("Green");
-        ui->comboBox_cl_status->addItem("Yellow");
-        ui->comboBox_cl_status->addItem("Red");
-    }
-
-}
-
-void MainWindow::on_button_cancel_client_register_clicked()
-{
-    clear_client_register_form();
-    ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
-}
-
-/*=============================================================================
- * DELETE CLIENT USING CLIENT ID
- * ==========================================================================*/
-void MainWindow::on_button_delete_client_clicked()
-{
-    //check if the user have permission or not.
-    registerType = DELETECLIENT;
-    if(currentrole != CASEWORKER && currentrole != ADMIN ){
-        statusBar()->showMessage("No permision to delete client! ", 5000);
-        ui->button_delete_client->hide();
-        return;
-    }
-    if(ui->lineEdit_cl_fName->text().toLower() == "anonymous" || ui->lineEdit_cl_lName->text().toLower() == "anonymous"){
-        statusBar()->showMessage("Cannot Delete anonymous.", 5000);
-        ui->button_delete_client->setEnabled(false);
-        return;
-    }
-    deleteClient();
-
-}
-
-
-void MainWindow::deleteClient(){
-
-
-    //confirm delete client
-    if(!doMessageBox(QString("Do you want delete '" + curClientName + "'?"))){
-        return;
-    }
-    QStringList logFieldList;
-    getRegisterLogFields(&logFieldList);
-    if(!dbManager->insertClientLog(&logFieldList)){
-        statusBar()->showMessage("Fail to delete Client. Please try again. ", 5000);
-        return;
-    }
-    if(!dbManager->deleteClientFromTable("Client", curClientID)){
-        statusBar()->showMessage("Fail to delete Client. Please try again. ", 5000);
-        return;
-    }
-
-    statusBar()->showMessage(QString(curClientName + " is deleted successfully"), 5000);
-    curClientID = "";
-    curClientName = "";
-    registerType = NOREGISTER;
-    //maybe need to block update
-
-    //move to main window
-    ui->stackedWidget->setCurrentIndex(MAINMENU);
-}
 
 /*==============================================================================
 SEARCH CLIENTS USING NAME
@@ -2269,16 +1854,7 @@ void MainWindow::setStorageClient(){
 void MainWindow::selected_client_info(int nRow, int nCol)
 {
     Q_UNUSED(nCol)
-    curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
-    ui->textEdit_cl_info_comment->clear();
-    newTrans = true;
-    newHistory = true;
-    getClientInfo();
-    initClTransactionTable();
-    initClBookHistoryTable();
-}
 
-void MainWindow::getClientInfo(){
     if(displayFuture.isRunning()|| !displayFuture.isFinished()){
         qDebug()<<"ProfilePic Is RUNNING";
         return;
@@ -2289,6 +1865,23 @@ void MainWindow::getClientInfo(){
          return;
        // displayPicFuture.cancel();
     }
+//    //clear scene
+//    QGraphicsScene *scene = new QGraphicsScene();
+//    scene->clear();
+//    ui->graphicsView_getInfo->setScene(scene);
+
+    curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
+    ui->textEdit_cl_info_comment->clear();
+    newTrans = true;
+    newHistory = true;
+    getClientInfo();
+    initClTransactionTable();
+    initClBookHistoryTable();
+}
+
+
+void MainWindow::getClientInfo(){
+
     ui->tabWidget_cl_info->setCurrentIndex(0);
     transacNum = 5;
     bookingNum = 5;
@@ -2705,6 +2298,438 @@ void MainWindow::initClientLookupInfo(){
     qDebug()<<"END BUTTON SETTUP";
 }
 
+
+/*===================================================================
+  REGISTRATION PAGE
+  ===================================================================*/
+
+void MainWindow::getCurrentClientId(){
+    int nRow = ui->tableWidget_search_client->currentRow();
+    if (nRow <0)
+        return;
+    curClientID = ui->tableWidget_search_client->item(nRow, 0)->text();
+
+}
+
+//Client Regiter widget [TAKE A PICTURE] button
+void MainWindow::on_button_cl_takePic_clicked()
+{
+    TakePhoto *camDialog = new TakePhoto();
+
+    connect(camDialog, SIGNAL(showPic(QImage)), this, SLOT(addPic(QImage)));
+    camDialog->show();
+}
+
+//delete client picture
+void MainWindow::on_button_cl_delPic_clicked()
+{
+    QGraphicsScene *scene = new QGraphicsScene();
+    scene->clear();
+    profilePic = (QImage)NULL;
+    ui->graphicsView_cl_pic->setScene(scene);
+
+    //delete picture function to database
+
+}
+//upload picture from file
+void MainWindow::on_button_cl_uploadpic_clicked()
+{
+    QString strFilePath = MainWindow::browse();
+
+    if (!strFilePath.isEmpty())
+    {
+        QImage img(strFilePath);
+        profilePic = img.scaledToWidth(300);
+        addPic(profilePic);
+    }
+    else
+    {
+        qDebug() << "Empty file path";
+    }
+}
+
+/*------------------------------------------------------------------
+  add picture into graphicview (after taking picture in pic dialog
+  ------------------------------------------------------------------*/
+void MainWindow::addPic(QImage pict){
+
+  //  qDebug()<<"ADDPIC";
+    profilePic = pict.copy();
+    QPixmap item = QPixmap::fromImage(pict);
+    QPixmap scaled = QPixmap(item.scaledToWidth((int)(ui->graphicsView_cl_pic->width()*0.9), Qt::SmoothTransformation));
+    QGraphicsScene *scene = new QGraphicsScene();
+    scene->addPixmap(QPixmap(scaled));
+    ui->graphicsView_cl_pic->setScene(scene);
+    ui->graphicsView_cl_pic->show();
+}
+
+
+
+void MainWindow::on_button_clear_client_regForm_clicked()
+{
+    clear_client_register_form();
+}
+void MainWindow::on_checkBox_cl_dob_no_clicked(bool checked)
+{
+        ui->dateEdit_cl_dob->setEnabled(!checked);
+}
+
+void MainWindow::getListRegisterFields(QStringList* fieldList)
+{
+    QString caseWorkerId = QString::number(caseWorkerList.value(ui->comboBox_cl_caseWorker->currentText()));
+    if(caseWorkerId == "0")
+        caseWorkerId = "";
+
+    QString firstName = ui->lineEdit_cl_fName->text();
+    QString middleName = ui->lineEdit_cl_mName->text();
+    QString lastName = ui->lineEdit_cl_lName->text();
+
+    if (!firstName.isEmpty())
+        firstName[0] = firstName[0].toUpper();
+    if (!middleName.isEmpty())
+        middleName[0] = middleName[0].toUpper();
+    if (!lastName.isEmpty())
+        lastName[0] = lastName[0].toUpper();
+
+    *fieldList << firstName
+               << middleName
+               << lastName
+               << (ui->checkBox_cl_dob_no->isChecked()? "" : ui->dateEdit_cl_dob->date().toString("yyyy-MM-dd"))
+               << ui->lineEdit_cl_SIN->text()
+               << ui->lineEdit_cl_GANum->text()
+               << caseWorkerId   //QString::number(caseWorkerList.value(ui->comboBox_cl_caseWorker->currentText())) //grab value from case worker dropdown I don't know how to do it
+               << ui->dateEdit_cl_rulesign->date().toString("yyyy-MM-dd")
+               << ui->lineEdit_cl_nok_name->text()
+               << ui->lineEdit_cl_nok_relationship->text()
+               << ui->lineEdit_cl_nok_loc->text()
+               << ui->lineEdit_cl_nok_ContactNo->text()
+               << ui->lineEdit_cl_phys_name->text()
+               << ui->lineEdit_cl_phys_ContactNo->text()
+               << ui->lineEdit_cl_supporter_Name->text()
+               << ui->lineEdit_cl_supporter_ContactNo->text()
+               << ui->lineEdit_cl_supporter2_Name->text()
+               << ui->lineEdit_cl_supporter2_ContactNo->text()
+               << ui->comboBox_cl_status->currentText() //grab value from status dropdown
+               << ui->plainTextEdit_cl_comments->toPlainText();
+
+}
+
+void MainWindow::getRegisterLogFields(QStringList* fieldList)
+{
+    QString firstName = ui->lineEdit_cl_fName->text();
+    QString middleName = ui->lineEdit_cl_mName->text();
+    QString lastName = ui->lineEdit_cl_lName->text();
+    QString fullName = "";
+
+    if (!lastName.isEmpty())
+    {
+        lastName[0] = lastName[0].toUpper();
+        fullName += QString(lastName + ", ");
+    }
+    if (!firstName.isEmpty())
+    {
+        firstName[0] = firstName[0].toUpper();
+        fullName += QString(firstName + " ");
+    }
+    if (!middleName.isEmpty())
+    {
+        middleName[0] = middleName[0].toUpper();
+        fullName += QString(middleName + " ");
+    }
+
+    QString action;
+    if(registerType == NEWCLIENT || ui->button_register_client->text() == "Register")
+        action = "Registered";
+    else if(registerType == EDITCLIENT)
+        action = "Updated";
+    else if(registerType == DELETECLIENT)
+        action = "Deleted";
+    else
+        return;
+
+    *fieldList << fullName
+               << action
+               << QDate::currentDate().toString("yyyy-MM-dd")
+               << QString::number(currentshiftid) // get shift number
+               << QTime::currentTime().toString("hh:mm:ss")
+               << usernameLoggedIn; //employee name
+
+}
+
+void MainWindow::clear_client_register_form(){
+    ui->lineEdit_cl_fName->clear();
+    ui->lineEdit_cl_mName->clear();
+    ui->lineEdit_cl_lName->clear();
+    ui->lineEdit_cl_SIN->clear();
+    ui->lineEdit_cl_GANum->clear();
+    ui->comboBox_cl_caseWorker->setCurrentIndex(0);
+    ui->lineEdit_cl_nok_name->clear();
+    ui->lineEdit_cl_nok_relationship->clear();
+    ui->lineEdit_cl_nok_loc->clear();
+    ui->lineEdit_cl_nok_ContactNo->clear();
+    ui->lineEdit_cl_phys_name->clear();
+    ui->lineEdit_cl_phys_ContactNo->clear();
+    ui->lineEdit_cl_supporter_Name->clear();
+    ui->lineEdit_cl_supporter_ContactNo->clear();
+    ui->lineEdit_cl_supporter2_Name->clear();
+    ui->lineEdit_cl_supporter2_ContactNo->clear();
+
+    ui->comboBox_cl_status->setCurrentIndex(0);
+    ui->plainTextEdit_cl_comments->clear();
+    QDate defaultDob= QDate::fromString("1990-01-01","yyyy-MM-dd");
+    ui->dateEdit_cl_dob->setDate(defaultDob);
+    ui->checkBox_cl_dob_no->setChecked(false);
+    ui->dateEdit_cl_dob->setEnabled(true);
+    ui->dateEdit_cl_rulesign->setDate(QDate::currentDate());
+
+    QPalette pal;
+    pal.setColor(QPalette::Normal, QPalette::WindowText, Qt::black);
+    ui->label_cl_fName->setPalette(pal);
+    ui->label_cl_mName->setPalette(pal);
+    ui->label_cl_lName->setPalette(pal);
+
+
+    on_button_cl_delPic_clicked();
+}
+
+//read client information to edit
+void MainWindow::read_curClient_Information(QString ClientId){
+//    QString searchClientQ = "SELECT * FROM Client WHERE ClientId = "+ ClientId;
+//    qDebug()<<"SEARCH QUERY: " + searchClientQ;
+   // QSqlQuery clientInfo = dbManager->execQuery("SELECT * FROM Client WHERE ClientId = "+ ClientId);
+    QSqlQuery clientInfo = dbManager->searchTableClientInfo("Client", ClientId);
+//    dbManager->printAll(clientInfo);
+    clientInfo.next();
+
+    //input currentValue;
+
+    qDebug()<<"FNAme: "<<clientInfo.value(1).toString()<<"MNAme: "<<clientInfo.value(2).toString()<<"LNAME: "<<clientInfo.value(3).toString();
+    qDebug()<<"DOB: "<<clientInfo.value(4).toString() <<"GANUM: "<<clientInfo.value(6).toString()<<"SIN: "<<clientInfo.value(7).toString();
+
+    ui->lineEdit_cl_fName->setText(clientInfo.value(1).toString());
+
+    ui->lineEdit_cl_mName->setText(clientInfo.value(2).toString());
+    ui->lineEdit_cl_lName->setText(clientInfo.value(3).toString());
+
+    if(clientInfo.value(4).toString() == ""){
+        ui->checkBox_cl_dob_no->setChecked(true);
+        ui->dateEdit_cl_dob->setEnabled(false);
+    }
+    else{
+        ui->checkBox_cl_dob_no->setChecked(false);
+        ui->dateEdit_cl_dob->setEnabled(true);
+        ui->dateEdit_cl_dob->setDate(QDate::fromString(clientInfo.value(4).toString(),"yyyy-MM-dd"));
+    }
+    QString caseWorkerName = caseWorkerList.key(clientInfo.value(21).toInt());
+    //balnace?
+    ui->comboBox_cl_caseWorker->setCurrentText(caseWorkerName);
+    ui->lineEdit_cl_SIN->setText(clientInfo.value(6).toString());
+    ui->lineEdit_cl_GANum->setText(clientInfo.value(7).toString());
+    ui->dateEdit_cl_rulesign->setDate(QDate::fromString(clientInfo.value(8).toString(),"yyyy-MM-dd"));
+
+    //NEXT OF KIN FIELD
+    ui->lineEdit_cl_nok_name->setText(clientInfo.value(9).toString());
+    ui->lineEdit_cl_nok_relationship->setText(clientInfo.value(10).toString());
+    ui->lineEdit_cl_nok_loc->setText(clientInfo.value(11).toString());
+    ui->lineEdit_cl_nok_ContactNo->setText(clientInfo.value(12).toString());
+
+    //Physician
+    ui->lineEdit_cl_phys_name->setText(clientInfo.value(13).toString());
+    ui->lineEdit_cl_phys_ContactNo->setText(clientInfo.value(14).toString());
+
+    //Supporter
+    ui->lineEdit_cl_supporter_Name->setText(clientInfo.value(15).toString());
+    ui->lineEdit_cl_supporter_ContactNo->setText(clientInfo.value(16).toString());
+    ui->lineEdit_cl_supporter2_Name->setText(clientInfo.value(22).toString());
+    ui->lineEdit_cl_supporter2_ContactNo->setText(clientInfo.value(23).toString());
+
+    ui->comboBox_cl_status->setCurrentText(clientInfo.value(17).toString());
+
+    //comments
+    ui->plainTextEdit_cl_comments->clear();
+    ui->plainTextEdit_cl_comments->setPlainText(clientInfo.value(18).toString());
+
+
+    //picture
+    QByteArray data = clientInfo.value(20).toByteArray();
+    QImage profile = QImage::fromData(data, "PNG");
+    addPic(profile);
+
+}
+
+//Client information input and register click
+void MainWindow::on_button_register_client_clicked()
+{
+
+    if (MainWindow::check_client_register_form())
+    {
+        QStringList registerFieldList, logFieldList;
+        MainWindow::getListRegisterFields(&registerFieldList);
+        MainWindow::getRegisterLogFields(&logFieldList);
+        if(!dbManager->insertClientLog(&logFieldList))
+            return;
+
+        if(registerType == NEWCLIENT || ui->label_cl_infoedit_title->text() == "Register Client")
+        {
+
+            if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
+            {
+                statusBar()->showMessage("Client Registered Sucessfully.", 5000);
+                qDebug() << "Client registered successfully";
+
+                clear_client_register_form();
+                ui->stackedWidget->setCurrentIndex(1);
+            }
+            else
+            {
+                statusBar()->showMessage("Register Failed. Check information.", 5000);
+                qDebug() << "Could not register client";
+            }
+        }
+        else if(registerType == EDITCLIENT)
+        {
+            if (dbManager->updateClientWithPic(&registerFieldList, curClientID, &profilePic))
+            {
+                statusBar()->showMessage("Client information updated Sucessfully.");
+                qDebug() << "Client info edit successfully";
+                clear_client_register_form();
+                ui->stackedWidget->setCurrentIndex(1);
+            }
+            else
+            {
+                statusBar()->showMessage("Register Failed. Check information.");
+                qDebug() << "Could not edit client info";
+            }
+        }
+        else
+            return;
+
+    }
+    else
+    {
+        statusBar()->showMessage("Register Failed. Check information.");
+        qDebug() << "Register form check was false";
+    }
+}
+
+
+//check if the value is valid or not
+bool MainWindow::check_client_register_form(){
+    if(ui->lineEdit_cl_fName->text().isEmpty()
+            && ui->lineEdit_cl_mName->text().isEmpty()
+            && ui->lineEdit_cl_lName->text().isEmpty()){
+        statusBar()->showMessage(QString("Please Enter Name of Clients"), 5000);
+        QPalette pal;
+        pal.setColor(QPalette::Normal, QPalette::WindowText, Qt::red);
+        ui->label_cl_fName->setPalette(pal);
+        ui->label_cl_mName->setPalette(pal);
+        ui->label_cl_lName->setPalette(pal);
+        return false;
+    }
+
+    return true;
+}
+
+void MainWindow::getCaseWorkerList(){
+//    QString caseWorkerquery = "SELECT EmpName, EmpId FROM Employee WHERE (Role = 'CASE WORKER' OR Role = 'ADMIN') ORDER BY Username";
+//    QSqlQuery caseWorkers = dbManager->execQuery(caseWorkerquery);
+    QSqlQuery caseWorkers = dbManager->getCaseWorkerList();
+    //dbManager->printAll(caseWorkers);
+    caseWorkerList.clear();
+    while(caseWorkers.next()){
+        qDebug()<<"CASEWORKER: " <<caseWorkers.value(0).toString() << caseWorkers.value(1).toString();
+        if(!caseWorkerList.contains(caseWorkers.value(0).toString())){
+            qDebug()<<"no info of "<<caseWorkers.value(0).toString();
+            caseWorkerList.insert(caseWorkers.value(0).toString(), caseWorkers.value(1).toInt());
+       }
+    }
+}
+
+void MainWindow::defaultRegisterOptions(){
+    //add caseWorker Name
+
+    if(ui->comboBox_cl_caseWorker->findText("NONE")==-1){
+        ui->comboBox_cl_caseWorker->addItem("NONE");
+    }
+
+    if(caseWorkerUpdated){
+      if(ui->comboBox_cl_caseWorker->count() != caseWorkerList.count()+1){
+          qDebug()<<"CASE WORKER LIST UPDATE";
+          ui->comboBox_cl_caseWorker->clear();
+          ui->comboBox_cl_caseWorker->addItem("NONE");
+          QMap<QString, int>::const_iterator it = caseWorkerList.constBegin();
+          while(it != caseWorkerList.constEnd()){
+            if(ui->comboBox_cl_caseWorker->findText(it.key())== -1){
+                ui->comboBox_cl_caseWorker->addItem(it.key());
+            }
+            ++it;
+          }
+        }
+        caseWorkerUpdated = false;
+    }
+    if(ui->comboBox_cl_status->findText("Green")==-1){
+        ui->comboBox_cl_status->addItem("Green");
+        ui->comboBox_cl_status->addItem("Yellow");
+        ui->comboBox_cl_status->addItem("Red");
+    }
+
+}
+
+void MainWindow::on_button_cancel_client_register_clicked()
+{
+    clear_client_register_form();
+    ui->stackedWidget->setCurrentIndex(CLIENTLOOKUP);
+}
+
+/*=============================================================================
+ * DELETE CLIENT USING CLIENT ID
+ * ==========================================================================*/
+void MainWindow::on_button_delete_client_clicked()
+{
+    //check if the user have permission or not.
+    registerType = DELETECLIENT;
+    if(currentrole != CASEWORKER && currentrole != ADMIN ){
+        statusBar()->showMessage("No permision to delete client! ", 5000);
+        ui->button_delete_client->hide();
+        return;
+    }
+    if(ui->lineEdit_cl_fName->text().toLower() == "anonymous" || ui->lineEdit_cl_lName->text().toLower() == "anonymous"){
+        statusBar()->showMessage("Cannot Delete anonymous.", 5000);
+        ui->button_delete_client->setEnabled(false);
+        return;
+    }
+    deleteClient();
+
+}
+
+
+void MainWindow::deleteClient(){
+
+
+    //confirm delete client
+    if(!doMessageBox(QString("Do you want delete '" + curClientName + "'?"))){
+        return;
+    }
+    QStringList logFieldList;
+    getRegisterLogFields(&logFieldList);
+    if(!dbManager->insertClientLog(&logFieldList)){
+        statusBar()->showMessage("Fail to delete Client. Please try again. ", 5000);
+        return;
+    }
+    if(!dbManager->deleteClientFromTable("Client", curClientID)){
+        statusBar()->showMessage("Fail to delete Client. Please try again. ", 5000);
+        return;
+    }
+
+    statusBar()->showMessage(QString(curClientName + " is deleted successfully"), 5000);
+    curClientID = "";
+    curClientName = "";
+    registerType = NOREGISTER;
+    //maybe need to block update
+
+    //move to main window
+    ui->stackedWidget->setCurrentIndex(MAINMENU);
+}
 
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -7706,4 +7731,6 @@ void MainWindow::addCurrencyNoSignToTableWidget(QTableWidget* table, int col){
         table->setItem(row, col, new QTableWidgetItem(value));
     }
 }
+
+
 
