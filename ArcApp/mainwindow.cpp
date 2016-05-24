@@ -1302,6 +1302,7 @@ void MainWindow::calcEditRefund(QDate date){
     int dUsed, mUsed, mRefund, dRefund;
     double adjustedDaily;
     double totalCost, dayCost, monthCost;
+    double refAmt = 1;
     std::pair<int, int> curLength = monthDay(curBook->startDate, date);
 
     dUsed = ui->editDayUsed->text().toInt();
@@ -1313,17 +1314,30 @@ void MainWindow::calcEditRefund(QDate date){
         if(curBook->cost > editExpected){
             qDebug() << "Warning, booking more expensive than expected";
         }
-       adjustedDaily = curBook->cost / curBook->stayLength;
+      /* adjustedDaily = curBook->cost / curBook->stayLength;
        int numDays = date.toJulianDay() - curBook->startDate.toJulianDay();
        dayCost = numDays * adjustedDaily;
        monthCost = 0;
-    }else{
-        dayCost = curLength.second * dCost;
-        if(dayCost > mCost)
-            dayCost = mCost;
-        monthCost = curLength.first * mCost;
+       */
+        if(curBook->cost == 0){
+            refAmt = 0;
+        }
+        else if(editExpected == 0){
+            refAmt = 1;
+        }
+        else{
+            refAmt = curBook->cost / editExpected;
+            if(refAmt > 1)
+                refAmt = 1;
+        }
 
     }
+    dayCost = curLength.second * dCost;
+    if(dayCost > mCost)
+        dayCost = mCost;
+    monthCost = curLength.first * mCost;
+
+
     double refundCost;
     if(!checkNumber(ui->editCancel->text())){
         refundCost = 0;
@@ -1335,8 +1349,8 @@ void MainWindow::calcEditRefund(QDate date){
     if(date > curBook->endDate){
         refundCost = 0;
     }
-    totalCost = curBook->cost - (dayCost + monthCost + refundCost);
-    double labelCost = dayCost + monthCost + refundCost;
+    totalCost = curBook->cost - ((dayCost + monthCost) * refAmt + refundCost);
+    double labelCost = (dayCost + monthCost) * refAmt + refundCost;
     if(curBook->endDate >= date){
         if(totalCost < 0)
             totalCost = 0;
@@ -1347,17 +1361,17 @@ void MainWindow::calcEditRefund(QDate date){
         ui->editRefOwe->setText("Expected Amount Owed");
         ui->editRefundLabel->setText("Amount Owed");
         ui->editRefundAmt->setText(QString::number(totalCost * -1, 'f',2));
-        ui->editRefundAmount->setText("-$"+QString::number(totalCost * -1, 'f', 2));
-
+        ui->editRefundAmount->setText("$"+QString::number(totalCost * -1, 'f', 2));
     }
     else{
         ui->editRefOwe->setText("Expected Refund Amount");
         ui->editRefundLabel->setText("Refund Amount");
         ui->editRefundAmt->setText(QString::number(totalCost, 'f',2));
         ui->editRefundAmount->setText("$"+QString::number(totalCost, 'f', 2));
-    }
-    ui->editCost->setText(QString::number(labelCost, 'f', 2));
 
+    }
+
+    ui->editCost->setText(QString::number(labelCost, 'f', 2));
 }
 
 void MainWindow::on_editManagePayment_clicked()
@@ -1637,6 +1651,34 @@ void MainWindow::on_button_cl_takePic_clicked()
     camDialog->show();
 }
 
+//delete client picture
+void MainWindow::on_button_cl_delPic_clicked()
+{
+    QGraphicsScene *scene = new QGraphicsScene();
+    scene->clear();
+    profilePic = (QImage)NULL;
+    ui->graphicsView_cl_pic->setScene(scene);
+
+    //delete picture function to database
+
+}
+//upload picture from file
+void MainWindow::on_button_cl_uploadpic_clicked()
+{
+    QString strFilePath = MainWindow::browse();
+
+    if (!strFilePath.isEmpty())
+    {
+        QImage img(strFilePath);
+        profilePic = img.scaledToWidth(300);
+        addPic(profilePic);
+    }
+    else
+    {
+        qDebug() << "Empty file path";
+    }
+}
+
 /*------------------------------------------------------------------
   add picture into graphicview (after taking picture in pic dialog
   ------------------------------------------------------------------*/
@@ -1652,16 +1694,7 @@ void MainWindow::addPic(QImage pict){
     ui->graphicsView_cl_pic->show();
 }
 
-void MainWindow::on_button_cl_delPic_clicked()
-{
-    QGraphicsScene *scene = new QGraphicsScene();
-    scene->clear();
-    profilePic = (QImage)NULL;
-    ui->graphicsView_cl_pic->setScene(scene);
 
-    //delete picture function to database
-
-}
 
 void MainWindow::on_button_clear_client_regForm_clicked()
 {
@@ -1872,7 +1905,7 @@ void MainWindow::on_button_register_client_clicked()
 
             if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
             {
-                statusBar()->showMessage("Client Registered Sucessfully.");
+                statusBar()->showMessage("Client Registered Sucessfully.", 5000);
                 qDebug() << "Client registered successfully";
 
                 clear_client_register_form();
@@ -1880,7 +1913,7 @@ void MainWindow::on_button_register_client_clicked()
             }
             else
             {
-                statusBar()->showMessage("Register Failed. Check information.");
+                statusBar()->showMessage("Register Failed. Check information.", 5000);
                 qDebug() << "Could not register client";
             }
         }
@@ -2714,7 +2747,7 @@ void MainWindow::on_btn_createNewUser_clicked()
             QStandardItemModel * model = new QStandardItemModel(0,0);
             model->clear();
             ui->tableWidget_3->clear();
-            ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+            //ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
             ui->tableWidget_3->setColumnCount(4);
             ui->tableWidget_3->setRowCount(0);
             ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
@@ -2726,6 +2759,7 @@ void MainWindow::on_btn_createNewUser_clicked()
             ui->lineEdit_EmpName->setText("");
 
             on_btn_listAllUsers_clicked();
+            resizeTableView(ui->tableWidget_3);
         } else {
             ui->lbl_editUserWarning->setText("Something went wrong - please try again");
         }
@@ -2763,7 +2797,7 @@ void MainWindow::on_btn_listAllUsers_clicked()
 {
     ui->tableWidget_3->setRowCount(0);
     ui->tableWidget_3->clear();
-    ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+    //ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
 
     QSqlQuery result = dbManager->execQuery("SELECT Username, Password, Role, EmpName FROM Employee");
 
@@ -2783,6 +2817,7 @@ void MainWindow::on_btn_listAllUsers_clicked()
         }
         x++;
     }
+    resizeTableView(ui->tableWidget_3);
 }
 
 void MainWindow::on_btn_searchUsers_clicked()
@@ -2790,7 +2825,7 @@ void MainWindow::on_btn_searchUsers_clicked()
     QString ename = ui->le_users->text();
     ui->tableWidget_3->setRowCount(0);
     ui->tableWidget_3->clear();
-    ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+    //ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
 
     QSqlQuery result = dbManager->execQuery("SELECT Username, Password, Role, EmpName FROM Employee WHERE Username LIKE '%"+ ename +"%'");
 
@@ -2810,6 +2845,7 @@ void MainWindow::on_btn_searchUsers_clicked()
         }
         x++;
     }
+    resizeTableView(ui->tableWidget_3);
 
 
 //    QSqlQuery results = dbManager->execQuery("SELECT Username, Password, Role FROM Employee WHERE Username LIKE '%"+ ename +"%'");
@@ -3131,7 +3167,7 @@ void MainWindow::on_pushButton_4_clicked()
             QStandardItemModel * model = new QStandardItemModel(0,0);
             model->clear();
             ui->tableWidget_3->clear();
-            ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+            //ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
             ui->tableWidget_3->setColumnCount(4);
             ui->tableWidget_3->setRowCount(0);
             ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
@@ -3143,6 +3179,7 @@ void MainWindow::on_pushButton_4_clicked()
             ui->le_users->setText("");
 
             on_btn_listAllUsers_clicked();
+            resizeTableView(ui->tableWidget_3);
         } else {
             ui->lbl_editUserWarning->setText("Something went wrong - Please try again");
         }
@@ -3160,7 +3197,7 @@ void MainWindow::on_btn_displayUser_clicked()
     QStandardItemModel * model = new QStandardItemModel(0,0);
     model->clear();
     ui->tableWidget_3->clear();
-    ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+    //ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
     ui->tableWidget_3->setColumnCount(4);
     ui->tableWidget_3->setRowCount(0);
     ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
@@ -3170,6 +3207,7 @@ void MainWindow::on_btn_displayUser_clicked()
     ui->le_password->setText("");
     ui->lineEdit_EmpName->setText("");
     ui->le_users->setText("");
+    resizeTableView(ui->tableWidget_3);
 }
 
 void MainWindow::on_tableWidget_3_clicked(const QModelIndex &index)
@@ -3233,7 +3271,7 @@ void MainWindow::on_pushButton_6_clicked()
             QStandardItemModel * model = new QStandardItemModel(0,0);
             model->clear();
             ui->tableWidget_3->clear();
-            ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
+            //ui->tableWidget_3->horizontalHeader()->setStretchLastSection(true);
             ui->tableWidget_3->setColumnCount(4);
             ui->tableWidget_3->setRowCount(0);
             ui->tableWidget_3->setHorizontalHeaderLabels(QStringList() << "Username" << "Password" << "Role" << "Name");
@@ -3245,6 +3283,7 @@ void MainWindow::on_pushButton_6_clicked()
             ui->le_users->setText("");
 
             on_btn_listAllUsers_clicked();
+            resizeTableView(ui->tableWidget_3);
         } else {
             ui->lbl_editUserWarning->setText("Employee Not Found");
         }
@@ -3329,13 +3368,13 @@ void MainWindow::on_btn_listAllUsers_2_clicked()
 {
     ui->tableWidget_2->setRowCount(0);
     ui->tableWidget_2->clear();
-    ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
+    //ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
 
     QSqlQuery result = dbManager->execQuery("SELECT ProgramCode, Description FROM Program");
 
     int numCols = result.record().count();
     ui->tableWidget_2->setColumnCount(numCols);
-    ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Program Code" << "Description");
+    ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Code" << "Description");
     int x = 0;
     int qt = result.size();
     qDebug() << qt;
@@ -3349,6 +3388,7 @@ void MainWindow::on_btn_listAllUsers_2_clicked()
         }
         x++;
     }
+    resizeTableView(ui->tableWidget_2);
 }
 
 // search programs by code
@@ -3357,7 +3397,7 @@ void MainWindow::on_btn_searchUsers_2_clicked()
     QString ename = ui->le_users_2->text();
     ui->tableWidget_2->setRowCount(0);
     ui->tableWidget_2->clear();
-    ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
+    //ui->tableWidget_2->horizontalHeader()->setStretchLastSection(true);
 
     QSqlQuery result = dbManager->execQuery("SELECT ProgramCode, Description FROM Program WHERE ProgramCode LIKE '%"+ ename +"%'");
 
@@ -3377,6 +3417,7 @@ void MainWindow::on_btn_searchUsers_2_clicked()
         }
         x++;
     }
+    resizeTableView(ui->tableWidget_2);
 }
 
 // delete program
@@ -4783,7 +4824,7 @@ void MainWindow::on_btn_searchUsers_3_clicked()
     ui->tableWidget_5->clear();
     ui->tableWidget_5->horizontalHeader()->setStretchLastSection(true);
 
-    QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, cost, Monthly FROM Space WHERE SpaceCode LIKE '%"+ ename +"%'");
+    QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, cost, Monthly FROM Space WHERE SpaceCode LIKE '%"+ ename +"%' ORDER BY SpaceCode");
 
 //    int numCols = result.record().count();
     ui->tableWidget_5->setColumnCount(8);
@@ -6556,7 +6597,7 @@ void MainWindow::on_editDelete_clicked()
         doMessageBox("Admin only feature");
         return;
     }
-    if(!doMessageBox("Deleting is permenant, and no refund is given. Continue?"))
+    if(!doMessageBox("Deleting is permenant, booking cost is refunded. Continue?"))
         return;
     int row = ui->editLookupTable->selectionModel()->currentIndex().row();
     if(row == -1)
@@ -6565,6 +6606,15 @@ void MainWindow::on_editDelete_clicked()
     curBook = new Booking();
     bNew = true;
     popBookFromRow();
+    QSqlQuery result = dbManager->getBalance(curBook->clientId);
+    if(!result.next()){
+        return;
+    }
+    double curBal = result.value("Balance").toString().toDouble();
+    double bCost = dbManager->getBookingCost(curBook->bookID);
+    curBal -= bCost;
+    if(!dbManager->updateBalance(bCost, curBook->clientId))
+            qDebug() << "Error updating balance";
 
     if(!dbManager->deleteBooking(curBook->bookID)){
         qDebug() << "Error deleting booking";
@@ -7643,3 +7693,4 @@ void MainWindow::addCurrencyNoSignToTableWidget(QTableWidget* table, int col){
         table->setItem(row, col, new QTableWidgetItem(value));
     }
 }
+
