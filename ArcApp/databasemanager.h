@@ -153,7 +153,7 @@ public:
     QSqlQuery getRole(QString empName);
     double getBookingCost(QString bookId);
     double getDoubleBalance(QString clientId);
-
+    bool checkDoubleBook(QString clientId);
 
     //END COLIN STUFF///////////////////////////////////////////////////////
     void print();

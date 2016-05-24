@@ -60,21 +60,21 @@ QPushButton:checked {
 }
 
 QWidget#wdg_mainScreen QPushButton, QWidget#wdg_admin QPushButton/*, QWidget#wdg_reports QPushButton*/{
-	border: 2px solid rgb(49, 49, 49);
-	
+        border: 2px solid rgb(49, 49, 49);
+
 /*        border: 0px; */
         border-radius: 5px;
         color: white;
 
-       background-color: #CC0000;  
-	
-	background-color: qlineargradient(spread:pad, x1:0.7611, y1:0, x2:0.766, y2:1, stop:0 rgba(155, 20, 19, 255), stop:0.308458 rgba(229, 0, 0, 255), stop:0.711443 rgba(198, 0, 0, 255), stop:1 rgba(155, 20, 19, 255));
+       background-color: #CC0000;
+
+        background-color: qlineargradient(spread:pad, x1:0.7611, y1:0, x2:0.766, y2:1, stop:0 rgba(155, 20, 19, 255), stop:0.308458 rgba(229, 0, 0, 255), stop:0.711443 rgba(198, 0, 0, 255), stop:1 rgba(155, 20, 19, 255));
 }
 
 QWidget#wdg_mainScreen QPushButton:hover, QWidget#wdg_admin QPushButton:hover/*, QWidget#wdg_reports QPushButton:hover*/{
 /*	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ff9090, stop: 1 #f80000); */
-	
-	background-color: qlineargradient(spread:pad, x1:0.781, y1:0, x2:0.766, y2:1, stop:0 rgba(155, 20, 19, 255), stop:0.144279 rgba(229, 0, 0, 255), stop:0.890547 rgba(198, 0, 0, 255), stop:1 rgba(155, 20, 19, 255));
+
+        background-color: qlineargradient(spread:pad, x1:0.781, y1:0, x2:0.766, y2:1, stop:0 rgba(155, 20, 19, 255), stop:0.144279 rgba(229, 0, 0, 255), stop:0.890547 rgba(198, 0, 0, 255), stop:1 rgba(155, 20, 19, 255));
 }
 
 QWidget#wdg_mainScreen QPushButton:pressed, QWidget#wdg_admin QPushButton:pressed/*, QWidget#wdg_reports QPushButton:pressed*/{
@@ -165,11 +165,11 @@ QGraphicsView{
 }
 
 QHeaderView::section{
-		/*background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                /*background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                       stop:0 #616161, stop: 0.5 #505050,
                                       stop: 0.6 #434343, stop:1 #656565);*/
-		color: #670000;
-		font: bold;
+                color: #670000;
+                font: bold;
 }
 
 QCheckBox::indicator {
@@ -260,7 +260,7 @@ QHeaderView{
             </font>
            </property>
            <property name="text">
-            <string>Manage 
+            <string>Manage
 Payment</string>
            </property>
           </widget>

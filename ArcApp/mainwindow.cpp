@@ -1425,12 +1425,28 @@ void MainWindow::on_editRoom_clicked()
     delete(edit);
 
 }
+void MainWindow::doAlert(QString message){
+    QString tmpStyleSheet=this->styleSheet();
+    this->setStyleSheet("");
+
+    QMessageBox::question(this, "Alert", message, QMessageBox::Ok);
+
+    this->setStyleSheet(tmpStyleSheet);
+
+
+}
 
 void MainWindow::on_pushButton_bookRoom_clicked()
 {
     addHistory(CLIENTLOOKUP);
     qDebug()<<"push book room";
     setSelectedClientInfo();
+    if(!dbManager->checkDoubleBook(curClient->clientId))
+    {
+
+        doAlert("Client already has an active booking");
+        return;
+    }
     /*
     curClient = new Client();
     int nRow = ui->tableWidget_search_client->currentRow();
