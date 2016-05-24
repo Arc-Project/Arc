@@ -1446,8 +1446,9 @@ void MainWindow::on_pushButton_bookRoom_clicked()
     if(!dbManager->checkDoubleBook(curClient->clientId))
     {
 
-        doAlert("Client already has an active booking");
-        return;
+        //doAlert("Client already has an active booking");
+        if(!doMessageBox("Client has a current booking. Are you sure you wish to make another?"))
+            return;
     }
     if(!dbManager->isBanned(curClient->clientId)){
         if(!doMessageBox("User is currently restricted. Continue anyways?"))
@@ -1701,7 +1702,7 @@ void MainWindow::initClientLookupTable(){
     ui->tableWidget_search_client->setColumnCount(6);
     ui->tableWidget_search_client->clear();
 
-    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"First Name"<<"Middle Name"<<"Last Name"<<"DateOfBirth"<<"Balance");
+    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"First Name"<<"Middle Name"<<"Last Name"<<"Date of Birth"<<"Balance");
 
 
 
@@ -1756,7 +1757,7 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
     ui->tableWidget_search_client->setColumnCount(colCnt);
     ui->tableWidget_search_client->clear();
 
-    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"LastName"<<"FirstName"<<"Middle Initial"<<"DateOfBirth"<<"Balance");
+    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"Last Name"<<"First Name"<<"Middle Initial"<<"Date of Birth"<<"Balance");
 
 
     int row =0;
@@ -1972,6 +1973,7 @@ void MainWindow::displayClientInfoThread(QString val){
    ui->label_cl_info_Supporter2_name_val->setText(clientInfo.value(18).toString());
    ui->label_cl_info_Supporter2_contact_val->setText(clientInfo.value(19).toString());
    ui->textEdit_cl_info_comment->document()->setPlainText(clientInfo.value(20).toString());
+   ui->lbl_espDays->setText(clientInfo.value(21).toString());
 }
 
 void MainWindow::displayPicThread()
@@ -6256,9 +6258,9 @@ void MainWindow::on_chk_filter_clicked()
     if (ui->chk_filter->isChecked()){
         int nRow = ui->tableWidget_search_client->currentRow();
 
-        QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+        QStringList filter = (QStringList() << ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
                               ui->tableWidget_search_client->item(nRow, 2)->text() + "*");
-        qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " + ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
+        qDebug() << ui->tableWidget_search_client->item(nRow, 1)->text() + ", " + ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
         populate_tw_caseFiles(filter);
     } else {
         QStringList filter;
