@@ -725,7 +725,7 @@ bool DatabaseManager::insertClientWithPic(QStringList* registerFieldList, QImage
     {
         if (registerFieldList->at(i) != NULL)
         {
-           // qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
+            qDebug()<<"["<<i<<"] : "<<registerFieldList->at(i);
             query.addBindValue(registerFieldList->at(i));
         }
         else
