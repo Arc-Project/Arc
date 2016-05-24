@@ -535,7 +535,7 @@ QSqlQuery DatabaseManager::searchClientInfo(QString ClientId){
                       + QString("SinNo, GaNo, EmpId, DateRulesSigned, status, ")
                       + QString("NokName, NokRelationship, NokLocation, NokContactNo, PhysName, ")
                       + QString("PhysContactNo, SuppWorker1Name, SuppWorker1ContactNo, SuppWorker2Name, SuppWorker2ContactNo, ")
-                      + QString("Comments ")
+                      + QString("Comments, EspDays ")
                       + QString("FROM Client WHERE ClientId =" + ClientId));
 
 

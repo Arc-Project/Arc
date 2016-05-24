@@ -1702,7 +1702,7 @@ void MainWindow::initClientLookupTable(){
     ui->tableWidget_search_client->setColumnCount(6);
     ui->tableWidget_search_client->clear();
 
-    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"First Name"<<"Middle Name"<<"Last Name"<<"DateOfBirth"<<"Balance");
+    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"First Name"<<"Middle Name"<<"Last Name"<<"Date of Birth"<<"Balance");
 
 
 
@@ -1757,7 +1757,7 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
     ui->tableWidget_search_client->setColumnCount(colCnt);
     ui->tableWidget_search_client->clear();
 
-    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"LastName"<<"FirstName"<<"Middle Initial"<<"DateOfBirth"<<"Balance");
+    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"Last Name"<<"First Name"<<"Middle Initial"<<"Date of Birth"<<"Balance");
 
 
     int row =0;
@@ -1973,6 +1973,7 @@ void MainWindow::displayClientInfoThread(QString val){
    ui->label_cl_info_Supporter2_name_val->setText(clientInfo.value(18).toString());
    ui->label_cl_info_Supporter2_contact_val->setText(clientInfo.value(19).toString());
    ui->textEdit_cl_info_comment->document()->setPlainText(clientInfo.value(20).toString());
+   ui->lbl_espDays->setText(clientInfo.value(21).toString());
 }
 
 void MainWindow::displayPicThread()
