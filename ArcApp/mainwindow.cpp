@@ -161,9 +161,6 @@ void MainWindow::initCurrentWidget(int idx){
             ui->pushButton_search_client->setEnabled(true);
             //initimageview
             ui->actionExport_to_PDF->setEnabled(false);
-            ui->hs_brpp->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
-            ui->hs_ppcf->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
-            ui->hs_cfec->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
             break;
         case BOOKINGLOOKUP: //WIDGET 2
             qDebug()<<"###BOOKING LOOKUP Client INFO###";
@@ -222,6 +219,7 @@ void MainWindow::initCurrentWidget(int idx){
             ui->editLookupTable->clear();
             ui->editLookupTable->setRowCount(0);
             //initcode
+            ui->actionExport_to_PDF->setEnabled(true);
             break;
         case CLIENTREGISTER:    //WIDGET 10
             if((registerType == EDITCLIENT || registerType == DELETECLIENT)
@@ -538,6 +536,7 @@ void MainWindow::clearTable(QTableWidget * table){
 
 void MainWindow::on_editButton_clicked()
 {
+    ui->actionExport_to_PDF->setEnabled(false);
     addHistory(EDITBOOKING);
     setup = true;
     int row = ui->editLookupTable->selectionModel()->currentIndex().row();
@@ -2264,14 +2263,22 @@ void MainWindow::initClientLookupInfo(){
     }
     qDebug()<<"START HIDE BUTTON SETTUP";
     //hide buttons for different workflows
+
+            //     ui->hs_brpp->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
+            // ui->hs_ppcf->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
+            // ui->hs_cfec->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
     switch (workFlow){
     case BOOKINGPAGE:
         ui->pushButton_CaseFiles->setVisible(false);
         ui->pushButton_processPaymeent->setVisible(false);
         ui->pushButton_bookRoom->setVisible(true);
-        ui->hs_brpp->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
-        ui->hs_ppcf->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->hs_cfec->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_brpp->changeSize(13,20,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_ppcf->changeSize(0,0,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_cfec->changeSize(0,0,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        
+        // ui->hs_brpp->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+        // ui->hs_ppcf->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        // ui->hs_cfec->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
         break;
     case PAYMENTPAGE:
         ui->pushButton_CaseFiles->setVisible(false);
@@ -2293,9 +2300,9 @@ void MainWindow::initClientLookupInfo(){
         ui->pushButton_CaseFiles->setVisible(true);
         ui->pushButton_processPaymeent->setVisible(true);
         ui->pushButton_bookRoom->setVisible(true);
-        ui->hs_brpp->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->hs_ppcf->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->hs_cfec->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_brpp->changeSize(13,20,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_ppcf->changeSize(13,20,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_cfec->changeSize(13,20,QSizePolicy::Fixed,QSizePolicy::Fixed);
         ui->horizontalLayout_15->update();
         break;
     }
@@ -2929,6 +2936,10 @@ void MainWindow::on_tableWidget_3_doubleClicked(const QModelIndex &index)
 
 void MainWindow::on_pushButton_CaseFiles_clicked()
 {
+    if (currentrole == STANDARD) {
+        return;
+    }
+
     addHistory(CLIENTLOOKUP);
     qDebug()<<"push casefile";
     setSelectedClientInfo();
@@ -3436,7 +3447,7 @@ void MainWindow::on_btn_searchUsers_2_clicked()
 
     int numCols = result.record().count();
     ui->tableWidget_2->setColumnCount(numCols);
-    ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Program Code" << "Description");
+    ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Code" << "Description");
     int x = 0;
     int qt = result.size();
     qDebug() << qt;
@@ -5429,6 +5440,12 @@ void MainWindow::on_actionExport_to_PDF_triggered()
         report->recordCount << 1;
     }
 
+    // registry
+    if (ui->stackedWidget->currentIndex() == EDITBOOKING) {
+        rptTemplate = ":/templates/pdf/registry.xml";
+        report->recordCount << ui->editLookupTable->rowCount();
+    }
+
     report->loadReport(rptTemplate);
 
     connect(report, SIGNAL(setValue(const int, const QString, QVariant&, const int)),
@@ -5477,6 +5494,11 @@ void MainWindow::setValue(const int recNo, const QString paramName, QVariant &pa
     // customer receipt
     if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING) {
         printStaySummary(recNo, paramName, paramValue, reportPage);
+    }
+
+    // registry
+    if (ui->stackedWidget->currentIndex() == EDITBOOKING) {
+        printRegistry(recNo, paramName, paramValue, reportPage);
     }
 }
 
@@ -5664,7 +5686,6 @@ void MainWindow::printMonthlyReport(const int recNo, const QString paramName, QV
     }
 }
 
-
 void MainWindow::printRestrictionReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage){
     Q_UNUSED(paramName);
     if (reportPage == 0) {
@@ -5739,11 +5760,18 @@ void MainWindow::printStaySummary(const int recNo, const QString paramName, QVar
         paramValue = ui->confirmLength->text();
 
     } else if (paramName == "bedType") {
+        QString bedString;
         QString s = curBook->room;
-/*        QChar c = *s.rbegin();
-        if (c == 'M') paramValue = "Mat";
-        else if (c == 'B') paramValue = "Bed";
-*/
+        QChar c = *(s.end()-1);
+        qDebug() << "last char" << c;
+        if (c == 'M') bedString.append("Mat ");
+        else if (c == 'B') bedString.append("Bed ");
+
+        QStringList pieces = curBook->room.split( "-" );
+        bedString.append(pieces.value( pieces.length() - 1));
+        bedString.chop(1);
+        paramValue = bedString;
+
     } else if (paramName == "roomNo") {
         QString s = curBook->room;
         QRegExp rx("[-]");
@@ -5758,6 +5786,36 @@ void MainWindow::printStaySummary(const int recNo, const QString paramName, QVar
         qDebug() << result.lastError();
         while (result.next())
             paramValue = result.value(0).toString();
+    } else if (paramName == "desc") {
+        QSqlQuery result = dbManager->getProgramDesc(curBook->program);
+        qDebug() << result.lastError();
+        while (result.next())
+        paramValue = result.value(0).toString();
+    }
+}
+
+void MainWindow::printRegistry(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
+    if (paramName == "client") {
+        if (ui->editLookupTable->item(recNo, 0) == 0 ) return;
+         paramValue = ui->editLookupTable->item(recNo, 0)->text();
+    } else if (paramName == "space") {
+        if (ui->editLookupTable->item(recNo, 1) == 0 ) return;
+         paramValue = ui->editLookupTable->item(recNo, 1)->text();
+    } else if (paramName == "start") {
+        if (ui->editLookupTable->item(recNo, 2) == 0 ) return;
+         paramValue = ui->editLookupTable->item(recNo, 2)->text();
+    } else if (paramName == "end") {
+        if (ui->editLookupTable->item(recNo, 3) == 0 ) return;
+         paramValue = ui->editLookupTable->item(recNo, 0)->text();
+    } else if (paramName == "prog"){
+        if (ui->editLookupTable->item(recNo, 4) == 0 ) return;
+         paramValue = ui->editLookupTable->item(recNo, 1)->text();
+    } else if (paramName == "cost"){
+        if (ui->editLookupTable->item(recNo, 5) == 0 ) return;
+         paramValue = ui->editLookupTable->item(recNo, 1)->text();
+    } else if (paramName == "rate"){
+        if (ui->editLookupTable->item(recNo, 6) == 0 ) return;
+         paramValue = ui->editLookupTable->item(recNo, 1)->text();
     }
 }
 
@@ -6474,12 +6532,12 @@ void MainWindow::updatemenuforuser() {
 
     if (roleq.value(0).toString() == "STANDARD") {
         QSizePolicy sp_retain = ui->caseButton->sizePolicy();
-        sp_retain.setRetainSizeWhenHidden(true);
+        //sp_retain.setRetainSizeWhenHidden(true);
         ui->caseButton->setSizePolicy(sp_retain);
         ui->caseButton->hide();
 
         QSizePolicy sp_retain2 = ui->caseButton->sizePolicy();
-        sp_retain2.setRetainSizeWhenHidden(true);
+        //sp_retain2.setRetainSizeWhenHidden(true);
         ui->adminButton->setSizePolicy(sp_retain2);
         ui->adminButton->hide();
 
@@ -6489,7 +6547,7 @@ void MainWindow::updatemenuforuser() {
         currentrole = STANDARD;
     } else if (roleq.value(0).toString() == "CASE WORKER") {
         QSizePolicy sp_retain = ui->caseButton->sizePolicy();
-        sp_retain.setRetainSizeWhenHidden(true);
+        //sp_retain.setRetainSizeWhenHidden(true);
         ui->adminButton->setSizePolicy(sp_retain);
         ui->adminButton->hide();
 
@@ -7671,7 +7729,7 @@ void MainWindow::createTextReceipt(QString totalCost, QString payType, QString p
                                tr("Text File (*.txt)"));
     QFile file(fileName);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)){
-        statusBar()->showMessage(tr("Receipt file save failed. Please try saving again or saving to another directory."));
+        statusBar()->showMessage(tr("Receipt file save failed. Please try saving again or saving to another directory."), 4000);
         return;
     }
 
@@ -7709,7 +7767,7 @@ void MainWindow::createTextReceipt(QString totalCost, QString payType, QString p
            "\n"
            "\n"
            "Thank you for your custom";
-           statusBar()->showMessage(tr("Receipt file saved!"));
+           statusBar()->showMessage(tr("Receipt file saved!"), 4000);
 }
 
 void MainWindow::on_actionReceipt_triggered()
