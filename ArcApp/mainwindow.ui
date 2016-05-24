@@ -2295,13 +2295,10 @@ Payment</string>
            <zorder>groupBox_cl_info_personal</zorder>
            <zorder>verticalSpacer_39</zorder>
            <zorder>verticalSpacer_7</zorder>
-           <zorder></zorder>
-           <zorder></zorder>
            <zorder>textEdit_cl_info_comment</zorder>
            <zorder>verticalSpacer_10</zorder>
            <zorder>groupBox_cl_info_MSD</zorder>
            <zorder>groupBox_cl_info_MSD_2</zorder>
-           <zorder>horizontalLayoutWidget</zorder>
           </widget>
           <widget class="QWidget" name="tab_cl_transaction">
            <attribute name="title">
@@ -5591,8 +5588,8 @@ Payment</string>
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>1195</width>
-                 <height>1381</height>
+                 <width>1266</width>
+                 <height>1294</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -19037,7 +19034,7 @@ Payment</string>
      <x>0</x>
      <y>0</y>
      <width>1625</width>
-     <height>29</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="font">

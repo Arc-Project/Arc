@@ -743,7 +743,7 @@ void MainWindow::on_btn_payListAllUsers_clicked()
     QSqlQuery tempSql = dbManager->getOwingClients();
     heads << "First" << "Last" << "DOB" << "Balance" << "";
     cols << "FirstName" << "LastName" << "Dob" << "Balance" << "ClientId";
-    ui->mpTable->setColumnHidden(4, true);  
+    ui->mpTable->setColumnHidden(4, true);
     populateATable(ui->mpTable, heads, cols, tempSql, false);
     addCurrencyNoSignToTableWidget(ui->mpTable, 3);
     resizeTableView(ui->mpTable);
@@ -1016,9 +1016,9 @@ bool MainWindow::doMessageBox(QString message){
 
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, "Confirm", message, QMessageBox::Yes | QMessageBox::No);
-    
+
     this->setStyleSheet(tmpStyleSheet);
-    
+
     if(reply == QMessageBox::Yes){
         return true;
     }
@@ -1446,9 +1446,8 @@ void MainWindow::on_pushButton_bookRoom_clicked()
     if(!dbManager->checkDoubleBook(curClient->clientId))
     {
 
-        //doAlert("Client already has an active booking");
-        if(!doMessageBox("Client has a current booking. Are you sure you wish to make another?"))
-            return;
+        doAlert("Client already has an active booking");
+        return;
     }
     if(!dbManager->isBanned(curClient->clientId)){
         if(!doMessageBox("User is currently restricted. Continue anyways?"))
@@ -1702,7 +1701,7 @@ void MainWindow::initClientLookupTable(){
     ui->tableWidget_search_client->setColumnCount(6);
     ui->tableWidget_search_client->clear();
 
-    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"First Name"<<"Middle Name"<<"Last Name"<<"Date of Birth"<<"Balance");
+    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"First Name"<<"Middle Name"<<"Last Name"<<"DateOfBirth"<<"Balance");
 
 
 
@@ -1757,7 +1756,7 @@ void MainWindow::setup_searchClientTable(QSqlQuery results){
     ui->tableWidget_search_client->setColumnCount(colCnt);
     ui->tableWidget_search_client->clear();
 
-    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"Last Name"<<"First Name"<<"Middle Initial"<<"Date of Birth"<<"Balance");
+    ui->tableWidget_search_client->setHorizontalHeaderLabels(QStringList()<<"ClientID"<<"LastName"<<"FirstName"<<"Middle Initial"<<"DateOfBirth"<<"Balance");
 
 
     int row =0;
@@ -1973,7 +1972,6 @@ void MainWindow::displayClientInfoThread(QString val){
    ui->label_cl_info_Supporter2_name_val->setText(clientInfo.value(18).toString());
    ui->label_cl_info_Supporter2_contact_val->setText(clientInfo.value(19).toString());
    ui->textEdit_cl_info_comment->document()->setPlainText(clientInfo.value(20).toString());
-   ui->lbl_espDays->setText(clientInfo.value(21).toString());
 }
 
 void MainWindow::displayPicThread()
@@ -2276,7 +2274,7 @@ void MainWindow::initClientLookupInfo(){
         ui->hs_brpp->changeSize(13,20,QSizePolicy::Fixed,QSizePolicy::Fixed);
         ui->hs_ppcf->changeSize(0,0,QSizePolicy::Fixed,QSizePolicy::Fixed);
         ui->hs_cfec->changeSize(0,0,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        
+
         // ui->hs_brpp->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
         // ui->hs_ppcf->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
         // ui->hs_cfec->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
@@ -4100,7 +4098,9 @@ void MainWindow::on_removebedfromprogram_clicked()
         }
     }
     std::string tempstr = newtag.toStdString();
-    tempstr.pop_back();
+    if (tempstr != "") {
+        tempstr.pop_back();
+    }
     newtag = QString::fromStdString(tempstr);
 
     qDebug() << newtag;
@@ -4276,7 +4276,7 @@ void MainWindow::resizeTableView(QTableView* tableView)
             }
             if (tableView->columnWidth(i) != 0)
             {
-                tableView->setColumnWidth(i, tableView->columnWidth(i) + sizeIncrease);    
+                tableView->setColumnWidth(i, tableView->columnWidth(i) + sizeIncrease);
             }
         }
     }
@@ -6258,9 +6258,9 @@ void MainWindow::on_chk_filter_clicked()
     if (ui->chk_filter->isChecked()){
         int nRow = ui->tableWidget_search_client->currentRow();
 
-        QStringList filter = (QStringList() << ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+        QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
                               ui->tableWidget_search_client->item(nRow, 2)->text() + "*");
-        qDebug() << ui->tableWidget_search_client->item(nRow, 1)->text() + ", " + ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
+        qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " + ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
         populate_tw_caseFiles(filter);
     } else {
         QStringList filter;
@@ -6566,7 +6566,7 @@ void MainWindow::updatemenuforuser() {
     //display logged in user and current shift in status bar
     lbl_curUser = new QLabel("Logged in as: " + usernameLoggedIn + "  ");
     // lbl_curShift = new QLabel("Shift Number: " + currentshiftid);
-    lbl_curUser->setStyleSheet("font-size: 12pt");   
+    lbl_curUser->setStyleSheet("font-size: 12pt");
     statusBar()->addPermanentWidget(lbl_curUser);
     // statusBar()->addPermanentWidget(lbl_curShift);
 }
