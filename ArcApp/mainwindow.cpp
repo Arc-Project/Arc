@@ -200,6 +200,7 @@ void MainWindow::initCurrentWidget(int idx){
             //initcode
             break;
         case CASEFILE: //WIDGET 8
+            ui->chk_filter->setVisible(false); // broken
             ui->tabw_casefiles->setCurrentIndex(PERSIONACASEPLAN);
             ui->tableWidget_casefile_booking->verticalHeader()->show();
             ui->tableWidget_casefile_transaction->verticalHeader()->show();
