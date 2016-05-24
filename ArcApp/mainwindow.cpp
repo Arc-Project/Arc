@@ -161,9 +161,6 @@ void MainWindow::initCurrentWidget(int idx){
             ui->pushButton_search_client->setEnabled(true);
             //initimageview
             ui->actionExport_to_PDF->setEnabled(false);
-            ui->hs_brpp->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
-            ui->hs_ppcf->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
-            ui->hs_cfec->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
             break;
         case BOOKINGLOOKUP: //WIDGET 2
             qDebug()<<"###BOOKING LOOKUP Client INFO###";
@@ -2259,14 +2256,22 @@ void MainWindow::initClientLookupInfo(){
     }
     qDebug()<<"START HIDE BUTTON SETTUP";
     //hide buttons for different workflows
+
+            //     ui->hs_brpp->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
+            // ui->hs_ppcf->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
+            // ui->hs_cfec->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
     switch (workFlow){
     case BOOKINGPAGE:
         ui->pushButton_CaseFiles->setVisible(false);
         ui->pushButton_processPaymeent->setVisible(false);
         ui->pushButton_bookRoom->setVisible(true);
-        ui->hs_brpp->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
-        ui->hs_ppcf->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->hs_cfec->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_brpp->changeSize(13,20,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_ppcf->changeSize(0,0,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_cfec->changeSize(0,0,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        
+        // ui->hs_brpp->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+        // ui->hs_ppcf->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        // ui->hs_cfec->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
         break;
     case PAYMENTPAGE:
         ui->pushButton_CaseFiles->setVisible(false);
@@ -2288,9 +2293,9 @@ void MainWindow::initClientLookupInfo(){
         ui->pushButton_CaseFiles->setVisible(true);
         ui->pushButton_processPaymeent->setVisible(true);
         ui->pushButton_bookRoom->setVisible(true);
-        ui->hs_brpp->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->hs_ppcf->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->hs_cfec->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_brpp->changeSize(13,20,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_ppcf->changeSize(13,20,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_cfec->changeSize(13,20,QSizePolicy::Fixed,QSizePolicy::Fixed);
         ui->horizontalLayout_15->update();
         break;
     }
