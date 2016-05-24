@@ -204,7 +204,7 @@ QHeaderView{
      </rect>
     </property>
     <property name="currentIndex">
-     <number>15</number>
+     <number>10</number>
     </property>
     <widget class="QWidget" name="mainMenu">
      <layout class="QGridLayout" name="gridLayout_5">
@@ -899,6 +899,353 @@ QHeaderView{
           <string>Client General Info</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_23">
+          <item row="4" column="0" rowspan="7">
+           <layout class="QVBoxLayout" name="verticalLayout_22">
+            <item>
+             <spacer name="verticalSpacer_11">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::MinimumExpanding</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>5</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_4">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="title">
+               <string>Next of Kin</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_64">
+               <item row="0" column="0">
+                <layout class="QFormLayout" name="formLayout_14">
+                 <property name="verticalSpacing">
+                  <number>8</number>
+                 </property>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_cl_info_nok_name">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>13</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>11</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Name</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QLabel" name="label_cl_info_nok_name_val">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>150</width>
+                     <height>15</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>11</pointsize>
+                    </font>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_cl_info_nok_relationship">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>13</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>11</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Relationship</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QLabel" name="label_cl_info_nok_relationship_val">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>150</width>
+                     <height>15</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>11</pointsize>
+                    </font>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="label_cl_info_nok_loc">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>13</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>11</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Location</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QLabel" name="label_cl_info_nok_loc_val">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>150</width>
+                     <height>15</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>11</pointsize>
+                    </font>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="label_cl_info_nok_contatct">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>13</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>11</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Contact Number </string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="1">
+                  <widget class="QLabel" name="label_cl_info_nok_contatct_val">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>150</width>
+                     <height>15</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>11</pointsize>
+                    </font>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_client_info_physician">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>11</pointsize>
+               </font>
+              </property>
+              <property name="title">
+               <string>Physician</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_63">
+               <item row="0" column="0">
+                <layout class="QFormLayout" name="formLayout_15">
+                 <property name="verticalSpacing">
+                  <number>6</number>
+                 </property>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_cl_info_phys_name">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>13</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>11</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Name</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QLabel" name="label_cl_info_phys_name_val">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>150</width>
+                     <height>15</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>11</pointsize>
+                    </font>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_cl_info_phys_contact">
+                   <property name="minimumSize">
+                    <size>
+                     <width>100</width>
+                     <height>13</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>11</pointsize>
+                    </font>
+                   </property>
+                   <property name="text">
+                    <string>Contact Number </string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QLabel" name="label_cl_info_phys_contact_val">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>150</width>
+                     <height>15</height>
+                    </size>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <pointsize>11</pointsize>
+                    </font>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </item>
           <item row="0" column="0" rowspan="2">
            <widget class="QGroupBox" name="groupBox_cl_info_personal">
             <property name="sizePolicy">
@@ -915,7 +1262,7 @@ QHeaderView{
             </property>
             <property name="font">
              <font>
-              <pointsize>10</pointsize>
+              <pointsize>11</pointsize>
               <weight>75</weight>
               <bold>true</bold>
              </font>
@@ -930,19 +1277,19 @@ QHeaderView{
                 <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
                </property>
                <property name="verticalSpacing">
-                <number>12</number>
+                <number>10</number>
                </property>
                <item row="1" column="0">
                 <widget class="QLabel" name="label_cl_info_fName">
                  <property name="minimumSize">
                   <size>
                    <width>100</width>
-                   <height>20</height>
+                   <height>13</height>
                   </size>
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <pointsize>11</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -961,7 +1308,7 @@ QHeaderView{
                  <property name="minimumSize">
                   <size>
                    <width>150</width>
-                   <height>20</height>
+                   <height>15</height>
                   </size>
                  </property>
                  <property name="font">
@@ -982,12 +1329,12 @@ QHeaderView{
                  <property name="minimumSize">
                   <size>
                    <width>100</width>
-                   <height>20</height>
+                   <height>13</height>
                   </size>
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <pointsize>11</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -1006,7 +1353,7 @@ QHeaderView{
                  <property name="minimumSize">
                   <size>
                    <width>150</width>
-                   <height>20</height>
+                   <height>15</height>
                   </size>
                  </property>
                  <property name="font">
@@ -1027,12 +1374,12 @@ QHeaderView{
                  <property name="minimumSize">
                   <size>
                    <width>100</width>
-                   <height>20</height>
+                   <height>13</height>
                   </size>
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <pointsize>11</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -1051,7 +1398,7 @@ QHeaderView{
                  <property name="minimumSize">
                   <size>
                    <width>150</width>
-                   <height>20</height>
+                   <height>15</height>
                   </size>
                  </property>
                  <property name="font">
@@ -1072,12 +1419,12 @@ QHeaderView{
                  <property name="minimumSize">
                   <size>
                    <width>100</width>
-                   <height>20</height>
+                   <height>13</height>
                   </size>
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <pointsize>11</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -1096,7 +1443,7 @@ QHeaderView{
                  <property name="minimumSize">
                   <size>
                    <width>150</width>
-                   <height>20</height>
+                   <height>15</height>
                   </size>
                  </property>
                  <property name="font">
@@ -1117,12 +1464,12 @@ QHeaderView{
                  <property name="minimumSize">
                   <size>
                    <width>100</width>
-                   <height>20</height>
+                   <height>13</height>
                   </size>
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <pointsize>11</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -1141,7 +1488,7 @@ QHeaderView{
                  <property name="minimumSize">
                   <size>
                    <width>150</width>
-                   <height>20</height>
+                   <height>15</height>
                   </size>
                  </property>
                  <property name="font">
@@ -1162,12 +1509,12 @@ QHeaderView{
                  <property name="minimumSize">
                   <size>
                    <width>100</width>
-                   <height>20</height>
+                   <height>13</height>
                   </size>
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <pointsize>11</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -1186,7 +1533,7 @@ QHeaderView{
                  <property name="minimumSize">
                   <size>
                    <width>150</width>
-                   <height>20</height>
+                   <height>15</height>
                   </size>
                  </property>
                  <property name="font">
@@ -1207,12 +1554,12 @@ QHeaderView{
                  <property name="minimumSize">
                   <size>
                    <width>100</width>
-                   <height>20</height>
+                   <height>13</height>
                   </size>
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <pointsize>11</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -1231,7 +1578,7 @@ QHeaderView{
                  <property name="minimumSize">
                   <size>
                    <width>150</width>
-                   <height>20</height>
+                   <height>15</height>
                   </size>
                  </property>
                  <property name="font">
@@ -1252,12 +1599,12 @@ QHeaderView{
                  <property name="minimumSize">
                   <size>
                    <width>100</width>
-                   <height>20</height>
+                   <height>13</height>
                   </size>
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <pointsize>11</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -1276,7 +1623,7 @@ QHeaderView{
                  <property name="minimumSize">
                   <size>
                    <width>150</width>
-                   <height>20</height>
+                   <height>15</height>
                   </size>
                  </property>
                  <property name="font">
@@ -1297,7 +1644,7 @@ QHeaderView{
             </layout>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="5" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_72">
             <item>
              <spacer name="horizontalSpacer_58">
@@ -1379,7 +1726,44 @@ QHeaderView{
             </item>
            </layout>
           </item>
-          <item row="2" column="1">
+          <item row="9" column="1">
+           <spacer name="verticalSpacer_10">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Preferred</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>10</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="6" column="1">
+           <widget class="QLabel" name="label_cl_info_Comment_tag">
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Comments</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="1">
+           <widget class="QPlainTextEdit" name="textEdit_cl_info_comment">
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_cl_info_status" stretch="0">
             <property name="leftMargin">
              <number>0</number>
@@ -1477,10 +1861,7 @@ QHeaderView{
             </item>
            </layout>
           </item>
-          <item row="10" column="0" colspan="2">
-           <layout class="QHBoxLayout" name="horizontalLayout_107"/>
-          </item>
-          <item row="9" column="0" colspan="2">
+          <item row="13" column="0" colspan="2">
            <spacer name="verticalSpacer_39">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -1491,10 +1872,13 @@ QHeaderView{
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>40</height>
+              <height>10</height>
              </size>
             </property>
            </spacer>
+          </item>
+          <item row="14" column="0" colspan="2">
+           <layout class="QHBoxLayout" name="horizontalLayout_107"/>
           </item>
           <item row="1" column="1">
            <spacer name="verticalSpacer_7">
@@ -1507,649 +1891,263 @@ QHeaderView{
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>10</height>
+              <height>5</height>
              </size>
             </property>
            </spacer>
           </item>
-          <item row="4" column="1">
-           <widget class="QLabel" name="label_cl_info_Comment_tag">
-            <property name="font">
-             <font>
-              <pointsize>11</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Comments</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QPlainTextEdit" name="textEdit_cl_info_comment">
-            <property name="font">
-             <font>
-              <pointsize>11</pointsize>
-             </font>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="0" colspan="2">
-           <layout class="QHBoxLayout" name="horizontalLayout_79">
-            <item>
-             <widget class="QGroupBox" name="groupBox_cl_info_MSD">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <property name="title">
-               <string>Support Worker 1</string>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_62">
-               <item row="0" column="0">
-                <layout class="QFormLayout" name="formLayout_16">
-                 <property name="verticalSpacing">
-                  <number>7</number>
-                 </property>
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="label_cl_info_Supporter_name">
-                   <property name="minimumSize">
-                    <size>
-                     <width>100</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <pointsize>10</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Name</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="QLabel" name="label_cl_info_Supporter_contact">
-                   <property name="minimumSize">
-                    <size>
-                     <width>100</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <pointsize>10</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Contact Number </string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QLabel" name="label_cl_info_Supporter_name_val">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>150</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <pointsize>11</pointsize>
-                    </font>
-                   </property>
-                   <property name="autoFillBackground">
-                    <bool>true</bool>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QLabel" name="label_cl_info_Supporter_contact_val">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>150</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <pointsize>11</pointsize>
-                    </font>
-                   </property>
-                   <property name="autoFillBackground">
-                    <bool>true</bool>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="groupBox_cl_info_MSD_2">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <property name="title">
-               <string>Support Worker 2</string>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_61">
-               <item row="0" column="0">
-                <layout class="QFormLayout" name="formLayout_18">
-                 <property name="verticalSpacing">
-                  <number>7</number>
-                 </property>
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="label_cl_info_Supporter2_name">
-                   <property name="minimumSize">
-                    <size>
-                     <width>100</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <pointsize>10</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Name</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QLabel" name="label_cl_info_Supporter2_name_val">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>150</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <pointsize>11</pointsize>
-                    </font>
-                   </property>
-                   <property name="autoFillBackground">
-                    <bool>true</bool>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="QLabel" name="label_cl_info_Supporter2_contact">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>100</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <pointsize>10</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>Contact Number </string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QLabel" name="label_cl_info_Supporter2_contact_val">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>150</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                   <property name="font">
-                    <font>
-                     <pointsize>11</pointsize>
-                    </font>
-                   </property>
-                   <property name="autoFillBackground">
-                    <bool>true</bool>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-              </layout>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="6" column="1">
-           <spacer name="verticalSpacer_10">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Preferred</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>10</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="2" column="0" rowspan="5">
-           <widget class="QGroupBox" name="groupBox">
+          <item row="11" column="0">
+           <widget class="QGroupBox" name="groupBox_cl_info_MSD">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="font">
              <font>
-              <pointsize>10</pointsize>
-              <weight>75</weight>
-              <bold>true</bold>
+              <pointsize>11</pointsize>
              </font>
             </property>
             <property name="title">
-             <string>Contact Information</string>
+             <string>Support Worker 1</string>
             </property>
-            <layout class="QGridLayout" name="gridLayout_55">
+            <layout class="QGridLayout" name="gridLayout_62">
              <item row="0" column="0">
-              <widget class="QGroupBox" name="groupBox_4">
-               <property name="enabled">
-                <bool>true</bool>
+              <layout class="QFormLayout" name="formLayout_16">
+               <property name="verticalSpacing">
+                <number>6</number>
                </property>
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                </font>
-               </property>
-               <property name="title">
-                <string>Next of Kin</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_64">
-                <item row="0" column="0">
-                 <layout class="QFormLayout" name="formLayout_14">
-                  <property name="verticalSpacing">
-                   <number>7</number>
-                  </property>
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="label_cl_info_nok_name">
-                    <property name="minimumSize">
-                     <size>
-                      <width>100</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>10</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Name</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="1">
-                   <widget class="QLabel" name="label_cl_info_nok_name_val">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>150</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>11</pointsize>
-                     </font>
-                    </property>
-                    <property name="autoFillBackground">
-                     <bool>true</bool>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="0">
-                   <widget class="QLabel" name="label_cl_info_nok_relationship">
-                    <property name="minimumSize">
-                     <size>
-                      <width>100</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>10</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Relationship</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="1">
-                   <widget class="QLabel" name="label_cl_info_nok_relationship_val">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>150</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>11</pointsize>
-                     </font>
-                    </property>
-                    <property name="autoFillBackground">
-                     <bool>true</bool>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="2" column="0">
-                   <widget class="QLabel" name="label_cl_info_nok_loc">
-                    <property name="minimumSize">
-                     <size>
-                      <width>100</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>10</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Location</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="2" column="1">
-                   <widget class="QLabel" name="label_cl_info_nok_loc_val">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>150</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>11</pointsize>
-                     </font>
-                    </property>
-                    <property name="autoFillBackground">
-                     <bool>true</bool>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="3" column="0">
-                   <widget class="QLabel" name="label_cl_info_nok_contatct">
-                    <property name="minimumSize">
-                     <size>
-                      <width>100</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>10</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Contact Number </string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="3" column="1">
-                   <widget class="QLabel" name="label_cl_info_nok_contatct_val">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>150</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>11</pointsize>
-                     </font>
-                    </property>
-                    <property name="autoFillBackground">
-                     <bool>true</bool>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </widget>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_cl_info_Supporter_name">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>13</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Name</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_cl_info_Supporter_contact">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>13</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Contact Number </string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLabel" name="label_cl_info_Supporter_name_val">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>150</width>
+                   <height>15</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
+                 </property>
+                 <property name="autoFillBackground">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLabel" name="label_cl_info_Supporter_contact_val">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>150</width>
+                   <height>15</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
+                 </property>
+                 <property name="autoFillBackground">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
-             <item row="1" column="0">
-              <widget class="QGroupBox" name="groupBox_client_info_physician">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
+            </layout>
+           </widget>
+          </item>
+          <item row="11" column="1">
+           <widget class="QGroupBox" name="groupBox_cl_info_MSD_2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
+            </property>
+            <property name="title">
+             <string>Support Worker 2</string>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_61">
+             <item row="0" column="0">
+              <layout class="QFormLayout" name="formLayout_18">
+               <property name="verticalSpacing">
+                <number>6</number>
                </property>
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                </font>
-               </property>
-               <property name="title">
-                <string>Physician</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_63">
-                <item row="0" column="0">
-                 <layout class="QFormLayout" name="formLayout_15">
-                  <property name="verticalSpacing">
-                   <number>7</number>
-                  </property>
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="label_cl_info_phys_name">
-                    <property name="minimumSize">
-                     <size>
-                      <width>100</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>10</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Name</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="1">
-                   <widget class="QLabel" name="label_cl_info_phys_name_val">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>150</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>11</pointsize>
-                     </font>
-                    </property>
-                    <property name="autoFillBackground">
-                     <bool>true</bool>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="0">
-                   <widget class="QLabel" name="label_cl_info_phys_contact">
-                    <property name="minimumSize">
-                     <size>
-                      <width>100</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>10</pointsize>
-                     </font>
-                    </property>
-                    <property name="text">
-                     <string>Contact Number </string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="1">
-                   <widget class="QLabel" name="label_cl_info_phys_contact_val">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                     <size>
-                      <width>150</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                    <property name="font">
-                     <font>
-                      <pointsize>11</pointsize>
-                     </font>
-                    </property>
-                    <property name="autoFillBackground">
-                     <bool>true</bool>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </widget>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_cl_info_Supporter2_name">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>13</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Name</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLabel" name="label_cl_info_Supporter2_name_val">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>150</width>
+                   <height>15</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
+                 </property>
+                 <property name="autoFillBackground">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_cl_info_Supporter2_contact">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>13</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Contact Number </string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLabel" name="label_cl_info_Supporter2_contact_val">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>150</width>
+                   <height>15</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
+                 </property>
+                 <property name="autoFillBackground">
+                  <bool>true</bool>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </widget>
           </item>
          </layout>
          <zorder>label_cl_info_Comment_tag</zorder>
-         <zorder>textEdit_cl_info_comment</zorder>
          <zorder>groupBox_cl_info_personal</zorder>
-         <zorder>groupBox</zorder>
          <zorder>verticalSpacer_39</zorder>
          <zorder>verticalSpacer_7</zorder>
+         <zorder></zorder>
+         <zorder></zorder>
+         <zorder>verticalLayoutWidget</zorder>
+         <zorder>textEdit_cl_info_comment</zorder>
          <zorder>verticalSpacer_10</zorder>
+         <zorder>groupBox_cl_info_MSD</zorder>
+         <zorder>groupBox_cl_info_MSD_2</zorder>
         </widget>
         <widget class="QWidget" name="tab_cl_transaction">
          <attribute name="title">
@@ -8156,7 +8154,7 @@ QHeaderView{
              </property>
              <property name="font">
               <font>
-               <pointsize>14</pointsize>
+               <pointsize>13</pointsize>
               </font>
              </property>
             </widget>
@@ -8189,7 +8187,7 @@ QHeaderView{
              </property>
              <property name="font">
               <font>
-               <pointsize>14</pointsize>
+               <pointsize>13</pointsize>
               </font>
              </property>
             </widget>
@@ -8222,7 +8220,7 @@ QHeaderView{
              </property>
              <property name="font">
               <font>
-               <pointsize>14</pointsize>
+               <pointsize>13</pointsize>
               </font>
              </property>
             </widget>
@@ -8263,7 +8261,7 @@ QHeaderView{
                </property>
                <property name="font">
                 <font>
-                 <pointsize>14</pointsize>
+                 <pointsize>13</pointsize>
                 </font>
                </property>
                <property name="focusPolicy">
@@ -8291,7 +8289,7 @@ QHeaderView{
               <widget class="QCheckBox" name="checkBox_cl_dob_no">
                <property name="minimumSize">
                 <size>
-                 <width>90</width>
+                 <width>80</width>
                  <height>0</height>
                 </size>
                </property>
@@ -8335,7 +8333,7 @@ QHeaderView{
              </property>
              <property name="font">
               <font>
-               <pointsize>14</pointsize>
+               <pointsize>13</pointsize>
               </font>
              </property>
              <property name="inputMethodHints">
@@ -8371,7 +8369,7 @@ QHeaderView{
              </property>
              <property name="font">
               <font>
-               <pointsize>14</pointsize>
+               <pointsize>13</pointsize>
               </font>
              </property>
              <property name="text">
@@ -8407,7 +8405,7 @@ QHeaderView{
              </property>
              <property name="font">
               <font>
-               <pointsize>11</pointsize>
+               <pointsize>13</pointsize>
               </font>
              </property>
             </widget>
@@ -8440,7 +8438,7 @@ QHeaderView{
              </property>
              <property name="font">
               <font>
-               <pointsize>14</pointsize>
+               <pointsize>13</pointsize>
               </font>
              </property>
              <property name="focusPolicy">
@@ -8714,12 +8712,12 @@ QHeaderView{
             <enum>Qt::Vertical</enum>
            </property>
            <property name="sizeType">
-            <enum>QSizePolicy::Minimum</enum>
+            <enum>QSizePolicy::Preferred</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
-             <height>20</height>
+             <height>15</height>
             </size>
            </property>
           </spacer>
@@ -8730,12 +8728,12 @@ QHeaderView{
             <enum>Qt::Vertical</enum>
            </property>
            <property name="sizeType">
-            <enum>QSizePolicy::Minimum</enum>
+            <enum>QSizePolicy::Preferred</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
-             <height>20</height>
+             <height>15</height>
             </size>
            </property>
           </spacer>
@@ -8746,12 +8744,12 @@ QHeaderView{
             <enum>Qt::Vertical</enum>
            </property>
            <property name="sizeType">
-            <enum>QSizePolicy::Minimum</enum>
+            <enum>QSizePolicy::Preferred</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
-             <height>20</height>
+             <height>15</height>
             </size>
            </property>
           </spacer>
@@ -8780,14 +8778,20 @@ QHeaderView{
             <item>
              <layout class="QFormLayout" name="formLayout_20">
               <property name="verticalSpacing">
-               <number>17</number>
+               <number>6</number>
               </property>
               <item row="0" column="0">
                <widget class="QLabel" name="label_cl_supporter2_Name">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>28</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="font">
@@ -8802,25 +8806,37 @@ QHeaderView{
               </item>
               <item row="0" column="1">
                <widget class="QLineEdit" name="lineEdit_cl_supporter2_Name">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>35</height>
+                  <height>20</height>
                  </size>
                 </property>
                 <property name="font">
                  <font>
-                  <pointsize>11</pointsize>
+                  <pointsize>13</pointsize>
                  </font>
                 </property>
                </widget>
               </item>
               <item row="1" column="0">
                <widget class="QLabel" name="label_cl_supporter2_ContactNo">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>28</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="font">
@@ -8835,15 +8851,21 @@ QHeaderView{
               </item>
               <item row="1" column="1">
                <widget class="QLineEdit" name="lineEdit_cl_supporter2_ContactNo">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>35</height>
+                  <height>20</height>
                  </size>
                 </property>
                 <property name="font">
                  <font>
-                  <pointsize>11</pointsize>
+                  <pointsize>13</pointsize>
                  </font>
                 </property>
                </widget>
@@ -8873,14 +8895,20 @@ QHeaderView{
             <item>
              <layout class="QFormLayout" name="formLayout_4">
               <property name="verticalSpacing">
-               <number>17</number>
+               <number>6</number>
               </property>
               <item row="0" column="0">
                <widget class="QLabel" name="label_cl_supporter_Name">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>28</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="font">
@@ -8895,10 +8923,16 @@ QHeaderView{
               </item>
               <item row="1" column="0">
                <widget class="QLabel" name="label_cl_supporter_ContactNo">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>28</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="font">
@@ -8913,30 +8947,42 @@ QHeaderView{
               </item>
               <item row="0" column="1">
                <widget class="QLineEdit" name="lineEdit_cl_supporter_Name">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>35</height>
+                  <height>20</height>
                  </size>
                 </property>
                 <property name="font">
                  <font>
-                  <pointsize>11</pointsize>
+                  <pointsize>13</pointsize>
                  </font>
                 </property>
                </widget>
               </item>
               <item row="1" column="1">
                <widget class="QLineEdit" name="lineEdit_cl_supporter_ContactNo">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>35</height>
+                  <height>20</height>
                  </size>
                 </property>
                 <property name="font">
                  <font>
-                  <pointsize>11</pointsize>
+                  <pointsize>13</pointsize>
                  </font>
                 </property>
                </widget>
@@ -8948,6 +8994,12 @@ QHeaderView{
          </item>
          <item row="0" column="0">
           <widget class="QGroupBox" name="groupBox_cl_nok">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="font">
             <font>
              <pointsize>13</pointsize>
@@ -8960,17 +9012,23 @@ QHeaderView{
             <item>
              <layout class="QFormLayout" name="formLayout_2">
               <property name="horizontalSpacing">
-               <number>4</number>
+               <number>6</number>
               </property>
               <property name="verticalSpacing">
-               <number>17</number>
+               <number>9</number>
               </property>
               <item row="0" column="0">
                <widget class="QLabel" name="label_cl_nok_name">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>28</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="font">
@@ -8985,25 +9043,37 @@ QHeaderView{
               </item>
               <item row="0" column="1">
                <widget class="QLineEdit" name="lineEdit_cl_nok_name">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>35</height>
+                  <height>20</height>
                  </size>
                 </property>
                 <property name="font">
                  <font>
-                  <pointsize>14</pointsize>
+                  <pointsize>13</pointsize>
                  </font>
                 </property>
                </widget>
               </item>
               <item row="1" column="0">
                <widget class="QLabel" name="label_cl_nok_relationship">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>28</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="font">
@@ -9018,25 +9088,37 @@ QHeaderView{
               </item>
               <item row="1" column="1">
                <widget class="QLineEdit" name="lineEdit_cl_nok_relationship">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>35</height>
+                  <height>20</height>
                  </size>
                 </property>
                 <property name="font">
                  <font>
-                  <pointsize>14</pointsize>
+                  <pointsize>13</pointsize>
                  </font>
                 </property>
                </widget>
               </item>
               <item row="2" column="0">
                <widget class="QLabel" name="label_cl_nok_loc">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>28</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="font">
@@ -9051,25 +9133,37 @@ QHeaderView{
               </item>
               <item row="2" column="1">
                <widget class="QLineEdit" name="lineEdit_cl_nok_loc">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>35</height>
+                  <height>20</height>
                  </size>
                 </property>
                 <property name="font">
                  <font>
-                  <pointsize>14</pointsize>
+                  <pointsize>13</pointsize>
                  </font>
                 </property>
                </widget>
               </item>
               <item row="3" column="0">
                <widget class="QLabel" name="label_cl_nok_ContactNo">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>28</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="font">
@@ -9084,15 +9178,21 @@ QHeaderView{
               </item>
               <item row="3" column="1">
                <widget class="QLineEdit" name="lineEdit_cl_nok_ContactNo">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>35</height>
+                  <height>20</height>
                  </size>
                 </property>
                 <property name="font">
                  <font>
-                  <pointsize>14</pointsize>
+                  <pointsize>13</pointsize>
                  </font>
                 </property>
                </widget>
@@ -9113,7 +9213,7 @@ QHeaderView{
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
-             <height>20</height>
+             <height>10</height>
             </size>
            </property>
           </spacer>
@@ -9138,14 +9238,20 @@ QHeaderView{
             <item>
              <layout class="QFormLayout" name="formLayout_3">
               <property name="verticalSpacing">
-               <number>17</number>
+               <number>6</number>
               </property>
               <item row="0" column="0">
                <widget class="QLabel" name="label_cl_phys_name">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>28</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="font">
@@ -9160,10 +9266,16 @@ QHeaderView{
               </item>
               <item row="1" column="0">
                <widget class="QLabel" name="label_cl_phys_ContactNo">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>28</height>
+                  <height>18</height>
                  </size>
                 </property>
                 <property name="font">
@@ -9178,30 +9290,42 @@ QHeaderView{
               </item>
               <item row="0" column="1">
                <widget class="QLineEdit" name="lineEdit_cl_phys_name">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>35</height>
+                  <height>20</height>
                  </size>
                 </property>
                 <property name="font">
                  <font>
-                  <pointsize>14</pointsize>
+                  <pointsize>13</pointsize>
                  </font>
                 </property>
                </widget>
               </item>
               <item row="1" column="1">
                <widget class="QLineEdit" name="lineEdit_cl_phys_ContactNo">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>35</height>
+                  <height>20</height>
                  </size>
                 </property>
                 <property name="font">
                  <font>
-                  <pointsize>14</pointsize>
+                  <pointsize>13</pointsize>
                  </font>
                 </property>
                </widget>

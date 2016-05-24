@@ -807,6 +807,18 @@ bool DatabaseManager::deleteClientFromTable(QString tableName, QString ClientId)
     return query.exec();
 }
 
+QSqlQuery DatabaseManager::getCaseWorkerList(){
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    query.prepare(QString("SELECT EmpName, EmpId FROM Employee ")
+                + QString("WHERE (Role = 'CASE WORKER' OR Role = 'ADMIN') ")
+                + QString("ORDER BY EmpName"));
+    query.exec();
+    qDebug()<<"CASEWORKERS";
+
+    return query;
+}
+
 /* .............................................................
          CLIENT REGISTER FINISHED
   ==============================================================*/
