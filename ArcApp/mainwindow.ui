@@ -60,20 +60,21 @@ QPushButton:checked {
 }
 
 QWidget#wdg_mainScreen QPushButton, QWidget#wdg_admin QPushButton/*, QWidget#wdg_reports QPushButton*/{
-/*	border: 2px solid #ab0000;*/
-        border: 0px;
-                border-radius: 5px;
+	border: 2px solid rgb(49, 49, 49);
+	
+/*        border: 0px; */
+        border-radius: 5px;
         color: white;
-/*	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa0a0, stop: 1 #f90000); */
-/*	background-color: qlineargradient(spread:pad, x1:0.488, y1:0.7, x2:0.488, y2:1, stop:0.661692 rgba(225,68,39, 255), stop:1 rgba(255, 234, 234, 255)); */
 
-        background-color: #CC0000;
-
+       background-color: #CC0000;  
+	
+	background-color: qlineargradient(spread:pad, x1:0.7611, y1:0, x2:0.766, y2:1, stop:0 rgba(155, 20, 19, 255), stop:0.308458 rgba(229, 0, 0, 255), stop:0.711443 rgba(198, 0, 0, 255), stop:1 rgba(155, 20, 19, 255));
 }
 
 QWidget#wdg_mainScreen QPushButton:hover, QWidget#wdg_admin QPushButton:hover/*, QWidget#wdg_reports QPushButton:hover*/{
 /*	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ff9090, stop: 1 #f80000); */
-        background-color: qlineargradient(spread:pad, x1:0.468, y1:0.217045, x2:0.468, y2:0, stop:0.661692 rgba(204, 0, 0, 255), stop:1 rgba(255, 234, 234, 255));
+	
+	background-color: qlineargradient(spread:pad, x1:0.781, y1:0, x2:0.766, y2:1, stop:0 rgba(155, 20, 19, 255), stop:0.144279 rgba(229, 0, 0, 255), stop:0.890547 rgba(198, 0, 0, 255), stop:1 rgba(155, 20, 19, 255));
 }
 
 QWidget#wdg_mainScreen QPushButton:pressed, QWidget#wdg_admin QPushButton:pressed/*, QWidget#wdg_reports QPushButton:pressed*/{
@@ -221,7 +222,7 @@ QHeaderView{
              </property>
              <property name="font">
               <font>
-               <pointsize>18</pointsize>
+               <pointsize>24</pointsize>
                <weight>75</weight>
                <bold>true</bold>
               </font>
@@ -247,13 +248,14 @@ QHeaderView{
              </property>
              <property name="font">
               <font>
-               <pointsize>18</pointsize>
+               <pointsize>24</pointsize>
                <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
              <property name="text">
-              <string>Manage Payment</string>
+              <string>Manage
+Payment</string>
              </property>
             </widget>
            </item>
@@ -273,7 +275,7 @@ QHeaderView{
              </property>
              <property name="font">
               <font>
-               <pointsize>18</pointsize>
+               <pointsize>24</pointsize>
                <weight>75</weight>
                <bold>true</bold>
               </font>
@@ -315,7 +317,7 @@ QHeaderView{
              </property>
              <property name="font">
               <font>
-               <pointsize>18</pointsize>
+               <pointsize>24</pointsize>
                <weight>75</weight>
                <bold>true</bold>
               </font>
@@ -341,7 +343,7 @@ QHeaderView{
              </property>
              <property name="font">
               <font>
-               <pointsize>18</pointsize>
+               <pointsize>24</pointsize>
                <weight>75</weight>
                <bold>true</bold>
               </font>
@@ -367,13 +369,13 @@ QHeaderView{
              </property>
              <property name="font">
               <font>
-               <pointsize>18</pointsize>
+               <pointsize>24</pointsize>
                <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
              <property name="text">
-              <string>Booking Summary</string>
+              <string>Registry</string>
              </property>
             </widget>
            </item>
@@ -399,7 +401,7 @@ QHeaderView{
              </property>
              <property name="font">
               <font>
-               <pointsize>18</pointsize>
+               <pointsize>24</pointsize>
                <weight>75</weight>
                <bold>true</bold>
               </font>
@@ -2141,7 +2143,6 @@ QHeaderView{
            <zorder>textEdit_cl_info_comment</zorder>
            <zorder>groupBox_cl_info_personal</zorder>
            <zorder>groupBox</zorder>
-           <zorder>horizontalLayoutWidget</zorder>
            <zorder>verticalSpacer_39</zorder>
            <zorder>verticalSpacer_7</zorder>
            <zorder>verticalSpacer_10</zorder>
@@ -5434,8 +5435,8 @@ QHeaderView{
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>1266</width>
-                 <height>1294</height>
+                 <width>1195</width>
+                 <height>1381</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -9230,7 +9231,7 @@ QHeaderView{
              <item row="0" column="1">
               <widget class="QStackedWidget" name="swdg_reports">
                <property name="currentIndex">
-                <number>0</number>
+                <number>1</number>
                </property>
                <widget class="QWidget" name="page_3">
                 <layout class="QGridLayout" name="gridLayout_34">
@@ -18820,7 +18821,7 @@ QHeaderView{
      <x>0</x>
      <y>0</y>
      <width>1625</width>
-     <height>23</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="font">
