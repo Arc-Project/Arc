@@ -7008,6 +7008,7 @@ void MainWindow::on_shift_dayOpt_currentIndexChanged(const QString &arg1)
     }
     ui->shift_num->setEnabled(true);
     ui->pushButton_shift_save->setEnabled(true);
+    ui->shift_num->setCurrentIndex(0);
     showAllShiftEdit(true);
 //    qDebug()<<"shifDay CurrentIndexChaged" << arg1;
     selectedDay = arg1;
@@ -7179,6 +7180,8 @@ void MainWindow::changeTimeSet(QTimeEdit* endUI, QTime time){
 
 void MainWindow::on_shift1_S_editingFinished()
 {
+    if(!ui->checkBox_shift_auto_endtime->isChecked())
+        return;
     QTime time = ui->shift1_S->time();
     time.setHMS(time.hour()+1, 0, 0);
     changeTimeSet(ui->shift1_E, time);
@@ -7188,12 +7191,16 @@ void MainWindow::on_shift1_S_editingFinished()
 }
 void MainWindow::on_shift2_S_editingFinished()
 {
+    if(!ui->checkBox_shift_auto_endtime->isChecked())
+        return;
     QTime time = ui->shift2_S->time();
     changeTimeSet(ui->shift1_E, time);
 }
 
 void MainWindow::on_shift3_S_editingFinished()
 {
+    if(!ui->checkBox_shift_auto_endtime->isChecked())
+        return;
     QTime time = ui->shift3_S->time();
     changeTimeSet(ui->shift2_E, time);
 
@@ -7201,6 +7208,8 @@ void MainWindow::on_shift3_S_editingFinished()
 
 void MainWindow::on_shift4_S_editingFinished()
 {
+    if(!ui->checkBox_shift_auto_endtime->isChecked())
+        return;
     QTime time = ui->shift4_S->time();
     changeTimeSet(ui->shift3_E, time);
 
@@ -7208,6 +7217,8 @@ void MainWindow::on_shift4_S_editingFinished()
 
 void MainWindow::on_shift5_S_editingFinished()
 {
+    if(!ui->checkBox_shift_auto_endtime->isChecked())
+        return;
     QTime time = ui->shift5_S->time();
     changeTimeSet(ui->shift4_E, time);
 }
@@ -7470,7 +7481,6 @@ void MainWindow::EditShiftInfo(){
     shiftExist = true;
     qDebug()<<"SHIFT UPDATE SUCCESS";
     statusBar()->showMessage(selectedDay + " SHIFT UPDATE SUCCESS", 10000);
-    ui->label_shiftList_Mon->setAutoFillBackground(true);
 
 }
 
