@@ -1446,8 +1446,9 @@ void MainWindow::on_pushButton_bookRoom_clicked()
     if(!dbManager->checkDoubleBook(curClient->clientId))
     {
 
-        doAlert("Client already has an active booking");
-        return;
+        //doAlert("Client already has an active booking");
+        if(!doMessageBox("Client has a current booking. Are you sure you wish to make another?"))
+            return;
     }
     if(!dbManager->isBanned(curClient->clientId)){
         if(!doMessageBox("User is currently restricted. Continue anyways?"))
@@ -6257,9 +6258,9 @@ void MainWindow::on_chk_filter_clicked()
     if (ui->chk_filter->isChecked()){
         int nRow = ui->tableWidget_search_client->currentRow();
 
-        QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+        QStringList filter = (QStringList() << ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
                               ui->tableWidget_search_client->item(nRow, 2)->text() + "*");
-        qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " + ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
+        qDebug() << ui->tableWidget_search_client->item(nRow, 1)->text() + ", " + ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
         populate_tw_caseFiles(filter);
     } else {
         QStringList filter;
