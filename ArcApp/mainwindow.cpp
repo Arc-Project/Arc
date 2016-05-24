@@ -3436,7 +3436,7 @@ void MainWindow::on_btn_searchUsers_2_clicked()
 
     int numCols = result.record().count();
     ui->tableWidget_2->setColumnCount(numCols);
-    ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Program Code" << "Description");
+    ui->tableWidget_2->setHorizontalHeaderLabels(QStringList() << "Code" << "Description");
     int x = 0;
     int qt = result.size();
     qDebug() << qt;
@@ -6474,12 +6474,12 @@ void MainWindow::updatemenuforuser() {
 
     if (roleq.value(0).toString() == "STANDARD") {
         QSizePolicy sp_retain = ui->caseButton->sizePolicy();
-        sp_retain.setRetainSizeWhenHidden(true);
+        //sp_retain.setRetainSizeWhenHidden(true);
         ui->caseButton->setSizePolicy(sp_retain);
         ui->caseButton->hide();
 
         QSizePolicy sp_retain2 = ui->caseButton->sizePolicy();
-        sp_retain2.setRetainSizeWhenHidden(true);
+        //sp_retain2.setRetainSizeWhenHidden(true);
         ui->adminButton->setSizePolicy(sp_retain2);
         ui->adminButton->hide();
 
@@ -6489,7 +6489,7 @@ void MainWindow::updatemenuforuser() {
         currentrole = STANDARD;
     } else if (roleq.value(0).toString() == "CASE WORKER") {
         QSizePolicy sp_retain = ui->caseButton->sizePolicy();
-        sp_retain.setRetainSizeWhenHidden(true);
+        //sp_retain.setRetainSizeWhenHidden(true);
         ui->adminButton->setSizePolicy(sp_retain);
         ui->adminButton->hide();
 
