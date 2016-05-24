@@ -121,6 +121,20 @@ QSqlQuery DatabaseManager::selectAll(QString tableName)
     query.exec("SELECT * FROM " + tableName);
     return query;
 }
+bool DatabaseManager::isBanned(QString clientId){
+    QSqlQuery query(db);
+    QString q = "SELECT Status FROM Client WHERE ClientId ='" + clientId + "'";
+    if(!query.exec(q)){
+        return false;
+    }
+    if(!query.next())
+        return false;
+    QString code = query.value("Status").toString();
+    if(code == "Red")
+        return false;
+    return true;
+
+}
 
 void DatabaseManager::reconnectToDatabase()
 {
@@ -805,6 +819,18 @@ bool DatabaseManager::deleteClientFromTable(QString tableName, QString ClientId)
     query.prepare(QString("DELETE FROM "+tableName)
                   += QString(" WHERE ClientId = " + ClientId));
     return query.exec();
+}
+
+QSqlQuery DatabaseManager::getCaseWorkerList(){
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    query.prepare(QString("SELECT EmpName, EmpId FROM Employee ")
+                + QString("WHERE (Role = 'CASE WORKER' OR Role = 'ADMIN') ")
+                + QString("ORDER BY EmpName"));
+    query.exec();
+    qDebug()<<"CASEWORKERS";
+
+    return query;
 }
 
 /* .............................................................
@@ -1818,6 +1844,16 @@ QSqlQuery DatabaseManager::deleteEmployee(QString username, QString password, QS
     return query;
 }
 
+bool DatabaseManager::checkDoubleBook(QString clientId){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Booking WHERE EndDate > '" + QDate::currentDate().toString(Qt::ISODate) + "' AND ClientId ='" + clientId + "'";
+    if(!query.exec(q))
+        return false;
+    if(!query.next())
+        return true;
+    return false;
+
+}
 
 QSqlQuery DatabaseManager::getActiveBooking(QString user, bool userLook){
     DatabaseManager::checkDatabaseConnection(&db);
@@ -1825,7 +1861,7 @@ QSqlQuery DatabaseManager::getActiveBooking(QString user, bool userLook){
     QString date = QDate::currentDate().toString(Qt::ISODate);
     QString q;
     if(!userLook){
-         q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '" + date + "' AND StartDate != EndDate ORDER BY ClientName ASC";
+         q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate > '" + date + "' AND StartDate != EndDate ORDER BY ClientName ASC";
     }
     else{
          q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '"
