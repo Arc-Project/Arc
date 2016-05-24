@@ -71,14 +71,32 @@ QPushButton:checked {
        /* background-color: qlineargradient(spread:pad, x1:0.7611, y1:0, x2:0.766, y2:1, stop:0 rgba(155, 20, 19, 255), stop:0.308458 rgba(229, 0, 0, 255), stop:0.711443 rgba(198, 0, 0, 255), stop:1 rgba(155, 20, 19, 255));*/
 }
 
+/*
 QWidget#wdg_mainScreen QPushButton{
-	border: 0px;
-	/*background-color: #CC0000;*/
-background-color: #a00000;
-color: white;
+	border: 1px solid #cc0000;
+    border-radius: 4px;
+	color: #cc0000;
 }
 
-QWidget#wdg_mainScreen QPushButton:hover, QWidget#wdg_admin QPushButton:hover/*, QWidget#wdg_reports QPushButton:hover*/{
+QWidget#wdg_mainScreen QPushButton:hover{
+	border: 1px solid grey;
+    border-radius: 4px;
+	background-color: #cc0000;
+	color: white;
+}*/
+
+QWidget#wdg_mainScreen QPushButton{
+	border: 0;
+    border-radius: 4px;
+	background-color: #a00000;
+	color: white;
+}
+
+QWidget#wdg_mainScreen QPushButton:hover{
+	background-color: qlineargradient(spread:pad, x1:0.781, y1:0, x2:0.766, y2:1, stop:0 rgba(155, 20, 19, 255), stop:0.144279 rgba(229, 0, 0, 255), stop:0.890547 rgba(198, 0, 0, 255), stop:1 rgba(155, 20, 19, 255));
+}
+
+/*QWidget#wdg_mainScreen QPushButton:hover,*/ QWidget#wdg_admin QPushButton:hover/*, QWidget#wdg_reports QPushButton:hover*/{
 /*	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ff9090, stop: 1 #f80000); */
 
         background-color: qlineargradient(spread:pad, x1:0.781, y1:0, x2:0.766, y2:1, stop:0 rgba(155, 20, 19, 255), stop:0.144279 rgba(229, 0, 0, 255), stop:0.890547 rgba(198, 0, 0, 255), stop:1 rgba(155, 20, 19, 255));
