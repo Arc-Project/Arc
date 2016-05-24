@@ -161,6 +161,9 @@ void MainWindow::initCurrentWidget(int idx){
             ui->pushButton_search_client->setEnabled(true);
             //initimageview
             ui->actionExport_to_PDF->setEnabled(false);
+            ui->hs_brpp->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
+            ui->hs_ppcf->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
+            ui->hs_cfec->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
             break;
         case BOOKINGLOOKUP: //WIDGET 2
             qDebug()<<"###BOOKING LOOKUP Client INFO###";
