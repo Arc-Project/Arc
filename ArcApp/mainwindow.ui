@@ -5355,7 +5355,7 @@ Payment</string>
              </font>
             </property>
             <property name="text">
-             <string>Filter Name:</string>
+             <string>Filter by:</string>
             </property>
            </widget>
           </item>
@@ -5507,8 +5507,8 @@ Payment</string>
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>1262</width>
-                 <height>1294</height>
+                 <width>1195</width>
+                 <height>1381</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -18953,7 +18953,7 @@ Payment</string>
      <x>0</x>
      <y>0</y>
      <width>1625</width>
-     <height>23</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="font">
@@ -18983,26 +18983,6 @@ Payment</string>
     <addaction name="actionLogout"/>
     <addaction name="actionQuit"/>
    </widget>
-   <widget class="QMenu" name="menuFor_Testing">
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
-     </font>
-    </property>
-    <property name="title">
-     <string>DEV TESTING</string>
-    </property>
-    <addaction name="actionDB_Connection"/>
-    <addaction name="actionTest_Query"/>
-    <addaction name="actionFile_Upload"/>
-    <addaction name="actionDownload_Latest_Upload"/>
-    <addaction name="actionPrint_Db_Connections"/>
-    <addaction name="actionUpload_Display_Picture"/>
-    <addaction name="actionDownload_Profile_Picture"/>
-    <addaction name="actionPcptables"/>
-   </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="font">
      <font>
@@ -19020,16 +19000,16 @@ Payment</string>
     </property>
     <addaction name="separator"/>
     <addaction name="actionReceipt"/>
+    <addaction name="actionExport_to_PDF"/>
    </widget>
    <addaction name="menuFle"/>
-   <addaction name="menuHelp"/>
-   <addaction name="menuFor_Testing"/>
    <addaction name="menuExport"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="font">
     <font>
-     <pointsize>9</pointsize>
+     <pointsize>12</pointsize>
     </font>
    </property>
    <property name="layoutDirection">
@@ -19045,7 +19025,6 @@ Payment</string>
     <bool>false</bool>
    </attribute>
    <addaction name="actionMain_Menu"/>
-   <addaction name="actionExport_to_PDF"/>
    <addaction name="actionBack"/>
    <addaction name="actionForward"/>
   </widget>
