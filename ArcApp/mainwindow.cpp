@@ -421,10 +421,14 @@ void MainWindow::on_lunchCheck_clicked()
 //   QDate otherDate = testDate.addDays(35);
   //curClient = new Client();
    //curClient->clientId = "1";
+    QString tmpStyleSheet = MainWindow::styleSheet();
+    MainWindow::setStyleSheet("");
 
    MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,1, curBook->room);
    mc->exec();
    delete(mc);
+
+   MainWindow::setStyleSheet(tmpStyleSheet);
 }
 
 void MainWindow::on_paymentButton_2_clicked()
@@ -472,9 +476,14 @@ void MainWindow::on_startDateEdit_dateChanged()
 
 void MainWindow::on_wakeupCheck_clicked()
 {
+    QString tmpStyleSheet = MainWindow::styleSheet();
+    MainWindow::setStyleSheet("");
+    
     MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,2, curBook->room);
     mc->exec();
     delete(mc);
+
+    MainWindow::setStyleSheet(tmpStyleSheet);
 }
 
 void MainWindow::on_endDateEdit_dateChanged()
@@ -849,7 +858,9 @@ void MainWindow::on_bookingSearchButton_clicked()
     populateATable(ui->bookingTable, headers, cols, result,false);
     ui->bookingTable->setColumnHidden(5, true);
     ui->makeBookingButton->show();
-    resizeTableView(ui->bookingTable);
+    MainWindow::resizeTableView(ui->bookingTable);
+    MainWindow::addCurrencyNoSignToTableWidget(ui->bookingTable, 3);
+    MainWindow::addCurrencyNoSignToTableWidget(ui->bookingTable, 4);
 }
 //PARAMS - The table, list of headers, list of table column names, the sqlquery result, STRETCH - stretch mode true/false
 void MainWindow::populateATable(QTableWidget * table, QStringList headers, QStringList items, QSqlQuery result, bool stretch){
@@ -922,8 +933,8 @@ void MainWindow::on_makeBookingButton_clicked()
     ui->stackedWidget->setCurrentIndex(BOOKINGPAGE);
     populateBooking();
     ui->makeBookingButton_2->setEnabled(true);
-    ui->bookAmtPaid->setText("0");
-    ui->confirmTotalPaid->setText("0");
+    ui->bookAmtPaid->setText("0.00");
+    ui->confirmTotalPaid->setText("0.00");
 
 }
 void MainWindow::populateBooking(){
@@ -931,11 +942,11 @@ void MainWindow::populateBooking(){
     ui->startLabel->setText(curBook->stringStart);
     ui->endLabel->setText(curBook->stringEnd);
     ui->roomLabel->setText(curBook->room);
-    ui->costInput->setText(QString::number(curBook->cost));
+    ui->costInput->setText(QString::number(curBook->cost, 'f', 2));
     ui->programLabel->setText(curBook->program);
     ui->lengthOfStayLabel->setText(QString::number(curBook->stayLength));
     // - curBook->cost + curBook->paidTotal, 'f', 2)
-    ui->stayLabel->setText(QString::number(curClient->balance));
+    ui->stayLabel->setText(QString::number(curClient->balance, 'f', 2));
     if(curBook->monthly){
         ui->monthLabel->setText("YES");
     }
@@ -1451,7 +1462,7 @@ void MainWindow::on_pushButton_bookRoom_clicked()
             return;
     }
     if(!dbManager->isBanned(curClient->clientId)){
-        if(!doMessageBox("User is currently restricted. Continue anyways?"))
+        if(!doMessageBox("User is currently restricted. Continue anyway?"))
             return;
     }
     /*
@@ -1973,6 +1984,7 @@ void MainWindow::displayClientInfoThread(QString val){
    ui->label_cl_info_Supporter2_name_val->setText(clientInfo.value(18).toString());
    ui->label_cl_info_Supporter2_contact_val->setText(clientInfo.value(19).toString());
    ui->textEdit_cl_info_comment->document()->setPlainText(clientInfo.value(20).toString());
+   ui->lbl_espDays->setText(clientInfo.value(21).toString());
 }
 
 void MainWindow::displayPicThread()
@@ -2229,6 +2241,7 @@ void MainWindow::initClientLookupInfo(){
     ui->label_cl_info_Supporter2_contact_val->clear();
 
     ui->textEdit_cl_info_comment->clear();
+    ui->lbl_espDays->clear();
 
     qDebug()<<"CLEAR ALL INFO FIELD";
     QGraphicsScene *scene = new QGraphicsScene();
@@ -2292,9 +2305,13 @@ void MainWindow::initClientLookupInfo(){
         ui->pushButton_CaseFiles->setVisible(true);
         ui->pushButton_bookRoom->setVisible(false);
         ui->pushButton_processPaymeent->setVisible(false);
-        ui->hs_brpp->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->hs_ppcf->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->hs_cfec->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+        ui->hs_brpp->changeSize(0,0,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_ppcf->changeSize(0,0,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_cfec->changeSize(13,20,QSizePolicy::Fixed,QSizePolicy::Fixed);
+
+        // ui->hs_brpp->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        // ui->hs_ppcf->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        // ui->hs_cfec->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
         break;
     case CLIENTLOOKUP:
         ui->pushButton_CaseFiles->setVisible(true);
@@ -5243,16 +5260,26 @@ void MainWindow::on_programDropdown_currentIndexChanged()
 
 void MainWindow::on_confirmAddLunch_clicked()
 {
+    QString tmpStyleSheet = MainWindow::styleSheet();
+    MainWindow::setStyleSheet("");
+    
     MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,1, curBook->room);
        mc->exec();
        delete(mc);
+
+    MainWindow::setStyleSheet(tmpStyleSheet);
 }
 
 void MainWindow::on_confirmAddWake_clicked()
 {
+    QString tmpStyleSheet = MainWindow::styleSheet();
+    MainWindow::setStyleSheet("");
+    
     MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,2, curBook->room);
         mc->exec();\
         delete(mc);
+
+    MainWindow::setStyleSheet(tmpStyleSheet);
 }
 
 void MainWindow::on_editLunches_clicked()

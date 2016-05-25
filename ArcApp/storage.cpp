@@ -32,8 +32,16 @@ Storage::~Storage()
     delete ui;
 }
 bool Storage::doMessageBox(QString message){
+    
+    QString tmpStyleSheet = parentWidget()->styleSheet();
+    parentWidget()->setStyleSheet("");
+    
+    
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, "Confirm", message, QMessageBox::Yes | QMessageBox::No);
+    
+    parentWidget()->setStyleSheet(tmpStyleSheet);
+    
     if(reply == QMessageBox::Yes){
         return true;
     }
