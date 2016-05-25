@@ -148,6 +148,9 @@ public:
 
     void updatemenuforuser();
 
+    static void addCurrencyNoSignToTableWidget(QTableWidget* table, int col);
+    static void resizeTableView(QTableView* tableView);
+
     /*==========================================================================
     DEV TESTING AUXILIARY FUNCTIONS
     ==========================================================================*/
@@ -721,7 +724,7 @@ private slots:
 
     void on_actionReceipt_triggered();
 
-    void addCurrencyNoSignToTableWidget(QTableWidget* table, int col);
+    
 
     void on_button_cl_uploadpic_clicked();
 
@@ -767,7 +770,8 @@ private:
     void getCashFloat(QDate date, int shiftNo);
     void getMonthlyReport(int month, int year);
     void updateRestrictionTables();
-    void resizeTableView(QTableView* tableView);
+    
+    
 
 
 

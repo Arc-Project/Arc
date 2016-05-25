@@ -1428,6 +1428,9 @@ void MainWindow::on_editCancel_textChanged()
 
 void MainWindow::on_editRoom_clicked()
 {
+    QString tmpStyleSheet=this->styleSheet();
+    this->setStyleSheet("");
+
    // swapper * swap = new Swapper();
     EditRooms * edit = new EditRooms(this, curBook, userLoggedIn, QString::number(currentshiftid), curClient);
     edit->exec();
@@ -1437,6 +1440,8 @@ void MainWindow::on_editRoom_clicked()
     ui->editUpdate->setEnabled(false);
     ui->editRoomLabel->setText(curBook->room);
     delete(edit);
+
+    this->setStyleSheet(tmpStyleSheet);
 
 }
 void MainWindow::doAlert(QString message){
@@ -2962,16 +2967,17 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
     setSelectedClientInfo();
     ui->stackedWidget->setCurrentIndex(CASEFILE);
 
-    double width = ui->tw_pcpRela->size().width();
+    double width = ui->tw_pcpRela->horizontalHeader()->size().width();
 
     for (auto x: pcp_tables){
         x->resizeRowsToContents();
-        x->setColumnWidth(0, width*0.41);
-        x->setColumnWidth(1, width*0.41);
-        x->setColumnWidth(2, width*0.16);
+        x->setColumnWidth(0, width*0.42f);
+        x->setColumnWidth(1, width*0.42f);
+        x->setColumnWidth(2, width*0.16f);
 
         resetPcpTable(x);
     }
+    
 
     //clear old data
     ui->tw_caseFiles->clearContents();
@@ -3009,7 +3015,6 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
     ui->te_notes->document()->clear();
     noteResult.next();
     ui->te_notes->document()->setPlainText(noteResult.value(0).toString());
-
 }
 
 void MainWindow::resetPcpTable(QTableWidget* table){
@@ -3857,12 +3862,12 @@ void MainWindow::on_pushButton_24_clicked()
 
 void MainWindow::resizeEvent(QResizeEvent* event) {
     Q_UNUSED(event);
-    double width = ui->tw_pcpRela->size().width();
+    double width = ui->tw_pcpRela->horizontalHeader()->size().width();
     for (auto x: pcp_tables){
         x->resizeRowsToContents();
-        x->setColumnWidth(0, width*0.41);
-        x->setColumnWidth(1, width*0.41);
-        x->setColumnWidth(2, width*0.16);
+        x->setColumnWidth(0, width*0.42f);
+        x->setColumnWidth(1, width*0.42f);
+        x->setColumnWidth(2, width*0.16f);
     }
 }
 
