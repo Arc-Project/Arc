@@ -96,7 +96,7 @@ public:
     int currentrole = STANDARD;
     int currentshiftid = 0;
 
-    const QString versionNo = "1.00";
+    const QString versionNo = "0.96";
 
     bool resettingfromcode = false;
 
@@ -151,7 +151,6 @@ public:
 
     static void addCurrencyNoSignToTableWidget(QTableWidget* table, int col);
     static void resizeTableView(QTableView* tableView);
-
     /*==========================================================================
     DEV TESTING AUXILIARY FUNCTIONS
     ==========================================================================*/
@@ -725,8 +724,6 @@ private slots:
 
     void on_actionReceipt_triggered();
 
-    
-
     void on_button_cl_uploadpic_clicked();
 
     void on_EditAddressButton_clicked();
@@ -775,8 +772,6 @@ private:
     void getCashFloat(QDate date, int shiftNo);
     void getMonthlyReport(int month, int year);
     void updateRestrictionTables();
-    
-    
 
 
 

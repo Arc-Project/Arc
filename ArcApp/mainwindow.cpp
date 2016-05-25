@@ -144,7 +144,7 @@ void MainWindow::initCurrentWidget(int idx){
             registerType = NOREGISTER;
             ui->actionExport_to_PDF->setEnabled(false);
             transType = "";
-            isAddressSet();
+//            isAddressSet();
             break;
         case CLIENTLOOKUP:  //WIDGET 1
             curClientName="";
