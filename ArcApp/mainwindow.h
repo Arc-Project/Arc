@@ -601,11 +601,11 @@ private slots:
 
     void printRegistry(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
 
-    void on_comboBox_3_currentTextChanged(const QString &arg1);
+//    void on_comboBox_3_currentTextChanged(const QString &arg1);
 
-    void on_btn_saveShift_clicked();
+//    void on_btn_saveShift_clicked();
 
-    void on_editProgramDrop_currentIndexChanged(const QString &arg1);
+//    void on_editProgramDrop_currentIndexChanged(const QString &arg1);
 
     void on_editRemoveCheque_clicked();
     void on_tabw_casefiles_currentChanged(int index);
@@ -628,7 +628,7 @@ private slots:
     void on_pushButton_casefile_book_reload_clicked();
 
     void on_addStorageClient_clicked();
-    void on_comboBox_2_currentTextChanged(const QString &arg1);
+//    void on_comboBox_2_currentTextChanged(const QString &arg1);
 
     void on_checkBox_cl_dob_no_clicked(bool checked);
 
@@ -640,25 +640,25 @@ private slots:
 
     void on_bookingTable_itemClicked(QTableWidgetItem *item);
 
-    void on_shiftNum_currentIndexChanged(int index);
+//    void on_shiftNum_currentIndexChanged(int index);
 
-    void on_shiftDay_currentIndexChanged(int index);
+//    void on_shiftDay_currentIndexChanged(int index);
 
-    void on_shiftE1_timeChanged(const QTime &time);
+//    void on_shiftE1_timeChanged(const QTime &time);
 
-    void on_shiftS2_timeChanged(const QTime &time);
+//    void on_shiftS2_timeChanged(const QTime &time);
 
-    void on_shiftE2_timeChanged(const QTime &time);
+//    void on_shiftE2_timeChanged(const QTime &time);
 
-    void on_shiftS3_timeChanged(const QTime &time);
+//    void on_shiftS3_timeChanged(const QTime &time);
 
-    void on_shiftS4_timeChanged(const QTime &time);
+//    void on_shiftS4_timeChanged(const QTime &time);
 
-    void on_shiftS5_timeChanged(const QTime &time);
+//    void on_shiftS5_timeChanged(const QTime &time);
 
-    void on_shiftE3_timeChanged(const QTime &time);
+//    void on_shiftE3_timeChanged(const QTime &time);
 
-    void on_shiftE4_timeChanged(const QTime &time);
+//    void on_shiftE4_timeChanged(const QTime &time);
 
     void on_editCost_textChanged(const QString &arg1);
     void on_shiftReport_tabWidget_currentChanged(int index);
@@ -724,6 +724,8 @@ private slots:
     void addCurrencyNoSignToTableWidget(QTableWidget* table, int col);
 
     void on_button_cl_uploadpic_clicked();
+
+    void on_EditAddressButton_clicked();
 
 private:
 
