@@ -258,6 +258,8 @@ void MainWindow::initCurrentWidget(int idx){
              ui->shift_num->setCurrentIndex(0);
              ui->pushButton_shift_save->setEnabled(false);
             break;
+        case EDITADDRESS:
+            break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
 
@@ -7809,5 +7811,5 @@ void MainWindow::addCurrencyNoSignToTableWidget(QTableWidget* table, int col){
 
 void MainWindow::on_EditAddressButton_clicked()
 {
-
+    ui->stackedWidget->setCurrentIndex(EDITADDRESS);
 }

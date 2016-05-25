@@ -18,6 +18,7 @@
 #define EDITPAGE            14
 #define EDITSHIFT           15
 #define STORAGEPAGE         16
+#define EDITADDRESS         17
 
 #define DAILYREPORT         0
 #define SHIFTREPORT         1
@@ -95,7 +96,7 @@ public:
     int currentrole = STANDARD;
     int currentshiftid = 0;
 
-    const QString versionNo = "0.95";
+    const QString versionNo = "1.00";
 
     bool resettingfromcode = false;
 
