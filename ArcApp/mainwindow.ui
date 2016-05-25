@@ -5670,8 +5670,8 @@ Payment</string>
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>1211</width>
-                 <height>1350</height>
+                 <width>1262</width>
+                 <height>1294</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -12491,7 +12491,7 @@ Payment</string>
       </widget>
       <widget class="QWidget" name="editRooms">
        <layout class="QGridLayout" name="gridLayout_43">
-        <item row="0" column="1">
+        <item row="0" column="0">
          <widget class="QWidget" name="wgd_editUserSearch_3" native="true">
           <layout class="QGridLayout" name="gridLayout_41">
            <item row="0" column="0">
@@ -12624,13 +12624,22 @@ Payment</string>
              <property name="selectionBehavior">
               <enum>QAbstractItemView::SelectRows</enum>
              </property>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
             </widget>
            </item>
           </layout>
          </widget>
         </item>
-        <item row="0" column="2">
+        <item row="0" column="1">
          <widget class="QWidget" name="wgd_editUserFields_3" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>500</width>
@@ -13255,7 +13264,7 @@ Payment</string>
                 </font>
                </property>
                <property name="text">
-                <string>Bed Number:</string>
+                <string>Space Number:</string>
                </property>
               </widget>
              </item>
@@ -13281,32 +13290,6 @@ Payment</string>
            </item>
           </layout>
          </widget>
-        </item>
-        <item row="0" column="0">
-         <spacer name="horizontalSpacer_51">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="0" column="3">
-         <spacer name="horizontalSpacer_120">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
         </item>
        </layout>
       </widget>
@@ -19116,7 +19099,7 @@ Payment</string>
      <x>0</x>
      <y>0</y>
      <width>1625</width>
-     <height>29</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="font">
