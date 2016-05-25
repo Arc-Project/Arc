@@ -796,7 +796,7 @@
     <rect>
      <x>11</x>
      <y>294</y>
-     <width>166</width>
+     <width>341</width>
      <height>79</height>
     </rect>
    </property>
@@ -825,7 +825,7 @@
      <widget class="QLabel" name="currentUse">
       <property name="minimumSize">
        <size>
-        <width>0</width>
+        <width>340</width>
         <height>35</height>
        </size>
       </property>
@@ -846,7 +846,7 @@
     <rect>
      <x>360</x>
      <y>294</y>
-     <width>182</width>
+     <width>342</width>
      <height>79</height>
     </rect>
    </property>
@@ -875,7 +875,7 @@
      <widget class="QLabel" name="swapUser">
       <property name="minimumSize">
        <size>
-        <width>0</width>
+        <width>340</width>
         <height>35</height>
        </size>
       </property>
