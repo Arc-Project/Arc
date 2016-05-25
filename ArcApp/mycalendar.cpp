@@ -138,7 +138,7 @@ void MyCalendar::on_calendarTable_cellClicked(int row, int column)
             wakeFlag[clicked] = 0;
         }
         else{
-            ui->calendarTable->item(row,column)->setText(ui->calendarTable->item(row,column)->text() + " " + ui->calendarTime->time().toString("h:mm ap"));
+            ui->calendarTable->item(row,column)->setText(ui->calendarTable->item(row,column)->text() + "\n" + ui->calendarTime->time().toString("h:mm ap"));
             wakeUps[clicked] = ui->calendarTime->time();
              wakeFlag[clicked]++;
         }

@@ -19,26 +19,26 @@ payment::payment(QWidget *parent, transaction * trans, double balance, double co
     hideCheque();
     this->client = client;
     ui->chequeDate->setDate(QDate::currentDate());
-    ui->balanceLabel->setText(QString::number(balance));
+    ui->balanceLabel->setText(QString::number(balance, 'f', 2));
     if(cost < 0){
         ui->refundOrTrans->setText("Current Refund");
-        ui->transactionLabel->setText(QString::number(cost * -1));
+        ui->transactionLabel->setText(QString::number(cost * -1, 'f', 2));
 
     }
     else{
         ui->refundOrTrans->setText("Current Transaction");
-        ui->transactionLabel->setText(QString::number(cost));
+        ui->transactionLabel->setText(QString::number(cost, 'f', 2));
 
     }
     double s = cost - balance;
     if(s > 0){
         ui->payOweRef->setText("Total Amount Owed");
-        ui->owedLabel->setText(QString::number(cost - balance));
+        ui->owedLabel->setText(QString::number(cost - balance, 'f', 2));
 
     }
     else{
         ui->payOweRef->setText("Total Refund Due");
-        ui->owedLabel->setText(QString::number((cost - balance) * -1));
+        ui->owedLabel->setText(QString::number((cost - balance) * -1, 'f', 2));
 
 
     }
