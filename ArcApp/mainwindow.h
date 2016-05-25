@@ -728,6 +728,10 @@ private slots:
 
     void on_EditAddressButton_clicked();
 
+    void on_btn_saveAd_clicked();
+
+    void isAddressSet();
+
 private:
 
     Ui::MainWindow *ui;

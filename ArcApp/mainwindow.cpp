@@ -144,6 +144,7 @@ void MainWindow::initCurrentWidget(int idx){
             registerType = NOREGISTER;
             ui->actionExport_to_PDF->setEnabled(false);
             transType = "";
+            isAddressSet();
             break;
         case CLIENTLOOKUP:  //WIDGET 1
             curClientName="";
@@ -7812,4 +7813,75 @@ void MainWindow::addCurrencyNoSignToTableWidget(QTableWidget* table, int col){
 void MainWindow::on_EditAddressButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(EDITADDRESS);
+
+    QSettings settings(QSettings::IniFormat, QSettings::SystemScope,
+                       "The Salvation Army", "ARCWay");
+
+    settings.beginGroup("Address");
+
+    ui->le_orgName->setText(settings.value("orgName").toString());
+    ui->le_streetNo->setText(settings.value("streetNumber").toString());
+    ui->le_streetName->setText(settings.value("streetName").toString());
+    ui->le_city->setText(settings.value("city").toString());
+    ui->le_province->setText(settings.value("province").toString());
+    ui->le_zip->setText(settings.value("zip").toString());
+    ui->le_phone->setText(settings.value("phone").toString());
+    ui->le_website->setText(settings.value("website").toString());
+
+    settings.endGroup();
+}
+
+void MainWindow::on_btn_saveAd_clicked()
+{
+    QSettings settings(QSettings::IniFormat, QSettings::SystemScope,
+                       "The Salvation Army", "ARCWay");
+
+    settings.beginGroup("Address");
+
+    settings.setValue("orgName", ui->le_orgName->text());
+    settings.setValue("streetNumber", ui->le_streetNo->text());
+    settings.setValue("streetName", ui->le_streetName->text());
+    settings.setValue("city", ui->le_city->text());
+    settings.setValue("province", ui->le_province->text());
+    settings.setValue("zip", ui->le_zip->text());
+    settings.setValue("phone", ui->le_phone->text());
+    settings.setValue("website", ui->le_website->text());
+
+    settings.endGroup();
+}
+
+void MainWindow::isAddressSet()
+{
+    bool emptyString = false;
+    QSettings settings(QSettings::IniFormat, QSettings::SystemScope,
+                       "The Salvation Army", "ARCWay");
+
+    settings.beginGroup("Address");
+
+    if (settings.value("orgName").toString().length() == 0) emptyString = true;
+    if (settings.value("streetNumber").toString().length() == 0) emptyString = true;
+    if (settings.value("streetName").toString().length() == 0) emptyString = true;
+    if (settings.value("city").toString().length() == 0) emptyString = true;
+    if (settings.value("province").toString().length() == 0) emptyString = true;
+    if (settings.value("zip").toString().length() == 0) emptyString = true;
+    if (settings.value("phone").toString().length() == 0) emptyString = true;
+    if (settings.value("website").toString().length() == 0) emptyString = true;
+
+    qDebug() << "empty address info? " << emptyString;
+
+    if (emptyString) {
+        if (doMessageBox("Please set your address information in the admin screen.")){
+            ui->stackedWidget->setCurrentIndex(EDITADDRESS);
+        } else {
+            QString tmpStyleSheet=this->styleSheet();
+            this->setStyleSheet("");
+
+            QMessageBox msgBox;
+            msgBox.setText("The Summary of Stay and payment receipts will be missing address information.\n\n"
+                           "Please set your address information from the admin page.");
+            msgBox.exec();
+
+            this->setStyleSheet(tmpStyleSheet);
+        }
+    }
 }
