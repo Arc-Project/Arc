@@ -1861,7 +1861,7 @@ QSqlQuery DatabaseManager::getActiveBooking(QString user, bool userLook){
     QString date = QDate::currentDate().toString(Qt::ISODate);
     QString q;
     if(!userLook){
-         q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate > '" + date + "' AND StartDate != EndDate ORDER BY ClientName ASC";
+         q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '" + date + "' AND StartDate != EndDate ORDER BY ClientName ASC";
     }
     else{
          q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '"
