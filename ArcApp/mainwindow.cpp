@@ -2302,9 +2302,14 @@ void MainWindow::initClientLookupInfo(){
         ui->pushButton_CaseFiles->setVisible(false);
         ui->pushButton_bookRoom->setVisible(false);
         ui->pushButton_processPaymeent->setVisible(true);
-        ui->hs_brpp->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->hs_ppcf->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
-        ui->hs_cfec->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+
+        ui->hs_brpp->changeSize(0,0,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_ppcf->changeSize(13,20,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_cfec->changeSize(0,0,QSizePolicy::Fixed,QSizePolicy::Fixed);
+
+        // ui->hs_brpp->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        // ui->hs_ppcf->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+        // ui->hs_cfec->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
         break;
     case CASEFILE:
         ui->pushButton_CaseFiles->setVisible(true);
@@ -2967,14 +2972,7 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
     setSelectedClientInfo();
     ui->stackedWidget->setCurrentIndex(CASEFILE);
 
-    double width = ui->tw_pcpRela->horizontalHeader()->size().width();
-
     for (auto x: pcp_tables){
-        x->resizeRowsToContents();
-        x->setColumnWidth(0, width*0.42f);
-        x->setColumnWidth(1, width*0.42f);
-        x->setColumnWidth(2, width*0.16f);
-
         resetPcpTable(x);
     }
     
@@ -3058,6 +3056,15 @@ void MainWindow::populatePcpTable(QStringList goal, QStringList strategy, QStrin
 
         //set height of table
         table->setMinimumHeight(table->minimumHeight() + 35);
+    }
+
+    double width = ui->tw_pcpRela->horizontalHeader()->size().width();
+    qDebug() << "width of pcp " << width;
+    for (auto x: pcp_tables){
+        x->resizeRowsToContents();
+        x->setColumnWidth(0, width*0.42f);
+        x->setColumnWidth(1, width*0.42f);
+        x->setColumnWidth(2, width*0.16f);
     }
 
     //populate table
