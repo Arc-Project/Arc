@@ -56,34 +56,33 @@ QPushButton:pressed {
 
 QPushButton:checked {
         background-color: #666666;
-                color: #ffffff;
+        color: #ffffff;
 }
 
-/*QWidget#wdg_mainScreen QPushButton, */QWidget#wdg_admin QPushButton/*, QWidget#wdg_reports QPushButton*/{
+/*QWidget#wdg_mainScreen QPushButton, QWidget#wdg_admin QPushButton, QWidget#wdg_reports QPushButton{
         border: 2px solid rgb(49, 49, 49);
 
-/*        border: 0px; */
         border-radius: 5px;
         color: white;
 
        background-color: #CC0000;
 
-       /* background-color: qlineargradient(spread:pad, x1:0.7611, y1:0, x2:0.766, y2:1, stop:0 rgba(155, 20, 19, 255), stop:0.308458 rgba(229, 0, 0, 255), stop:0.711443 rgba(198, 0, 0, 255), stop:1 rgba(155, 20, 19, 255));*/
-}
+       background-color: qlineargradient(spread:pad, x1:0.7611, y1:0, x2:0.766, y2:1, stop:0 rgba(155, 20, 19, 255), stop:0.308458 rgba(229, 0, 0, 255), stop:0.711443 rgba(198, 0, 0, 255), stop:1 rgba(155, 20, 19, 255));
+}*/
 
-/*
-QWidget#wdg_mainScreen QPushButton{
+
+QWidget#wdg_admin QPushButton{
 	border: 1px solid #cc0000;
     border-radius: 4px;
 	color: #cc0000;
 }
 
-QWidget#wdg_mainScreen QPushButton:hover{
+QWidget#wdg_admin QPushButton:hover{
 	border: 1px solid grey;
     border-radius: 4px;
 	background-color: #cc0000;
 	color: white;
-}*/
+}
 
 QWidget#wdg_mainScreen QPushButton{
 	border: 0;
@@ -96,11 +95,10 @@ QWidget#wdg_mainScreen QPushButton:hover{
 	background-color: qlineargradient(spread:pad, x1:0.781, y1:0, x2:0.766, y2:1, stop:0 rgba(155, 20, 19, 255), stop:0.144279 rgba(229, 0, 0, 255), stop:0.890547 rgba(198, 0, 0, 255), stop:1 rgba(155, 20, 19, 255));
 }
 
-/*QWidget#wdg_mainScreen QPushButton:hover,*/ QWidget#wdg_admin QPushButton:hover/*, QWidget#wdg_reports QPushButton:hover*/{
-/*	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ff9090, stop: 1 #f80000); */
+/*QWidget#wdg_mainScreen QPushButton:hover, QWidget#wdg_admin QPushButton:hover, QWidget#wdg_reports QPushButton:hover{
 
         background-color: qlineargradient(spread:pad, x1:0.781, y1:0, x2:0.766, y2:1, stop:0 rgba(155, 20, 19, 255), stop:0.144279 rgba(229, 0, 0, 255), stop:0.890547 rgba(198, 0, 0, 255), stop:1 rgba(155, 20, 19, 255));
-}
+}*/
 
 QWidget#wdg_mainScreen QPushButton:pressed, QWidget#wdg_admin QPushButton:pressed/*, QWidget#wdg_reports QPushButton:pressed*/{
 /*	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #f90000, stop: 1 #ffa0a0); */
@@ -3996,147 +3994,231 @@ Payment</string>
       </widget>
       <widget class="QWidget" name="adminPage">
        <layout class="QGridLayout" name="gridLayout_4">
-        <item row="0" column="0">
+        <item row="0" column="1">
          <widget class="QWidget" name="wdg_admin" native="true">
           <layout class="QGridLayout" name="gridLayout">
-           <item row="0" column="0">
-            <widget class="QPushButton" name="EditProgramButton">
-             <property name="minimumSize">
-              <size>
-               <width>250</width>
-               <height>151</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>375</width>
-               <height>226</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>20</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Edit Programs</string>
-             </property>
-            </widget>
+           <item row="2" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_84">
+             <item>
+              <widget class="QPushButton" name="EditRoomsButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>999999</width>
+                 <height>999999</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>25</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Edit Rooms</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="EditAddressButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>25</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Edit Address</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="EditUserButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>999999</width>
+                 <height>999999</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>25</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Edit Users</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
-           <item row="0" column="2">
-            <widget class="QPushButton" name="EditShiftsButton">
-             <property name="minimumSize">
-              <size>
-               <width>250</width>
-               <height>151</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>375</width>
-               <height>226</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>20</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Edit Shifts</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="2">
-            <widget class="QPushButton" name="EditUserButton">
-             <property name="minimumSize">
-              <size>
-               <width>250</width>
-               <height>151</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>375</width>
-               <height>226</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>20</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Edit Users</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QPushButton" name="EditRoomsButton">
-             <property name="minimumSize">
-              <size>
-               <width>250</width>
-               <height>151</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>375</width>
-               <height>226</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>20</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Edit Rooms</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
+           <item row="0" column="1">
             <spacer name="verticalSpacer_2">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
              <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
+              <enum>QSizePolicy::Minimum</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
                <width>20</width>
-               <height>40</height>
+               <height>150</height>
               </size>
              </property>
             </spacer>
            </item>
-           <item row="0" column="1">
-            <spacer name="horizontalSpacer_5">
+           <item row="1" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_86">
+             <item>
+              <widget class="QPushButton" name="EditShiftsButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>9999999</width>
+                 <height>999999</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>30</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Edit Shifts</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="EditProgramButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>30</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Edit Programs</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="3" column="1">
+            <spacer name="verticalSpacer_41">
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Vertical</enum>
              </property>
              <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
+              <enum>QSizePolicy::Minimum</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>40</width>
-               <height>20</height>
+               <width>20</width>
+               <height>150</height>
               </size>
              </property>
             </spacer>
            </item>
           </layout>
          </widget>
+        </item>
+        <item row="0" column="0">
+         <spacer name="horizontalSpacer_5">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>350</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="2">
+         <spacer name="horizontalSpacer_87">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>350</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </widget>
@@ -5588,7 +5670,7 @@ Payment</string>
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>1266</width>
+                 <width>1262</width>
                  <height>1294</height>
                 </rect>
                </property>
@@ -12409,7 +12491,7 @@ Payment</string>
       </widget>
       <widget class="QWidget" name="editRooms">
        <layout class="QGridLayout" name="gridLayout_43">
-        <item row="0" column="1">
+        <item row="0" column="0">
          <widget class="QWidget" name="wgd_editUserSearch_3" native="true">
           <layout class="QGridLayout" name="gridLayout_41">
            <item row="0" column="0">
@@ -12542,13 +12624,22 @@ Payment</string>
              <property name="selectionBehavior">
               <enum>QAbstractItemView::SelectRows</enum>
              </property>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
             </widget>
            </item>
           </layout>
          </widget>
         </item>
-        <item row="0" column="2">
+        <item row="0" column="1">
          <widget class="QWidget" name="wgd_editUserFields_3" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>500</width>
@@ -13173,7 +13264,7 @@ Payment</string>
                 </font>
                </property>
                <property name="text">
-                <string>Bed Number:</string>
+                <string>Space Number:</string>
                </property>
               </widget>
              </item>
@@ -13199,32 +13290,6 @@ Payment</string>
            </item>
           </layout>
          </widget>
-        </item>
-        <item row="0" column="0">
-         <spacer name="horizontalSpacer_51">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="0" column="3">
-         <spacer name="horizontalSpacer_120">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
         </item>
        </layout>
       </widget>

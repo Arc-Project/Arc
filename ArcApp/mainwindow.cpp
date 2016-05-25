@@ -3346,13 +3346,13 @@ void MainWindow::on_btn_listAllUsers_3_clicked()
     QString ename = ui->le_users_3->text();
     ui->tableWidget_5->setRowCount(0);
     ui->tableWidget_5->clear();
-    ui->tableWidget_5->horizontalHeader()->setStretchLastSection(true);
+    //ui->tableWidget_5->horizontalHeader()->setStretchLastSection(true);
 
     QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, cost, Monthly FROM Space ORDER BY SpaceCode");
 
 //    int numCols = result.record().count();
     ui->tableWidget_5->setColumnCount(8);
-    ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly");
+    ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "Space Code" << "Building" << "Floor" << "Room" << "Space #" << "Type" << "Daily Cost" << "Monthly Cost");
     int x = 0;
     int qt = result.size();
     qDebug() << "<" << qt;
@@ -3405,6 +3405,10 @@ void MainWindow::on_btn_listAllUsers_3_clicked()
         }
         x++;
     }
+    MainWindow::resizeTableView(ui->tableWidget_5);
+    MainWindow::addCurrencyToTableWidget(ui->tableWidget_5, 6);
+    MainWindow::addCurrencyToTableWidget(ui->tableWidget_5, 7);
+
 }
 
 // list all programs
@@ -4868,13 +4872,13 @@ void MainWindow::on_btn_searchUsers_3_clicked()
     QString ename = ui->le_users_3->text();
     ui->tableWidget_5->setRowCount(0);
     ui->tableWidget_5->clear();
-    ui->tableWidget_5->horizontalHeader()->setStretchLastSection(true);
+    //ui->tableWidget_5->horizontalHeader()->setStretchLastSection(true);
 
     QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, cost, Monthly FROM Space WHERE SpaceCode LIKE '%"+ ename +"%' ORDER BY SpaceCode");
 
 //    int numCols = result.record().count();
     ui->tableWidget_5->setColumnCount(8);
-    ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly");
+    ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "Space Code" << "Building" << "Floor" << "Room" << "Space #" << "Type" << "Daily Cost" << "Monthly Cost");
     int x = 0;
     int qt = result.size();
     qDebug() << qt;
@@ -4918,6 +4922,9 @@ void MainWindow::on_btn_searchUsers_3_clicked()
         }
         x++;
     }
+    MainWindow::resizeTableView(ui->tableWidget_5);
+    MainWindow::addCurrencyToTableWidget(ui->tableWidget_5, 6);
+    MainWindow::addCurrencyToTableWidget(ui->tableWidget_5, 7);
 }
 
 void MainWindow::populate_modRoom_cboxes() {
