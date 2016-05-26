@@ -96,7 +96,7 @@ public:
     int currentrole = STANDARD;
     int currentshiftid = 0;
 
-    const QString versionNo = "0.96";
+    const QString versionNo = "1.00";
 
     bool resettingfromcode = false;
 
@@ -731,6 +731,22 @@ private slots:
     void on_btn_saveAd_clicked();
 
     void isAddressSet();
+
+    QString getOrgName();
+
+    QString getStreetNo();
+
+    QString getStreetName();
+
+    QString getCity();
+
+    QString getProvince();
+
+    QString getZip();
+
+    QString getPhone();
+
+    QString getWebsite();
 
 private:
 
