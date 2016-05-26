@@ -152,6 +152,10 @@ void EditRooms::searchAvailable(QString program){
 
     populateATable(ui->editRoom,headers, col, result, false);
     ui->editRoom->setColumnHidden(5, true);
+
+    MainWindow::addCurrencyNoSignToTableWidget(ui->editRoom, 3);
+    MainWindow::addCurrencyNoSignToTableWidget(ui->editRoom, 4);
+    MainWindow::resizeTableView(ui->editRoom);
 }
 
 void EditRooms::getProgramCodes(QString cur){
@@ -175,8 +179,8 @@ void EditRooms::populateATable(QTableWidget * table, QStringList headers, QStrin
     if(headers.length() != items.length())
         return;
 
-    if(stretch)
-        table->horizontalHeader()->setStretchLastSection(true);
+    //if(stretch)
+       // table->horizontalHeader()->setStretchLastSection(true);
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     table->verticalHeader()->hide();
     table->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -201,6 +205,8 @@ void EditRooms::populateATable(QTableWidget * table, QStringList headers, QStrin
 
         x++;
     }
+
+
 }
 void EditRooms::on_editProgram_currentIndexChanged(const QString &arg1)
 {
@@ -246,7 +252,7 @@ void EditRooms::on_editSwap_clicked()
     col << "SpaceCode" << "ProgramCodes" << "type" << "cost" << "Monthly" << "ClientName" << "BookingId" << "SpaceId" << "ClientId" <<
          "SpaceId" << "StartDate" << "EndDate" << "Cost";
     populateATable(ui->editRoom,headers, col, result, false);
-    ui->editRoom->setColumnWidth(5, 300);
+    // ui->editRoom->setColumnWidth(5, 300);
     ui->editRoom->setColumnHidden(8, true);
     ui->editRoom->setColumnHidden(6, true);
     ui->editRoom->setColumnHidden(5, false);
@@ -258,6 +264,9 @@ void EditRooms::on_editSwap_clicked()
     swapping = true;
     setCurbook();
 
+    MainWindow::addCurrencyNoSignToTableWidget(ui->editRoom, 3);
+    MainWindow::addCurrencyNoSignToTableWidget(ui->editRoom, 4);
+    MainWindow::resizeTableView(ui->editRoom);
 }
 void EditRooms::setCurbook(){
     ui->curCost->setText(QString::number(curBook->cost,'f',2));
@@ -610,3 +619,4 @@ void EditRooms::on_editCancelButton_clicked()
 {
     close();
 }
+

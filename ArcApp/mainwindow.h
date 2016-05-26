@@ -18,6 +18,7 @@
 #define EDITPAGE            14
 #define EDITSHIFT           15
 #define STORAGEPAGE         16
+#define EDITADDRESS         17
 
 #define DAILYREPORT         0
 #define SHIFTREPORT         1
@@ -95,7 +96,7 @@ public:
     int currentrole = STANDARD;
     int currentshiftid = 0;
 
-    const QString versionNo = "0.90";
+    const QString versionNo = "1.00";
 
     bool resettingfromcode = false;
 
@@ -147,6 +148,9 @@ public:
     //COLIN END//////
 
     void updatemenuforuser();
+
+    static void addCurrencyNoSignToTableWidget(QTableWidget* table, int col);
+    static void resizeTableView(QTableView* tableView);
 
     /*==========================================================================
     DEV TESTING AUXILIARY FUNCTIONS
@@ -601,11 +605,11 @@ private slots:
 
     void printRegistry(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage);
 
-    void on_comboBox_3_currentTextChanged(const QString &arg1);
+//    void on_comboBox_3_currentTextChanged(const QString &arg1);
 
-    void on_btn_saveShift_clicked();
+//    void on_btn_saveShift_clicked();
 
-    void on_editProgramDrop_currentIndexChanged(const QString &arg1);
+//    void on_editProgramDrop_currentIndexChanged(const QString &arg1);
 
     void on_editRemoveCheque_clicked();
     void on_tabw_casefiles_currentChanged(int index);
@@ -628,7 +632,7 @@ private slots:
     void on_pushButton_casefile_book_reload_clicked();
 
     void on_addStorageClient_clicked();
-    void on_comboBox_2_currentTextChanged(const QString &arg1);
+//    void on_comboBox_2_currentTextChanged(const QString &arg1);
 
     void on_checkBox_cl_dob_no_clicked(bool checked);
 
@@ -640,25 +644,25 @@ private slots:
 
     void on_bookingTable_itemClicked(QTableWidgetItem *item);
 
-    void on_shiftNum_currentIndexChanged(int index);
+//    void on_shiftNum_currentIndexChanged(int index);
 
-    void on_shiftDay_currentIndexChanged(int index);
+//    void on_shiftDay_currentIndexChanged(int index);
 
-    void on_shiftE1_timeChanged(const QTime &time);
+//    void on_shiftE1_timeChanged(const QTime &time);
 
-    void on_shiftS2_timeChanged(const QTime &time);
+//    void on_shiftS2_timeChanged(const QTime &time);
 
-    void on_shiftE2_timeChanged(const QTime &time);
+//    void on_shiftE2_timeChanged(const QTime &time);
 
-    void on_shiftS3_timeChanged(const QTime &time);
+//    void on_shiftS3_timeChanged(const QTime &time);
 
-    void on_shiftS4_timeChanged(const QTime &time);
+//    void on_shiftS4_timeChanged(const QTime &time);
 
-    void on_shiftS5_timeChanged(const QTime &time);
+//    void on_shiftS5_timeChanged(const QTime &time);
 
-    void on_shiftE3_timeChanged(const QTime &time);
+//    void on_shiftE3_timeChanged(const QTime &time);
 
-    void on_shiftE4_timeChanged(const QTime &time);
+//    void on_shiftE4_timeChanged(const QTime &time);
 
     void on_editCost_textChanged(const QString &arg1);
     void on_shiftReport_tabWidget_currentChanged(int index);
@@ -721,9 +725,15 @@ private slots:
 
     void on_actionReceipt_triggered();
 
-    void addCurrencyNoSignToTableWidget(QTableWidget* table, int col);
+    
 
     void on_button_cl_uploadpic_clicked();
+
+    void on_EditAddressButton_clicked();
+
+    void on_btn_saveAd_clicked();
+
+    void isAddressSet();
 
 private:
 
@@ -765,7 +775,8 @@ private:
     void getCashFloat(QDate date, int shiftNo);
     void getMonthlyReport(int month, int year);
     void updateRestrictionTables();
-    void resizeTableView(QTableView* tableView);
+    
+    
 
 
 

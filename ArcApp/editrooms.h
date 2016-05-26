@@ -7,6 +7,7 @@
 #include <QTableWidgetItem>
 #include "swapper.h"
 #include "client.h"
+#include "mainwindow.h"
 namespace Ui {
 class EditRooms;
 }

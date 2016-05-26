@@ -144,6 +144,7 @@ void MainWindow::initCurrentWidget(int idx){
             registerType = NOREGISTER;
             ui->actionExport_to_PDF->setEnabled(false);
             transType = "";
+            isAddressSet();
             break;
         case CLIENTLOOKUP:  //WIDGET 1
             curClientName="";
@@ -200,6 +201,7 @@ void MainWindow::initCurrentWidget(int idx){
             //initcode
             break;
         case CASEFILE: //WIDGET 8
+            ui->chk_filter->setVisible(false); // broken
             ui->tabw_casefiles->setCurrentIndex(PERSIONACASEPLAN);
             ui->tableWidget_casefile_booking->verticalHeader()->show();
             ui->tableWidget_casefile_transaction->verticalHeader()->show();
@@ -256,6 +258,8 @@ void MainWindow::initCurrentWidget(int idx){
              ui->shift_dayOpt->setCurrentIndex(0);
              ui->shift_num->setCurrentIndex(0);
              ui->pushButton_shift_save->setEnabled(false);
+            break;
+        case EDITADDRESS:
             break;
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
@@ -420,10 +424,14 @@ void MainWindow::on_lunchCheck_clicked()
 //   QDate otherDate = testDate.addDays(35);
   //curClient = new Client();
    //curClient->clientId = "1";
+    QString tmpStyleSheet = MainWindow::styleSheet();
+    MainWindow::setStyleSheet("");
 
    MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,1, curBook->room);
    mc->exec();
    delete(mc);
+
+   MainWindow::setStyleSheet(tmpStyleSheet);
 }
 
 void MainWindow::on_paymentButton_2_clicked()
@@ -471,9 +479,14 @@ void MainWindow::on_startDateEdit_dateChanged()
 
 void MainWindow::on_wakeupCheck_clicked()
 {
+    QString tmpStyleSheet = MainWindow::styleSheet();
+    MainWindow::setStyleSheet("");
+    
     MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,2, curBook->room);
     mc->exec();
     delete(mc);
+
+    MainWindow::setStyleSheet(tmpStyleSheet);
 }
 
 void MainWindow::on_endDateEdit_dateChanged()
@@ -848,7 +861,9 @@ void MainWindow::on_bookingSearchButton_clicked()
     populateATable(ui->bookingTable, headers, cols, result,false);
     ui->bookingTable->setColumnHidden(5, true);
     ui->makeBookingButton->show();
-    resizeTableView(ui->bookingTable);
+    MainWindow::resizeTableView(ui->bookingTable);
+    MainWindow::addCurrencyNoSignToTableWidget(ui->bookingTable, 3);
+    MainWindow::addCurrencyNoSignToTableWidget(ui->bookingTable, 4);
 }
 //PARAMS - The table, list of headers, list of table column names, the sqlquery result, STRETCH - stretch mode true/false
 void MainWindow::populateATable(QTableWidget * table, QStringList headers, QStringList items, QSqlQuery result, bool stretch){
@@ -921,8 +936,8 @@ void MainWindow::on_makeBookingButton_clicked()
     ui->stackedWidget->setCurrentIndex(BOOKINGPAGE);
     populateBooking();
     ui->makeBookingButton_2->setEnabled(true);
-    ui->bookAmtPaid->setText("0");
-    ui->confirmTotalPaid->setText("0");
+    ui->bookAmtPaid->setText("0.00");
+    ui->confirmTotalPaid->setText("0.00");
 
 }
 void MainWindow::populateBooking(){
@@ -930,11 +945,11 @@ void MainWindow::populateBooking(){
     ui->startLabel->setText(curBook->stringStart);
     ui->endLabel->setText(curBook->stringEnd);
     ui->roomLabel->setText(curBook->room);
-    ui->costInput->setText(QString::number(curBook->cost));
+    ui->costInput->setText(QString::number(curBook->cost, 'f', 2));
     ui->programLabel->setText(curBook->program);
     ui->lengthOfStayLabel->setText(QString::number(curBook->stayLength));
     // - curBook->cost + curBook->paidTotal, 'f', 2)
-    ui->stayLabel->setText(QString::number(curClient->balance));
+    ui->stayLabel->setText(QString::number(curClient->balance, 'f', 2));
     if(curBook->monthly){
         ui->monthLabel->setText("YES");
     }
@@ -1416,6 +1431,9 @@ void MainWindow::on_editCancel_textChanged()
 
 void MainWindow::on_editRoom_clicked()
 {
+    QString tmpStyleSheet=this->styleSheet();
+    this->setStyleSheet("");
+
    // swapper * swap = new Swapper();
     EditRooms * edit = new EditRooms(this, curBook, userLoggedIn, QString::number(currentshiftid), curClient);
     edit->exec();
@@ -1425,6 +1443,8 @@ void MainWindow::on_editRoom_clicked()
     ui->editUpdate->setEnabled(false);
     ui->editRoomLabel->setText(curBook->room);
     delete(edit);
+
+    this->setStyleSheet(tmpStyleSheet);
 
 }
 void MainWindow::doAlert(QString message){
@@ -1446,13 +1466,14 @@ void MainWindow::on_pushButton_bookRoom_clicked()
     if(!dbManager->checkDoubleBook(curClient->clientId))
     {
 
-        doAlert("Client already has an active booking");
-        return;
+        if(!doMessageBox("Client has a current booking. Are you sure you wish to make another?"))
+            return;
     }
     if(!dbManager->isBanned(curClient->clientId)){
+
         doMessageBox("User is currently restricted. Continue anyways?");
         /*
-        if(!doMessageBox("User is currently restricted. Continue anyways?"))
+        if(!doMessageBox("User is currently restricted. Continue anyway?"))
             return;
             */
     }
@@ -1975,6 +1996,7 @@ void MainWindow::displayClientInfoThread(QString val){
    ui->label_cl_info_Supporter2_name_val->setText(clientInfo.value(18).toString());
    ui->label_cl_info_Supporter2_contact_val->setText(clientInfo.value(19).toString());
    ui->textEdit_cl_info_comment->document()->setPlainText(clientInfo.value(20).toString());
+   ui->lbl_espDays->setText(clientInfo.value(21).toString());
 }
 
 void MainWindow::displayPicThread()
@@ -2231,6 +2253,7 @@ void MainWindow::initClientLookupInfo(){
     ui->label_cl_info_Supporter2_contact_val->clear();
 
     ui->textEdit_cl_info_comment->clear();
+    ui->lbl_espDays->clear();
 
     qDebug()<<"CLEAR ALL INFO FIELD";
     QGraphicsScene *scene = new QGraphicsScene();
@@ -2286,17 +2309,26 @@ void MainWindow::initClientLookupInfo(){
         ui->pushButton_CaseFiles->setVisible(false);
         ui->pushButton_bookRoom->setVisible(false);
         ui->pushButton_processPaymeent->setVisible(true);
-        ui->hs_brpp->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->hs_ppcf->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
-        ui->hs_cfec->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+
+        ui->hs_brpp->changeSize(0,0,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_ppcf->changeSize(13,20,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_cfec->changeSize(0,0,QSizePolicy::Fixed,QSizePolicy::Fixed);
+
+        // ui->hs_brpp->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        // ui->hs_ppcf->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+        // ui->hs_cfec->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
         break;
     case CASEFILE:
         ui->pushButton_CaseFiles->setVisible(true);
         ui->pushButton_bookRoom->setVisible(false);
         ui->pushButton_processPaymeent->setVisible(false);
-        ui->hs_brpp->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->hs_ppcf->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
-        ui->hs_cfec->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
+        ui->hs_brpp->changeSize(0,0,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_ppcf->changeSize(0,0,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        ui->hs_cfec->changeSize(13,20,QSizePolicy::Fixed,QSizePolicy::Fixed);
+
+        // ui->hs_brpp->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        // ui->hs_ppcf->changeSize(1,1,QSizePolicy::Fixed,QSizePolicy::Fixed);
+        // ui->hs_cfec->changeSize(1,1,QSizePolicy::Expanding,QSizePolicy::Fixed);
         break;
     case CLIENTLOOKUP:
         ui->pushButton_CaseFiles->setVisible(true);
@@ -2947,16 +2979,10 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
     setSelectedClientInfo();
     ui->stackedWidget->setCurrentIndex(CASEFILE);
 
-    double width = ui->tw_pcpRela->size().width();
-
     for (auto x: pcp_tables){
-        x->resizeRowsToContents();
-        x->setColumnWidth(0, width*0.41);
-        x->setColumnWidth(1, width*0.41);
-        x->setColumnWidth(2, width*0.16);
-
         resetPcpTable(x);
     }
+    
 
     //clear old data
     ui->tw_caseFiles->clearContents();
@@ -2994,7 +3020,6 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
     ui->te_notes->document()->clear();
     noteResult.next();
     ui->te_notes->document()->setPlainText(noteResult.value(0).toString());
-
 }
 
 void MainWindow::resetPcpTable(QTableWidget* table){
@@ -3038,6 +3063,15 @@ void MainWindow::populatePcpTable(QStringList goal, QStringList strategy, QStrin
 
         //set height of table
         table->setMinimumHeight(table->minimumHeight() + 35);
+    }
+
+    double width = ui->tw_pcpRela->horizontalHeader()->size().width();
+    qDebug() << "width of pcp " << width;
+    for (auto x: pcp_tables){
+        x->resizeRowsToContents();
+        x->setColumnWidth(0, width*0.42f);
+        x->setColumnWidth(1, width*0.42f);
+        x->setColumnWidth(2, width*0.16f);
     }
 
     //populate table
@@ -3348,13 +3382,13 @@ void MainWindow::on_btn_listAllUsers_3_clicked()
     QString ename = ui->le_users_3->text();
     ui->tableWidget_5->setRowCount(0);
     ui->tableWidget_5->clear();
-    ui->tableWidget_5->horizontalHeader()->setStretchLastSection(true);
+    //ui->tableWidget_5->horizontalHeader()->setStretchLastSection(true);
 
     QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, cost, Monthly FROM Space ORDER BY SpaceCode");
 
 //    int numCols = result.record().count();
     ui->tableWidget_5->setColumnCount(8);
-    ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly");
+    ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "Space Code" << "Building" << "Floor" << "Room" << "Space #" << "Type" << "Daily Cost" << "Monthly Cost");
     int x = 0;
     int qt = result.size();
     qDebug() << "<" << qt;
@@ -3407,6 +3441,10 @@ void MainWindow::on_btn_listAllUsers_3_clicked()
         }
         x++;
     }
+    MainWindow::resizeTableView(ui->tableWidget_5);
+    MainWindow::addCurrencyToTableWidget(ui->tableWidget_5, 6);
+    MainWindow::addCurrencyToTableWidget(ui->tableWidget_5, 7);
+
 }
 
 // list all programs
@@ -3838,12 +3876,12 @@ void MainWindow::on_pushButton_24_clicked()
 
 void MainWindow::resizeEvent(QResizeEvent* event) {
     Q_UNUSED(event);
-    double width = ui->tw_pcpRela->size().width();
+    double width = ui->tw_pcpRela->horizontalHeader()->size().width();
     for (auto x: pcp_tables){
         x->resizeRowsToContents();
-        x->setColumnWidth(0, width*0.41);
-        x->setColumnWidth(1, width*0.41);
-        x->setColumnWidth(2, width*0.16);
+        x->setColumnWidth(0, width*0.42f);
+        x->setColumnWidth(1, width*0.42f);
+        x->setColumnWidth(2, width*0.16f);
     }
 }
 
@@ -4870,13 +4908,13 @@ void MainWindow::on_btn_searchUsers_3_clicked()
     QString ename = ui->le_users_3->text();
     ui->tableWidget_5->setRowCount(0);
     ui->tableWidget_5->clear();
-    ui->tableWidget_5->horizontalHeader()->setStretchLastSection(true);
+    //ui->tableWidget_5->horizontalHeader()->setStretchLastSection(true);
 
     QSqlQuery result = dbManager->execQuery("SELECT SpaceCode, cost, Monthly FROM Space WHERE SpaceCode LIKE '%"+ ename +"%' ORDER BY SpaceCode");
 
 //    int numCols = result.record().count();
     ui->tableWidget_5->setColumnCount(8);
-    ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "ID Code" << "Building" << "Floor" << "Room" << "Bed Number" << "Type" << "Cost" << "Monthly");
+    ui->tableWidget_5->setHorizontalHeaderLabels(QStringList() << "Space Code" << "Building" << "Floor" << "Room" << "Space #" << "Type" << "Daily Cost" << "Monthly Cost");
     int x = 0;
     int qt = result.size();
     qDebug() << qt;
@@ -4920,6 +4958,9 @@ void MainWindow::on_btn_searchUsers_3_clicked()
         }
         x++;
     }
+    MainWindow::resizeTableView(ui->tableWidget_5);
+    MainWindow::addCurrencyToTableWidget(ui->tableWidget_5, 6);
+    MainWindow::addCurrencyToTableWidget(ui->tableWidget_5, 7);
 }
 
 void MainWindow::populate_modRoom_cboxes() {
@@ -5068,60 +5109,60 @@ void MainWindow::on_btn_modRoomType_clicked()
 void MainWindow::on_EditShiftsButton_clicked()
 {
 
-    addHistory(ADMINPAGE);
+   addHistory(ADMINPAGE);
    ui->stackedWidget->setCurrentIndex(EDITSHIFT);
    // ui->stackedWidget->setCurrentIndex(17);
    // showShifts(0);
    //return;
-    ui->tableWidget_6->clearContents();
+//    ui->tableWidget_6->clearContents();
 
     // populate table
     // ui->tableWidget_6
 
-    QSqlQuery shifts = dbManager->execQuery("SELECT * FROM Shift");
-    while (shifts.next()) {
-        int numberofshifts = shifts.value(11).toInt();
-        QString day = shifts.value(0).toString();
-        int dayrow = 0;
-        if (day == "Monday") {
-            dayrow = 0;
-        } else if (day == "Tuesday") {
-            dayrow = 1;
-        } else if (day == "Wednesday") {
-            dayrow = 2;
-        } else if (day == "Thursday") {
-            dayrow = 3;
-        } else if (day == "Friday") {
-            dayrow = 4;
-        } else if (day == "Saturday") {
-            dayrow = 5;
-        } else if (day == "Sunday") {
-            dayrow = 6;
-        }
+//    QSqlQuery shifts = dbManager->execQuery("SELECT * FROM Shift");
+//    while (shifts.next()) {
+//        int numberofshifts = shifts.value(11).toInt();
+//        QString day = shifts.value(0).toString();
+//        int dayrow = 0;
+//        if (day == "Monday") {
+//            dayrow = 0;
+//        } else if (day == "Tuesday") {
+//            dayrow = 1;
+//        } else if (day == "Wednesday") {
+//            dayrow = 2;
+//        } else if (day == "Thursday") {
+//            dayrow = 3;
+//        } else if (day == "Friday") {
+//            dayrow = 4;
+//        } else if (day == "Saturday") {
+//            dayrow = 5;
+//        } else if (day == "Sunday") {
+//            dayrow = 6;
+//        }
 
-        for (int i = 1; i < (numberofshifts + 1); i++) {
-            QTime starttime = shifts.value((i*2)-1).toTime();
-            QTime endtime = shifts.value(i*2).toTime();
+//        for (int i = 1; i < (numberofshifts + 1); i++) {
+//            QTime starttime = shifts.value((i*2)-1).toTime();
+//            QTime endtime = shifts.value(i*2).toTime();
 
-            int starthr = starttime.hour();
-            int endhr = endtime.hour();
+//            int starthr = starttime.hour();
+//            int endhr = endtime.hour();
 
-            for (int j = starthr; j <= endhr; j++) {
-                QTableWidgetItem* item = new QTableWidgetItem();
-                QTableWidgetItem* temp = ui->tableWidget_6->item(dayrow, j);
-                QString newtxt = "";
-                if (temp != 0) {
-                    newtxt += temp->text();
-                }
-                newtxt += " " + QString::fromStdString(std::to_string(i)) + " ";
-                item->setText(newtxt);
-                ui->tableWidget_6->setItem(dayrow, j, item);
-            }
-        }
-    }
+//            for (int j = starthr; j <= endhr; j++) {
+//                QTableWidgetItem* item = new QTableWidgetItem();
+//                QTableWidgetItem* temp = ui->tableWidget_6->item(dayrow, j);
+//                QString newtxt = "";
+//                if (temp != 0) {
+//                    newtxt += temp->text();
+//                }
+//                newtxt += " " + QString::fromStdString(std::to_string(i)) + " ";
+//                item->setText(newtxt);
+//                ui->tableWidget_6->setItem(dayrow, j, item);
+//            }
+//        }
+//    }
 
-    ui->comboBox_2->setCurrentIndex(1);
-    ui->comboBox_2->setCurrentIndex(0);
+//    ui->comboBox_2->setCurrentIndex(1);
+//    ui->comboBox_2->setCurrentIndex(0);
 }
 
 void MainWindow::on_cbox_roomLoc_currentTextChanged(const QString &arg1)
@@ -5238,16 +5279,26 @@ void MainWindow::on_programDropdown_currentIndexChanged()
 
 void MainWindow::on_confirmAddLunch_clicked()
 {
+    QString tmpStyleSheet = MainWindow::styleSheet();
+    MainWindow::setStyleSheet("");
+    
     MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,1, curBook->room);
        mc->exec();
        delete(mc);
+
+    MainWindow::setStyleSheet(tmpStyleSheet);
 }
 
 void MainWindow::on_confirmAddWake_clicked()
 {
+    QString tmpStyleSheet = MainWindow::styleSheet();
+    MainWindow::setStyleSheet("");
+    
     MyCalendar* mc = new MyCalendar(this, curBook->startDate,curBook->endDate, curClient,2, curBook->room);
         mc->exec();\
         delete(mc);
+
+    MainWindow::setStyleSheet(tmpStyleSheet);
 }
 
 void MainWindow::on_editLunches_clicked()
@@ -6291,42 +6342,42 @@ void MainWindow::on_actionLogout_triggered()
 
 
 
-void MainWindow::on_editProgramDrop_currentIndexChanged(const QString &arg1)
-{
-    ui->editUpdate->setEnabled(true);
-}
+//void MainWindow::on_editProgramDrop_currentIndexChanged(const QString &arg1)
+//{
+//    ui->editUpdate->setEnabled(true);
+//}
 
-void MainWindow::on_comboBox_3_currentTextChanged(const QString &arg1)
-{
-    if (arg1 == "1") {
-        ui->comboBox_4->clear();
-        ui->comboBox_4->addItem("1");
-    } else if (arg1 == "2") {
-        ui->comboBox_4->clear();
-        ui->comboBox_4->addItem("1");
-        ui->comboBox_4->addItem("2");
-    } else if (arg1 == "3") {
-        ui->comboBox_4->clear();
-        ui->comboBox_4->addItem("1");
-        ui->comboBox_4->addItem("2");
-        ui->comboBox_4->addItem("3");
-    } else if (arg1 == "4") {
-        ui->comboBox_4->clear();
-        ui->comboBox_4->addItem("1");
-        ui->comboBox_4->addItem("2");
-        ui->comboBox_4->addItem("3");
-        ui->comboBox_4->addItem("4");
-    } else if (arg1 == "5"){
-        ui->comboBox_4->clear();
-        ui->comboBox_4->addItem("1");
-        ui->comboBox_4->addItem("2");
-        ui->comboBox_4->addItem("3");
-        ui->comboBox_4->addItem("4");
-        ui->comboBox_4->addItem("5");
-    }
+//void MainWindow::on_comboBox_3_currentTextChanged(const QString &arg1)
+//{
+//    if (arg1 == "1") {
+//        ui->comboBox_4->clear();
+//        ui->comboBox_4->addItem("1");
+//    } else if (arg1 == "2") {
+//        ui->comboBox_4->clear();
+//        ui->comboBox_4->addItem("1");
+//        ui->comboBox_4->addItem("2");
+//    } else if (arg1 == "3") {
+//        ui->comboBox_4->clear();
+//        ui->comboBox_4->addItem("1");
+//        ui->comboBox_4->addItem("2");
+//        ui->comboBox_4->addItem("3");
+//    } else if (arg1 == "4") {
+//        ui->comboBox_4->clear();
+//        ui->comboBox_4->addItem("1");
+//        ui->comboBox_4->addItem("2");
+//        ui->comboBox_4->addItem("3");
+//        ui->comboBox_4->addItem("4");
+//    } else if (arg1 == "5"){
+//        ui->comboBox_4->clear();
+//        ui->comboBox_4->addItem("1");
+//        ui->comboBox_4->addItem("2");
+//        ui->comboBox_4->addItem("3");
+//        ui->comboBox_4->addItem("4");
+//        ui->comboBox_4->addItem("5");
+//    }
 
-    qDebug() << currentshiftid;
-}
+//    qDebug() << currentshiftid;
+//}
 
 void MainWindow::setShift() {
 
@@ -6483,47 +6534,47 @@ void MainWindow::setShift() {
       qDebug() << "Shiftno =" << currentshiftid;
 }
 
-void MainWindow::on_btn_saveShift_clicked()
-{
-    QString day = ui->comboBox_2->currentText();
-    int dayindex = ui->comboBox_2->currentIndex();
-    QString shiftno = ui->comboBox_4->currentText();
-    int shiftindex = ui->comboBox_4->currentIndex();
+//void MainWindow::on_btn_saveShift_clicked()
+//{
+//    QString day = ui->comboBox_2->currentText();
+//    int dayindex = ui->comboBox_2->currentIndex();
+//    QString shiftno = ui->comboBox_4->currentText();
+//    int shiftindex = ui->comboBox_4->currentIndex();
 
-    QString starttime = ui->timeEdit->text();
-    QString endtime = ui->timeEdit_2->text();
+//    QString starttime = ui->timeEdit->text();
+//    QString endtime = ui->timeEdit_2->text();
 
-    // if the shift does not exist, make one
-    QSqlQuery existcheck = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='" + day + "'");
+//    // if the shift does not exist, make one
+//    QSqlQuery existcheck = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='" + day + "'");
 
-    if (!existcheck.next()) {
-        qDebug() << "Doesn't exist";
-        // insert
-        QSqlQuery insert = dbManager->execQuery("INSERT INTO Shift VALUES('" + day + "'"
-                                                ", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, " + ui->comboBox_3->currentText() + ")");
-    }
+//    if (!existcheck.next()) {
+//        qDebug() << "Doesn't exist";
+//        // insert
+//        QSqlQuery insert = dbManager->execQuery("INSERT INTO Shift VALUES('" + day + "'"
+//                                                ", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, " + ui->comboBox_3->currentText() + ")");
+//    }
 
-    // update
-    QSqlQuery update = dbManager->execQuery("UPDATE Shift SET StartTimeShift" + shiftno +
-                                            "='" + starttime + "' WHERE DayOfWeek = '" + day + "'");
-    QSqlQuery update2 = dbManager->execQuery("UPDATE Shift SET EndTimeShift" + shiftno +
-                                            "='" + endtime + "' WHERE DayOfWeek = '" + day + "'");
-    dbManager->execQuery("UPDATE Shift SET NumShifts=" + ui->comboBox_3->currentText() + " WHERE DayOfWeek = '" + day + "'");
+//    // update
+//    QSqlQuery update = dbManager->execQuery("UPDATE Shift SET StartTimeShift" + shiftno +
+//                                            "='" + starttime + "' WHERE DayOfWeek = '" + day + "'");
+//    QSqlQuery update2 = dbManager->execQuery("UPDATE Shift SET EndTimeShift" + shiftno +
+//                                            "='" + endtime + "' WHERE DayOfWeek = '" + day + "'");
+//    dbManager->execQuery("UPDATE Shift SET NumShifts=" + ui->comboBox_3->currentText() + " WHERE DayOfWeek = '" + day + "'");
 
-    on_EditShiftsButton_clicked();
-    ui->comboBox_2->setCurrentIndex(dayindex);
-    ui->comboBox_4->setCurrentIndex(shiftindex);
-}
+//    on_EditShiftsButton_clicked();
+//    ui->comboBox_2->setCurrentIndex(dayindex);
+//    ui->comboBox_4->setCurrentIndex(shiftindex);
+//}
 
-void MainWindow::on_comboBox_2_currentTextChanged(const QString &arg1)
-{
-    QSqlQuery existcheck = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='" + arg1 + "'");
+//void MainWindow::on_comboBox_2_currentTextChanged(const QString &arg1)
+//{
+//    QSqlQuery existcheck = dbManager->execQuery("SELECT * FROM Shift WHERE DayOfWeek='" + arg1 + "'");
 
-    if (existcheck.next()) {
-        int numshifts = existcheck.value(11).toInt();
-        ui->comboBox_3->setCurrentIndex(numshifts-1);
-    }
-}
+//    if (existcheck.next()) {
+//        int numshifts = existcheck.value(11).toInt();
+//        ui->comboBox_3->setCurrentIndex(numshifts-1);
+//    }
+//}
 
 void MainWindow::updatemenuforuser() {
     QSqlQuery roleq = dbManager->execQuery("SELECT Role, EmpName FROM Employee WHERE Username='" + userLoggedIn + "'");
@@ -6808,206 +6859,206 @@ void MainWindow::on_bookingTable_itemClicked(QTableWidgetItem *item)
     ui->bookCostLabel->setText(QString::number(cost, 'f',2));
 }
 
-void MainWindow::on_shiftNum_currentIndexChanged(int index)
-{
-    lockupShifts();
-    showShifts(index + 1);
-}
+//void MainWindow::on_shiftNum_currentIndexChanged(int index)
+//{
+//    lockupShifts();
+//    showShifts(index + 1);
+//}
 
-void MainWindow::on_shiftDay_currentIndexChanged(int index)
-{
-    lockupShifts();
+//void MainWindow::on_shiftDay_currentIndexChanged(int index)
+//{
+//    lockupShifts();
 
-}
-void MainWindow::lockupShifts(){
-    QTime midnight = QTime::fromString("00:00:00", "hh:mm:ss");
-    ui->shiftS1->setTime(midnight);
-    midnight = midnight.addSecs(1);
-    ui->shiftS2->setTime(midnight);
-    midnight = midnight.addSecs(1);
-    ui->shiftS3->setTime(midnight);
-    midnight = midnight.addSecs(1);
-    ui->shiftS4->setTime(midnight);
-    midnight = midnight.addSecs(1);
-    ui->shiftS5->setTime(midnight);
-    midnight = midnight.addSecs(1);
-    ui->shiftE1->setTime(midnight);
-    midnight = midnight.addSecs(1);
-    ui->shiftE2->setTime(midnight);
-    midnight = midnight.addSecs(1);
-    ui->shiftE3->setTime(midnight);
-    midnight = midnight.addSecs(1);
-    ui->shiftE4->setTime(midnight);
-    midnight = midnight.addSecs(1);
-    ui->shiftE5->setTime(midnight);
+//}
+//void MainWindow::lockupShifts(){
+//    QTime midnight = QTime::fromString("00:00:00", "hh:mm:ss");
+//    ui->shiftS1->setTime(midnight);
+//    midnight = midnight.addSecs(1);
+//    ui->shiftS2->setTime(midnight);
+//    midnight = midnight.addSecs(1);
+//    ui->shiftS3->setTime(midnight);
+//    midnight = midnight.addSecs(1);
+//    ui->shiftS4->setTime(midnight);
+//    midnight = midnight.addSecs(1);
+//    ui->shiftS5->setTime(midnight);
+//    midnight = midnight.addSecs(1);
+//    ui->shiftE1->setTime(midnight);
+//    midnight = midnight.addSecs(1);
+//    ui->shiftE2->setTime(midnight);
+//    midnight = midnight.addSecs(1);
+//    ui->shiftE3->setTime(midnight);
+//    midnight = midnight.addSecs(1);
+//    ui->shiftE4->setTime(midnight);
+//    midnight = midnight.addSecs(1);
+//    ui->shiftE5->setTime(midnight);
 
-}
-void MainWindow::showShifts(int num){
-    ui->shiftS1->setHidden(true);
-    ui->shiftE1->setHidden(true);
-    ui->shiftS2->setHidden(true);
-    ui->shiftE2->setHidden(true);
-    ui->shiftS3->setHidden(true);
-    ui->shiftE3->setHidden(true);
-    ui->shiftS4->setHidden(true);
-    ui->shiftE4->setHidden(true);
-    ui->shiftS5->setHidden(true);
-    ui->shiftE5->setHidden(true);
-    ui->shiftS1->setEnabled(false);
-    ui->shiftS2->setEnabled(false);
-    ui->shiftS3->setEnabled(false);
-    ui->shiftS4->setEnabled(false);
-    ui->shiftS5->setEnabled(false);
-    ui->shiftE1->setEnabled(false);
-    ui->shiftE2->setEnabled(false);
-    ui->shiftE3->setEnabled(false);
-    ui->shiftE4->setEnabled(false);
-    ui->shiftE5->setEnabled(false);
-    numShift = num;
-    QTime endTime = QTime::fromString("23:59:59", "hh:mm:ss");
-    if(num-- > 0){
-        ui->shiftS1->setHidden(false);
-        ui->shiftE1->setEnabled(true);
-        ui->shiftE1->setHidden(false);
-        if(!num){
-            ui->shiftE1->setTime(endTime);
-            ui->shiftE1->setEnabled(false);
-        }
-    }
-    if(num-- > 0){
-        ui->shiftS2->setHidden(false);
-        ui->shiftE2->setHidden(false);
-        ui->shiftE2->setEnabled(true);
+//}
+//void MainWindow::showShifts(int num){
+//    ui->shiftS1->setHidden(true);
+//    ui->shiftE1->setHidden(true);
+//    ui->shiftS2->setHidden(true);
+//    ui->shiftE2->setHidden(true);
+//    ui->shiftS3->setHidden(true);
+//    ui->shiftE3->setHidden(true);
+//    ui->shiftS4->setHidden(true);
+//    ui->shiftE4->setHidden(true);
+//    ui->shiftS5->setHidden(true);
+//    ui->shiftE5->setHidden(true);
+//    ui->shiftS1->setEnabled(false);
+//    ui->shiftS2->setEnabled(false);
+//    ui->shiftS3->setEnabled(false);
+//    ui->shiftS4->setEnabled(false);
+//    ui->shiftS5->setEnabled(false);
+//    ui->shiftE1->setEnabled(false);
+//    ui->shiftE2->setEnabled(false);
+//    ui->shiftE3->setEnabled(false);
+//    ui->shiftE4->setEnabled(false);
+//    ui->shiftE5->setEnabled(false);
+//    numShift = num;
+//    QTime endTime = QTime::fromString("23:59:59", "hh:mm:ss");
+//    if(num-- > 0){
+//        ui->shiftS1->setHidden(false);
+//        ui->shiftE1->setEnabled(true);
+//        ui->shiftE1->setHidden(false);
+//        if(!num){
+//            ui->shiftE1->setTime(endTime);
+//            ui->shiftE1->setEnabled(false);
+//        }
+//    }
+//    if(num-- > 0){
+//        ui->shiftS2->setHidden(false);
+//        ui->shiftE2->setHidden(false);
+//        ui->shiftE2->setEnabled(true);
 
-        if(!num){
-            ui->shiftE2->setTime(endTime);
-            ui->shiftE2->setEnabled(false);
-        }
-    }
-    if(num-- > 0){
-        ui->shiftS3->setHidden(false);
-        ui->shiftE3->setHidden(false);
-        ui->shiftE3->setEnabled(true);
+//        if(!num){
+//            ui->shiftE2->setTime(endTime);
+//            ui->shiftE2->setEnabled(false);
+//        }
+//    }
+//    if(num-- > 0){
+//        ui->shiftS3->setHidden(false);
+//        ui->shiftE3->setHidden(false);
+//        ui->shiftE3->setEnabled(true);
 
-        if(!num){
-            ui->shiftE3->setTime(endTime);
-            ui->shiftE3->setEnabled(false);
-        }
-    }
-    if(num-- > 0){
-        ui->shiftS4->setHidden(false);
-        ui->shiftE4->setHidden(false);
-        ui->shiftE4->setEnabled(true);
+//        if(!num){
+//            ui->shiftE3->setTime(endTime);
+//            ui->shiftE3->setEnabled(false);
+//        }
+//    }
+//    if(num-- > 0){
+//        ui->shiftS4->setHidden(false);
+//        ui->shiftE4->setHidden(false);
+//        ui->shiftE4->setEnabled(true);
 
-        if(!num){
-            ui->shiftE4->setTime(endTime);
-            ui->shiftE4->setEnabled(false);
-        }
-    }
-    if(num-- > 0){
-        ui->shiftS5->setHidden(false);
-        ui->shiftE5->setHidden(false);
-        ui->shiftE5->setEnabled(true);
+//        if(!num){
+//            ui->shiftE4->setTime(endTime);
+//            ui->shiftE4->setEnabled(false);
+//        }
+//    }
+//    if(num-- > 0){
+//        ui->shiftS5->setHidden(false);
+//        ui->shiftE5->setHidden(false);
+//        ui->shiftE5->setEnabled(true);
 
-        if(!num){
-            ui->shiftE5->setTime(endTime);
-            ui->shiftE5->setEnabled(false);
-        }
-    }
+//        if(!num){
+//            ui->shiftE5->setTime(endTime);
+//            ui->shiftE5->setEnabled(false);
+//        }
+//    }
 
-}
+//}
 
-void MainWindow::on_shiftE1_timeChanged(const QTime &time)
-{
-    if(numShift <= 1){
-        return;
-    }
-    if(time <= ui->shiftS1->time()){
-        ui->shiftE1->setTime(ui->shiftS1->time().addSecs(60));
-        return;
-    }
-    ui->shiftS2->setTime(time.addSecs(1));
-}
+//void MainWindow::on_shiftE1_timeChanged(const QTime &time)
+//{
+//    if(numShift <= 1){
+//        return;
+//    }
+//    if(time <= ui->shiftS1->time()){
+//        ui->shiftE1->setTime(ui->shiftS1->time().addSecs(60));
+//        return;
+//    }
+//    ui->shiftS2->setTime(time.addSecs(1));
+//}
 
-void MainWindow::on_shiftS2_timeChanged(const QTime &time)
-{
-    if(time <= ui->shiftE1->time()){
-        ui->shiftS2->setTime(ui->shiftE1->time().addSecs(60));
-        return;
-    }
-    if(ui->shiftE2->time() < time)
-        ui->shiftE2->setTime(time.addSecs(1));
-}
+//void MainWindow::on_shiftS2_timeChanged(const QTime &time)
+//{
+//    if(time <= ui->shiftE1->time()){
+//        ui->shiftS2->setTime(ui->shiftE1->time().addSecs(60));
+//        return;
+//    }
+//    if(ui->shiftE2->time() < time)
+//        ui->shiftE2->setTime(time.addSecs(1));
+//}
 
-void MainWindow::on_shiftE2_timeChanged(const QTime &time)
-{
-    if(numShift <= 2){
-        return;
-    }
-    if(time <= ui->shiftS2->time()){
-        ui->shiftE2->setTime(ui->shiftS2->time().addSecs(60));
-        return;
-    }
-    ui->shiftS3->setTime(time.addSecs(1));
-}
+//void MainWindow::on_shiftE2_timeChanged(const QTime &time)
+//{
+//    if(numShift <= 2){
+//        return;
+//    }
+//    if(time <= ui->shiftS2->time()){
+//        ui->shiftE2->setTime(ui->shiftS2->time().addSecs(60));
+//        return;
+//    }
+//    ui->shiftS3->setTime(time.addSecs(1));
+//}
 
-void MainWindow::on_shiftS3_timeChanged(const QTime &time)
-{
+//void MainWindow::on_shiftS3_timeChanged(const QTime &time)
+//{
 
-    if(time <= ui->shiftE2->time()){
-        ui->shiftS3->setTime(ui->shiftE2->time().addSecs(60));
-        return;
-    }
-    if(ui->shiftE3->time() < time)
-         ui->shiftE3->setTime(time.addSecs(60));
-}
+//    if(time <= ui->shiftE2->time()){
+//        ui->shiftS3->setTime(ui->shiftE2->time().addSecs(60));
+//        return;
+//    }
+//    if(ui->shiftE3->time() < time)
+//         ui->shiftE3->setTime(time.addSecs(60));
+//}
 
-void MainWindow::on_shiftS4_timeChanged(const QTime &time)
-{
+//void MainWindow::on_shiftS4_timeChanged(const QTime &time)
+//{
 
-    if(time <= ui->shiftE3->time()){
-        ui->shiftS4->setTime(ui->shiftE3->time().addSecs(60));
-        return;
-    }
-    if(ui->shiftE4->time() < time)
-        ui->shiftE4->setTime(time.addSecs(60));
-}
+//    if(time <= ui->shiftE3->time()){
+//        ui->shiftS4->setTime(ui->shiftE3->time().addSecs(60));
+//        return;
+//    }
+//    if(ui->shiftE4->time() < time)
+//        ui->shiftE4->setTime(time.addSecs(60));
+//}
 
-void MainWindow::on_shiftS5_timeChanged(const QTime &time)
-{
-    if(time <= ui->shiftE4->time()){
-        ui->shiftS5->setTime(ui->shiftE4->time().addSecs(60));
-        return;
-    }
-    if(time >= ui->shiftE5->time()){
-        ui->shiftS5->setTime(ui->shiftE5->time().addSecs(-60));
-        return;
-    }
-}
+//void MainWindow::on_shiftS5_timeChanged(const QTime &time)
+//{
+//    if(time <= ui->shiftE4->time()){
+//        ui->shiftS5->setTime(ui->shiftE4->time().addSecs(60));
+//        return;
+//    }
+//    if(time >= ui->shiftE5->time()){
+//        ui->shiftS5->setTime(ui->shiftE5->time().addSecs(-60));
+//        return;
+//    }
+//}
 
-void MainWindow::on_shiftE3_timeChanged(const QTime &time)
-{
-    if(numShift <=3){
-        return;
-    }
-    if(time <= ui->shiftS3->time()){
-        ui->shiftE3->setTime(ui->shiftS3->time().addSecs(60));
-        return;
-    }
-    ui->shiftS4->setTime(time.addSecs(60));
-}
+//void MainWindow::on_shiftE3_timeChanged(const QTime &time)
+//{
+//    if(numShift <=3){
+//        return;
+//    }
+//    if(time <= ui->shiftS3->time()){
+//        ui->shiftE3->setTime(ui->shiftS3->time().addSecs(60));
+//        return;
+//    }
+//    ui->shiftS4->setTime(time.addSecs(60));
+//}
 
-void MainWindow::on_shiftE4_timeChanged(const QTime &time)
-{
-    if(numShift <= 4){
-        return;
-    }
-    if(time <= ui->shiftS4->time()){
-        ui->shiftE4->setTime(ui->shiftS4->time().addSecs(60));
-        return;
-    }
-    ui->shiftS5->setTime(time.addSecs(60));
-}
+//void MainWindow::on_shiftE4_timeChanged(const QTime &time)
+//{
+//    if(numShift <= 4){
+//        return;
+//    }
+//    if(time <= ui->shiftS4->time()){
+//        ui->shiftE4->setTime(ui->shiftS4->time().addSecs(60));
+//        return;
+//    }
+//    ui->shiftS5->setTime(time.addSecs(60));
+//}
 
 void MainWindow::on_editCost_textChanged(const QString &arg1)
 {
@@ -7119,12 +7170,8 @@ void MainWindow::on_shift_dayOpt_currentIndexChanged(const QString &arg1)
 void MainWindow::readShiftDb(QString day){
 //    qDebug()<<"READ shift DB" << day;
     QSqlQuery dailyShift = dbManager->getShiftInfoDaily(day);
-
-    //dbManager->printAll(dailyShift);
     while(dailyShift.next()){
-//        qDebug()<<"Check Query";
         shiftSize = dailyShift.value("NumShifts").toInt();
-//        qDebug()<<"shiftSize"<<shiftSize;
         ui->shift_num->setCurrentIndex(shiftSize);
         setShiftTimeDialog(false);
         shiftExist = true;
@@ -7163,8 +7210,6 @@ void MainWindow::setShiftTimeDialog(bool resetTime){
     double TimeGap = (double)24/(shiftSize);
     startTime.setHMS(TimeGap,0,0);
     endTime.setHMS(TimeGap-1,59,0);
-//    qDebug()<<"Time Gap: "<< QString::number(TimeGap)<<QString::number(TimeGap,'f',2)
-//           <<startTime.toString() << endTime.toString();
     initTime();
     showAllShiftEdit(false);
 
@@ -7581,8 +7626,6 @@ void MainWindow::EditShiftInfo(){
 
 //read shift information
 void MainWindow::ReadCurrentShift(QString readDay){
-    QString readShift = "SELECT * FROM Shift";
- //   QSqlQuery readShiftQ = dbManager->execQuery(readShift);
     QSqlQuery readShiftQ = dbManager->getShiftInfoDaily(readDay);
     while(readShiftQ.next()){
         QString dayTag = readShiftQ.value("DayOfWeek").toString();
@@ -7801,3 +7844,79 @@ void MainWindow::addCurrencyNoSignToTableWidget(QTableWidget* table, int col){
 
 
 
+
+void MainWindow::on_EditAddressButton_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(EDITADDRESS);
+
+    QSettings settings(QSettings::IniFormat, QSettings::SystemScope,
+                       "The Salvation Army", "ARCWay");
+
+    settings.beginGroup("Address");
+
+    ui->le_orgName->setText(settings.value("orgName").toString());
+    ui->le_streetNo->setText(settings.value("streetNumber").toString());
+    ui->le_streetName->setText(settings.value("streetName").toString());
+    ui->le_city->setText(settings.value("city").toString());
+    ui->le_province->setText(settings.value("province").toString());
+    ui->le_zip->setText(settings.value("zip").toString());
+    ui->le_phone->setText(settings.value("phone").toString());
+    ui->le_website->setText(settings.value("website").toString());
+
+    settings.endGroup();
+}
+
+void MainWindow::on_btn_saveAd_clicked()
+{
+    QSettings settings(QSettings::IniFormat, QSettings::SystemScope,
+                       "The Salvation Army", "ARCWay");
+
+    settings.beginGroup("Address");
+
+    settings.setValue("orgName", ui->le_orgName->text());
+    settings.setValue("streetNumber", ui->le_streetNo->text());
+    settings.setValue("streetName", ui->le_streetName->text());
+    settings.setValue("city", ui->le_city->text());
+    settings.setValue("province", ui->le_province->text());
+    settings.setValue("zip", ui->le_zip->text());
+    settings.setValue("phone", ui->le_phone->text());
+    settings.setValue("website", ui->le_website->text());
+
+    settings.endGroup();
+}
+
+void MainWindow::isAddressSet()
+{
+    bool emptyString = false;
+    QSettings settings(QSettings::IniFormat, QSettings::SystemScope,
+                       "The Salvation Army", "ARCWay");
+
+    settings.beginGroup("Address");
+
+    if (settings.value("orgName").toString().length() == 0) emptyString = true;
+    if (settings.value("streetNumber").toString().length() == 0) emptyString = true;
+    if (settings.value("streetName").toString().length() == 0) emptyString = true;
+    if (settings.value("city").toString().length() == 0) emptyString = true;
+    if (settings.value("province").toString().length() == 0) emptyString = true;
+    if (settings.value("zip").toString().length() == 0) emptyString = true;
+    if (settings.value("phone").toString().length() == 0) emptyString = true;
+    if (settings.value("website").toString().length() == 0) emptyString = true;
+
+    qDebug() << "empty address info? " << emptyString;
+
+    if (emptyString) {
+        if (doMessageBox("Address information is incomplete.\nPlease set your address information from the admin screen.")){
+            ui->stackedWidget->setCurrentIndex(EDITADDRESS);
+        } else {
+            QString tmpStyleSheet=this->styleSheet();
+            this->setStyleSheet("");
+
+            QMessageBox msgBox;
+            msgBox.setText("The Summary of Stay and payment receipts will be missing address information.\n\n"
+                           "Please set your address information from the admin page.");
+            msgBox.exec();
+
+            this->setStyleSheet(tmpStyleSheet);
+        }
+    }
+}
