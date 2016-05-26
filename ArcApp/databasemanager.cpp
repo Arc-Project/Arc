@@ -7,7 +7,7 @@ QMutex DatabaseManager::mutex;
 QString DatabaseManager::staticError = "";
 
 //ini file stuff
-QSettings settings;
+QSettings dbsettings;
 QString SERVER_NAME;
 QString DB_NAME;
 QString DB_USERNAME;
@@ -27,14 +27,14 @@ DatabaseManager::DatabaseManager(QObject *parent) :
    qRegisterMetaType< IntList >( "IntList" );
 
    //ini file stuff
-   QSettings settings(QSettings::IniFormat, QSettings::SystemScope,
+   QSettings dbsettings(QSettings::IniFormat, QSettings::SystemScope,
                       "The Salvation Army", "ARCWay");
 
-   qDebug() << "ini path" << settings.fileName();
-   settings.beginGroup("database");
-   qDebug() << "server name: " << settings.value("SERVER_NAME").toString();
+   qDebug() << "ini path" << dbsettings.fileName();
+   dbsettings.beginGroup("database");
+   qDebug() << "server name: " << dbsettings.value("SERVER_NAME").toString();
    //hack to make this work with this particular server name that has backslashes and commas
-   QVariant value = settings.value("SERVER_NAME2");
+   QVariant value = dbsettings.value("SERVER_NAME2");
    QString server_name2;
    if (value.type() == QVariant::StringList) {
      server_name2 = value.toStringList().join(",");
@@ -42,17 +42,17 @@ DatabaseManager::DatabaseManager(QObject *parent) :
      server_name2 = value.toString();
    }
    qDebug() << "server name part 2: " << server_name2;
-   qDebug() << "db name: " << settings.value("DB_NAME").toString();
-   qDebug() << "db username: " << settings.value("DB_USERNAME").toString();
-   qDebug() << "db pw: " << settings.value("DB_PW").toString();
+   qDebug() << "db name: " << dbsettings.value("DB_NAME").toString();
+   qDebug() << "db username: " << dbsettings.value("DB_USERNAME").toString();
+   qDebug() << "db pw: " << dbsettings.value("DB_PW").toString();
 
 //   //set constants
 
-   SERVER_NAME = settings.value("SERVER_NAME").toString() + "\\" + server_name2;
-   DB_NAME = settings.value("DB_NAME").toString();
-   DB_USERNAME = settings.value("DB_USERNAME").toString();
-   DB_PW = settings.value("DB_PW").toString();
-   DB_DSN = settings.value("DB_DSN").toString();
+   SERVER_NAME = dbsettings.value("SERVER_NAME").toString() + "\\" + server_name2;
+   DB_NAME = dbsettings.value("DB_NAME").toString();
+   DB_USERNAME = dbsettings.value("DB_USERNAME").toString();
+   DB_PW = dbsettings.value("DB_PW").toString();
+   DB_DSN = dbsettings.value("DB_DSN").toString();
 
    if (DatabaseManager::createDatabase(&db, DEFAULT_SQL_CONN_NAME))
    {

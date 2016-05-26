@@ -5670,7 +5670,7 @@ Payment</string>
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>718</width>
+                 <width>1195</width>
                  <height>1381</height>
                 </rect>
                </property>
@@ -18153,8 +18153,8 @@ Payment</string>
           <property name="font">
            <font>
             <pointsize>16</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
+            <weight>50</weight>
+            <bold>false</bold>
            </font>
           </property>
           <property name="title">
@@ -18306,8 +18306,8 @@ Payment</string>
           <property name="font">
            <font>
             <pointsize>16</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
+            <weight>50</weight>
+            <bold>false</bold>
            </font>
           </property>
           <property name="title">
@@ -18621,7 +18621,7 @@ Payment</string>
            <enum>Qt::LeftToRight</enum>
           </property>
           <property name="text">
-           <string>The information entered here will be displayed on the Summary of Stay PDF as well as the text receipt when payments are made.</string>
+           <string>The information entered here will be displayed on the PDF exports as well as the text receipt when payments are made.</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>

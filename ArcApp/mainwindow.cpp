@@ -47,6 +47,9 @@ bool isRefund = false;
 
 QProgressDialog* dialog;
 
+//QSettings settings(QSettings::IniFormat, QSettings::SystemScope,
+//                   "The Salvation Army", "ARCWay");
+
 //QSqlQuery resultssss;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -143,6 +146,7 @@ void MainWindow::initCurrentWidget(int idx){
             }
             registerType = NOREGISTER;
             ui->actionExport_to_PDF->setEnabled(false);
+            ui->actionReceipt->setEnabled(false);
             transType = "";
             isAddressSet();
             break;
@@ -177,7 +181,7 @@ void MainWindow::initCurrentWidget(int idx){
             bookingSetup();
             clearTable(ui->bookingTable);
             editOverLap = false;
-
+            ui->actionReceipt->setEnabled(false);
             break;
         case BOOKINGPAGE: //WIDGET 3
             //initcode
@@ -216,6 +220,7 @@ void MainWindow::initCurrentWidget(int idx){
             initCasefileTransactionTable();
             initPcp();
             ui->actionExport_to_PDF->setEnabled(true);
+            ui->actionReceipt->setEnabled(false);
             break;
         case EDITBOOKING: //WIDGET 9
             ui->editLookupTable->clear();
@@ -224,6 +229,7 @@ void MainWindow::initCurrentWidget(int idx){
             ui->actionExport_to_PDF->setEnabled(true);
             break;
         case CLIENTREGISTER:    //WIDGET 10
+            ui->actionReceipt->setEnabled(false);
             if((registerType == EDITCLIENT || registerType == DELETECLIENT)
                     && (currentrole == CASEWORKER || currentrole == ADMIN)){
                 ui->button_delete_client->show();
@@ -1592,6 +1598,7 @@ void MainWindow::populateConfirm(){
     ui->actionExport_to_PDF->setEnabled(true);
     MainWindow::on_actionExport_to_PDF_triggered();
     isRefund = curBook->paidTotal < 0;
+    ui->actionReceipt->setEnabled(true);
     createTextReceipt(ui->confirmCost->text(), transType, ui->confirmTotalPaid->text(), curBook->stringStart,
                       curBook->stringEnd, ui->confirmLength->text(), true, isRefund);
 }
@@ -4706,6 +4713,7 @@ void MainWindow::on_pushButton_processPaymeent_clicked()
 
     //text receipt
     isRefund = trans->transType == "Refund" ? true : false;
+    ui->actionReceipt->setEnabled(true);
     createTextReceipt(QString::number(trans->amount),trans->type,QString::number(trans->paidToday),QString(),QString(),QString(),false,isRefund);
 }
 
@@ -5585,7 +5593,25 @@ void MainWindow::printDailyReport(const int recNo, const QString paramName, QVar
         } else if (paramName == "totalvac") {
             if (ui->lbl_totalVacancies->text().isEmpty()) return;
             paramValue = ui->lbl_totalVacancies->text();
-        }
+        } else if (paramName == "streetNo"){
+             paramValue = getStreetNo();
+             qDebug() << paramValue;
+        } else if (paramName == "streetName"){
+             paramValue = getStreetName();
+             qDebug() << paramValue;
+        } else if (paramName == "city"){
+             paramValue = getCity();
+             qDebug() << paramValue;
+        } else if (paramName == "province"){
+             paramValue = getProvince();
+             qDebug() << paramValue;
+        } else if (paramName == "zip"){
+             paramValue = getZip();
+             qDebug() << paramValue;
+        } else if (paramName == "org"){
+            paramValue = getOrgName();
+            qDebug() << paramValue;
+       }
     } else if (reportPage == 1) {
         if (paramName == "space"){
             paramValue = vacancyReport->model.tableData->at(recNo * vacancyReport->model.cols + 0);
@@ -5645,7 +5671,25 @@ void MainWindow::printShiftReport(const int recNo, const QString paramName, QVar
             paramValue = ui->lbl_depoAmt->text();
         } else if (paramName == "total") {
             paramValue = ui->lbl_shiftAmt->text();
-        }
+        } else if (paramName == "streetNo"){
+             paramValue = getStreetNo();
+             qDebug() << paramValue;
+        } else if (paramName == "streetName"){
+             paramValue = getStreetName();
+             qDebug() << paramValue;
+        } else if (paramName == "city"){
+             paramValue = getCity();
+             qDebug() << paramValue;
+        } else if (paramName == "province"){
+             paramValue = getProvince();
+             qDebug() << paramValue;
+        } else if (paramName == "zip"){
+             paramValue = getZip();
+             qDebug() << paramValue;
+        } else if (paramName == "org"){
+            paramValue = getOrgName();
+            qDebug() << paramValue;
+       }
     } else if (reportPage == 1) {
         if (paramName == "client") {
             paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 0);
@@ -5722,7 +5766,25 @@ void MainWindow::printFloatReport(const int recNo, const QString paramName, QVar
         paramValue = ui->cashFloatShift_lbl->text();
     } else if (paramName == "comment") {
         paramValue = ui->pte_floatMemo->document()->toPlainText();
-    }
+    } else if (paramName == "streetNo"){
+         paramValue = getStreetNo();
+         qDebug() << paramValue;
+    } else if (paramName == "streetName"){
+         paramValue = getStreetName();
+         qDebug() << paramValue;
+    } else if (paramName == "city"){
+         paramValue = getCity();
+         qDebug() << paramValue;
+    } else if (paramName == "province"){
+         paramValue = getProvince();
+         qDebug() << paramValue;
+    } else if (paramName == "zip"){
+         paramValue = getZip();
+         qDebug() << paramValue;
+    } else if (paramName == "org"){
+        paramValue = getOrgName();
+        qDebug() << paramValue;
+   }
 }
 
 void MainWindow::printMonthlyReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage){
@@ -5738,13 +5800,50 @@ void MainWindow::printMonthlyReport(const int recNo, const QString paramName, QV
         paramValue = ui->numUniqueClients_lbl->text();
     } else if (paramName == "date") {
         paramValue = ui->monthlyReportMonth_lbl->text();
-    }
+    } else if (paramName == "streetNo"){
+         paramValue = getStreetNo();
+         qDebug() << paramValue;
+    } else if (paramName == "streetName"){
+         paramValue = getStreetName();
+         qDebug() << paramValue;
+    } else if (paramName == "city"){
+         paramValue = getCity();
+         qDebug() << paramValue;
+    } else if (paramName == "province"){
+         paramValue = getProvince();
+         qDebug() << paramValue;
+    } else if (paramName == "zip"){
+         paramValue = getZip();
+         qDebug() << paramValue;
+    } else if (paramName == "org"){
+        paramValue = getOrgName();
+        qDebug() << paramValue;
+   }
 }
 
 void MainWindow::printRestrictionReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage){
     Q_UNUSED(paramName);
     if (reportPage == 0) {
         paramValue = yellowReport->model.tableData->at(recNo * yellowReport->model.cols);
+        if (paramName == "streetNo"){
+             paramValue = getStreetNo();
+             qDebug() << paramValue;
+        } else if (paramName == "streetName"){
+             paramValue = getStreetName();
+             qDebug() << paramValue;
+        } else if (paramName == "city"){
+             paramValue = getCity();
+             qDebug() << paramValue;
+        } else if (paramName == "province"){
+             paramValue = getProvince();
+             qDebug() << paramValue;
+        } else if (paramName == "zip"){
+             paramValue = getZip();
+             qDebug() << paramValue;
+        } else if (paramName == "org"){
+            paramValue = getOrgName();
+            qDebug() << paramValue;
+       }
     } else if (reportPage == 1) {
         paramValue = redReport->model.tableData->at(recNo * redReport->model.cols);
     }
@@ -5841,15 +5940,31 @@ void MainWindow::printStaySummary(const int recNo, const QString paramName, QVar
         qDebug() << result.lastError();
         while (result.next())
             paramValue = result.value(0).toString();
-    } else if (paramName == "desc") {
-        QSqlQuery result = dbManager->getProgramDesc(curBook->program);
-        qDebug() << result.lastError();
-        while (result.next())
-        paramValue = result.value(0).toString();
-    }
+
+    } else if (paramName == "streetNo"){
+         paramValue = getStreetNo();
+         qDebug() << paramValue;
+    } else if (paramName == "streetName"){
+         paramValue = getStreetName();
+         qDebug() << paramValue;
+    } else if (paramName == "city"){
+         paramValue = getCity();
+         qDebug() << paramValue;
+    } else if (paramName == "province"){
+         paramValue = getProvince();
+         qDebug() << paramValue;
+    } else if (paramName == "zip"){
+         paramValue = getZip();
+         qDebug() << paramValue;
+    } else if (paramName == "org"){
+        paramValue = getOrgName();
+        qDebug() << paramValue;
+   }
+
 }
 
 void MainWindow::printRegistry(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
+    Q_UNUSED(reportPage);
     if (paramName == "client") {
         if (ui->editLookupTable->item(recNo, 0) == 0 ) return;
          paramValue = ui->editLookupTable->item(recNo, 0)->text();
@@ -5871,7 +5986,25 @@ void MainWindow::printRegistry(const int recNo, const QString paramName, QVarian
     } else if (paramName == "rate"){
         if (ui->editLookupTable->item(recNo, 6) == 0 ) return;
          paramValue = ui->editLookupTable->item(recNo, 1)->text();
-    }
+    } else if (paramName == "streetNo"){
+         paramValue = getStreetNo();
+         qDebug() << paramValue;
+    } else if (paramName == "streetName"){
+         paramValue = getStreetName();
+         qDebug() << paramValue;
+    } else if (paramName == "city"){
+         paramValue = getCity();
+         qDebug() << paramValue;
+    } else if (paramName == "province"){
+         paramValue = getProvince();
+         qDebug() << paramValue;
+    } else if (paramName == "zip"){
+         paramValue = getZip();
+         qDebug() << paramValue;
+    } else if (paramName == "org"){
+        paramValue = getOrgName();
+        qDebug() << paramValue;
+   }
 }
 
 void MainWindow::on_btn_createNewUser_3_clicked()
@@ -7126,7 +7259,13 @@ void MainWindow::on_dailyReport_tabWidget_currentChanged(int index)
 void MainWindow::on_actionAbout_triggered()
 {
     QMessageBox aboutBox;
-    aboutBox.setText("ARCWay Version " + versionNo);
+    aboutBox.setText("ARCWay Version " + versionNo +"\n\n"
+                                                    "Colin Bose\ncolin.bose2@gmail.com\n\n"
+                                                    "Dennis Chau\ndennis.chau@outlook.com\n\n"
+                                                    "Eunwon Moon\nimoongom@gmail.com\n\n"
+                                                    "Hank Lo\nhlo1453@gmail.com\n\n"
+                                                    "Joseph Tam\njosephtam3@gmail.com\n\n"
+                                                    "BCIT 2016");
     aboutBox.setIcon(QMessageBox::Information);
     aboutBox.exec();
     qDebug() << "about clicked";
@@ -7782,10 +7921,11 @@ void MainWindow::createTextReceipt(QString totalCost, QString payType, QString p
 
 
     QTextStream out(&file);
-    out << "Salvation Army ARC\n"
-           "525 Johnson St, Victoria BC V8W 1M2\n"
-           "250-384-3396\n"
-           "www.victoriaarc.org\n"
+    out << getOrgName()+"\n" +
+           getStreetNo() + " " +getStreetName() + "\n" +
+           getCity()+ " " +getProvince()+ " " +getZip()+"\n"+
+           getPhone()+"\n"+
+           getWebsite()+"\n"+
            "**********************************\n"
            "\n"
            "\n";
@@ -7830,7 +7970,6 @@ void MainWindow::on_actionReceipt_triggered()
                           QString(),QString(),QString(),false,isRefund);
         break;
     }
-
 }
 
 void MainWindow::addCurrencyNoSignToTableWidget(QTableWidget* table, int col){
@@ -7842,11 +7981,9 @@ void MainWindow::addCurrencyNoSignToTableWidget(QTableWidget* table, int col){
     }
 }
 
-
-
-
 void MainWindow::on_EditAddressButton_clicked()
 {
+    addHistory(ADMINPAGE);
     ui->stackedWidget->setCurrentIndex(EDITADDRESS);
 
     QSettings settings(QSettings::IniFormat, QSettings::SystemScope,
@@ -7887,9 +8024,9 @@ void MainWindow::on_btn_saveAd_clicked()
 
 void MainWindow::isAddressSet()
 {
-    bool emptyString = false;
     QSettings settings(QSettings::IniFormat, QSettings::SystemScope,
                        "The Salvation Army", "ARCWay");
+    bool emptyString = false;
 
     settings.beginGroup("Address");
 
@@ -7912,11 +8049,77 @@ void MainWindow::isAddressSet()
             this->setStyleSheet("");
 
             QMessageBox msgBox;
-            msgBox.setText("The Summary of Stay and payment receipts will be missing address information.\n\n"
-                           "Please set your address information from the admin page.");
+            msgBox.setText("The PDF exports and payment receipts will be missing address information.\n\n"
+                           "Please set your address information from the admin page.\n\n"
+                           "If you wish to leave one of the address fields empty, type the spacebar while in that field,\n"
+                           "that will prevent the warning about missing information.");
             msgBox.exec();
 
             this->setStyleSheet(tmpStyleSheet);
         }
     }
+}
+
+QString MainWindow::getOrgName(){
+    QSettings settings(QSettings::IniFormat, QSettings::SystemScope,
+                       "The Salvation Army", "ARCWay");
+    settings.beginGroup("Address");
+    QString tmp = settings.value("orgName").toString();
+    return settings.value("orgName").toString().length() == 0 ? "" : tmp;
+}
+
+QString MainWindow::getStreetNo(){
+    QSettings settings(QSettings::IniFormat, QSettings::SystemScope,
+                       "The Salvation Army", "ARCWay");
+    settings.beginGroup("Address");
+    QString tmp = settings.value("streetNumber").toString();
+    return settings.value("streetNumber").toString().length() == 0 ? "" : tmp;
+}
+
+QString MainWindow::getStreetName(){
+    QSettings settings(QSettings::IniFormat, QSettings::SystemScope,
+                       "The Salvation Army", "ARCWay");
+    settings.beginGroup("Address");
+    QString tmp = settings.value("streetName").toString();
+    return settings.value("streetName").toString().length() == 0 ? "" : tmp;
+}
+
+QString MainWindow::getCity(){
+    QSettings settings(QSettings::IniFormat, QSettings::SystemScope,
+                       "The Salvation Army", "ARCWay");
+    settings.beginGroup("Address");
+    QString tmp = settings.value("city").toString();
+    return settings.value("city").toString().length() == 0 ? "" : tmp;
+}
+
+QString MainWindow::getProvince(){
+    QSettings settings(QSettings::IniFormat, QSettings::SystemScope,
+                       "The Salvation Army", "ARCWay");
+    settings.beginGroup("Address");
+    QString tmp = settings.value("province").toString();
+    return settings.value("province").toString().length() == 0 ? "" : tmp;
+}
+
+QString MainWindow::getZip(){
+    QSettings settings(QSettings::IniFormat, QSettings::SystemScope,
+                                                "The Salvation Army", "ARCWay");
+    settings.beginGroup("Address");
+    QString tmp = settings.value("zip").toString();
+    return settings.value("zip").toString().length() == 0 ? "" : tmp;
+}
+
+QString MainWindow::getPhone(){
+    QSettings settings(QSettings::IniFormat, QSettings::SystemScope,
+                       "The Salvation Army", "ARCWay");
+    settings.beginGroup("Address");
+    QString tmp = settings.value("phone").toString();
+    return settings.value("phone").toString().length() == 0 ? "" : tmp;
+}
+
+QString MainWindow::getWebsite(){
+    QSettings settings(QSettings::IniFormat, QSettings::SystemScope,
+                       "The Salvation Army", "ARCWay");
+    settings.beginGroup("Address");
+    QString tmp = settings.value("website").toString();
+    return settings.value("website").toString().length() == 0 ? "" : tmp;
 }
