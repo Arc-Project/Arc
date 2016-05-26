@@ -151,7 +151,6 @@ public:
 
     static void addCurrencyNoSignToTableWidget(QTableWidget* table, int col);
     static void resizeTableView(QTableView* tableView);
-
     /*==========================================================================
     DEV TESTING AUXILIARY FUNCTIONS
     ==========================================================================*/
@@ -725,8 +724,6 @@ private slots:
 
     void on_actionReceipt_triggered();
 
-    
-
     void on_button_cl_uploadpic_clicked();
 
     void on_EditAddressButton_clicked();
@@ -734,6 +731,22 @@ private slots:
     void on_btn_saveAd_clicked();
 
     void isAddressSet();
+
+    QString getOrgName();
+
+    QString getStreetNo();
+
+    QString getStreetName();
+
+    QString getCity();
+
+    QString getProvince();
+
+    QString getZip();
+
+    QString getPhone();
+
+    QString getWebsite();
 
 private:
 
@@ -775,8 +788,6 @@ private:
     void getCashFloat(QDate date, int shiftNo);
     void getMonthlyReport(int month, int year);
     void updateRestrictionTables();
-    
-    
 
 
 
