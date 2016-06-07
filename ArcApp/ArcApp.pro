@@ -33,7 +33,8 @@ SOURCES += main.cpp\
     swapper.cpp \
     addmsd.cpp \
     worker.cpp \
-    storage.cpp
+    storage.cpp \
+    changepassword.cpp
 
 HEADERS  += mainwindow.h \
     databasemanager.h \
@@ -56,7 +57,8 @@ HEADERS  += mainwindow.h \
     swapper.h \
     addmsd.h \
     worker.h \
-    storage.h
+    storage.h \
+    changepassword.h
 
 FORMS    += mainwindow.ui \
     loginprompt.ui \
@@ -65,7 +67,8 @@ FORMS    += mainwindow.ui \
     mycalendar.ui \
     editrooms.ui \
     addmsd.ui \
-    storage.ui
+    storage.ui \
+    changepassword.ui
 
 RESOURCES += arcstyle/styling.qrc
 
