@@ -8050,6 +8050,9 @@ Payment</string>
           <property name="sizeAdjustPolicy">
            <enum>QAbstractScrollArea::AdjustToContents</enum>
           </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
           <property name="columnCount">
            <number>12</number>
           </property>
@@ -11028,6 +11031,9 @@ Payment</string>
                         <property name="alignment">
                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                         </property>
+                        <property name="maximum">
+                         <number>999</number>
+                        </property>
                        </widget>
                       </item>
                       <item row="1" column="0">
@@ -11063,6 +11069,9 @@ Payment</string>
                         </property>
                         <property name="alignment">
                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                        <property name="maximum">
+                         <number>999</number>
                         </property>
                        </widget>
                       </item>
@@ -11100,6 +11109,9 @@ Payment</string>
                         <property name="alignment">
                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                         </property>
+                        <property name="maximum">
+                         <number>999</number>
+                        </property>
                        </widget>
                       </item>
                       <item row="3" column="0">
@@ -11136,6 +11148,9 @@ Payment</string>
                         <property name="alignment">
                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                         </property>
+                        <property name="maximum">
+                         <number>999</number>
+                        </property>
                        </widget>
                       </item>
                       <item row="4" column="0">
@@ -11171,6 +11186,9 @@ Payment</string>
                         </property>
                         <property name="alignment">
                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                        <property name="maximum">
+                         <number>999</number>
                         </property>
                        </widget>
                       </item>
@@ -11497,6 +11515,9 @@ Payment</string>
                         <property name="alignment">
                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                         </property>
+                        <property name="maximum">
+                         <number>999</number>
+                        </property>
                        </widget>
                       </item>
                       <item row="1" column="0">
@@ -11532,6 +11553,9 @@ Payment</string>
                         </property>
                         <property name="alignment">
                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                        <property name="maximum">
+                         <number>999</number>
                         </property>
                        </widget>
                       </item>
@@ -11569,6 +11593,9 @@ Payment</string>
                         <property name="alignment">
                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                         </property>
+                        <property name="maximum">
+                         <number>999</number>
+                        </property>
                        </widget>
                       </item>
                       <item row="3" column="0">
@@ -11605,6 +11632,9 @@ Payment</string>
                         <property name="alignment">
                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                         </property>
+                        <property name="maximum">
+                         <number>999</number>
+                        </property>
                        </widget>
                       </item>
                       <item row="4" column="0">
@@ -11640,6 +11670,9 @@ Payment</string>
                         </property>
                         <property name="alignment">
                          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                        </property>
+                        <property name="maximum">
+                         <number>999</number>
                         </property>
                        </widget>
                       </item>

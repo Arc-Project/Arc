@@ -5666,9 +5666,9 @@ void MainWindow::printShiftReport(const int recNo, const QString paramName, QVar
             paramValue = ui->lbl_cashAmt->text();
         } else if (paramName == "elec") {
             paramValue = ui->lbl_debitAmt->text();
-        } else if (paramName == "depo") {
-            paramValue = ui->lbl_chequeAmt->text();
         } else if (paramName == "cheque") {
+            paramValue = ui->lbl_chequeAmt->text();
+        } else if (paramName == "depo") {
             paramValue = ui->lbl_depoAmt->text();
         } else if (paramName == "total") {
             paramValue = ui->lbl_shiftAmt->text();
