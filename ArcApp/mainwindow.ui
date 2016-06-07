@@ -224,7 +224,7 @@ QHeaderView{
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>18</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_55">
@@ -3084,7 +3084,7 @@ Payment</string>
              </font>
             </property>
             <property name="text">
-             <string>End Date</string>
+             <string>Checkout Date</string>
             </property>
            </widget>
           </item>
@@ -3275,7 +3275,7 @@ Payment</string>
              </font>
             </property>
             <property name="text">
-             <string>End Date:</string>
+             <string>Checkout Date</string>
             </property>
            </widget>
           </item>
@@ -3994,6 +3994,38 @@ Payment</string>
       </widget>
       <widget class="QWidget" name="adminPage">
        <layout class="QGridLayout" name="gridLayout_4">
+        <item row="0" column="0">
+         <spacer name="horizontalSpacer_5">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>350</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="3">
+         <spacer name="horizontalSpacer_87">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>350</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
         <item row="0" column="1">
          <widget class="QWidget" name="wdg_admin" native="true">
           <layout class="QGridLayout" name="gridLayout">
@@ -4188,37 +4220,12 @@ Payment</string>
           </layout>
          </widget>
         </item>
-        <item row="0" column="0">
-         <spacer name="horizontalSpacer_5">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>350</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
         <item row="0" column="2">
-         <spacer name="horizontalSpacer_87">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+         <widget class="QPushButton" name="adminVal">
+          <property name="text">
+           <string>Validate</string>
           </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Fixed</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>350</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -5670,7 +5677,7 @@ Payment</string>
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>1195</width>
+                 <width>718</width>
                  <height>1381</height>
                 </rect>
                </property>
@@ -13604,7 +13611,7 @@ Payment</string>
              </font>
             </property>
             <property name="text">
-             <string>End Date:</string>
+             <string>Checkout Date:</string>
             </property>
            </widget>
           </item>
@@ -13947,7 +13954,7 @@ Payment</string>
                 </font>
                </property>
                <property name="text">
-                <string>End Date</string>
+                <string>Checkout Date</string>
                </property>
               </widget>
              </item>
@@ -14769,7 +14776,7 @@ Payment</string>
                 </font>
                </property>
                <property name="text">
-                <string>End Date</string>
+                <string>Checkout Date</string>
                </property>
               </widget>
              </item>
@@ -18642,6 +18649,31 @@ Payment</string>
          </spacer>
         </item>
        </layout>
+      </widget>
+      <widget class="QWidget" name="validate">
+       <widget class="QPushButton" name="valUpdate">
+        <property name="geometry">
+         <rect>
+          <x>1470</x>
+          <y>910</y>
+          <width>93</width>
+          <height>28</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Update</string>
+        </property>
+       </widget>
+       <widget class="QTableWidget" name="valTable">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>1441</width>
+          <height>951</height>
+         </rect>
+        </property>
+       </widget>
       </widget>
      </widget>
     </item>

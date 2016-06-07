@@ -19,7 +19,7 @@
 #define EDITSHIFT           15
 #define STORAGEPAGE         16
 #define EDITADDRESS         17
-
+#define VALIDATEPAGE        18
 #define DAILYREPORT         0
 #define SHIFTREPORT         1
 #define FLOATCOUNT          2
@@ -127,6 +127,7 @@ public:
     void populateATable(QTableWidget * table, QStringList headers, QStringList items, QSqlQuery result, bool stretch);
     void handleNewPayment(int row);
     void updateCheque(int row, QString chequeNo);
+    void doValidate();
     double calcRefund(QDate old, QDate n);
     bool checkNumber(QString num);
     bool updateBooking(Booking b);
@@ -747,6 +748,8 @@ private slots:
     QString getPhone();
 
     QString getWebsite();
+
+    void on_adminVal_clicked();
 
 private:
 

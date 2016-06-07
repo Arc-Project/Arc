@@ -144,6 +144,10 @@ public:
     bool escapePayment(QString clientId, QString curDate, QString amount, QString type, QString notes, QString chequeNo, QString msd, QString issued,
                                         QString transtype, QString outstanding, QString empId, QString shiftNo, QString time);
     QSqlQuery loadStorage(QString id);
+    bool addBooking(QString stringStart, QString stringEnd, QString roomId, QString clientId, QString fullName, double cost, QString program);
+    QSqlQuery getAllClients();
+    double validateMoney(QString clientId);
+
     bool addStorage(QString id, QString name, QString data);
     bool updateStore(QString storeId, QString data);
     bool updateStoreDate(QString storeId);
