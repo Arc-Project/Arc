@@ -8050,6 +8050,9 @@ Payment</string>
           <property name="sizeAdjustPolicy">
            <enum>QAbstractScrollArea::AdjustToContents</enum>
           </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
           <property name="columnCount">
            <number>12</number>
           </property>
