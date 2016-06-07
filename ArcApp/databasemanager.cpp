@@ -2198,3 +2198,9 @@ bool DatabaseManager::getPcpQuery(QSqlQuery* query, QString curClientID, QString
                      " AND Type = '" + type + "'";
     return query->exec(result);
 }
+
+bool DatabaseManager::changePassword(QString userName, QString newPassword){
+    QSqlQuery query(db);
+    return query.exec("UPDATE Employee SET Password='" + newPassword + "' WHERE Username='" + userName + "';");
+
+}

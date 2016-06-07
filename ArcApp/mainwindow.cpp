@@ -9,6 +9,7 @@
 #include <QProgressDialog>
 #include <qtrpt.h>
 #include "worker.h"
+#include "changepassword.h"
 
 QLabel *lbl_curUser;
 QLabel *lbl_curShift;
@@ -8123,3 +8124,27 @@ QString MainWindow::getWebsite(){
     QString tmp = settings.value("website").toString();
     return settings.value("website").toString().length() == 0 ? "" : tmp;
 }
+
+/*==============================================================================
+CHANGE PASSWORD
+==============================================================================*/
+void MainWindow::on_actionChange_Password_triggered()
+{
+    ChangePassword *changePwDialog = new ChangePassword();
+
+    connect(changePwDialog, SIGNAL(newPw(QString)), this, SLOT(changeUserPw(QString)));
+    changePwDialog->show();
+
+}
+
+void MainWindow::changeUserPw(QString newPw){
+    if(dbManager->changePassword(userLoggedIn, newPw)){
+        qDebug()<<"PWCHANGED";
+        statusBar()->showMessage(QString("Password Changed"), 5000);
+        return;
+    }
+    qDebug()<<"PWNOtCHANGED";
+    statusBar()->showMessage(QString("Password Change Fail"), 7000);
+}
+
+

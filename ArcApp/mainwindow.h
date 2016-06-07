@@ -748,6 +748,10 @@ private slots:
 
     QString getWebsite();
 
+  //CHANGE PASSWORD
+    void on_actionChange_Password_triggered();
+    void changeUserPw(QString newPw);
+
 private:
 
     Ui::MainWindow *ui;
@@ -798,6 +802,11 @@ private:
     int curmodifyingspace = NOT_SET;
 
     QFutureWatcher<void> futureWatcher;
+
+
+
+
+
 };
 
 #endif // MAINWINDOW_H

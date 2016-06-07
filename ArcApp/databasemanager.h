@@ -185,6 +185,10 @@ public:
     bool updateShift(bool shiftExist, QString selectedDay, QStringList *shiftList);
     QSqlQuery getShiftInfoDaily(QString day = "");
 
+    //change user PW
+    bool changePassword(QString userName, QString newPassword);
+
+
 signals:
     void dailyReportStatsChanged(QList<int> list, bool conn);
     void shiftReportStatsChanged(QStringList list, bool conn);

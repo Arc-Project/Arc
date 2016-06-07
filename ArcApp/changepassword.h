@@ -15,6 +15,18 @@ public:
     explicit ChangePassword(QWidget *parent = 0);
     ~ChangePassword();
 
+    bool confirm_Password();
+
+
+signals:
+    void newPw(QString newPw);
+
+private slots:
+
+    void on_pushButton_userpw_ok_clicked();
+
+    void on_pushButton_userpw_cancel_clicked();
+
 private:
     Ui::ChangePassword *ui;
 };
