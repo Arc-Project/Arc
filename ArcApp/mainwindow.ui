@@ -5670,8 +5670,8 @@ Payment</string>
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>1195</width>
-                 <height>1381</height>
+                 <width>620</width>
+                 <height>1294</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -18686,7 +18686,7 @@ Payment</string>
      <x>0</x>
      <y>0</y>
      <width>1625</width>
-     <height>29</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="font">
@@ -18715,6 +18715,8 @@ Payment</string>
     <addaction name="actionReconnect_to_Database"/>
     <addaction name="actionLogout"/>
     <addaction name="actionQuit"/>
+    <addaction name="separator"/>
+    <addaction name="actionChange_Password"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="font">
@@ -18934,6 +18936,16 @@ Payment</string>
   <action name="actionReceipt">
    <property name="text">
     <string>Receipt</string>
+   </property>
+  </action>
+  <action name="actionChange_Password">
+   <property name="text">
+    <string>Change Password</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
    </property>
   </action>
  </widget>

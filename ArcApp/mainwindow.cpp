@@ -9,6 +9,7 @@
 #include <QProgressDialog>
 #include <qtrpt.h>
 #include "worker.h"
+#include "changepassword.h"
 
 QLabel *lbl_curUser;
 QLabel *lbl_curShift;
@@ -1476,8 +1477,12 @@ void MainWindow::on_pushButton_bookRoom_clicked()
             return;
     }
     if(!dbManager->isBanned(curClient->clientId)){
+
+        doMessageBox("User is currently restricted. Continue anyways?");
+        /*
         if(!doMessageBox("User is currently restricted. Continue anyway?"))
             return;
+            */
     }
     /*
     curClient = new Client();
@@ -7305,12 +7310,8 @@ void MainWindow::on_shift_dayOpt_currentIndexChanged(const QString &arg1)
 void MainWindow::readShiftDb(QString day){
 //    qDebug()<<"READ shift DB" << day;
     QSqlQuery dailyShift = dbManager->getShiftInfoDaily(day);
-
-    //dbManager->printAll(dailyShift);
     while(dailyShift.next()){
-//        qDebug()<<"Check Query";
         shiftSize = dailyShift.value("NumShifts").toInt();
-//        qDebug()<<"shiftSize"<<shiftSize;
         ui->shift_num->setCurrentIndex(shiftSize);
         setShiftTimeDialog(false);
         shiftExist = true;
@@ -7349,8 +7350,6 @@ void MainWindow::setShiftTimeDialog(bool resetTime){
     double TimeGap = (double)24/(shiftSize);
     startTime.setHMS(TimeGap,0,0);
     endTime.setHMS(TimeGap-1,59,0);
-//    qDebug()<<"Time Gap: "<< QString::number(TimeGap)<<QString::number(TimeGap,'f',2)
-//           <<startTime.toString() << endTime.toString();
     initTime();
     showAllShiftEdit(false);
 
@@ -7767,8 +7766,6 @@ void MainWindow::EditShiftInfo(){
 
 //read shift information
 void MainWindow::ReadCurrentShift(QString readDay){
-    QString readShift = "SELECT * FROM Shift";
- //   QSqlQuery readShiftQ = dbManager->execQuery(readShift);
     QSqlQuery readShiftQ = dbManager->getShiftInfoDaily(readDay);
     while(readShiftQ.next()){
         QString dayTag = readShiftQ.value("DayOfWeek").toString();
@@ -8127,3 +8124,27 @@ QString MainWindow::getWebsite(){
     QString tmp = settings.value("website").toString();
     return settings.value("website").toString().length() == 0 ? "" : tmp;
 }
+
+/*==============================================================================
+CHANGE PASSWORD
+==============================================================================*/
+void MainWindow::on_actionChange_Password_triggered()
+{
+    ChangePassword *changePwDialog = new ChangePassword();
+
+    connect(changePwDialog, SIGNAL(newPw(QString)), this, SLOT(changeUserPw(QString)));
+    changePwDialog->show();
+
+}
+
+void MainWindow::changeUserPw(QString newPw){
+    if(dbManager->changePassword(userLoggedIn, newPw)){
+        qDebug()<<"PWCHANGED";
+        statusBar()->showMessage(QString("Password Changed"), 5000);
+        return;
+    }
+    qDebug()<<"PWNOtCHANGED";
+    statusBar()->showMessage(QString("Password Change Fail"), 7000);
+}
+
+
