@@ -748,6 +748,8 @@ private slots:
 
     QString getWebsite();
 
+    void saveReceipt();
+
   //CHANGE PASSWORD
     void on_actionChange_Password_triggered();
     void changeUserPw(QString newPw);

@@ -18734,7 +18734,6 @@ Payment</string>
      <string>Export</string>
     </property>
     <addaction name="separator"/>
-    <addaction name="actionReceipt"/>
     <addaction name="actionExport_to_PDF"/>
    </widget>
    <addaction name="menuFle"/>

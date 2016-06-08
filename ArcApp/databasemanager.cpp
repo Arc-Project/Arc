@@ -2207,14 +2207,19 @@ bool DatabaseManager::changePassword(QString userName, QString newPassword){
 bool DatabaseManager::addReceiptQuery(QString receiptid, QString date, QString time, QString clientName, QString startDate,
                                       QString endDate, QString numNights, QString bedType, QString roomNo, QString prog,
                                       QString descr, QString streetNo, QString streetName, QString city, QString province,
-                                      QString zip, QString org, QString totalCost, QString payType, QString payTotal, QString refund)
+                                      QString zip, QString org, QString totalCost, QString payType, QString payTotal,
+                                      QString refund, QString payOwe)
 {
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
 
-    query.prepare("INSERT INTO Receipt (receiptid, date, time, clientName, startDate, endDate, numNights, bedType, roomNo, prog"
-                  "descr, streetNo, streetName, city, province, zip, org, totalCost, payType, payTotal, refund)"
-                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    qDebug() << "preparing query";
+
+    query.prepare("INSERT INTO Receipt (receiptid, date, time, clientName, startDate, endDate, numNights, bedType, roomNo, prog,"
+                  "descr, streetNo, streetName, city, province, zip, org, totalCost, payType, payTotal, refund, payOwe)"
+                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+    qDebug() << "begin binding";
 
     query.addBindValue(receiptid);
     query.addBindValue(date);
@@ -2237,18 +2242,22 @@ bool DatabaseManager::addReceiptQuery(QString receiptid, QString date, QString t
     query.addBindValue(payType);
     query.addBindValue(payTotal);
     query.addBindValue(refund);
+    query.addBindValue(payOwe);
+
+    qDebug() << "binding done";
 
     if (query.exec())
     {
+        qDebug() << query.lastQuery();
         return true;
     }
+    qDebug() << query.lastError();
     return false;
 }
 
-bool DatabaseManager::getReceiptQuery(QString curClientID, QString date, QString time) {
-//    QString result = "SELECT rowId, Goal, Strategy, Date "
-//                     "FROM Pcp "
-//                     "WHERE ClientId = " + curClientID +
-//                     " AND Type = '" + type + "'";
+bool DatabaseManager::getReceiptQuery(QString receiptid) {
+//    QString result = "SELECT * "
+//                     "FROM Receipt "
+//                     "WHERE receiptid = '" + receiptid + "'";
 //    return query->exec(result);
 }
