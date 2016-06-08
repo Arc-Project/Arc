@@ -118,3 +118,8 @@ void Validate::populateATable(QTableWidget * table, QStringList headers, QString
 
 
 }
+
+void Validate::on_valExit_clicked()
+{
+    close();
+}
