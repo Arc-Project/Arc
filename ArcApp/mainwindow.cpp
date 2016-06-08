@@ -5500,7 +5500,7 @@ void MainWindow::on_actionExport_to_PDF_triggered()
 
     // customer receipt
     if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING) {
-        rptTemplate = ":/templates/pdf/staysummary.xml";
+        rptTemplate = ":/templates/pdf/combinedRec.xml";
         report->recordCount << 1;
     }
 
@@ -5941,6 +5941,20 @@ void MainWindow::printStaySummary(const int recNo, const QString paramName, QVar
         qDebug() << result.lastError();
         while (result.next())
             paramValue = result.value(0).toString();
+
+    } else if (paramName == "totalCost") {
+        paramValue = "$" + ui->confirmCost->text();
+
+    } else if (paramName == "totalPaid") {
+        paramValue = "$" + ui->confirmTotalPaid->text();
+
+    } else if (paramName == "owing") {
+        qDebug() << "cost " <<  curBook->cost;
+        qDebug() << "paid " << trans->paidToday;
+        paramValue = "$" + QString::number(curBook->cost - trans->paidToday, 'f', 2);
+
+    } else if (paramName == "payType") {
+        paramValue = transType;
 
     } else if (paramName == "streetNo"){
          paramValue = getStreetNo();

@@ -180,6 +180,11 @@ public:
     QSqlQuery getProgramDesc(QString programcode);
     void readPcpThread(QString clientId, QString type, int idx);
     bool getPcpQuery(QSqlQuery* query, QString curClientID, QString type);
+    bool addReceiptQuery(QString receiptid, QString date, QString time, QString clientName, QString startDate,
+                                          QString endDate, QString numNights, QString bedType, QString roomNo, QString prog,
+                                          QString descr, QString streetNo, QString streetName, QString city, QString province,
+                                          QString zip, QString org, QString totalCost, QString payType, QString payTotal, QString refund);
+    bool getReceiptQuery(QString curClientID, QString date, QString time);
 
     //Shift table
     bool updateShift(bool shiftExist, QString selectedDay, QStringList *shiftList);
