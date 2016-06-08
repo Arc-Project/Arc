@@ -26,6 +26,8 @@ public:
 private slots:
     void on_valFix_clicked();
 
+    void on_valExit_clicked();
+
 private:
     Ui::Validate *ui;
     double curBal, fixBal;

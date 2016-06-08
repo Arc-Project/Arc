@@ -755,6 +755,9 @@ private slots:
     void on_registryRoomLook_clicked();
 
     void on_valUpdate_clicked();
+  //CHANGE PASSWORD
+    void on_actionChange_Password_triggered();
+    void changeUserPw(QString newPw);
 
 private:
 
@@ -806,6 +809,11 @@ private:
     int curmodifyingspace = NOT_SET;
 
     QFutureWatcher<void> futureWatcher;
+
+
+
+
+
 };
 
 #endif // MAINWINDOW_H
