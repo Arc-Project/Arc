@@ -1638,12 +1638,15 @@ void MainWindow::populateConfirm(){
         ui->confirmTotalPaid->setText(QString::number(curBook->paidTotal, 'f', 2));
     }
 
-    ui->actionExport_to_PDF->setEnabled(true);
-    MainWindow::on_actionExport_to_PDF_triggered();
+    //handle receipt
+
+    ui->actionExport_to_PDF->setEnabled(true);  
+//    MainWindow::on_actionExport_to_PDF_triggered();
     isRefund = curBook->paidTotal < 0;
-    ui->actionReceipt->setEnabled(true);
-    createTextReceipt(ui->confirmCost->text(), transType, ui->confirmTotalPaid->text(), curBook->stringStart,
-                      curBook->stringEnd, ui->confirmLength->text(), true, isRefund);
+    MainWindow::saveReceipt();
+//    ui->actionReceipt->setEnabled(true);
+//    createTextReceipt(ui->confirmCost->text(), transType, ui->confirmTotalPaid->text(), curBook->stringStart,
+//                      curBook->stringEnd, ui->confirmLength->text(), true, isRefund);
 }
 
 //void MainWindow::on_monthCheck_stateChanged(int arg1)
@@ -5542,7 +5545,7 @@ void MainWindow::on_actionExport_to_PDF_triggered()
 
     // customer receipt
     if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING) {
-        rptTemplate = ":/templates/pdf/staysummary.xml";
+        rptTemplate = ":/templates/pdf/combinedRec.xml";
         report->recordCount << 1;
     }
 
@@ -5983,6 +5986,20 @@ void MainWindow::printStaySummary(const int recNo, const QString paramName, QVar
         qDebug() << result.lastError();
         while (result.next())
             paramValue = result.value(0).toString();
+
+    } else if (paramName == "totalCost") {
+        paramValue = "$" + ui->confirmCost->text();
+
+    } else if (paramName == "totalPaid") {
+        paramValue = "$" + ui->confirmTotalPaid->text();
+
+    } else if (paramName == "owing") {
+        qDebug() << "cost " <<  curBook->cost;
+        qDebug() << "paid " << trans->paidToday;
+        paramValue = "$" + QString::number(curBook->cost - trans->paidToday, 'f', 2);
+
+    } else if (paramName == "payType") {
+        paramValue = transType;
 
     } else if (paramName == "streetNo"){
          paramValue = getStreetNo();
@@ -8167,6 +8184,66 @@ QString MainWindow::getWebsite(){
     return settings.value("website").toString().length() == 0 ? "" : tmp;
 }
 
+
+void MainWindow::saveReceipt() {
+    //bed type
+    QString bedString;
+    QString s = curBook->room;
+    QChar c = *(s.end()-1);
+    qDebug() << "last char" << c;
+    if (c == 'M') bedString.append("Mat ");
+    else if (c == 'B') bedString.append("Bed ");
+
+    QStringList pieces = curBook->room.split( "-" );
+    bedString.append(pieces.value( pieces.length() - 1));
+    bedString.chop(1);
+
+    //room number
+    QRegExp rx("[-]");
+    QStringList spacecodeList = s.split(rx, QString::SkipEmptyParts);
+
+    //program description
+    QSqlQuery progResult = dbManager->getProgramDesc(curBook->program);
+    progResult.next();
+    qDebug() << "desc:";
+    qDebug() << progResult.lastError();
+    qDebug() << progResult.value(0).toString();
+
+    //receiptid
+    QString timestamp = QDate::currentDate().toString("yyyyMMdd") + QTime::currentTime().toString("hhmmss");
+
+
+//    qDebug() << "program" << curBook->program;
+
+//receiptid, date, time, clientName, startDate, endDate, numNights, bedType, roomNo, prog,"
+//"descr, streetNo, streetName, city, province, zip, org, totalCost, payType, payTotal, refund, payOwe)"
+
+    dbManager->addReceiptQuery( timestamp,
+                                       QDate::currentDate().toString("yyyy-MM-dd"),
+                                       QTime::currentTime().toString("H:mm AP"),
+                                       curClientName,
+                                       ui->confirmStart->text(),
+                                       ui->confirmEnd->text(),
+                                       ui->confirmLength->text(),
+                                       bedString,
+                                       spacecodeList.at(2),
+                                       curBook->program,
+                                       progResult.value(0).toString(),
+                                       getStreetNo(),
+                                       getStreetName(),
+                                       getCity(),
+                                       getProvince(),
+                                       getZip(),
+                                       getOrgName(),
+                                       "$" + ui->confirmCost->text(),
+                                       transType,
+                                       "$" + ui->confirmTotalPaid->text(),
+                                       QString::number(isRefund),
+                                       "$" + QString::number(curBook->cost - trans->paidToday, 'f', 2));
+
+
+}
+
 void MainWindow::on_adminVal_clicked()
 {
     ui->stackedWidget->setCurrentIndex(VALIDATEPAGE);
@@ -8210,6 +8287,7 @@ void MainWindow::on_valUpdate_clicked()
     validate->exec();
 
 }
+
 /*==============================================================================
 CHANGE PASSWORD
 ==============================================================================*/
