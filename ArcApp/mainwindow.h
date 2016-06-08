@@ -19,7 +19,7 @@
 #define EDITSHIFT           15
 #define STORAGEPAGE         16
 #define EDITADDRESS         17
-
+#define VALIDATEPAGE        18
 #define DAILYREPORT         0
 #define SHIFTREPORT         1
 #define FLOATCOUNT          2
@@ -65,6 +65,7 @@
 #include "client.h"
 #include "shared.h"
 #include "casefile.h"
+#include "validate.h"
 #include "Utility.h"
 #include "mymodel.h"
 #include "report.h"
@@ -127,6 +128,7 @@ public:
     void populateATable(QTableWidget * table, QStringList headers, QStringList items, QSqlQuery result, bool stretch);
     void handleNewPayment(int row);
     void updateCheque(int row, QString chequeNo);
+    void doValidate();
     double calcRefund(QDate old, QDate n);
     bool checkNumber(QString num);
     bool updateBooking(Booking b);
@@ -749,6 +751,12 @@ private slots:
     QString getWebsite();
 
     void saveReceipt();
+
+    void on_adminVal_clicked();
+
+    void on_registryRoomLook_clicked();
+
+    void on_valUpdate_clicked();
 
   //CHANGE PASSWORD
     void on_actionChange_Password_triggered();

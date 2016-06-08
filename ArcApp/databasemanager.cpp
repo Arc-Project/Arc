@@ -182,6 +182,21 @@ void DatabaseManager::printAll(QSqlQuery queryResults)
         qDebug() << record;
     }
 }
+QSqlQuery DatabaseManager::getClientBooking(QString clientId){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Booking WHERE ClientId = " + clientId;
+    qDebug() << q;
+    query.exec(q);
+    return query;
+}
+QSqlQuery DatabaseManager::getClientTransactions(QString clientId){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Transac WHERE ClientId = " + clientId;
+    qDebug() << q;
+    query.exec(q);
+    return query;
+}
+
 bool DatabaseManager::deleteBooking(QString id){
     QSqlQuery query(db);
     QString q = "DELETE FROM Booking WHERE BookingId ='" + id + "'";
@@ -224,6 +239,14 @@ QSqlQuery DatabaseManager::loadStorage(QString id){
 }
 bool DatabaseManager::addStorage(QString id, QString name, QString data){
     QSqlQuery query(db);
+    query.prepare("INSERT INTO Storage (StorageDate, ClientId, StorageUserName, StorageItems, Deleted) Values(?,?,?,?,?)");
+    QString today = QDate::currentDate().toString(Qt::ISODate);
+    query.bindValue(0,today);
+    query.bindValue(1,id);
+    query.bindValue(2,name);
+    query.bindValue(3,"");
+    query.bindValue(4,"0");
+    return query.exec();
     QString q = "INSERT INTO Storage VALUES ('" + QDate::currentDate().toString(Qt::ISODate) + "',' " + id + "','" + name +"', '', '0' )";
     return query.exec(q);
 
@@ -232,6 +255,56 @@ bool DatabaseManager::removeStorage(QString storeId){
     QSqlQuery query(db);
     QString q = "UPDATE Storage SET Deleted = '1' WHERE StorageId = '" + storeId + "'";
     return query.exec(q);
+}
+double DatabaseManager::validateMoney(QString clientId){
+    double payments, costs;
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Transac WHERE ClientId = " + clientId;
+    query.exec(q);
+    payments = 0;
+    double add;
+    QString type;
+    while(query.next()){
+        add = query.value("Amount").toString().toDouble();
+        type = query.value("TransType").toString();
+        if(type == "Payment")
+            payments += add;
+        else
+            payments -= add;
+    }
+    q = "SELECT * FROM Booking WHERE ClientId = " + clientId;
+    query.exec(q);
+    costs = 0;
+    while(query.next()){
+        add = query.value("Cost").toString().toDouble();
+        costs += add;
+    }
+    return payments - costs;
+}
+QSqlQuery DatabaseManager::getRoomBooking(QString roomId){
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    QString date = QDate::currentDate().toString(Qt::ISODate);
+    QString q;
+    q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '"
+                 + date + "' AND SpaceCode LIKE '[0-9]-[0-9]-" + roomId +"-%' AND StartDate != EndDate ORDER BY ClientName ASC";
+
+
+    qDebug() << q;
+    if(query.exec(q)){
+
+    }
+    else{
+        qDebug() << "ERROR TRYING TO GET BOOKING";
+    }
+    return query;
+}
+
+QSqlQuery DatabaseManager::getAllClients(){
+    QSqlQuery query(db);
+    QString q = "SELECT ClientId, FirstName, LastName, Balance FROM Client";
+    query.exec(q);
+    return query;
 }
 
 bool DatabaseManager::updateStoreDate(QString storeId){
@@ -656,6 +729,22 @@ bool DatabaseManager::uploadProfilePic(QSqlDatabase* tempDbPtr, QString connName
 bool DatabaseManager::insertIntoBookingHistory(QString clientName, QString spaceId, QString program, QString start, QString end, QString action, QString emp, QString shift, QString clientId){
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
+    QString time = QTime::currentTime().toString();
+    QString today = QDate::currentDate().toString(Qt::ISODate);
+    query.prepare("INSERT INTO BookingHistory (ClientName, SpaceCode, ProgramCode, Date, StartDate, EndDate, Action, Status, EmpName, ShiftNo, Time, ClientId) Values(?,?,?,?,?,?,?,?,?,?,?,?)");
+    query.bindValue(0,clientName);
+    query.bindValue(1,spaceId);
+    query.bindValue(2,program);
+    query.bindValue(3,today);
+    query.bindValue(4,start);
+    query.bindValue(5,end);
+    query.bindValue(6, action);
+    query.bindValue(7,"UNKNOWN");
+    query.bindValue(8,emp);
+    query.bindValue(9,shift);
+    query.bindValue(10,time);
+    query.bindValue(11,clientId);
+    return query.exec();
     QString q = "INSERT INTO BookingHistory VALUES ('" +clientName + "','" +
             spaceId + "','" + program + "','" + QDate::currentDate().toString(Qt::ISODate)
             + "','" + start + "','" + end + "','" + action + "','" + "UNKNOWN"
@@ -1680,22 +1769,22 @@ bool DatabaseManager::escapePayment(QString clientId, QString curDate, QString a
 
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
-    query.prepare("INSERT INTO Transac VALUES(:clientId, :curDate, :amount, :type, :notes, :chequeNo, :msd, :issued, :transtype, :deleted, :outstanding, :empId, :shiftNo, :time)");
+    query.prepare("INSERT INTO Transac VALUES(?, ?,?,? ,?,?,?,?,?,?,?,?,?,?)");
 
-    query.bindValue(":clientId", clientId);
-    query.bindValue(":curdate", QDate::currentDate());
-    query.bindValue(":amount",amount );
-    query.bindValue(":type", type );
-    query.bindValue(":notes",notes );
-    query.bindValue(":chequeNo", chequeNo);
-    query.bindValue(":msd",msd );
-    query.bindValue(":issued",issued );
-    query.bindValue(":transtype",transtype );
-    query.bindValue(":deleted", "0");
-    query.bindValue(":outstanding",outstanding );
-    query.bindValue(":empId",empId );
-    query.bindValue(":shiftNo",shiftNo );
-    query.bindValue(":time",QTime::currentTime() );
+    query.bindValue(0, clientId);
+    query.bindValue(1, QDate::currentDate().toString(Qt::ISODate));
+    query.bindValue(2, amount );
+    query.bindValue(3, type );
+    query.bindValue(4,notes );
+    query.bindValue(5, chequeNo);
+    query.bindValue(6, msd );
+    query.bindValue(7, "");
+    query.bindValue(8, transtype );
+    query.bindValue(9, false);
+    query.bindValue(10, false);
+    query.bindValue(11,empId );
+    query.bindValue(12,shiftNo );
+    query.bindValue(13,QTime::currentTime().toString() );
     return query.exec();
 
 
@@ -1801,6 +1890,28 @@ bool DatabaseManager::insertBookingTable(QString insert){
     }
     return true;
 }
+bool DatabaseManager::addBooking(QString stringStart, QString stringEnd, QString roomId, QString clientId, QString fullName, double cost, QString program){
+
+    QString today = QDate::currentDate().toString(Qt::ISODate);
+    QSqlQuery query(db);
+    query.prepare("INSERT INTO Booking (DateCreated, Date, SpaceId, ClientId, ProgramCode, Cost, StartDate, EndDate, FirstBook, Monthly, ClientName) Values(?,?,?,?,?,?,?,?,?,?,?)");
+    query.bindValue(0,today);
+    query.bindValue(1,stringStart);
+    query.bindValue(2,roomId);
+    query.bindValue(3,clientId);
+    query.bindValue(4, program);
+    query.bindValue(5,cost);
+    query.bindValue(6, stringStart);
+    query.bindValue(7,stringEnd);
+    query.bindValue(8,"YES");
+    query.bindValue(9,"NO");
+    query.bindValue(10,fullName);
+    return query.exec();
+
+
+
+
+}
 
 QSqlQuery DatabaseManager::loginSelect(QString username, QString password) {
     DatabaseManager::checkDatabaseConnection(&db);
@@ -1861,10 +1972,10 @@ QSqlQuery DatabaseManager::getActiveBooking(QString user, bool userLook){
     QString date = QDate::currentDate().toString(Qt::ISODate);
     QString q;
     if(!userLook){
-         q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '" + date + "' AND StartDate != EndDate ORDER BY ClientName ASC";
+         q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate > '" + date + "' AND StartDate != EndDate ORDER BY ClientName ASC";
     }
     else{
-         q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '"
+         q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate > '"
                  + date + "' AND ClientName LIKE '%" + user + "%' AND StartDate != EndDate ORDER BY ClientName ASC";
 
     }

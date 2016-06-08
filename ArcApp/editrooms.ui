@@ -98,7 +98,7 @@
     <rect>
      <x>11</x>
      <y>380</y>
-     <width>341</width>
+     <width>351</width>
      <height>289</height>
     </rect>
    </property>
@@ -160,7 +160,7 @@
        </font>
       </property>
       <property name="text">
-       <string>End Date</string>
+       <string>Checkout Date</string>
       </property>
      </widget>
     </item>
@@ -388,7 +388,7 @@
     <rect>
      <x>360</x>
      <y>380</y>
-     <width>341</width>
+     <width>351</width>
      <height>289</height>
     </rect>
    </property>
@@ -450,7 +450,7 @@
        </font>
       </property>
       <property name="text">
-       <string>End Date</string>
+       <string>Checkout Date</string>
       </property>
      </widget>
     </item>

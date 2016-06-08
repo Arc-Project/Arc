@@ -751,7 +751,46 @@ void MainWindow::on_cbox_payDateRange_activated(int index)
     resizeTableView(ui->mpTable);
 
 }
+void MainWindow::doValidate(){
+    QSqlQuery result;
+    result = dbManager->getAllClients();
+    QTableWidget * table = ui->valTable;
+    QStringList headers;
+    headers << "ID" << "Name" << "Balance" << "Expected";
+    table->clear();
+    table->setRowCount(0);
 
+
+    table->horizontalHeader()->setStretchLastSection(true);
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    table->verticalHeader()->hide();
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->setSelectionMode(QAbstractItemView::SingleSelection);
+    int colCount = headers.size();
+    table->setColumnCount(colCount);
+    if(headers.length() != 0){
+        table->setHorizontalHeaderLabels(headers);
+    }
+    double expected, real;
+    int x = 0;
+    while(result.next()){
+        QString clientId = result.value("ClientId").toString();
+        expected = dbManager->validateMoney(clientId);
+        real = result.value("Balance").toString().toDouble();
+        if(expected == real){
+            return;
+        }
+        table->insertRow(x);
+        qDebug() << "Adding Client" << clientId;
+        QString fullName = result.value("FirstName").toString() + result.value("LastName").toString();
+        table->setItem(x,0, new QTableWidgetItem(result.value("ClientId").toString()));
+        table->setItem(x,1, new QTableWidgetItem(fullName));
+        table->setItem(x,2, new QTableWidgetItem(QString::number(real, 'f',2)));
+        table->setItem(x,3, new QTableWidgetItem(QString::number(expected, 'f', 2)));
+        x++;
+    }
+
+}
 
 void MainWindow::on_btn_payListAllUsers_clicked()
 {
@@ -795,7 +834,7 @@ void MainWindow::on_editSearch_clicked()
 
     QStringList headers;
     QStringList cols;
-    headers << "Client" << "Space #" << "Start Date" << "End Date" << "Program" << "Cost" << "Monthly" << "" << "" << "";
+    headers << "Client" << "Space #" << "Start Date" << "Checkout Date" << "Program" << "Cost" << "Monthly" << "" << "" << "";
     cols << "ClientName" << "SpaceCode" << "StartDate" << "EndDate" << "ProgramCode" << "Cost" << "Monthly" << "BookingId" << "ClientId" << "SpaceId";
     populateATable(ui->editLookupTable, headers, cols, result, false);
     ui->editLookupTable->hideColumn(7);
@@ -1555,12 +1594,15 @@ void MainWindow::on_makeBookingButton_2_clicked()
              + "','" + curBook->stringEnd + "','" + "YES'" + ",'" + month + "','" + curClient->fullName +"'";
 //    QDate next = curBook->startDate;
     //QDate::fromString(ui->startLabel->text(), "yyyy-MM-dd");
+    if(!dbManager->addBooking(curBook->stringStart, curBook->stringEnd, curBook->roomId, curBook->clientId, curClient->fullName, cost, curBook->program)){
+        qDebug() << "THIS IS SO AWESOME";
+        return;
+    }
+
     curBook->cost = cost;
    // insertIntoBookingHistory(QString clientName, QString spaceId, QString program, QDate start, QDate end, QString action, QString emp, QString shift){
     qDebug()<<"check booking"<<curBook->roomId;
-    if(!dbManager->insertBookingTable(values)){
-        qDebug() << "ERROR INSERTING BOOKING";
-    }
+
     if(!dbManager->updateBalance(curClient->balance - curBook->cost, curClient->clientId)){
         qDebug() << "ERROR ADDING TO BALANCE UPDATE";
     }
@@ -2182,7 +2224,7 @@ void MainWindow::initClBookHistoryTable(){
     ui->tableWidget_booking->setRowCount(0);
     ui->tableWidget_booking->setColumnCount(6);
     ui->tableWidget_booking->clear();
-    ui->tableWidget_booking->setHorizontalHeaderLabels(QStringList()<<"Booking Date"<<"Program"<<"Start Date"<< "End Date"<<"Cost"<<"Space No");
+    ui->tableWidget_booking->setHorizontalHeaderLabels(QStringList()<<"Booking Date"<<"Program"<<"Start Date"<< "Checkout Date"<<"Cost"<<"Space No");
     ui->tableWidget_booking->setMinimumHeight(30*6-1);
 }
 
@@ -3149,7 +3191,7 @@ void MainWindow::initCasefileBookHistoryTable(){
     ui->tableWidget_casefile_booking->setRowCount(0);
     ui->tableWidget_casefile_booking->setColumnCount(8);
     ui->tableWidget_casefile_booking->clear();
-    ui->tableWidget_casefile_booking->setHorizontalHeaderLabels(QStringList()<<"Reserved Date"<<"Program Code"<<"Start Date"<<"End Date"<<"Cost"<<"Bed Number"<<"FirstBook"<<"Monthly");
+    ui->tableWidget_casefile_booking->setHorizontalHeaderLabels(QStringList()<<"Reserved Date"<<"Program Code"<<"Start Date"<<"Checkout Date"<<"Cost"<<"Bed Number"<<"FirstBook"<<"Monthly");
 }
 
 void MainWindow::searchCasefileBookHistory(QString clientId){
@@ -8142,6 +8184,7 @@ QString MainWindow::getWebsite(){
     return settings.value("website").toString().length() == 0 ? "" : tmp;
 }
 
+
 void MainWindow::saveReceipt() {
     //bed type
     QString bedString;
@@ -8198,6 +8241,50 @@ void MainWindow::saveReceipt() {
                                        QString::number(isRefund),
                                        "$" + QString::number(curBook->cost - trans->paidToday, 'f', 2));
 
+
+}
+
+void MainWindow::on_adminVal_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(VALIDATEPAGE);
+    doValidate();
+}
+
+void MainWindow::on_registryRoomLook_clicked()
+{
+    QSqlQuery result;
+    QString user = "";
+    user = ui->registryRoom->text();
+
+    result = dbManager->getRoomBooking(user);
+//    int numCols = result.record().count();
+
+    QStringList headers;
+    QStringList cols;
+    headers << "Client" << "Space #" << "Start Date" << "Checkout Date" << "Program" << "Cost" << "Monthly" << "" << "" << "";
+    cols << "ClientName" << "SpaceCode" << "StartDate" << "EndDate" << "ProgramCode" << "Cost" << "Monthly" << "BookingId" << "ClientId" << "SpaceId";
+    populateATable(ui->editLookupTable, headers, cols, result, false);
+    ui->editLookupTable->hideColumn(7);
+    ui->editLookupTable->hideColumn(8);
+    ui->editLookupTable->hideColumn(9);
+
+    addCurrencyToTableWidget(ui->editLookupTable, 5);
+    //dbManager->printAll(result);
+
+    MainWindow::resizeTableView(ui->editLookupTable);
+}
+
+void MainWindow::on_valUpdate_clicked()
+{
+    int selected = ui->valTable->selectionModel()->currentIndex().row();
+    if(selected == -1){
+        return;
+    }
+    QString clientId = ui->valTable->item(selected, 0)->text();
+    double real = ui->valTable->item(selected, 2)->text().toDouble();
+    double expected = ui->valTable->item(selected, 3)->text().toDouble();
+    Validate * validate = new Validate(this, clientId, real,expected, usernameLoggedIn, QString::number(currentshiftid));
+    validate->exec();
 
 }
 
