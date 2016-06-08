@@ -150,6 +150,18 @@ void MainWindow::initCurrentWidget(int idx){
             ui->actionReceipt->setEnabled(false);
             transType = "";
             isAddressSet();
+
+            //clear booking confirmation fields
+            ui->confirmEnd->setText("TextLabel");
+            ui->confirmLength->setText("TextLabel");
+            ui->confirmMonthly->setText("TextLabel");
+            ui->confirmProgram->setText("TextLabel");
+            ui->confirmRoom->setText("TextLabel");
+            ui->confirmStart->setText("TextLabel");
+            ui->confirmCost->setText("TextLabel");
+            ui->confirmPaid->setText("TextLabel");
+            ui->confirmTotalPaid->setText("TextLabel");
+            isRefund = false;
             break;
         case CLIENTLOOKUP:  //WIDGET 1
             curClientName="";
@@ -185,6 +197,9 @@ void MainWindow::initCurrentWidget(int idx){
             ui->actionReceipt->setEnabled(false);
             break;
         case BOOKINGPAGE: //WIDGET 3
+            //clear receipts in case payment was made on the next page and then back was hit
+            if (trans != 0)
+                trans->receiptid = "";
             //initcode
 
             break;
@@ -468,6 +483,11 @@ void MainWindow::on_paymentButton_2_clicked()
         ui->bookAmtPaid->setText(QString::number(totalPaid, 'f', 2));
     }
     transType = trans->type;
+
+    if (ui->bookAmtPaid->text() != "0.00"){
+        saveReceipt(false, ui->bookAmtPaid->text());
+    }
+
 }
 void MainWindow::on_startDateEdit_dateChanged()
 {
@@ -4761,6 +4781,7 @@ void MainWindow::on_pushButton_processPaymeent_clicked()
     isRefund = trans->transType == "Refund" ? true : false;
     ui->actionReceipt->setEnabled(true);
     createTextReceipt(QString::number(trans->amount),trans->type,QString::number(trans->paidToday),QString(),QString(),QString(),false,isRefund);
+    on_pushButton_search_client_clicked();
 }
 
 void MainWindow::insertPcp(QTableWidget *tw, QString type){
@@ -8185,61 +8206,104 @@ QString MainWindow::getWebsite(){
 }
 
 
-void MainWindow::saveReceipt() {
-    //bed type
-    QString bedString;
-    QString s = curBook->room;
-    QChar c = *(s.end()-1);
-    qDebug() << "last char" << c;
-    if (c == 'M') bedString.append("Mat ");
-    else if (c == 'B') bedString.append("Bed ");
-
-    QStringList pieces = curBook->room.split( "-" );
-    bedString.append(pieces.value( pieces.length() - 1));
-    bedString.chop(1);
-
-    //room number
-    QRegExp rx("[-]");
-    QStringList spacecodeList = s.split(rx, QString::SkipEmptyParts);
-
-    //program description
-    QSqlQuery progResult = dbManager->getProgramDesc(curBook->program);
-    progResult.next();
-    qDebug() << "desc:";
-    qDebug() << progResult.lastError();
-    qDebug() << progResult.value(0).toString();
-
+void MainWindow::saveReceipt(bool booked, QString amtPaid) {
     //receiptid
     QString timestamp = QDate::currentDate().toString("yyyyMMdd") + QTime::currentTime().toString("hhmmss");
 
+    //date
+    QString date = QDate::currentDate().toString("yyyy-MM-dd");
 
-//    qDebug() << "program" << curBook->program;
+    //time
+    QString time = QTime::currentTime().toString("H:mm AP");
 
-//receiptid, date, time, clientName, startDate, endDate, numNights, bedType, roomNo, prog,"
-//"descr, streetNo, streetName, city, province, zip, org, totalCost, payType, payTotal, refund, payOwe)"
+    //start date
+    QString startDate = ui->confirmStart->text() == "TextLabel" ? "" : ui->confirmStart->text();
 
-    dbManager->addReceiptQuery( timestamp,
-                                       QDate::currentDate().toString("yyyy-MM-dd"),
-                                       QTime::currentTime().toString("H:mm AP"),
+    //end date
+    QString endDate = ui->confirmEnd->text() == "TextLabel" ? "" : ui->confirmEnd->text();
+
+    //lenght of stay
+    QString stayLen = ui->confirmLength->text() == "TextLabel" ? "" : ui->confirmLength->text();
+
+    //bed type and number
+    QString bedString;
+    if (booked) {
+        QString s = curBook->room;
+        QChar c = *(s.end()-1);
+        qDebug() << "last char" << c;
+        if (c == 'M') bedString.append("Mat ");
+        else if (c == 'B') bedString.append("Bed ");
+
+        QStringList pieces = curBook->room.split( "-" );
+        bedString.append(pieces.value( pieces.length() - 1));
+        bedString.chop(1);
+    } else {
+        bedString == "";
+    }
+
+    //room number
+    QString roomNo;
+    if (booked) {
+        QRegExp rx("[-]");
+        QString s = curBook->room;
+        QStringList spacecodeList = s.split(rx, QString::SkipEmptyParts);
+        roomNo = spacecodeList.at(2);
+    } else {
+        roomNo = "";
+    }
+
+    //program description
+    QString programDesc;
+    if (booked) {
+        QSqlQuery progResult = dbManager->getProgramDesc(curBook->program);
+        progResult.next();
+        qDebug() << "desc:";
+        qDebug() << progResult.lastError();
+        qDebug() << progResult.value(0).toString();
+        programDesc = progResult.value(0).toString();
+    } else {
+        programDesc = "";
+    }
+
+    //total cost
+    QString totalCost = ui->confirmCost->text() == "TextLabel" ? "" : "$"+ui->confirmCost->text();
+
+    //total paid
+    QString totalPaid;
+    if (booked)
+        totalPaid = ui->confirmTotalPaid->text() == "TextLabel" ? "" : "$"+ui->confirmTotalPaid->text();
+    else
+        totalPaid = "$" + amtPaid;
+
+    //total owing
+    QString owing = booked == true ? "$" + QString::number(curBook->cost - trans->paidToday, 'f', 2) : "";
+
+    //try to save the receipt 3 times in case of connection lost
+    for (int i = 0; i < 3; i++) {
+        bool saved = dbManager->addReceiptQuery( timestamp,
+                                       date,
+                                       time,
                                        curClientName,
-                                       ui->confirmStart->text(),
-                                       ui->confirmEnd->text(),
-                                       ui->confirmLength->text(),
+                                       startDate,
+                                       endDate,
+                                       stayLen,
                                        bedString,
-                                       spacecodeList.at(2),
+                                       roomNo,
                                        curBook->program,
-                                       progResult.value(0).toString(),
+                                       programDesc,
                                        getStreetNo(),
                                        getStreetName(),
                                        getCity(),
                                        getProvince(),
                                        getZip(),
                                        getOrgName(),
-                                       "$" + ui->confirmCost->text(),
+                                       totalCost,
                                        transType,
-                                       "$" + ui->confirmTotalPaid->text(),
+                                       totalPaid,
                                        QString::number(isRefund),
-                                       "$" + QString::number(curBook->cost - trans->paidToday, 'f', 2));
+                                       owing);
+        if (saved) break;
+    }
 
 
 }
