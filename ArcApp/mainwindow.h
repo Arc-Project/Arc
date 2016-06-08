@@ -65,6 +65,7 @@
 #include "client.h"
 #include "shared.h"
 #include "casefile.h"
+#include "validate.h"
 #include "Utility.h"
 #include "mymodel.h"
 #include "report.h"
@@ -750,6 +751,10 @@ private slots:
     QString getWebsite();
 
     void on_adminVal_clicked();
+
+    void on_registryRoomLook_clicked();
+
+    void on_valUpdate_clicked();
 
 private:
 

@@ -8175,3 +8175,41 @@ void MainWindow::on_adminVal_clicked()
     ui->stackedWidget->setCurrentIndex(VALIDATEPAGE);
     doValidate();
 }
+
+void MainWindow::on_registryRoomLook_clicked()
+{
+    QSqlQuery result;
+    QString user = "";
+    user = ui->registryRoom->text();
+
+    result = dbManager->getRoomBooking(user);
+//    int numCols = result.record().count();
+
+    QStringList headers;
+    QStringList cols;
+    headers << "Client" << "Space #" << "Start Date" << "Checkout Date" << "Program" << "Cost" << "Monthly" << "" << "" << "";
+    cols << "ClientName" << "SpaceCode" << "StartDate" << "EndDate" << "ProgramCode" << "Cost" << "Monthly" << "BookingId" << "ClientId" << "SpaceId";
+    populateATable(ui->editLookupTable, headers, cols, result, false);
+    ui->editLookupTable->hideColumn(7);
+    ui->editLookupTable->hideColumn(8);
+    ui->editLookupTable->hideColumn(9);
+
+    addCurrencyToTableWidget(ui->editLookupTable, 5);
+    //dbManager->printAll(result);
+
+    MainWindow::resizeTableView(ui->editLookupTable);
+}
+
+void MainWindow::on_valUpdate_clicked()
+{
+    int selected = ui->valTable->selectionModel()->currentIndex().row();
+    if(selected == -1){
+        return;
+    }
+    QString clientId = ui->valTable->item(selected, 0)->text();
+    double real = ui->valTable->item(selected, 2)->text().toDouble();
+    double expected = ui->valTable->item(selected, 3)->text().toDouble();
+    Validate * validate = new Validate(this, clientId, real,expected, usernameLoggedIn, QString::number(currentshiftid));
+    validate->exec();
+
+}

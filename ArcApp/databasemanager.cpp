@@ -182,6 +182,21 @@ void DatabaseManager::printAll(QSqlQuery queryResults)
         qDebug() << record;
     }
 }
+QSqlQuery DatabaseManager::getClientBooking(QString clientId){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Booking WHERE ClientId = " + clientId;
+    qDebug() << q;
+    query.exec(q);
+    return query;
+}
+QSqlQuery DatabaseManager::getClientTransactions(QString clientId){
+    QSqlQuery query(db);
+    QString q = "SELECT * FROM Transac WHERE ClientId = " + clientId;
+    qDebug() << q;
+    query.exec(q);
+    return query;
+}
+
 bool DatabaseManager::deleteBooking(QString id){
     QSqlQuery query(db);
     QString q = "DELETE FROM Booking WHERE BookingId ='" + id + "'";
@@ -266,6 +281,25 @@ double DatabaseManager::validateMoney(QString clientId){
     }
     return payments - costs;
 }
+QSqlQuery DatabaseManager::getRoomBooking(QString roomId){
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    QString date = QDate::currentDate().toString(Qt::ISODate);
+    QString q;
+    q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate >= '"
+                 + date + "' AND SpaceCode LIKE '[0-9]-[0-9]-" + roomId +"-%' AND StartDate != EndDate ORDER BY ClientName ASC";
+
+
+    qDebug() << q;
+    if(query.exec(q)){
+
+    }
+    else{
+        qDebug() << "ERROR TRYING TO GET BOOKING";
+    }
+    return query;
+}
+
 QSqlQuery DatabaseManager::getAllClients(){
     QSqlQuery query(db);
     QString q = "SELECT ClientId, FirstName, LastName, Balance FROM Client";
@@ -1735,22 +1769,22 @@ bool DatabaseManager::escapePayment(QString clientId, QString curDate, QString a
 
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
-    query.prepare("INSERT INTO Transac VALUES(:clientId, :curDate, :amount, :type, :notes, :chequeNo, :msd, :issued, :transtype, :deleted, :outstanding, :empId, :shiftNo, :time)");
+    query.prepare("INSERT INTO Transac VALUES(?, ?,?,? ,?,?,?,?,?,?,?,?,?,?)");
 
-    query.bindValue(":clientId", clientId);
-    query.bindValue(":curdate", QDate::currentDate());
-    query.bindValue(":amount",amount );
-    query.bindValue(":type", type );
-    query.bindValue(":notes",notes );
-    query.bindValue(":chequeNo", chequeNo);
-    query.bindValue(":msd",msd );
-    query.bindValue(":issued",issued );
-    query.bindValue(":transtype",transtype );
-    query.bindValue(":deleted", "0");
-    query.bindValue(":outstanding",outstanding );
-    query.bindValue(":empId",empId );
-    query.bindValue(":shiftNo",shiftNo );
-    query.bindValue(":time",QTime::currentTime() );
+    query.bindValue(0, clientId);
+    query.bindValue(1, QDate::currentDate().toString(Qt::ISODate));
+    query.bindValue(2, amount );
+    query.bindValue(3, type );
+    query.bindValue(4,notes );
+    query.bindValue(5, chequeNo);
+    query.bindValue(6, msd );
+    query.bindValue(7, "");
+    query.bindValue(8, transtype );
+    query.bindValue(9, false);
+    query.bindValue(10, false);
+    query.bindValue(11,empId );
+    query.bindValue(12,shiftNo );
+    query.bindValue(13,QTime::currentTime().toString() );
     return query.exec();
 
 

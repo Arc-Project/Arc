@@ -221,10 +221,10 @@ QHeaderView{
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_8">
-    <item row="0" column="0">
+    <item row="0" column="1">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>18</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_55">
@@ -8047,7 +8047,7 @@ Payment</string>
       </widget>
       <widget class="QWidget" name="editBooking">
        <layout class="QGridLayout" name="gridLayout_60">
-        <item row="1" column="0" colspan="7">
+        <item row="1" column="0" colspan="9">
          <widget class="QTableWidget" name="editLookupTable">
           <property name="font">
            <font>
@@ -8074,7 +8074,7 @@ Payment</string>
           <column/>
          </widget>
         </item>
-        <item row="2" column="6">
+        <item row="2" column="8">
          <widget class="QPushButton" name="editButton">
           <property name="minimumSize">
            <size>
@@ -8170,7 +8170,7 @@ Payment</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="4">
+        <item row="0" column="6">
          <spacer name="horizontalSpacer_65">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -8183,7 +8183,7 @@ Payment</string>
           </property>
          </spacer>
         </item>
-        <item row="2" column="5">
+        <item row="2" column="7">
          <widget class="QPushButton" name="editDelete">
           <property name="minimumSize">
            <size>
@@ -8204,6 +8204,16 @@ Payment</string>
           </property>
           <property name="text">
            <string>Delete</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="4">
+         <widget class="QLineEdit" name="registryRoom"/>
+        </item>
+        <item row="0" column="5">
+         <widget class="QPushButton" name="registryRoomLook">
+          <property name="text">
+           <string>Search Room</string>
           </property>
          </widget>
         </item>
@@ -18661,7 +18671,7 @@ Payment</string>
          </rect>
         </property>
         <property name="text">
-         <string>Update</string>
+         <string>View</string>
         </property>
        </widget>
        <widget class="QTableWidget" name="valTable">

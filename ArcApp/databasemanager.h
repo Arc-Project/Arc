@@ -147,7 +147,9 @@ public:
     bool addBooking(QString stringStart, QString stringEnd, QString roomId, QString clientId, QString fullName, double cost, QString program);
     QSqlQuery getAllClients();
     double validateMoney(QString clientId);
-
+    QSqlQuery getRoomBooking(QString roomId);
+    QSqlQuery getClientBooking(QString clientId);
+    QSqlQuery getClientTransactions(QString clientId);
     bool addStorage(QString id, QString name, QString data);
     bool updateStore(QString storeId, QString data);
     bool updateStoreDate(QString storeId);
