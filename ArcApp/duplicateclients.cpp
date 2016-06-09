@@ -44,16 +44,14 @@ void DuplicateClients::on_pushButton_cl_warning_Select_clicked()
     }
 }
 
-void DuplicateClients::on_pushButton_cl_warning_close_clicked()
-{
-    emit ignoreWarning();
-    close();
-}
-
-
-
 void DuplicateClients::on_tableWidget_same_name_cellClicked(int row, int column)
 {
     Q_UNUSED(column);
     nRow = row;
+}
+
+void DuplicateClients::on_pushButton_cl_warning_ignore_clicked()
+{
+    emit ignoreWarning();
+    close();
 }

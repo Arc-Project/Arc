@@ -2775,7 +2775,7 @@ bool MainWindow::check_unique_client(){
     }
 
     QSqlQuery sameClient = dbManager->checkUniqueClient(&infoList);
-    if(sameClient.numRowsAffected() <0){
+    if(sameClient.numRowsAffected() <= 0){
         qDebug()<<"No same Client";
         return true;
     }
@@ -2791,6 +2791,7 @@ bool MainWindow::check_unique_client(){
         return false;
     }
     else if(type == CHECKNAME){
+
         DuplicateClients *showPossibleClient = new DuplicateClients();
         connect(showPossibleClient, SIGNAL(selectedUser(QString)), this, SLOT(readSameClientInfo(QString)));
         connect(showPossibleClient, SIGNAL(ignoreWarning()), this, SLOT(ignoreAndRegister()));
