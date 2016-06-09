@@ -837,6 +837,11 @@ void MainWindow::on_btn_payListAllUsers_clicked()
 
 void MainWindow::on_editSearch_clicked()
 {
+    ui->editLookupTable->setSortingEnabled(false);
+    ui->editLookupTable->clearContents();
+    ui->editLookupTable->setRowCount(0);
+    ui->editLookupTable->sortByColumn(0);
+    qDebug() << "editlookup table cleared";
     /*ui->editLookupTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->editLookupTable->verticalHeader()->hide();
     ui->editLookupTable->horizontalHeader()->setStretchLastSection(true);
@@ -868,7 +873,9 @@ void MainWindow::on_editSearch_clicked()
     ui->editLookupTable->hideColumn(8);
     ui->editLookupTable->hideColumn(9);
 
+
     addCurrencyToTableWidget(ui->editLookupTable, 5);
+    ui->editLookupTable->setSortingEnabled(true);
     //dbManager->printAll(result);
 
     MainWindow::resizeTableView(ui->editLookupTable);
@@ -8051,6 +8058,7 @@ void MainWindow::on_btnViewTranns_clicked()
 void MainWindow::addCurrencyToTableWidget(QTableWidget* table, int col){
     int numRows = table->rowCount();
     for (int row = 0; row < numRows; ++row) {
+        qDebug() << "modifying item: " << table->item(row, col)->text();
         QString value = QString::number(table->item(row, col)->text().toFloat(), 'f', 2);
         //QString value = table->item(row, col)->text();
         table->setItem(row, col, new QTableWidgetItem("$"+value));
@@ -8385,6 +8393,7 @@ void MainWindow::on_adminVal_clicked()
 
 void MainWindow::on_registryRoomLook_clicked()
 {
+    ui->editLookupTable->setSortingEnabled(false);
     QSqlQuery result;
     QString user = "";
     user = ui->registryRoom->text();
@@ -8402,6 +8411,7 @@ void MainWindow::on_registryRoomLook_clicked()
     ui->editLookupTable->hideColumn(9);
 
     addCurrencyToTableWidget(ui->editLookupTable, 5);
+    ui->editLookupTable->setSortingEnabled(true);
     //dbManager->printAll(result);
 
     MainWindow::resizeTableView(ui->editLookupTable);
