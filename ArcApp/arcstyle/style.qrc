@@ -62,5 +62,6 @@
         <file>pdf/running.xml</file>
         <file>pdf/staysummary.xml</file>
         <file>pdf/registry.xml</file>
+        <file>pdf/combinedRec.xml</file>
     </qresource>
 </RCC>
