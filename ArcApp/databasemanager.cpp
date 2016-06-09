@@ -2382,6 +2382,50 @@ bool DatabaseManager::addReceiptQuery(QString receiptid, QString date, QString t
     return false;
 }
 
+bool DatabaseManager::updateReceiptQuery(QString receiptid, QString date, QString time, QString clientName, QString startDate, QString endDate,
+                                         QString numNights, QString bedType, QString roomNo, QString prog, QString descr, QString totalCost,
+                                         QString payType, QString payTotal, QString refund, QString payOwe)
+{
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+
+    qDebug() << "preparing query";
+
+    query.prepare("UPDATE Receipt "
+                  "SET date = ?, time = ?, clientName = ?, startDate = ?, endDate = ?, numNights = ?, bedType = ?, roomNo = ?, prog = ?, "
+                  "descr = ?, totalCost = ?, payType = ?, payTotal = ?, "
+                  "refund = ?, payOwe = ? "
+                  "WHERE receiptid = '" + receiptid + "'");
+
+    qDebug() << "begin binding";
+
+    query.addBindValue(date);
+    query.addBindValue(time);
+    query.addBindValue(clientName);
+    query.addBindValue(startDate);
+    query.addBindValue(endDate);
+    query.addBindValue(numNights);
+    query.addBindValue(bedType);
+    query.addBindValue(roomNo);
+    query.addBindValue(prog);
+    query.addBindValue(descr);
+    query.addBindValue(totalCost);
+    query.addBindValue(payType);
+    query.addBindValue(payTotal);
+    query.addBindValue(refund);
+    query.addBindValue(payOwe);
+
+    qDebug() << "binding done";
+
+    if (query.exec())
+    {
+        qDebug() << query.lastQuery();
+        return true;
+    }
+    qDebug() << query.lastError();
+    return false;
+}
+
 bool DatabaseManager::getReceiptQuery(QString receiptid) {
 //    QString result = "SELECT * "
 //                     "FROM Receipt "

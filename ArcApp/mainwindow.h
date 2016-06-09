@@ -111,6 +111,8 @@ public:
 
     bool resettingfromcode = false;
 
+    QString receiptid = "";
+
     bookingManager book;
     void searchClientListThread();
     void setup_searchClientTable(QSqlQuery results);
