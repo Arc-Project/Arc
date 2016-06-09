@@ -35,7 +35,8 @@ SOURCES += main.cpp\
     worker.cpp \
     storage.cpp \
     validate.cpp \
-    changepassword.cpp
+    changepassword.cpp \
+    duplicateclients.cpp
 
 HEADERS  += mainwindow.h \
     databasemanager.h \
@@ -60,7 +61,8 @@ HEADERS  += mainwindow.h \
     worker.h \
     storage.h \
     validate.h \
-    changepassword.h
+    changepassword.h \
+    duplicateclients.h
 
 FORMS    += mainwindow.ui \
     loginprompt.ui \
@@ -71,7 +73,8 @@ FORMS    += mainwindow.ui \
     addmsd.ui \
     storage.ui \
     validate.ui \
-    changepassword.ui
+    changepassword.ui \
+    duplicateclients.ui
 
 RESOURCES += arcstyle/styling.qrc
 

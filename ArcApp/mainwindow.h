@@ -20,6 +20,8 @@
 #define STORAGEPAGE         16
 #define EDITADDRESS         17
 #define VALIDATEPAGE        18
+
+
 #define DAILYREPORT         0
 #define SHIFTREPORT         1
 #define FLOATCOUNT          2
@@ -31,10 +33,16 @@
 #define CASEWORKER          1
 #define ADMIN               2
 
+//client Register Type
 #define NOREGISTER          0
 #define NEWCLIENT           1
 #define EDITCLIENT          2
 #define DELETECLIENT        3
+#define FINDSAMECLIENT      4
+
+//duplicateClient
+#define CHECKSIN    1
+#define CHECKNAME   2
 
 #define PERSIONACASEPLAN 	0
 #define RUNNINGNOTE			1
@@ -48,6 +56,8 @@
 #define     THUR    5
 #define     FRI     6
 #define     SAT     7
+
+
 
 #include <QMainWindow>
 #include <QDebug>
@@ -292,6 +302,12 @@ private slots:
     void on_button_register_client_clicked();           //BUTTON REGISTER OR EDIT INFO
 
     bool check_client_register_form();                  //CHECK IF IT IS EMPTY OR NOT
+
+    bool check_unique_client();
+
+    void readSameClientInfo(QString clientID);
+
+    void proceedRegister();
 
     void clear_client_register_form();
 
