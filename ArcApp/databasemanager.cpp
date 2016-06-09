@@ -922,6 +922,22 @@ QSqlQuery DatabaseManager::getCaseWorkerList(){
     return query;
 }
 
+QSqlQuery DatabaseManager::checkUniqueClient(QStringList* infoList){
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    QString queryString = QString("SELECT LastName, FirstName, MiddleName, Dob, SinNo, ClientId ")
+        + QString("FROM Client ")
+        + QString("WHERE LastName = '"+infoList->at(0)+"' ")
+        + QString("AND FirstName = '"+infoList->at(1)+"' ");
+
+    if(infoList->size() == 3){
+        queryString += QString("AND SinNo = '"+infoList->at(2)+"' ");
+    }
+    qDebug()<<"SELECT QUERY TO CHECK UNIQUE : " << queryString;
+    query.exec(queryString);
+    return query;
+}
+
 /* .............................................................
          CLIENT REGISTER FINISHED
   ==============================================================*/
