@@ -252,6 +252,7 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case CLIENTREGISTER:    //WIDGET 10
             ui->actionReceipt->setEnabled(false);
+            ignore_duplicate = false;
             if((registerType == EDITCLIENT || registerType == DELETECLIENT)
                     && (currentrole == CASEWORKER || currentrole == ADMIN)){
                 ui->button_delete_client->show();
@@ -2695,7 +2696,7 @@ void MainWindow::on_button_register_client_clicked()
 
         if(registerType == NEWCLIENT || ui->label_cl_infoedit_title->text() == "Register Client")
         {
-            if(check_unique_client()){
+            if(ignore_duplicate || check_unique_client()){
                 if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
                 {
                     statusBar()->showMessage("Client Registered Sucessfully.", 5000);
@@ -2792,10 +2793,9 @@ bool MainWindow::check_unique_client(){
     else if(type == CHECKNAME){
         DuplicateClients *showPossibleClient = new DuplicateClients();
         connect(showPossibleClient, SIGNAL(selectedUser(QString)), this, SLOT(readSameClientInfo(QString)));
-        connect(showPossibleClient, SIGNAL(keepProceed()), this, SLOT(proceedRegister()));
+        connect(showPossibleClient, SIGNAL(ignoreWarning()), this, SLOT(ignoreAndRegister()));
         showPossibleClient->show();
         qDebug()<<"DuplicateClients";
-        //dbManager->printAll(sameClient);
         showPossibleClient->displayList(sameClient);
         return false;
     }
@@ -2809,13 +2809,15 @@ void MainWindow::readSameClientInfo(QString clientID){
     on_button_cancel_client_register_clicked();
 }
 
-void MainWindow::proceedRegister(){
+void MainWindow::ignoreAndRegister(){
     qDebug()<< "PROCEED REGISTER";
+    registerType = NEWCLIENT;
+    ignore_duplicate = true;
+   // on_button_register_client_clicked();
 }
 
+
 void MainWindow::getCaseWorkerList(){
-//    QString caseWorkerquery = "SELECT EmpName, EmpId FROM Employee WHERE (Role = 'CASE WORKER' OR Role = 'ADMIN') ORDER BY Username";
-//    QSqlQuery caseWorkers = dbManager->execQuery(caseWorkerquery);
     QSqlQuery caseWorkers = dbManager->getCaseWorkerList();
     //dbManager->printAll(caseWorkers);
     caseWorkerList.clear();
