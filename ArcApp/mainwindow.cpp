@@ -151,6 +151,18 @@ void MainWindow::initCurrentWidget(int idx){
             ui->actionReceipt->setEnabled(false);
             transType = "";
             isAddressSet();
+
+            //clear booking confirmation fields
+            ui->confirmEnd->setText("TextLabel");
+            ui->confirmLength->setText("TextLabel");
+            ui->confirmMonthly->setText("TextLabel");
+            ui->confirmProgram->setText("TextLabel");
+            ui->confirmRoom->setText("TextLabel");
+            ui->confirmStart->setText("TextLabel");
+            ui->confirmCost->setText("TextLabel");
+            ui->confirmPaid->setText("TextLabel");
+            ui->confirmTotalPaid->setText("TextLabel");
+            isRefund = false;
             break;
         case CLIENTLOOKUP:  //WIDGET 1
 
@@ -191,6 +203,9 @@ void MainWindow::initCurrentWidget(int idx){
             ui->actionReceipt->setEnabled(false);
             break;
         case BOOKINGPAGE: //WIDGET 3
+            //clear receipts in case payment was made on the next page and then back was hit
+            if (trans != 0)
+                trans->receiptid = "";
             //initcode
 
             break;
@@ -474,6 +489,11 @@ void MainWindow::on_paymentButton_2_clicked()
         ui->bookAmtPaid->setText(QString::number(totalPaid, 'f', 2));
     }
     transType = trans->type;
+
+    if (ui->bookAmtPaid->text() != "0.00"){
+        saveReceipt(false, ui->bookAmtPaid->text());
+    }
+
 }
 void MainWindow::on_startDateEdit_dateChanged()
 {
@@ -1644,12 +1664,15 @@ void MainWindow::populateConfirm(){
         ui->confirmTotalPaid->setText(QString::number(curBook->paidTotal, 'f', 2));
     }
 
-    ui->actionExport_to_PDF->setEnabled(true);
-    MainWindow::on_actionExport_to_PDF_triggered();
+    //handle receipt
+
+    ui->actionExport_to_PDF->setEnabled(true);  
+//    MainWindow::on_actionExport_to_PDF_triggered();
     isRefund = curBook->paidTotal < 0;
-    ui->actionReceipt->setEnabled(true);
-    createTextReceipt(ui->confirmCost->text(), transType, ui->confirmTotalPaid->text(), curBook->stringStart,
-                      curBook->stringEnd, ui->confirmLength->text(), true, isRefund);
+    MainWindow::saveReceipt();
+//    ui->actionReceipt->setEnabled(true);
+//    createTextReceipt(ui->confirmCost->text(), transType, ui->confirmTotalPaid->text(), curBook->stringStart,
+//                      curBook->stringEnd, ui->confirmLength->text(), true, isRefund);
 }
 
 //void MainWindow::on_monthCheck_stateChanged(int arg1)
@@ -4822,6 +4845,7 @@ void MainWindow::on_pushButton_processPaymeent_clicked()
     isRefund = trans->transType == "Refund" ? true : false;
     ui->actionReceipt->setEnabled(true);
     createTextReceipt(QString::number(trans->amount),trans->type,QString::number(trans->paidToday),QString(),QString(),QString(),false,isRefund);
+    on_pushButton_search_client_clicked();
 }
 
 void MainWindow::insertPcp(QTableWidget *tw, QString type){
@@ -5606,7 +5630,7 @@ void MainWindow::on_actionExport_to_PDF_triggered()
 
     // customer receipt
     if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING) {
-        rptTemplate = ":/templates/pdf/staysummary.xml";
+        rptTemplate = ":/templates/pdf/combinedRec.xml";
         report->recordCount << 1;
     }
 
@@ -6047,6 +6071,20 @@ void MainWindow::printStaySummary(const int recNo, const QString paramName, QVar
         qDebug() << result.lastError();
         while (result.next())
             paramValue = result.value(0).toString();
+
+    } else if (paramName == "totalCost") {
+        paramValue = "$" + ui->confirmCost->text();
+
+    } else if (paramName == "totalPaid") {
+        paramValue = "$" + ui->confirmTotalPaid->text();
+
+    } else if (paramName == "owing") {
+        qDebug() << "cost " <<  curBook->cost;
+        qDebug() << "paid " << trans->paidToday;
+        paramValue = "$" + QString::number(curBook->cost - trans->paidToday, 'f', 2);
+
+    } else if (paramName == "payType") {
+        paramValue = transType;
 
     } else if (paramName == "streetNo"){
          paramValue = getStreetNo();
@@ -6998,8 +7036,9 @@ void MainWindow::on_editDelete_clicked()
     }
     double curBal = result.value("Balance").toString().toDouble();
     double bCost = dbManager->getBookingCost(curBook->bookID);
-    curBal -= bCost;
-    if(!dbManager->updateBalance(bCost, curBook->clientId))
+    curBal += bCost;
+
+    if(!dbManager->updateBalance(curBal, curBook->clientId))
             qDebug() << "Error updating balance";
 
     if(!dbManager->deleteBooking(curBook->bookID)){
@@ -8231,6 +8270,109 @@ QString MainWindow::getWebsite(){
     return settings.value("website").toString().length() == 0 ? "" : tmp;
 }
 
+
+void MainWindow::saveReceipt(bool booked, QString amtPaid) {
+    //receiptid
+    QString timestamp = QDate::currentDate().toString("yyyyMMdd") + QTime::currentTime().toString("hhmmss");
+
+    //date
+    QString date = QDate::currentDate().toString("yyyy-MM-dd");
+
+    //time
+    QString time = QTime::currentTime().toString("H:mm AP");
+
+    //start date
+    QString startDate = ui->confirmStart->text() == "TextLabel" ? "" : ui->confirmStart->text();
+
+    //end date
+    QString endDate = ui->confirmEnd->text() == "TextLabel" ? "" : ui->confirmEnd->text();
+
+    //lenght of stay
+    QString stayLen = ui->confirmLength->text() == "TextLabel" ? "" : ui->confirmLength->text();
+
+    //bed type and number
+    QString bedString;
+    if (booked) {
+        QString s = curBook->room;
+        QChar c = *(s.end()-1);
+        qDebug() << "last char" << c;
+        if (c == 'M') bedString.append("Mat ");
+        else if (c == 'B') bedString.append("Bed ");
+
+        QStringList pieces = curBook->room.split( "-" );
+        bedString.append(pieces.value( pieces.length() - 1));
+        bedString.chop(1);
+    } else {
+        bedString == "";
+    }
+
+    //room number
+    QString roomNo;
+    if (booked) {
+        QRegExp rx("[-]");
+        QString s = curBook->room;
+        QStringList spacecodeList = s.split(rx, QString::SkipEmptyParts);
+        roomNo = spacecodeList.at(2);
+    } else {
+        roomNo = "";
+    }
+
+    //program description
+    QString programDesc;
+    if (booked) {
+        QSqlQuery progResult = dbManager->getProgramDesc(curBook->program);
+        progResult.next();
+        qDebug() << "desc:";
+        qDebug() << progResult.lastError();
+        qDebug() << progResult.value(0).toString();
+        programDesc = progResult.value(0).toString();
+    } else {
+        programDesc = "";
+    }
+
+    //total cost
+    QString totalCost = ui->confirmCost->text() == "TextLabel" ? "" : "$"+ui->confirmCost->text();
+
+    //total paid
+    QString totalPaid;
+    if (booked)
+        totalPaid = ui->confirmTotalPaid->text() == "TextLabel" ? "" : "$"+ui->confirmTotalPaid->text();
+    else
+        totalPaid = "$" + amtPaid;
+
+    //total owing
+    QString owing = booked == true ? "$" + QString::number(curBook->cost - trans->paidToday, 'f', 2) : "";
+
+    //try to save the receipt 3 times in case of connection lost
+    for (int i = 0; i < 3; i++) {
+        bool saved = dbManager->addReceiptQuery( timestamp,
+                                       date,
+                                       time,
+                                       curClientName,
+                                       startDate,
+                                       endDate,
+                                       stayLen,
+                                       bedString,
+                                       roomNo,
+                                       curBook->program,
+                                       programDesc,
+                                       getStreetNo(),
+                                       getStreetName(),
+                                       getCity(),
+                                       getProvince(),
+                                       getZip(),
+                                       getOrgName(),
+                                       totalCost,
+                                       transType,
+                                       totalPaid,
+                                       QString::number(isRefund),
+                                       owing);
+        if (saved) break;
+    }
+
+
+}
+
 void MainWindow::on_adminVal_clicked()
 {
     ui->stackedWidget->setCurrentIndex(VALIDATEPAGE);
@@ -8274,6 +8416,7 @@ void MainWindow::on_valUpdate_clicked()
     validate->exec();
 
 }
+
 /*==============================================================================
 CHANGE PASSWORD
 ==============================================================================*/
