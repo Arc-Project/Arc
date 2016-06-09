@@ -6934,8 +6934,9 @@ void MainWindow::on_editDelete_clicked()
     }
     double curBal = result.value("Balance").toString().toDouble();
     double bCost = dbManager->getBookingCost(curBook->bookID);
-    curBal -= bCost;
-    if(!dbManager->updateBalance(bCost, curBook->clientId))
+    curBal += bCost;
+
+    if(!dbManager->updateBalance(curBal, curBook->clientId))
             qDebug() << "Error updating balance";
 
     if(!dbManager->deleteBooking(curBook->bookID)){
