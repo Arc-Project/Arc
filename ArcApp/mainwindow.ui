@@ -18796,10 +18796,9 @@ Balance</string>
      <string>File</string>
     </property>
     <addaction name="actionReconnect_to_Database"/>
+    <addaction name="separator"/>
     <addaction name="actionLogout"/>
     <addaction name="actionQuit"/>
-    <addaction name="separator"/>
-    <addaction name="actionChange_Password"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="font">
@@ -18820,8 +18819,15 @@ Balance</string>
     <addaction name="actionReceipt"/>
     <addaction name="actionExport_to_PDF"/>
    </widget>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <addaction name="actionChange_Password"/>
+   </widget>
    <addaction name="menuFle"/>
    <addaction name="menuExport"/>
+   <addaction name="menuOptions"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
