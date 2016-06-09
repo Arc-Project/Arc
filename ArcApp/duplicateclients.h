@@ -26,7 +26,7 @@ private slots:
 
 signals:
     void selectedUser(QString clientID);
-    void keepProceed();
+    void ignoreWarning();
 
 private:
     Ui::DuplicateClients *ui;

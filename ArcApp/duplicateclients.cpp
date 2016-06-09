@@ -46,7 +46,7 @@ void DuplicateClients::on_pushButton_cl_warning_Select_clicked()
 
 void DuplicateClients::on_pushButton_cl_warning_close_clicked()
 {
-    emit keepProceed();
+    emit ignoreWarning();
     close();
 }
 

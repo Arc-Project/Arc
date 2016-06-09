@@ -307,7 +307,7 @@ private slots:
 
     void readSameClientInfo(QString clientID);
 
-    void proceedRegister();
+    void ignoreAndRegister();
 
     void clear_client_register_form();
 
@@ -798,11 +798,11 @@ private:
 
     QDir dir;
     
+    bool ignore_duplicate = false;
     //SHIFT CHANGE
     QString selectedDay;
     int     selectedDayIdx;
     int     shiftSize;
-    //QVector<TimeModel> *mon,*tue,*wed,*thur,*fri,*sat,*sun;
     QVector<QStringList> mon,tue,wed,thur,fri,sat,sun;
     bool shiftExist;
 
