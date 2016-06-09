@@ -2781,8 +2781,8 @@ bool MainWindow::check_unique_client(){
     }
     if(type == CHECKSIN){
         if(doMessageBox(QString("A Client with the same SIN Number already exist.\n")
-                      + QString("OK - return search Client\n")
-                      + QString("Cancle - modify information"))){
+                      + QString("Yes - return to search Client\n")
+                      + QString("No - modify information"))){
             sameClient.next();
 
             readSameClientInfo(sameClient.value("ClientId").toString());
