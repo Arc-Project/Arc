@@ -2696,7 +2696,7 @@ void MainWindow::on_button_register_client_clicked()
 
         if(registerType == NEWCLIENT || ui->label_cl_infoedit_title->text() == "Register Client")
         {
-            if(ignore_duplicate || check_unique_client()){
+            if(check_unique_client() || ignore_duplicate){
                 if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
                 {
                     statusBar()->showMessage("Client Registered Sucessfully.", 5000);
