@@ -190,9 +190,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_cl_warning_close">
+      <widget class="QPushButton" name="pushButton_cl_warning_ignore">
        <property name="text">
-        <string>Close</string>
+        <string>Ignore</string>
        </property>
       </widget>
      </item>
