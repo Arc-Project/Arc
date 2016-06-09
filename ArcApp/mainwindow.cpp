@@ -204,8 +204,8 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case BOOKINGPAGE: //WIDGET 3
             //clear receipts in case payment was made on the next page and then back was hit
-            if (trans != 0)
-                trans->receiptid = "";
+//            if (trans != 0)
+//                trans->receiptid = "";
             //initcode
 
             break;
@@ -492,7 +492,7 @@ void MainWindow::on_paymentButton_2_clicked()
     transType = trans->type;
 
     if (ui->bookAmtPaid->text() != "0.00"){
-        saveReceipt(false, ui->bookAmtPaid->text());
+//        saveReceipt(false, ui->bookAmtPaid->text());
     }
 
 }
@@ -837,6 +837,11 @@ void MainWindow::on_btn_payListAllUsers_clicked()
 
 void MainWindow::on_editSearch_clicked()
 {
+    ui->editLookupTable->setSortingEnabled(false);
+    ui->editLookupTable->clearContents();
+    ui->editLookupTable->setRowCount(0);
+    ui->editLookupTable->sortByColumn(0);
+    qDebug() << "editlookup table cleared";
     /*ui->editLookupTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->editLookupTable->verticalHeader()->hide();
     ui->editLookupTable->horizontalHeader()->setStretchLastSection(true);
@@ -868,7 +873,9 @@ void MainWindow::on_editSearch_clicked()
     ui->editLookupTable->hideColumn(8);
     ui->editLookupTable->hideColumn(9);
 
+
     addCurrencyToTableWidget(ui->editLookupTable, 5);
+    ui->editLookupTable->setSortingEnabled(true);
     //dbManager->printAll(result);
 
     MainWindow::resizeTableView(ui->editLookupTable);
@@ -1668,12 +1675,12 @@ void MainWindow::populateConfirm(){
     //handle receipt
 
     ui->actionExport_to_PDF->setEnabled(true);  
-//    MainWindow::on_actionExport_to_PDF_triggered();
+    MainWindow::on_actionExport_to_PDF_triggered();
     isRefund = curBook->paidTotal < 0;
-    MainWindow::saveReceipt();
-//    ui->actionReceipt->setEnabled(true);
-//    createTextReceipt(ui->confirmCost->text(), transType, ui->confirmTotalPaid->text(), curBook->stringStart,
-//                      curBook->stringEnd, ui->confirmLength->text(), true, isRefund);
+//    MainWindow::saveReceipt();
+    ui->actionReceipt->setEnabled(true);
+    createTextReceipt(ui->confirmCost->text(), transType, ui->confirmTotalPaid->text(), curBook->stringStart,
+                      curBook->stringEnd, ui->confirmLength->text(), true, isRefund);
 }
 
 //void MainWindow::on_monthCheck_stateChanged(int arg1)
@@ -5633,7 +5640,8 @@ void MainWindow::on_actionExport_to_PDF_triggered()
 
     // customer receipt
     if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING) {
-        rptTemplate = ":/templates/pdf/combinedRec.xml";
+//        rptTemplate = ":/templates/pdf/combinedRec.xml";
+        rptTemplate = ":/templates/pdf/staysummary.xml";
         report->recordCount << 1;
     }
 
@@ -8050,6 +8058,7 @@ void MainWindow::on_btnViewTranns_clicked()
 void MainWindow::addCurrencyToTableWidget(QTableWidget* table, int col){
     int numRows = table->rowCount();
     for (int row = 0; row < numRows; ++row) {
+        qDebug() << "modifying item: " << table->item(row, col)->text();
         QString value = QString::number(table->item(row, col)->text().toFloat(), 'f', 2);
         //QString value = table->item(row, col)->text();
         table->setItem(row, col, new QTableWidgetItem("$"+value));
@@ -8102,7 +8111,7 @@ void MainWindow::createTextReceipt(QString totalCost, QString payType, QString p
            "Receipt No: "+timestamp+"\n"
            "\n"
            "\n"
-           "Thank you for your custom";
+           "Thank you";
            statusBar()->showMessage(tr("Receipt file saved!"), 4000);
 }
 
@@ -8285,13 +8294,13 @@ void MainWindow::saveReceipt(bool booked, QString amtPaid) {
     QString time = QTime::currentTime().toString("H:mm AP");
 
     //start date
-    QString startDate = ui->confirmStart->text() == "TextLabel" ? "" : ui->confirmStart->text();
+    QString startDate = booked == false ? "" : ui->confirmStart->text();
 
     //end date
-    QString endDate = ui->confirmEnd->text() == "TextLabel" ? "" : ui->confirmEnd->text();
+    QString endDate = booked == false ? "" : ui->confirmEnd->text();
 
     //lenght of stay
-    QString stayLen = ui->confirmLength->text() == "TextLabel" ? "" : ui->confirmLength->text();
+    QString stayLen = booked == false ? "" : ui->confirmLength->text();
 
     //bed type and number
     QString bedString;
@@ -8334,17 +8343,17 @@ void MainWindow::saveReceipt(bool booked, QString amtPaid) {
     }
 
     //total cost
-    QString totalCost = ui->confirmCost->text() == "TextLabel" ? "" : "$"+ui->confirmCost->text();
+    QString totalCost = booked == true ? "$"+ui->confirmCost->text() : "";
 
     //total paid
     QString totalPaid;
     if (booked)
-        totalPaid = ui->confirmTotalPaid->text() == "TextLabel" ? "" : "$"+ui->confirmTotalPaid->text();
+        totalPaid = "$"+ui->confirmTotalPaid->text();
     else
         totalPaid = "$" + amtPaid;
 
     //total owing
-    QString owing = booked == true ? "$" + QString::number(curBook->cost - trans->paidToday, 'f', 2) : "";
+    QString owing = booked == true ? "$" + ui->confirmPaid->text() : "";
 
     //try to save the receipt 3 times in case of connection lost
     for (int i = 0; i < 3; i++) {
@@ -8368,7 +8377,7 @@ void MainWindow::saveReceipt(bool booked, QString amtPaid) {
                                        totalCost,
                                        transType,
                                        totalPaid,
-                                       QString::number(isRefund),
+                                       trans->transType,
                                        owing);
         if (saved) break;
     }
@@ -8384,6 +8393,7 @@ void MainWindow::on_adminVal_clicked()
 
 void MainWindow::on_registryRoomLook_clicked()
 {
+    ui->editLookupTable->setSortingEnabled(false);
     QSqlQuery result;
     QString user = "";
     user = ui->registryRoom->text();
@@ -8401,6 +8411,7 @@ void MainWindow::on_registryRoomLook_clicked()
     ui->editLookupTable->hideColumn(9);
 
     addCurrencyToTableWidget(ui->editLookupTable, 5);
+    ui->editLookupTable->setSortingEnabled(true);
     //dbManager->printAll(result);
 
     MainWindow::resizeTableView(ui->editLookupTable);

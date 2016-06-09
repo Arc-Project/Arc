@@ -170,7 +170,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Select Client</string>
+        <string>Select Existing Client</string>
        </property>
       </widget>
      </item>
@@ -188,7 +188,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Ignore</string>
+        <string>Create New Client</string>
        </property>
       </widget>
      </item>

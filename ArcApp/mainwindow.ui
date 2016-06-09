@@ -3483,7 +3483,7 @@ Payment</string>
                </font>
               </property>
               <property name="text">
-               <string>Client's Current Balance:</string>
+               <string>Balance Before Booking Cost:</string>
               </property>
              </widget>
             </item>
@@ -4157,7 +4157,7 @@ Payment</string>
                </property>
                <property name="font">
                 <font>
-                 <pointsize>30</pointsize>
+                 <pointsize>25</pointsize>
                  <weight>75</weight>
                  <bold>true</bold>
                 </font>
@@ -4189,13 +4189,37 @@ Payment</string>
                </property>
                <property name="font">
                 <font>
-                 <pointsize>30</pointsize>
+                 <pointsize>25</pointsize>
                  <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
                <property name="text">
                 <string>Edit Programs</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="adminVal">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>25</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Validate 
+Balance</string>
                </property>
               </widget>
              </item>
@@ -4218,13 +4242,6 @@ Payment</string>
             </spacer>
            </item>
           </layout>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QPushButton" name="adminVal">
-          <property name="text">
-           <string>Validate</string>
-          </property>
          </widget>
         </item>
        </layout>
@@ -8047,7 +8064,25 @@ Payment</string>
       </widget>
       <widget class="QWidget" name="editBooking">
        <layout class="QGridLayout" name="gridLayout_60">
-        <item row="1" column="0" colspan="9">
+        <item row="0" column="2">
+         <widget class="QPushButton" name="editSearch">
+          <property name="minimumSize">
+           <size>
+            <width>195</width>
+            <height>35</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Search Bookings</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="10">
          <widget class="QTableWidget" name="editLookupTable">
           <property name="font">
            <font>
@@ -8077,29 +8112,27 @@ Payment</string>
           <column/>
          </widget>
         </item>
-        <item row="2" column="8">
-         <widget class="QPushButton" name="editButton">
+        <item row="0" column="4">
+         <widget class="QLineEdit" name="registryRoom">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="minimumSize">
            <size>
-            <width>160</width>
+            <width>0</width>
             <height>35</height>
            </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>14</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Edit Booking</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="2">
-         <widget class="QPushButton" name="editSearch">
+        <item row="0" column="5">
+         <widget class="QPushButton" name="registryRoomLook">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="minimumSize">
            <size>
-            <width>195</width>
+            <width>0</width>
             <height>35</height>
            </size>
           </property>
@@ -8109,25 +8142,38 @@ Payment</string>
            </font>
           </property>
           <property name="text">
-           <string>Search Bookings</string>
+           <string>Search Room</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="3">
-         <widget class="QPushButton" name="storage">
-          <property name="minimumSize">
+        <item row="0" column="7">
+         <spacer name="horizontalSpacer_65">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
            <size>
-            <width>160</width>
-            <height>35</height>
+            <width>40</width>
+            <height>20</height>
            </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_9">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
           <property name="font">
            <font>
-            <pointsize>14</pointsize>
+            <pointsize>15</pointsize>
            </font>
           </property>
           <property name="text">
-           <string>View Storage</string>
+           <string>Search Client</string>
           </property>
          </widget>
         </item>
@@ -8155,38 +8201,25 @@ Payment</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_9">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
+        <item row="2" column="9">
+         <widget class="QPushButton" name="editButton">
+          <property name="minimumSize">
+           <size>
+            <width>160</width>
+            <height>35</height>
+           </size>
           </property>
           <property name="font">
            <font>
-            <pointsize>15</pointsize>
+            <pointsize>14</pointsize>
            </font>
           </property>
           <property name="text">
-           <string>Search Client</string>
+           <string>Edit Booking</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="6">
-         <spacer name="horizontalSpacer_65">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="2" column="7">
+        <item row="2" column="8">
          <widget class="QPushButton" name="editDelete">
           <property name="minimumSize">
            <size>
@@ -8210,13 +8243,21 @@ Payment</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="4">
-         <widget class="QLineEdit" name="registryRoom"/>
-        </item>
-        <item row="0" column="5">
-         <widget class="QPushButton" name="registryRoomLook">
+        <item row="0" column="6">
+         <widget class="QPushButton" name="storage">
+          <property name="minimumSize">
+           <size>
+            <width>160</width>
+            <height>35</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
           <property name="text">
-           <string>Search Room</string>
+           <string>View Storage</string>
           </property>
          </widget>
         </item>
@@ -18755,10 +18796,9 @@ Payment</string>
      <string>File</string>
     </property>
     <addaction name="actionReconnect_to_Database"/>
+    <addaction name="separator"/>
     <addaction name="actionLogout"/>
     <addaction name="actionQuit"/>
-    <addaction name="separator"/>
-    <addaction name="actionChange_Password"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="font">
@@ -18779,8 +18819,15 @@ Payment</string>
     <addaction name="actionReceipt"/>
     <addaction name="actionExport_to_PDF"/>
    </widget>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <addaction name="actionChange_Password"/>
+   </widget>
    <addaction name="menuFle"/>
    <addaction name="menuExport"/>
+   <addaction name="menuOptions"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
