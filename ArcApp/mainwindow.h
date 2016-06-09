@@ -97,7 +97,7 @@ public:
     int currentrole = STANDARD;
     int currentshiftid = 0;
 
-    const QString versionNo = "1.00";
+    const QString versionNo = "1.01";
 
     bool resettingfromcode = false;
 

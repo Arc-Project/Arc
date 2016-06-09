@@ -3483,7 +3483,7 @@ Payment</string>
                </font>
               </property>
               <property name="text">
-               <string>Client's Current Balance:</string>
+               <string>Balance Before Booking Cost:</string>
               </property>
              </widget>
             </item>
