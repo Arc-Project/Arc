@@ -10,6 +10,7 @@
 #include <qtrpt.h>
 #include "worker.h"
 #include "changepassword.h"
+#include "duplicateclients.h"
 
 QLabel *lbl_curUser;
 QLabel *lbl_curShift;
@@ -164,15 +165,20 @@ void MainWindow::initCurrentWidget(int idx){
             isRefund = false;
             break;
         case CLIENTLOOKUP:  //WIDGET 1
+
             curClientName="";
+            qDebug()<<"curclient id in clientLookup before init " << curClientID;
             initClientLookupInfo();
             if(caseWorkerUpdated){
                 getCaseWorkerList();
                 defaultRegisterOptions();
             }
             ui->tabWidget_cl_info->setCurrentIndex(0);
-            if(registerType == EDITCLIENT)
+            if(registerType == EDITCLIENT || registerType == FINDSAMECLIENT){
+                on_tableWidget_search_client_itemClicked();
                 getClientInfo();
+            }
+            qDebug()<<"curclient id in CLIENT LOOKUP PAGE: " << curClientID;
             registerType = NOREGISTER;
             set_curClient_name();
             ui->checkBox_search_anonymous->setChecked(false);
@@ -246,6 +252,7 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case CLIENTREGISTER:    //WIDGET 10
             ui->actionReceipt->setEnabled(false);
+            ignore_duplicate = false;
             if((registerType == EDITCLIENT || registerType == DELETECLIENT)
                     && (currentrole == CASEWORKER || currentrole == ADMIN)){
                 ui->button_delete_client->show();
@@ -2354,6 +2361,7 @@ void MainWindow::initClientLookupInfo(){
     qDebug()<<"START BUTTON SETTUP";
     //disable buttons that need a clientId
     if(curClientID == NULL){
+        qDebug()<<"CurClient ID not existing";
         ui->pushButton_bookRoom->setEnabled(false);
         ui->pushButton_processPaymeent->setEnabled(false);
         ui->pushButton_editClientInfo->setEnabled(false);
@@ -2365,6 +2373,7 @@ void MainWindow::initClientLookupInfo(){
             //     ui->hs_brpp->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
             // ui->hs_ppcf->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
             // ui->hs_cfec->changeSize(13,20, QSizePolicy::Fixed, QSizePolicy::Fixed);
+    qDebug()<<"WORK FLOW: " << workFlow;
     switch (workFlow){
     case BOOKINGPAGE:
         ui->pushButton_CaseFiles->setVisible(false);
@@ -2613,9 +2622,6 @@ void MainWindow::clear_client_register_form(){
 
 //read client information to edit
 void MainWindow::read_curClient_Information(QString ClientId){
-//    QString searchClientQ = "SELECT * FROM Client WHERE ClientId = "+ ClientId;
-//    qDebug()<<"SEARCH QUERY: " + searchClientQ;
-   // QSqlQuery clientInfo = dbManager->execQuery("SELECT * FROM Client WHERE ClientId = "+ ClientId);
     QSqlQuery clientInfo = dbManager->searchTableClientInfo("Client", ClientId);
 //    dbManager->printAll(clientInfo);
     clientInfo.next();
@@ -2690,20 +2696,22 @@ void MainWindow::on_button_register_client_clicked()
 
         if(registerType == NEWCLIENT || ui->label_cl_infoedit_title->text() == "Register Client")
         {
+            if(check_unique_client() || ignore_duplicate){
+                if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
+                {
+                    statusBar()->showMessage("Client Registered Sucessfully.", 5000);
+                    qDebug() << "Client registered successfully";
 
-            if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
-            {
-                statusBar()->showMessage("Client Registered Sucessfully.", 5000);
-                qDebug() << "Client registered successfully";
+                    clear_client_register_form();
+                    ui->stackedWidget->setCurrentIndex(1);
+                }
+                else
+                {
+                    statusBar()->showMessage("Register Failed. Check information.", 5000);
+                    qDebug() << "Could not register client";
+                }
+            }
 
-                clear_client_register_form();
-                ui->stackedWidget->setCurrentIndex(1);
-            }
-            else
-            {
-                statusBar()->showMessage("Register Failed. Check information.", 5000);
-                qDebug() << "Could not register client";
-            }
         }
         else if(registerType == EDITCLIENT)
         {
@@ -2745,13 +2753,72 @@ bool MainWindow::check_client_register_form(){
         ui->label_cl_lName->setPalette(pal);
         return false;
     }
-
     return true;
 }
 
+bool MainWindow::check_unique_client(){
+    QStringList infoList;
+    int type = -1;
+
+    infoList << ui->lineEdit_cl_lName->text()
+             << ui->lineEdit_cl_fName->text();
+
+    if(ui->lineEdit_cl_SIN->text() != ""){
+        qDebug()<<"TYPE : CHECK SIN NUMBER";
+        type = CHECKSIN;
+        infoList << ui->lineEdit_cl_SIN->text();
+
+    }
+    else{
+        qDebug()<<"TYPE : CHECK NAME";
+        type = CHECKNAME;
+    }
+
+    QSqlQuery sameClient = dbManager->checkUniqueClient(&infoList);
+    if(sameClient.numRowsAffected() <= 0){
+        qDebug()<<"No same Client";
+        return true;
+    }
+    if(type == CHECKSIN){
+        if(doMessageBox(QString("A Client with the same SIN Number already exist.\n")
+                      + QString("Yes - return to search Client\n")
+                      + QString("No - modify information"))){
+            sameClient.next();
+
+            readSameClientInfo(sameClient.value("ClientId").toString());
+
+        }
+        return false;
+    }
+    else if(type == CHECKNAME){
+
+        DuplicateClients *showPossibleClient = new DuplicateClients();
+        connect(showPossibleClient, SIGNAL(selectedUser(QString)), this, SLOT(readSameClientInfo(QString)));
+        connect(showPossibleClient, SIGNAL(ignoreWarning()), this, SLOT(ignoreAndRegister()));
+        showPossibleClient->show();
+        qDebug()<<"DuplicateClients";
+        showPossibleClient->displayList(sameClient);
+        return false;
+    }
+    return false;
+}
+
+void MainWindow::readSameClientInfo(QString clientID){
+    qDebug()<<"ReadClientInfo " <<clientID;
+    registerType = FINDSAMECLIENT;
+    curClientID = clientID;
+    on_button_cancel_client_register_clicked();
+}
+
+void MainWindow::ignoreAndRegister(){
+    qDebug()<< "PROCEED REGISTER";
+    registerType = NEWCLIENT;
+    ignore_duplicate = true;
+   // on_button_register_client_clicked();
+}
+
+
 void MainWindow::getCaseWorkerList(){
-//    QString caseWorkerquery = "SELECT EmpName, EmpId FROM Employee WHERE (Role = 'CASE WORKER' OR Role = 'ADMIN') ORDER BY Username";
-//    QSqlQuery caseWorkers = dbManager->execQuery(caseWorkerquery);
     QSqlQuery caseWorkers = dbManager->getCaseWorkerList();
     //dbManager->printAll(caseWorkers);
     caseWorkerList.clear();
@@ -6973,8 +7040,9 @@ void MainWindow::on_editDelete_clicked()
     }
     double curBal = result.value("Balance").toString().toDouble();
     double bCost = dbManager->getBookingCost(curBook->bookID);
-    curBal -= bCost;
-    if(!dbManager->updateBalance(bCost, curBook->clientId))
+    curBal += bCost;
+
+    if(!dbManager->updateBalance(curBal, curBook->clientId))
             qDebug() << "Error updating balance";
 
     if(!dbManager->deleteBooking(curBook->bookID)){
