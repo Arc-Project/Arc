@@ -491,7 +491,7 @@ void MainWindow::on_paymentButton_2_clicked()
     transType = trans->type;
 
     if (ui->bookAmtPaid->text() != "0.00"){
-        saveReceipt(false, ui->bookAmtPaid->text());
+        saveReceipt(false, ui->bookAmtPaid->text(), false);
     }
 
 }
@@ -4854,7 +4854,9 @@ void MainWindow::on_pushButton_processPaymeent_clicked()
     isRefund = trans->transType == "Refund" ? true : false;
     ui->actionReceipt->setEnabled(true);
     qDebug() << "total paid " << QString::number(trans->paidToday, 'f', 2);
-    saveReceipt(false, QString::number(trans->paidToday, 'f', 2));
+    transType = trans->type;
+    qDebug() << "trans type" << transType;
+    saveReceipt(false, QString::number(trans->paidToday, 'f', 2), true);
     receiptid = "";
 //    createTextReceipt(QString::number(trans->amount),trans->type,QString::number(trans->paidToday),QString(),QString(),QString(),false,isRefund);
     on_pushButton_search_client_clicked();
@@ -5641,9 +5643,9 @@ void MainWindow::on_actionExport_to_PDF_triggered()
     }
 
     // customer receipt
-    if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING) {
-//        rptTemplate = ":/templates/pdf/combinedRec.xml";
-        rptTemplate = ":/templates/pdf/staysummary.xml";
+    if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING || ui->stackedWidget->currentIndex() == CLIENTLOOKUP) {
+        rptTemplate = ":/templates/pdf/combinedRec.xml";
+//        rptTemplate = ":/templates/pdf/staysummary.xml";
         report->recordCount << 1;
     }
 
@@ -5699,7 +5701,7 @@ void MainWindow::setValue(const int recNo, const QString paramName, QVariant &pa
     }
 
     // customer receipt
-    if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING) {
+    if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING || ui->stackedWidget->currentIndex() == CLIENTLOOKUP) {
         printStaySummary(recNo, paramName, paramValue, reportPage);
     }
 
@@ -6045,80 +6047,78 @@ void MainWindow::printStaySummary(const int recNo, const QString paramName, QVar
     Q_UNUSED(recNo);
     Q_UNUSED(reportPage);
 
-//    if (paramName == "lastFirst") {
-//        paramValue = curClientName;
+//    QString receiptid, date, time, clientName, startDate, endDate, numNights, bedType, roomNo, prog, descr, streetNo,
+//            streetName, city, province, zip, org, totalCost, payType, payTotal, refund, payOwe;
 
-//    } else if (paramName == "start") {
-//        paramValue = ui->confirmStart->text();
+    QSqlQuery result = dbManager->getReceiptQuery(receiptid);
+    result.next();
 
-//    } else if (paramName == "end") {
-//        paramValue = ui->confirmEnd->text();
+    if (paramName == "receiptid") {
+        paramValue = result.value(0).toString();
+    }
 
-//    } else if (paramName == "numNights") {
-//        paramValue = ui->confirmLength->text();
+    if (paramName == "date") {
+        paramValue = result.value(1).toString();
+    }
 
-//    } else if (paramName == "bedType") {
-//        QString bedString;
-//        QString s = curBook->room;
-//        QChar c = *(s.end()-1);
-//        qDebug() << "last char" << c;
-//        if (c == 'M') bedString.append("Mat ");
-//        else if (c == 'B') bedString.append("Bed ");
+    if (paramName == "time") {
+        paramValue = result.value(2).toString();
+    }
 
-//        QStringList pieces = curBook->room.split( "-" );
-//        bedString.append(pieces.value( pieces.length() - 1));
-//        bedString.chop(1);
-//        paramValue = bedString;
+    if (paramName == "lastFirst") {
+        paramValue = result.value(3).toString();
 
-//    } else if (paramName == "roomNo") {
-//        QString s = curBook->room;
-//        QRegExp rx("[-]");
-//        QStringList list = s.split(rx, QString::SkipEmptyParts);
-//        paramValue = list.at(2);
+    } else if (paramName == "start") {
+        paramValue = result.value(4).toString();
 
-//    } else if (paramName == "prog") {
-//        paramValue = curBook->program;
+    } else if (paramName == "end") {
+        paramValue = result.value(5).toString();
 
-//    } else if (paramName == "desc") {
-//        QSqlQuery result = dbManager->getProgramDesc(curBook->program);
-//        qDebug() << result.lastError();
-//        while (result.next())
-//            paramValue = result.value(0).toString();
+    } else if (paramName == "numNights") {
+        paramValue = result.value(6).toString();
 
-//    } else if (paramName == "totalCost") {
-//        paramValue = "$" + ui->confirmCost->text();
+    } else if (paramName == "bedType") {
+        paramValue = result.value(7).toString();
 
-//    } else if (paramName == "totalPaid") {
-//        paramValue = "$" + ui->confirmTotalPaid->text();
+    } else if (paramName == "roomNo") {
+        paramValue = result.value(8).toString();
 
-//    } else if (paramName == "owing") {
-//        qDebug() << "cost " <<  curBook->cost;
-//        qDebug() << "paid " << trans->paidToday;
-//        paramValue = "$" + QString::number(curBook->cost - trans->paidToday, 'f', 2);
+    } else if (paramName == "prog") {
+        paramValue = result.value(9).toString();
 
-//    } else if (paramName == "payType") {
-//        paramValue = transType;
+    } else if (paramName == "desc") {
+        paramValue = result.value(10).toString();
 
-//    } else if (paramName == "streetNo"){
-//         paramValue = getStreetNo();
-//         qDebug() << paramValue;
-//    } else if (paramName == "streetName"){
-//         paramValue = getStreetName();
-//         qDebug() << paramValue;
-//    } else if (paramName == "city"){
-//         paramValue = getCity();
-//         qDebug() << paramValue;
-//    } else if (paramName == "province"){
-//         paramValue = getProvince();
-//         qDebug() << paramValue;
-//    } else if (paramName == "zip"){
-//         paramValue = getZip();
-//         qDebug() << paramValue;
-//    } else if (paramName == "org"){
-//        paramValue = getOrgName();
-//        qDebug() << paramValue;
-//   }
+    } else if (paramName == "streetNo"){
+        paramValue = result.value(11).toString();
 
+    } else if (paramName == "streetName"){
+        paramValue = result.value(12).toString();
+
+    } else if (paramName == "city"){
+        paramValue = result.value(13).toString();
+
+    } else if (paramName == "province"){
+        paramValue = result.value(14).toString();
+
+    } else if (paramName == "zip"){
+        paramValue = result.value(15).toString();
+
+    } else if (paramName == "org"){
+        paramValue = result.value(16).toString();
+
+    } else if (paramName == "totalCost") {
+        paramValue = result.value(17).toString();
+
+    } else if (paramName == "payType") {
+        paramValue = result.value(18).toString();
+
+    } else if (paramName == "totalPaid") {
+        paramValue = result.value(20).toString() + " of " + result.value(19).toString();
+
+    } else if (paramName == "owing") {
+        paramValue = result.value(21).toString();
+    }
 }
 
 void MainWindow::printRegistry(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
@@ -8285,7 +8285,7 @@ QString MainWindow::getWebsite(){
 }
 
 
-void MainWindow::saveReceipt(bool booked, QString amtPaid) {
+void MainWindow::saveReceipt(bool booked, QString amtPaid, bool printPDF) {
     bool newReceipt = true;
 
     //receiptid
@@ -8372,7 +8372,7 @@ void MainWindow::saveReceipt(bool booked, QString amtPaid) {
         totalPaid = "$" + amtPaid;
 
     //total owing
-    QString owing = booked == true ? "$" + ui->confirmPaid->text() : "";
+    QString owing = booked == true ? "$" + ui->confirmPaid->text() : "$" + QString::number(curClient->balance, 'f', 2);
 
     //try to save the receipt 3 times in case of connection lost
     if (newReceipt) {
@@ -8423,7 +8423,9 @@ void MainWindow::saveReceipt(bool booked, QString amtPaid) {
         }
     }
 
-
+    if (printPDF) {
+        on_actionExport_to_PDF_triggered();
+    }
 }
 
 void MainWindow::on_adminVal_clicked()

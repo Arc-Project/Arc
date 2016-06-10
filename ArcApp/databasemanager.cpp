@@ -2426,9 +2426,12 @@ bool DatabaseManager::updateReceiptQuery(QString receiptid, QString date, QStrin
     return false;
 }
 
-bool DatabaseManager::getReceiptQuery(QString receiptid) {
-//    QString result = "SELECT * "
-//                     "FROM Receipt "
-//                     "WHERE receiptid = '" + receiptid + "'";
-//    return query->exec(result);
+QSqlQuery DatabaseManager::getReceiptQuery(QString receiptid) {
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    QString result = "SELECT * "
+                     "FROM Receipt "
+                     "WHERE receiptid = '" + receiptid + "'";
+    query.exec(result);
+    return query;
 }

@@ -197,7 +197,7 @@ public:
                                           QString endDate, QString numNights, QString bedType, QString roomNo, QString prog,
                                           QString descr, QString totalCost, QString payType, QString payTotal,
                                           QString refund, QString payOwe);
-    bool getReceiptQuery(QString receiptid);
+   QSqlQuery getReceiptQuery(QString receiptid);
 
     //Shift table
     bool updateShift(bool shiftExist, QString selectedDay, QStringList *shiftList);

@@ -768,7 +768,7 @@ private slots:
 
     QString getWebsite();
 
-    void saveReceipt(bool booked = true, QString amtPaid = "");
+    void saveReceipt(bool booked = true, QString amtPaid = "", bool printPDF = true);
 
     void on_adminVal_clicked();
 
