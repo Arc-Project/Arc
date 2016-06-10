@@ -240,6 +240,7 @@ void MainWindow::initCurrentWidget(int idx){
             }
             newTrans = true;
             newHistory = true;
+            newReceipt = true;
             initCasefileTransactionTable();
             initPcp();
             ui->actionExport_to_PDF->setEnabled(true);
@@ -1949,8 +1950,11 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
 
     case 4:
         if(curClientID == NULL || !newReceipt) break;
+        ui->btn_displayReceipt->setEnabled(false);
         QFuture<void> receiptFuture = QtConcurrent::run(this, &searchReceipts, curClientID);
         useProgressDialog("Loading receipts...", receiptFuture);
+        resizeTableView(ui->tw_receipts);
+        newReceipt = false;
     }
 }
 
@@ -6124,7 +6128,7 @@ void MainWindow::printStaySummary(const int recNo, const QString paramName, QVar
         paramValue = result.value(18).toString();
 
     } else if (paramName == "totalPaid") {
-        paramValue = result.value(20).toString() + " of " + result.value(19).toString();
+        paramValue = result.value(19).toString() == "$0.00" ? "$0.00" : result.value(20).toString() + " of " + result.value(19).toString();
 
     } else if (paramName == "owing") {
         paramValue = result.value(21).toString();
@@ -8296,6 +8300,11 @@ QString MainWindow::getWebsite(){
 
 
 void MainWindow::saveReceipt(bool booked, QString amtPaid, bool printPDF) {
+    qDebug() << "testing passed params:";
+    qDebug() << "booked: " << booked;
+    qDebug() << "amtPaid: " << amtPaid;
+    qDebug() << "printPDF: " << printPDF;
+
     bool newReceipt = true;
 
     //receiptid
@@ -8314,18 +8323,23 @@ void MainWindow::saveReceipt(bool booked, QString amtPaid, bool printPDF) {
     qDebug() << "using new receipt: " << newReceipt;
     //date
     QString date = QDate::currentDate().toString("yyyy-MM-dd");
+    qDebug() << "set date: " << date;
 
     //time
     QString time = QTime::currentTime().toString("H:mm AP");
+    qDebug() << "set time: " << time;
 
     //start date
     QString startDate = booked == false ? "" : ui->confirmStart->text();
+    qDebug() << "set start: " << startDate;
 
     //end date
     QString endDate = booked == false ? "" : ui->confirmEnd->text();
+    qDebug() << "set end: " << endDate;
 
     //lenght of stay
     QString stayLen = booked == false ? "" : ui->confirmLength->text();
+    qDebug() << "set length: " << stayLen;
 
     //bed type and number
     QString bedString;
@@ -8342,6 +8356,7 @@ void MainWindow::saveReceipt(bool booked, QString amtPaid, bool printPDF) {
     } else {
         bedString == "";
     }
+    qDebug() << "set bed: " << bedString;
 
     //room number
     QString roomNo;
@@ -8353,10 +8368,12 @@ void MainWindow::saveReceipt(bool booked, QString amtPaid, bool printPDF) {
     } else {
         roomNo = "";
     }
+    qDebug() << "set room: " << roomNo;
 
     //program
     QString program;
     program = booked == true ? curBook->program : "";
+    qDebug() << "set program: " << program;
 
     //program description
     QString programDesc;
@@ -8370,19 +8387,31 @@ void MainWindow::saveReceipt(bool booked, QString amtPaid, bool printPDF) {
     } else {
         programDesc = "";
     }
+    qDebug() << "set prog desc: " << programDesc;
 
     //total cost
     QString totalCost = booked == true ? "$"+ui->confirmCost->text() : "";
+    qDebug() << "set cost: " << totalCost;
 
     //total paid
-    QString totalPaid;
-    if (booked)
-        totalPaid = "$"+ui->confirmTotalPaid->text();
-    else
-        totalPaid = "$" + amtPaid;
+    QString totalPaid = booked == true ? "$"+ui->confirmTotalPaid->text() : "$"+amtPaid;
+    qDebug() << "set paid: " << totalPaid;
+
+    //payment or refund
+    QString payOrRef;
+
+    payOrRef = trans == nullptr ? "" : trans->transType;
+    qDebug() << "set trans type" << payOrRef;
+
+    //payment method
+    qDebug() << transType;
 
     //total owing
     QString owing = booked == true ? "$" + ui->confirmPaid->text() : "$" + QString::number(curClient->balance, 'f', 2);
+    qDebug() << "set bal: " << owing;
+
+    //clientid
+    qDebug() << "set clientId" << curClientID.toInt();
 
     //try to save the receipt 3 times in case of connection lost
     if (newReceipt) {
@@ -8407,9 +8436,10 @@ void MainWindow::saveReceipt(bool booked, QString amtPaid, bool printPDF) {
                                            totalCost,
                                            transType,
                                            totalPaid,
-                                           trans->transType,
+                                           payOrRef,
                                            owing,
                                            curClientID.toInt());
+            qDebug() << "insert query success: " << saved;
             if (saved) break;
         }
     } else {
@@ -8430,12 +8460,14 @@ void MainWindow::saveReceipt(bool booked, QString amtPaid, bool printPDF) {
                                            totalPaid,
                                            trans->transType,
                                            owing);
+            qDebug() << "update query success: " << saved;
             if (saved) break;
         }
     }
 
     if (printPDF) {
         on_actionExport_to_PDF_triggered();
+        qDebug() << "pdf generated";
     }
 }
 
@@ -8506,29 +8538,52 @@ void MainWindow::initClReceiptTable(){
 void MainWindow::displayReceipt(QSqlQuery results, QTableWidget* table){
     initClReceiptTable();
     int colCnt = table->columnCount();
-    int dataCnt = results.record().count();
+//    int dataCnt = results.record().count();
     int row = table->rowCount();
     while(results.next()){
         table->insertRow(row);
-        for(int i=0, j=0; i<colCnt, j<dataCnt; ++j, ++i){
+        for(int i=0, j=0; i<colCnt; ++j, ++i){
             //date, time, startDate, refund, payTotal, receiptid
             //0      1       2          3      4         5
             //date, time, type, amount, receiptid
             //0      1     2      3        4
             if (i == 2) {
-                qDebug() << "column " << i;
                 QString s;
                 s += results.value(j+1).toString();
-                s += results.value(j).toString() == "" ? "" : " and Booking";
+                if (results.value(j).toString() != ""){
+                    if (s.length() > 0){
+                        s += " and ";
+                    }
+                    s += "Booking";
+                }
                  table->setItem(row, i, new QTableWidgetItem(s));
                 j++;
 
             } else {
-                qDebug() << "column " << i;
                 table->setItem(row, i, new QTableWidgetItem(results.value(j).toString()));
             }
         }
         row++;
+    }
+}
+
+
+//display selected receipt
+void MainWindow::on_btn_displayReceipt_clicked()
+{
+    int row = ui->tw_receipts->currentRow();
+    receiptid = ui->tw_receipts->item(row, 4)->text();
+
+    on_actionExport_to_PDF_triggered();
+    receiptid = "";
+}
+
+//enable display receipt button when a row is selected
+void MainWindow::on_tw_receipts_itemClicked(QTableWidgetItem *item)
+{
+    Q_UNUSED(item);
+    if(ui->tw_receipts->rowCount() > 1){
+        ui->btn_displayReceipt->setEnabled(true);
     }
 }
 
@@ -8553,5 +8608,9 @@ void MainWindow::changeUserPw(QString newPw){
     qDebug()<<"PWNOtCHANGED";
     statusBar()->showMessage(QString("Password Change Fail"), 7000);
 }
+/*==============================================================================
+END CHANGE PASSWORD
+==============================================================================*/
+
 
 

@@ -786,6 +786,10 @@ private slots:
     void on_actionChange_Password_triggered();
     void changeUserPw(QString newPw);
 
+    void on_btn_displayReceipt_clicked();
+
+    void on_tw_receipts_itemClicked(QTableWidgetItem *item);
+
 private:
 
     Ui::MainWindow *ui;
