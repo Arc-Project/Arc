@@ -48,6 +48,7 @@
 #define RUNNINGNOTE			1
 #define BOOKINGHISTORY		2
 #define TRANSACTIONHISTORY	3
+#define CL_RECEIPTS	        4
 
 #define     SUN     1
 #define     MON     2
@@ -123,7 +124,7 @@ public:
     void setSelectedClientInfo();
     void initClBookHistoryTable();
     void initClTransactionTable();
-    void initClReceiptTable();
+    void initClReceiptTable(QTableWidget* table);
 
     void getRegisterLogFields(QStringList* fieldList);
     void getCurrentClientId();   //get client id from client list table
@@ -299,7 +300,7 @@ private slots:
 
     void displayReceipt(QSqlQuery results, QTableWidget* table);
 
-    void searchReceipts(QString clientId);
+    void searchReceipts(QString clientId, QTableWidget* table);
 
     /*==========================================================================
     CLIENT REGISTRATION FUNCTION
@@ -789,6 +790,12 @@ private slots:
     void on_btn_displayReceipt_clicked();
 
     void on_tw_receipts_itemClicked(QTableWidgetItem *item);
+
+    void on_pushButton_casefile_receipt_reload_clicked();
+
+    void on_btn_cf_displayReceipt_clicked();
+
+    void on_tw_cl_receipts_itemClicked(QTableWidgetItem *item);
 
 private:
 

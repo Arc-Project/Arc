@@ -1951,7 +1951,7 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
     case 4:
         if(curClientID == NULL || !newReceipt) break;
         ui->btn_displayReceipt->setEnabled(false);
-        QFuture<void> receiptFuture = QtConcurrent::run(this, &searchReceipts, curClientID);
+        QFuture<void> receiptFuture = QtConcurrent::run(this, &searchReceipts, curClientID, ui->tw_receipts);
         useProgressDialog("Loading receipts...", receiptFuture);
         resizeTableView(ui->tw_receipts);
         newReceipt = false;
@@ -2001,7 +2001,7 @@ void MainWindow::selected_client_info(int nRow, int nCol)
     getClientInfo();
     initClTransactionTable();
     initClBookHistoryTable();
-    initClReceiptTable();
+    initClReceiptTable(ui->tw_receipts);
 }
 
 
@@ -3285,6 +3285,12 @@ void MainWindow::on_tabw_casefiles_currentChanged(int index)
             */
             newTrans = false;
             break;
+
+    case CL_RECEIPTS:
+        if (!newReceipt) break;
+        on_pushButton_casefile_receipt_reload_clicked();
+        newReceipt = false;
+        break;
     }
 }
 
@@ -3314,7 +3320,7 @@ void MainWindow::on_pushButton_casefile_book_reload_clicked()
     ui->tableWidget_casefile_booking->setSortingEnabled(false);
     useProgressDialog("Search Transaction...",QtConcurrent::run(this, &searchCasefileBookHistory, curClientID));
     bookingTotal = ui->tableWidget_casefile_booking->rowCount();
-    ui->label_casefile_booking_total_num->setText(QString::number(bookingTotal) + " Booking");
+    ui->label_casefile_booking_total_num->setText(QString::number(bookingTotal) + " Bookings");
     ui->tableWidget_casefile_booking->sortByColumn(3, Qt::DescendingOrder);
     ui->tableWidget_casefile_booking->setSortingEnabled(true);
 }
@@ -3348,11 +3354,24 @@ void MainWindow::on_pushButton_casefile_trans_reload_clicked()
     ui->tableWidget_casefile_transaction->setSortingEnabled(false);
     useProgressDialog("Search Transaction...",QtConcurrent::run(this, &searchCasefileTransaction, curClientID));
     transacTotal = ui->tableWidget_casefile_transaction->rowCount();
-    ui->label_casefile_trans_total_num->setText(QString::number(transacTotal) + " Transaction");
+    ui->label_casefile_trans_total_num->setText(QString::number(transacTotal) + " Transactions");
     ui->tableWidget_casefile_transaction->sortByColumn(0, Qt::DescendingOrder);
     ui->tableWidget_casefile_transaction->setSortingEnabled(true);
 }
 
+/*-----------------------------------------------
+        CASEFILE RECEIPTS(DENNIS)
+-------------------------------------------------*/
+
+//reload client transaction history
+void MainWindow::on_pushButton_casefile_receipt_reload_clicked()
+{
+    initClReceiptTable(ui->tw_cl_receipts);
+    QFuture<void> receiptFuture = QtConcurrent::run(this, &searchReceipts, curClientID, ui->tw_cl_receipts);
+    useProgressDialog("Loading receipts...", receiptFuture);
+    QString receiptTotal = QString::number(ui->tw_cl_receipts->rowCount());
+    ui->label_casefile_receipt_total_num->setText(receiptTotal + " Receipts");
+}
 
 /*----------------------------------------CASEFILE END------------------------------------------*/
 
@@ -5657,7 +5676,9 @@ void MainWindow::on_actionExport_to_PDF_triggered()
     }
 
     // customer receipt
-    if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING || ui->stackedWidget->currentIndex() == CLIENTLOOKUP) {
+    if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING ||
+            ui->stackedWidget->currentIndex() == CLIENTLOOKUP ||
+            ui->tabw_casefiles->currentIndex() == CL_RECEIPTS) {
         rptTemplate = ":/templates/pdf/combinedRec.xml";
 //        rptTemplate = ":/templates/pdf/staysummary.xml";
         report->recordCount << 1;
@@ -5715,7 +5736,9 @@ void MainWindow::setValue(const int recNo, const QString paramName, QVariant &pa
     }
 
     // customer receipt
-    if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING || ui->stackedWidget->currentIndex() == CLIENTLOOKUP) {
+    if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING ||
+            ui->stackedWidget->currentIndex() == CLIENTLOOKUP ||
+            ui->tabw_casefiles->currentIndex() == CL_RECEIPTS) {
         printStaySummary(recNo, paramName, paramValue, reportPage);
     }
 
@@ -8518,25 +8541,25 @@ void MainWindow::on_valUpdate_clicked()
 }
 
 //search receipt history when receipt tab is clicked
-void MainWindow::searchReceipts(QString clientid){
+void MainWindow::searchReceipts(QString clientid, QTableWidget* table){
     qDebug()<<"search booking";
 
     QSqlQuery receiptQuery = dbManager->listReceiptQuery(clientid);
-    displayReceipt(receiptQuery, ui->tw_receipts);
+    displayReceipt(receiptQuery, table);
 
 }
 
 //initialize client booking history table in client info tab
-void MainWindow::initClReceiptTable(){
-    ui->tw_receipts->setRowCount(0);
-    ui->tw_receipts->clearContents();
+void MainWindow::initClReceiptTable(QTableWidget* table){
+    table->setRowCount(0);
+    table->clearContents();
 //    ui->tableWidget_booking->setMinimumHeight(30*6-1);
 }
 
 
 //display booking history in the table view
 void MainWindow::displayReceipt(QSqlQuery results, QTableWidget* table){
-    initClReceiptTable();
+    initClReceiptTable(table);
     int colCnt = table->columnCount();
 //    int dataCnt = results.record().count();
     int row = table->rowCount();
@@ -8578,6 +8601,15 @@ void MainWindow::on_btn_displayReceipt_clicked()
     receiptid = "";
 }
 
+void MainWindow::on_btn_cf_displayReceipt_clicked()
+{
+    int row = ui->tw_cl_receipts->currentRow();
+    receiptid = ui->tw_cl_receipts->item(row, 4)->text();
+
+    on_actionExport_to_PDF_triggered();
+    receiptid = "";
+}
+
 //enable display receipt button when a row is selected
 void MainWindow::on_tw_receipts_itemClicked(QTableWidgetItem *item)
 {
@@ -8586,6 +8618,15 @@ void MainWindow::on_tw_receipts_itemClicked(QTableWidgetItem *item)
         ui->btn_displayReceipt->setEnabled(true);
     }
 }
+
+void MainWindow::on_tw_cl_receipts_itemClicked(QTableWidgetItem *item)
+{
+    Q_UNUSED(item);
+    if(ui->tw_cl_receipts->rowCount() > 1){
+        ui->btn_cf_displayReceipt->setEnabled(true);
+    }
+}
+
 
 /*==============================================================================
 CHANGE PASSWORD
