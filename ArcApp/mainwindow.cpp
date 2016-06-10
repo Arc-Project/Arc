@@ -34,6 +34,8 @@ QFuture<void> displayFuture ;
 QFuture<void> displayPicFuture;
 QFuture<void> transacFuture;
 QFuture<void> bookHistoryFuture;
+bool newReceipt;
+
 
 //register Type
 int registerType;
@@ -185,6 +187,7 @@ void MainWindow::initCurrentWidget(int idx){
             ui->pushButton_search_client->setEnabled(true);
             //initimageview
             ui->actionExport_to_PDF->setEnabled(false);
+            receiptid = "";
             break;
         case BOOKINGLOOKUP: //WIDGET 2
             qDebug()<<"###BOOKING LOOKUP Client INFO###";
@@ -201,11 +204,9 @@ void MainWindow::initCurrentWidget(int idx){
             clearTable(ui->bookingTable);
             editOverLap = false;
             ui->actionReceipt->setEnabled(false);
+            receiptid = "";
             break;
         case BOOKINGPAGE: //WIDGET 3
-            //clear receipts in case payment was made on the next page and then back was hit
-//            if (trans != 0)
-//                trans->receiptid = "";
             //initcode
 
             break;
@@ -492,7 +493,7 @@ void MainWindow::on_paymentButton_2_clicked()
     transType = trans->type;
 
     if (ui->bookAmtPaid->text() != "0.00"){
-//        saveReceipt(false, ui->bookAmtPaid->text());
+        saveReceipt(false, ui->bookAmtPaid->text(), false);
     }
 
 }
@@ -1675,12 +1676,12 @@ void MainWindow::populateConfirm(){
     //handle receipt
 
     ui->actionExport_to_PDF->setEnabled(true);  
-    MainWindow::on_actionExport_to_PDF_triggered();
+//    MainWindow::on_actionExport_to_PDF_triggered();
     isRefund = curBook->paidTotal < 0;
-//    MainWindow::saveReceipt();
-    ui->actionReceipt->setEnabled(true);
-    createTextReceipt(ui->confirmCost->text(), transType, ui->confirmTotalPaid->text(), curBook->stringStart,
-                      curBook->stringEnd, ui->confirmLength->text(), true, isRefund);
+    saveReceipt();
+//    ui->actionReceipt->setEnabled(true);
+//    createTextReceipt(ui->confirmCost->text(), transType, ui->confirmTotalPaid->text(), curBook->stringStart,
+//                      curBook->stringEnd, ui->confirmLength->text(), true, isRefund);
 }
 
 //void MainWindow::on_monthCheck_stateChanged(int arg1)
@@ -1944,8 +1945,12 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
              break;
     case 3:
        setStorageClient();
-
         break;
+
+    case 4:
+        if(curClientID == NULL || !newReceipt) break;
+        QFuture<void> receiptFuture = QtConcurrent::run(this, &searchReceipts, curClientID);
+        useProgressDialog("Loading receipts...", receiptFuture);
     }
 }
 
@@ -1988,9 +1993,11 @@ void MainWindow::selected_client_info(int nRow, int nCol)
     ui->textEdit_cl_info_comment->clear();
     newTrans = true;
     newHistory = true;
+    newReceipt = true;
     getClientInfo();
     initClTransactionTable();
     initClBookHistoryTable();
+    initClReceiptTable();
 }
 
 
@@ -4854,7 +4861,14 @@ void MainWindow::on_pushButton_processPaymeent_clicked()
     //text receipt
     isRefund = trans->transType == "Refund" ? true : false;
     ui->actionReceipt->setEnabled(true);
-    createTextReceipt(QString::number(trans->amount),trans->type,QString::number(trans->paidToday),QString(),QString(),QString(),false,isRefund);
+    qDebug() << "total paid " << QString::number(trans->paidToday, 'f', 2);
+    transType = trans->type;
+    qDebug() << "trans type" << transType;
+    if (transType != ""){
+        saveReceipt(false, QString::number(trans->paidToday, 'f', 2), true);
+        receiptid = "";
+    }
+//    createTextReceipt(QString::number(trans->amount),trans->type,QString::number(trans->paidToday),QString(),QString(),QString(),false,isRefund);
     on_pushButton_search_client_clicked();
 }
 
@@ -5639,9 +5653,9 @@ void MainWindow::on_actionExport_to_PDF_triggered()
     }
 
     // customer receipt
-    if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING) {
-//        rptTemplate = ":/templates/pdf/combinedRec.xml";
-        rptTemplate = ":/templates/pdf/staysummary.xml";
+    if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING || ui->stackedWidget->currentIndex() == CLIENTLOOKUP) {
+        rptTemplate = ":/templates/pdf/combinedRec.xml";
+//        rptTemplate = ":/templates/pdf/staysummary.xml";
         report->recordCount << 1;
     }
 
@@ -5697,7 +5711,7 @@ void MainWindow::setValue(const int recNo, const QString paramName, QVariant &pa
     }
 
     // customer receipt
-    if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING) {
+    if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING || ui->stackedWidget->currentIndex() == CLIENTLOOKUP) {
         printStaySummary(recNo, paramName, paramValue, reportPage);
     }
 
@@ -6043,80 +6057,78 @@ void MainWindow::printStaySummary(const int recNo, const QString paramName, QVar
     Q_UNUSED(recNo);
     Q_UNUSED(reportPage);
 
+//    QString receiptid, date, time, clientName, startDate, endDate, numNights, bedType, roomNo, prog, descr, streetNo,
+//            streetName, city, province, zip, org, totalCost, payType, payTotal, refund, payOwe;
+
+    QSqlQuery result = dbManager->getReceiptQuery(receiptid);
+    result.next();
+
+    if (paramName == "receiptid") {
+        paramValue = result.value(0).toString();
+    }
+
+    if (paramName == "date") {
+        paramValue = result.value(1).toString();
+    }
+
+    if (paramName == "time") {
+        paramValue = result.value(2).toString();
+    }
+
     if (paramName == "lastFirst") {
-        paramValue = curClientName;
+        paramValue = result.value(3).toString();
 
     } else if (paramName == "start") {
-        paramValue = ui->confirmStart->text();
+        paramValue = result.value(4).toString();
 
     } else if (paramName == "end") {
-        paramValue = ui->confirmEnd->text();
+        paramValue = result.value(5).toString();
 
     } else if (paramName == "numNights") {
-        paramValue = ui->confirmLength->text();
+        paramValue = result.value(6).toString();
 
     } else if (paramName == "bedType") {
-        QString bedString;
-        QString s = curBook->room;
-        QChar c = *(s.end()-1);
-        qDebug() << "last char" << c;
-        if (c == 'M') bedString.append("Mat ");
-        else if (c == 'B') bedString.append("Bed ");
-
-        QStringList pieces = curBook->room.split( "-" );
-        bedString.append(pieces.value( pieces.length() - 1));
-        bedString.chop(1);
-        paramValue = bedString;
+        paramValue = result.value(7).toString();
 
     } else if (paramName == "roomNo") {
-        QString s = curBook->room;
-        QRegExp rx("[-]");
-        QStringList list = s.split(rx, QString::SkipEmptyParts);
-        paramValue = list.at(2);
+        paramValue = result.value(8).toString();
 
     } else if (paramName == "prog") {
-        paramValue = curBook->program;
+        paramValue = result.value(9).toString();
 
     } else if (paramName == "desc") {
-        QSqlQuery result = dbManager->getProgramDesc(curBook->program);
-        qDebug() << result.lastError();
-        while (result.next())
-            paramValue = result.value(0).toString();
-
-    } else if (paramName == "totalCost") {
-        paramValue = "$" + ui->confirmCost->text();
-
-    } else if (paramName == "totalPaid") {
-        paramValue = "$" + ui->confirmTotalPaid->text();
-
-    } else if (paramName == "owing") {
-        qDebug() << "cost " <<  curBook->cost;
-        qDebug() << "paid " << trans->paidToday;
-        paramValue = "$" + QString::number(curBook->cost - trans->paidToday, 'f', 2);
-
-    } else if (paramName == "payType") {
-        paramValue = transType;
+        paramValue = result.value(10).toString();
 
     } else if (paramName == "streetNo"){
-         paramValue = getStreetNo();
-         qDebug() << paramValue;
-    } else if (paramName == "streetName"){
-         paramValue = getStreetName();
-         qDebug() << paramValue;
-    } else if (paramName == "city"){
-         paramValue = getCity();
-         qDebug() << paramValue;
-    } else if (paramName == "province"){
-         paramValue = getProvince();
-         qDebug() << paramValue;
-    } else if (paramName == "zip"){
-         paramValue = getZip();
-         qDebug() << paramValue;
-    } else if (paramName == "org"){
-        paramValue = getOrgName();
-        qDebug() << paramValue;
-   }
+        paramValue = result.value(11).toString();
 
+    } else if (paramName == "streetName"){
+        paramValue = result.value(12).toString();
+
+    } else if (paramName == "city"){
+        paramValue = result.value(13).toString();
+
+    } else if (paramName == "province"){
+        paramValue = result.value(14).toString();
+
+    } else if (paramName == "zip"){
+        paramValue = result.value(15).toString();
+
+    } else if (paramName == "org"){
+        paramValue = result.value(16).toString();
+
+    } else if (paramName == "totalCost") {
+        paramValue = result.value(17).toString();
+
+    } else if (paramName == "payType") {
+        paramValue = result.value(18).toString();
+
+    } else if (paramName == "totalPaid") {
+        paramValue = result.value(20).toString() + " of " + result.value(19).toString();
+
+    } else if (paramName == "owing") {
+        paramValue = result.value(21).toString();
+    }
 }
 
 void MainWindow::printRegistry(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
@@ -8283,10 +8295,23 @@ QString MainWindow::getWebsite(){
 }
 
 
-void MainWindow::saveReceipt(bool booked, QString amtPaid) {
-    //receiptid
-    QString timestamp = QDate::currentDate().toString("yyyyMMdd") + QTime::currentTime().toString("hhmmss");
+void MainWindow::saveReceipt(bool booked, QString amtPaid, bool printPDF) {
+    bool newReceipt = true;
 
+    //receiptid
+    QString timestamp;
+    //check if receiptid already exists from previous payments of the same booking
+    if (receiptid == "") {
+        timestamp = QDate::currentDate().toString("yyyyMMdd") + QTime::currentTime().toString("hhmmss");
+        receiptid = timestamp;
+        qDebug() << "updated receiptid: " << receiptid;
+    } else {
+        timestamp = receiptid;
+        newReceipt = false;
+        qDebug() << "using existing receiptid:" << receiptid;
+    }
+
+    qDebug() << "using new receipt: " << newReceipt;
     //date
     QString date = QDate::currentDate().toString("yyyy-MM-dd");
 
@@ -8307,7 +8332,7 @@ void MainWindow::saveReceipt(bool booked, QString amtPaid) {
     if (booked) {
         QString s = curBook->room;
         QChar c = *(s.end()-1);
-        qDebug() << "last char" << c;
+//        qDebug() << "last char" << c;
         if (c == 'M') bedString.append("Mat ");
         else if (c == 'B') bedString.append("Bed ");
 
@@ -8329,14 +8354,18 @@ void MainWindow::saveReceipt(bool booked, QString amtPaid) {
         roomNo = "";
     }
 
+    //program
+    QString program;
+    program = booked == true ? curBook->program : "";
+
     //program description
     QString programDesc;
     if (booked) {
         QSqlQuery progResult = dbManager->getProgramDesc(curBook->program);
         progResult.next();
-        qDebug() << "desc:";
-        qDebug() << progResult.lastError();
-        qDebug() << progResult.value(0).toString();
+//        qDebug() << "desc:";
+//        qDebug() << progResult.lastError();
+//        qDebug() << progResult.value(0).toString();
         programDesc = progResult.value(0).toString();
     } else {
         programDesc = "";
@@ -8353,36 +8382,61 @@ void MainWindow::saveReceipt(bool booked, QString amtPaid) {
         totalPaid = "$" + amtPaid;
 
     //total owing
-    QString owing = booked == true ? "$" + ui->confirmPaid->text() : "";
+    QString owing = booked == true ? "$" + ui->confirmPaid->text() : "$" + QString::number(curClient->balance, 'f', 2);
 
     //try to save the receipt 3 times in case of connection lost
-    for (int i = 0; i < 3; i++) {
-        bool saved = dbManager->addReceiptQuery( timestamp,
-                                       date,
-                                       time,
-                                       curClientName,
-                                       startDate,
-                                       endDate,
-                                       stayLen,
-                                       bedString,
-                                       roomNo,
-                                       curBook->program,
-                                       programDesc,
-                                       getStreetNo(),
-                                       getStreetName(),
-                                       getCity(),
-                                       getProvince(),
-                                       getZip(),
-                                       getOrgName(),
-                                       totalCost,
-                                       transType,
-                                       totalPaid,
-                                       trans->transType,
-                                       owing);
-        if (saved) break;
+    if (newReceipt) {
+        for (int i = 0; i < 3; i++) {
+            bool saved = dbManager->addReceiptQuery( timestamp,
+                                           date,
+                                           time,
+                                           curClientName,
+                                           startDate,
+                                           endDate,
+                                           stayLen,
+                                           bedString,
+                                           roomNo,
+                                           program,
+                                           programDesc,
+                                           getStreetNo(),
+                                           getStreetName(),
+                                           getCity(),
+                                           getProvince(),
+                                           getZip(),
+                                           getOrgName(),
+                                           totalCost,
+                                           transType,
+                                           totalPaid,
+                                           trans->transType,
+                                           owing,
+                                           curClientID.toInt());
+            if (saved) break;
+        }
+    } else {
+        for (int i = 0; i < 3; i++) {
+            bool saved = dbManager->updateReceiptQuery( timestamp,
+                                           date,
+                                           time,
+                                           curClientName,
+                                           startDate,
+                                           endDate,
+                                           stayLen,
+                                           bedString,
+                                           roomNo,
+                                           curBook->program,
+                                           programDesc,
+                                           totalCost,
+                                           transType,
+                                           totalPaid,
+                                           trans->transType,
+                                           owing);
+            if (saved) break;
+        }
     }
 
-
+    if (printPDF) {
+        on_actionExport_to_PDF_triggered();
+    }
 }
 
 void MainWindow::on_adminVal_clicked()
@@ -8429,6 +8483,53 @@ void MainWindow::on_valUpdate_clicked()
     Validate * validate = new Validate(this, clientId, real,expected, usernameLoggedIn, QString::number(currentshiftid));
     validate->exec();
 
+}
+
+//search receipt history when receipt tab is clicked
+void MainWindow::searchReceipts(QString clientid){
+    qDebug()<<"search booking";
+
+    QSqlQuery receiptQuery = dbManager->listReceiptQuery(clientid);
+    displayReceipt(receiptQuery, ui->tw_receipts);
+
+}
+
+//initialize client booking history table in client info tab
+void MainWindow::initClReceiptTable(){
+    ui->tw_receipts->setRowCount(0);
+    ui->tw_receipts->clearContents();
+//    ui->tableWidget_booking->setMinimumHeight(30*6-1);
+}
+
+
+//display booking history in the table view
+void MainWindow::displayReceipt(QSqlQuery results, QTableWidget* table){
+    initClReceiptTable();
+    int colCnt = table->columnCount();
+    int dataCnt = results.record().count();
+    int row = table->rowCount();
+    while(results.next()){
+        table->insertRow(row);
+        for(int i=0, j=0; i<colCnt, j<dataCnt; ++j, ++i){
+            //date, time, startDate, refund, payTotal, receiptid
+            //0      1       2          3      4         5
+            //date, time, type, amount, receiptid
+            //0      1     2      3        4
+            if (i == 2) {
+                qDebug() << "column " << i;
+                QString s;
+                s += results.value(j+1).toString();
+                s += results.value(j).toString() == "" ? "" : " and Booking";
+                 table->setItem(row, i, new QTableWidgetItem(s));
+                j++;
+
+            } else {
+                qDebug() << "column " << i;
+                table->setItem(row, i, new QTableWidgetItem(results.value(j).toString()));
+            }
+        }
+        row++;
+    }
 }
 
 /*==============================================================================

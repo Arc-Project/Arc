@@ -111,6 +111,8 @@ public:
 
     bool resettingfromcode = false;
 
+    QString receiptid = "";
+
     bookingManager book;
     void searchClientListThread();
     void setup_searchClientTable(QSqlQuery results);
@@ -121,6 +123,7 @@ public:
     void setSelectedClientInfo();
     void initClBookHistoryTable();
     void initClTransactionTable();
+    void initClReceiptTable();
 
     void getRegisterLogFields(QStringList* fieldList);
     void getCurrentClientId();   //get client id from client list table
@@ -291,7 +294,12 @@ private slots:
     void displayTransaction(QSqlQuery results, QTableWidget* table);
 
     void displayBookHistory(QSqlQuery results, QTableWidget* table);
+
     void searchBookHistory(QString clientId);
+
+    void displayReceipt(QSqlQuery results, QTableWidget* table);
+
+    void searchReceipts(QString clientId);
 
     /*==========================================================================
     CLIENT REGISTRATION FUNCTION
@@ -766,7 +774,7 @@ private slots:
 
     QString getWebsite();
 
-    void saveReceipt(bool booked = true, QString amtPaid = "");
+    void saveReceipt(bool booked = true, QString amtPaid = "", bool printPDF = true);
 
     void on_adminVal_clicked();
 
