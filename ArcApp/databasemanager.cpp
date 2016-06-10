@@ -2335,7 +2335,7 @@ bool DatabaseManager::addReceiptQuery(QString receiptid, QString date, QString t
                                       QString endDate, QString numNights, QString bedType, QString roomNo, QString prog,
                                       QString descr, QString streetNo, QString streetName, QString city, QString province,
                                       QString zip, QString org, QString totalCost, QString payType, QString payTotal,
-                                      QString refund, QString payOwe)
+                                      QString refund, QString payOwe, int clientId)
 {
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
@@ -2343,8 +2343,8 @@ bool DatabaseManager::addReceiptQuery(QString receiptid, QString date, QString t
     qDebug() << "preparing query";
 
     query.prepare("INSERT INTO Receipt (receiptid, date, time, clientName, startDate, endDate, numNights, bedType, roomNo, prog,"
-                  "descr, streetNo, streetName, city, province, zip, org, totalCost, payType, payTotal, refund, payOwe)"
-                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                  "descr, streetNo, streetName, city, province, zip, org, totalCost, payType, payTotal, refund, payOwe, clientId)"
+                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
     qDebug() << "begin binding";
 
@@ -2370,6 +2370,7 @@ bool DatabaseManager::addReceiptQuery(QString receiptid, QString date, QString t
     query.addBindValue(payTotal);
     query.addBindValue(refund);
     query.addBindValue(payOwe);
+    query.addBindValue(clientId);
 
     qDebug() << "binding done";
 
@@ -2393,8 +2394,7 @@ bool DatabaseManager::updateReceiptQuery(QString receiptid, QString date, QStrin
 
     query.prepare("UPDATE Receipt "
                   "SET date = ?, time = ?, clientName = ?, startDate = ?, endDate = ?, numNights = ?, bedType = ?, roomNo = ?, prog = ?, "
-                  "descr = ?, totalCost = ?, payType = ?, payTotal = ?, "
-                  "refund = ?, payOwe = ? "
+                  "descr = ?, totalCost = ?, payType = ?, payTotal = ?, refund = ?, payOwe = ? "
                   "WHERE receiptid = '" + receiptid + "'");
 
     qDebug() << "begin binding";
@@ -2432,6 +2432,16 @@ QSqlQuery DatabaseManager::getReceiptQuery(QString receiptid) {
     QString result = "SELECT * "
                      "FROM Receipt "
                      "WHERE receiptid = '" + receiptid + "'";
+    query.exec(result);
+    return query;
+}
+
+QSqlQuery DatabaseManager::listReceiptQuery(QString clientId) {
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    QString result = "SELECT date, time, startDate, refund, payTotal, receiptid "
+                     "FROM Receipt "
+                     "WHERE clientId = " + clientId ;
     query.exec(result);
     return query;
 }

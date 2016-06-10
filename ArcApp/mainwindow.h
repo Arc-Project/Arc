@@ -123,6 +123,7 @@ public:
     void setSelectedClientInfo();
     void initClBookHistoryTable();
     void initClTransactionTable();
+    void initClReceiptTable();
 
     void getRegisterLogFields(QStringList* fieldList);
     void getCurrentClientId();   //get client id from client list table
@@ -293,7 +294,12 @@ private slots:
     void displayTransaction(QSqlQuery results, QTableWidget* table);
 
     void displayBookHistory(QSqlQuery results, QTableWidget* table);
+
     void searchBookHistory(QString clientId);
+
+    void displayReceipt(QSqlQuery results, QTableWidget* table);
+
+    void searchReceipts(QString clientId);
 
     /*==========================================================================
     CLIENT REGISTRATION FUNCTION

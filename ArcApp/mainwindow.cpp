@@ -34,6 +34,8 @@ QFuture<void> displayFuture ;
 QFuture<void> displayPicFuture;
 QFuture<void> transacFuture;
 QFuture<void> bookHistoryFuture;
+bool newReceipt;
+
 
 //register Type
 int registerType;
@@ -185,6 +187,7 @@ void MainWindow::initCurrentWidget(int idx){
             ui->pushButton_search_client->setEnabled(true);
             //initimageview
             ui->actionExport_to_PDF->setEnabled(false);
+            receiptid = "";
             break;
         case BOOKINGLOOKUP: //WIDGET 2
             qDebug()<<"###BOOKING LOOKUP Client INFO###";
@@ -201,10 +204,9 @@ void MainWindow::initCurrentWidget(int idx){
             clearTable(ui->bookingTable);
             editOverLap = false;
             ui->actionReceipt->setEnabled(false);
-            receiptid = ""; //clear receipts in case payment was made on the next page and then back was hit
+            receiptid = "";
             break;
         case BOOKINGPAGE: //WIDGET 3
-            receiptid = ""; //clear receipts in case payment was made on the next page and then back was hit
             //initcode
 
             break;
@@ -1943,8 +1945,12 @@ void MainWindow::on_tabWidget_cl_info_currentChanged(int index)
              break;
     case 3:
        setStorageClient();
-
         break;
+
+    case 4:
+        if(curClientID == NULL || !newReceipt) break;
+        QFuture<void> receiptFuture = QtConcurrent::run(this, &searchReceipts, curClientID);
+        useProgressDialog("Loading receipts...", receiptFuture);
     }
 }
 
@@ -1987,9 +1993,11 @@ void MainWindow::selected_client_info(int nRow, int nCol)
     ui->textEdit_cl_info_comment->clear();
     newTrans = true;
     newHistory = true;
+    newReceipt = true;
     getClientInfo();
     initClTransactionTable();
     initClBookHistoryTable();
+    initClReceiptTable();
 }
 
 
@@ -4856,8 +4864,10 @@ void MainWindow::on_pushButton_processPaymeent_clicked()
     qDebug() << "total paid " << QString::number(trans->paidToday, 'f', 2);
     transType = trans->type;
     qDebug() << "trans type" << transType;
-    saveReceipt(false, QString::number(trans->paidToday, 'f', 2), true);
-    receiptid = "";
+    if (transType != ""){
+        saveReceipt(false, QString::number(trans->paidToday, 'f', 2), true);
+        receiptid = "";
+    }
 //    createTextReceipt(QString::number(trans->amount),trans->type,QString::number(trans->paidToday),QString(),QString(),QString(),false,isRefund);
     on_pushButton_search_client_clicked();
 }
@@ -8398,7 +8408,8 @@ void MainWindow::saveReceipt(bool booked, QString amtPaid, bool printPDF) {
                                            transType,
                                            totalPaid,
                                            trans->transType,
-                                           owing);
+                                           owing,
+                                           curClientID.toInt());
             if (saved) break;
         }
     } else {
@@ -8472,6 +8483,53 @@ void MainWindow::on_valUpdate_clicked()
     Validate * validate = new Validate(this, clientId, real,expected, usernameLoggedIn, QString::number(currentshiftid));
     validate->exec();
 
+}
+
+//search receipt history when receipt tab is clicked
+void MainWindow::searchReceipts(QString clientid){
+    qDebug()<<"search booking";
+
+    QSqlQuery receiptQuery = dbManager->listReceiptQuery(clientid);
+    displayReceipt(receiptQuery, ui->tw_receipts);
+
+}
+
+//initialize client booking history table in client info tab
+void MainWindow::initClReceiptTable(){
+    ui->tw_receipts->setRowCount(0);
+    ui->tw_receipts->clearContents();
+//    ui->tableWidget_booking->setMinimumHeight(30*6-1);
+}
+
+
+//display booking history in the table view
+void MainWindow::displayReceipt(QSqlQuery results, QTableWidget* table){
+    initClReceiptTable();
+    int colCnt = table->columnCount();
+    int dataCnt = results.record().count();
+    int row = table->rowCount();
+    while(results.next()){
+        table->insertRow(row);
+        for(int i=0, j=0; i<colCnt, j<dataCnt; ++j, ++i){
+            //date, time, startDate, refund, payTotal, receiptid
+            //0      1       2          3      4         5
+            //date, time, type, amount, receiptid
+            //0      1     2      3        4
+            if (i == 2) {
+                qDebug() << "column " << i;
+                QString s;
+                s += results.value(j+1).toString();
+                s += results.value(j).toString() == "" ? "" : " and Booking";
+                 table->setItem(row, i, new QTableWidgetItem(s));
+                j++;
+
+            } else {
+                qDebug() << "column " << i;
+                table->setItem(row, i, new QTableWidgetItem(results.value(j).toString()));
+            }
+        }
+        row++;
+    }
 }
 
 /*==============================================================================

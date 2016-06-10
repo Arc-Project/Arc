@@ -192,12 +192,13 @@ public:
                                           QString endDate, QString numNights, QString bedType, QString roomNo, QString prog,
                                           QString descr, QString streetNo, QString streetName, QString city, QString province,
                                           QString zip, QString org, QString totalCost, QString payType, QString payTotal,
-                                          QString refund, QString payOwe);
+                                          QString refund, QString payOwe, int clientId);
     bool updateReceiptQuery(QString receiptid, QString date, QString time, QString clientName, QString startDate,
                                           QString endDate, QString numNights, QString bedType, QString roomNo, QString prog,
                                           QString descr, QString totalCost, QString payType, QString payTotal,
                                           QString refund, QString payOwe);
    QSqlQuery getReceiptQuery(QString receiptid);
+   QSqlQuery listReceiptQuery(QString clientid);
 
     //Shift table
     bool updateShift(bool shiftExist, QString selectedDay, QStringList *shiftList);
