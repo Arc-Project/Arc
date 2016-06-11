@@ -2426,15 +2426,50 @@ bool DatabaseManager::updateReceiptQuery(QString receiptid, QString date, QStrin
     return false;
 }
 
-QSqlQuery DatabaseManager::getReceiptQuery(QString receiptid) {
-    DatabaseManager::checkDatabaseConnection(&db);
-    QSqlQuery query(db);
+bool DatabaseManager::getReceiptQuery(QSqlQuery* query, QString receiptid) {
     QString result = "SELECT * "
                      "FROM Receipt "
                      "WHERE receiptid = '" + receiptid + "'";
-    query.exec(result);
-    return query;
+
+    return query->exec(result);
 }
+
+void DatabaseManager::getReceiptThread(QString receiptid)
+{
+    QString connName = QString::number(dbManager->getDbCounter());
+    QStringList receipt;
+    bool conn = true;
+    {
+        QSqlDatabase tempDb = QSqlDatabase::database();
+
+        if (dbManager->createDatabase(&tempDb, connName))
+        {
+            QSqlQuery query(tempDb);
+            if (DatabaseManager::getReceiptQuery(&query, receiptid))
+            {
+                qDebug() << "query returned";
+                int idx = 0;
+                query.next();
+                for (int i = 0; i < 23; i++){
+                    receipt << query.value(i).toString();
+                    qDebug() << "from query: added " << query.value(idx).toString();
+                }
+            }
+            tempDb.close();
+        }
+        else
+        {
+            tempDb.close();
+            conn = false;
+        }
+    } // Necessary braces: tempDb and query are destroyed because out of scope
+    QSqlDatabase::removeDatabase(connName);
+
+    qDebug() << "emitting receipt data";
+    emit DatabaseManager::getReceiptData(receipt, conn);
+}
+
+
 
 QSqlQuery DatabaseManager::listReceiptQuery(QString clientId) {
     DatabaseManager::checkDatabaseConnection(&db);
