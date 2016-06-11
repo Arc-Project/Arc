@@ -197,7 +197,8 @@ public:
                                           QString endDate, QString numNights, QString bedType, QString roomNo, QString prog,
                                           QString descr, QString totalCost, QString payType, QString payTotal,
                                           QString refund, QString payOwe);
-   QSqlQuery getReceiptQuery(QString receiptid);
+   bool getReceiptQuery(QSqlQuery* query, QString receiptid);
+   void getReceiptThread(QString receiptid);
    QSqlQuery listReceiptQuery(QString clientid);
    QSqlQuery getFullName(QString clientId);
 
@@ -220,6 +221,7 @@ signals:
     void noDatabaseConnection();
     void reconnectedToDatabase();
     void getPcpData(QStringList goal, QStringList strategy, QStringList date, int idx,  bool conn);
+    void getReceiptData(QStringList receipt, bool conn);
 
 private:
     QSqlDatabase db = QSqlDatabase::database();

@@ -48,6 +48,7 @@ QString idDisplayed;
 
 QString transType;
 bool isRefund = false;
+QStringList curReceipt;
 
 QProgressDialog* dialog;
 
@@ -95,6 +96,8 @@ MainWindow::MainWindow(QWidget *parent) :
         SLOT(on_reconnectedToDatabase()));
     connect(dbManager, SIGNAL(getPcpData(QStringList,QStringList,QStringList,int,bool)), this,
         SLOT(populatePcpTable(QStringList, QStringList, QStringList, int, bool)));
+    connect(dbManager, SIGNAL(getReceiptData(QStringList,bool)), this,
+        SLOT(setCurReceipt(QStringList,bool)));
 
     curClient = 0;
     curBook = 0;
@@ -6100,74 +6103,95 @@ void MainWindow::printStaySummary(const int recNo, const QString paramName, QVar
 //    QString receiptid, date, time, clientName, startDate, endDate, numNights, bedType, roomNo, prog, descr, streetNo,
 //            streetName, city, province, zip, org, totalCost, payType, payTotal, refund, payOwe;
 
-    QSqlQuery result = dbManager->getReceiptQuery(receiptid);
-    result.next();
+//    QSqlQuery result = dbManager->getReceiptQuery(receiptid);
+//    result.next();
 
     if (paramName == "receiptid") {
-        paramValue = result.value(0).toString();
+//        paramValue = result.value(0).toString();
+        paramValue = curReceipt[0];
     }
 
     if (paramName == "date") {
-        paramValue = result.value(1).toString();
+//        paramValue = result.value(1).toString();
+        paramValue = curReceipt[1];
     }
 
     if (paramName == "time") {
-        paramValue = result.value(2).toString();
+//        paramValue = result.value(2).toString();
+        paramValue = curReceipt[2];
     }
 
     if (paramName == "lastFirst") {
-        paramValue = result.value(3).toString();
+//        paramValue = result.value(3).toString();
+        paramValue = curReceipt[3];
 
     } else if (paramName == "start") {
-        paramValue = result.value(4).toString();
+//        paramValue = result.value(4).toString();
+        paramValue = curReceipt[4];
 
     } else if (paramName == "end") {
-        paramValue = result.value(5).toString();
+//        paramValue = result.value(5).toString();
+        paramValue = curReceipt[5];
 
     } else if (paramName == "numNights") {
-        paramValue = result.value(6).toString();
+//        paramValue = result.value(6).toString();
+        paramValue = curReceipt[6];
 
     } else if (paramName == "bedType") {
-        paramValue = result.value(7).toString();
+//        paramValue = result.value(7).toString();
+        paramValue = curReceipt[7];
 
     } else if (paramName == "roomNo") {
-        paramValue = result.value(8).toString();
+//        paramValue = result.value(8).toString();
+        paramValue = curReceipt[8];
 
     } else if (paramName == "prog") {
-        paramValue = result.value(9).toString();
+//        paramValue = result.value(9).toString();
+        paramValue = curReceipt[9];
 
     } else if (paramName == "desc") {
-        paramValue = result.value(10).toString();
+//        paramValue = result.value(10).toString();
+        paramValue = curReceipt[10];
 
     } else if (paramName == "streetNo"){
-        paramValue = result.value(11).toString();
+//        paramValue = result.value(11).toString();
+        paramValue = curReceipt[11];
 
     } else if (paramName == "streetName"){
-        paramValue = result.value(12).toString();
+//        paramValue = result.value(12).toString();
+        paramValue = curReceipt[12];
 
     } else if (paramName == "city"){
-        paramValue = result.value(13).toString();
+//        paramValue = result.value(13).toString();
+        paramValue = curReceipt[13];
 
     } else if (paramName == "province"){
-        paramValue = result.value(14).toString();
+//        paramValue = result.value(14).toString();
+        paramValue = curReceipt[14];
 
     } else if (paramName == "zip"){
-        paramValue = result.value(15).toString();
+//        paramValue = result.value(15).toString();
+        paramValue = curReceipt[15];
 
     } else if (paramName == "org"){
-        paramValue = result.value(16).toString();
+//        paramValue = result.value(16).toString();
+        paramValue = curReceipt[16];
 
     } else if (paramName == "totalCost") {
-        paramValue = result.value(17).toString();
+//        paramValue = result.value(17).toString();
+        paramValue = curReceipt[17];
 
     } else if (paramName == "payType") {
-        paramValue = result.value(18).toString();
+//        paramValue = result.value(18).toString();
+        paramValue = curReceipt[18];
 
     } else if (paramName == "totalPaid") {
-        paramValue = result.value(19).toString() == "$0.00" ? "$0.00" : result.value(20).toString() + " of " + result.value(19).toString();
+//        paramValue = result.value(19).toString() == "$0.00" ? "$0.00" : result.value(20).toString() + " of " + result.value(19).toString();
+        paramValue = curReceipt[19] == "$0.00" ? "$0.00" : curReceipt[20] + " of " + curReceipt[19];
 
     } else if (paramName == "owing") {
-        paramValue = result.value(21).toString();
+//        paramValue = result.value(21).toString();
+        paramValue = curReceipt[21];
     }
 }
 
@@ -8502,6 +8526,8 @@ void MainWindow::saveReceipt(bool booked, QString amtPaid, bool printPDF) {
     }
 
     if (printPDF) {
+        qDebug() << "retrieving data from db";
+        dbManager->getReceiptThread(timestamp);
         on_actionExport_to_PDF_triggered();
         qDebug() << "pdf generated";
     }
@@ -8610,6 +8636,8 @@ void MainWindow::on_btn_displayReceipt_clicked()
     int row = ui->tw_receipts->currentRow();
     receiptid = ui->tw_receipts->item(row, 4)->text();
 
+    qDebug() << "retrieving data from db";
+    dbManager->getReceiptThread(receiptid);
     on_actionExport_to_PDF_triggered();
     receiptid = "";
 }
@@ -8619,6 +8647,8 @@ void MainWindow::on_btn_cf_displayReceipt_clicked()
     int row = ui->tw_cl_receipts->currentRow();
     receiptid = ui->tw_cl_receipts->item(row, 4)->text();
 
+    qDebug() << "retrieving data from db";
+    dbManager->getReceiptThread(receiptid);
     on_actionExport_to_PDF_triggered();
     receiptid = "";
 }
@@ -8671,6 +8701,15 @@ void MainWindow::getFullName (QString clientId) {
     }
 
     qDebug() << "new curclientname " << curClientName;
+}
+
+void MainWindow::setCurReceipt(QStringList receipt, bool conn) {
+    Q_UNUSED(conn);
+    curReceipt.clear();
+    for (int i = 0; i < receipt.length(); ++i) {
+        curReceipt << receipt[i];
+        qDebug() << receipt[i];
+    }
 }
 
 /*==============================================================================

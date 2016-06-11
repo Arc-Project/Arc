@@ -799,6 +799,8 @@ private slots:
 
     void getFullName (QString clientId);
 
+    void setCurReceipt(QStringList receipt, bool conn);
+
 private:
 
     Ui::MainWindow *ui;
