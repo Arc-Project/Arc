@@ -797,6 +797,8 @@ private slots:
 
     void on_tw_cl_receipts_itemClicked(QTableWidgetItem *item);
 
+    void getFullName (QString clientId);
+
 private:
 
     Ui::MainWindow *ui;

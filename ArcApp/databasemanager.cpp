@@ -2445,3 +2445,14 @@ QSqlQuery DatabaseManager::listReceiptQuery(QString clientId) {
     query.exec(result);
     return query;
 }
+
+QSqlQuery DatabaseManager::getFullName(QString clientId) {
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    QString result = "SELECT LastName, FirstName, MiddleName "
+                     "FROM Client "
+                     "WHERE ClientId = " + clientId ;
+    qDebug() << result;
+    query.exec(result);
+    return query;
+}

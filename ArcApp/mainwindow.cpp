@@ -1243,8 +1243,22 @@ void MainWindow::handleNewPayment(int row){
 
     payment * pay = new payment(this, trans, curClient->balance, 0 , curClient, note, true, usernameLoggedIn, QString::number(currentshiftid));
     pay->exec();
-    ui->mpTable->removeRow(row);
+//    ui->mpTable->removeRow(row);
     delete(pay);
+
+    //text receipt
+    curClientID = curClient->clientId;
+    getFullName(curClientID);
+
+    qDebug() << "total paid " << QString::number(trans->paidToday, 'f', 2);
+    transType = trans->type;
+    qDebug() << "trans type" << transType;
+    if (transType != ""){
+        saveReceipt(false, QString::number(trans->paidToday, 'f', 2), true);
+        receiptid = "";
+    }
+
+    on_btn_payListAllUsers_clicked();
 }
 
 void MainWindow::updateCheque(int row, QString chequeNo){
@@ -1288,7 +1302,6 @@ void MainWindow::getTransactionFromRow(int row){
     dbManager->updateBalance(curBal, clientId);
     dbManager->removeTransaction(transId);
     ui->mpTable->removeRow(row);
-
 }
 
 void MainWindow::on_btn_payOutstanding_clicked()
@@ -1853,7 +1866,7 @@ void MainWindow::set_curClient_name(int nRow, int nCol){
     if(mName!=NULL){
         if(curClientName!="")
             curClientName += QString(" ");
-        curClientName += QString(mName);
+        curClientName += QString(mName.toUpper());
     }
 
     ui->label_cl_curClient->setText(curClientName);
@@ -8627,6 +8640,38 @@ void MainWindow::on_tw_cl_receipts_itemClicked(QTableWidgetItem *item)
     }
 }
 
+void MainWindow::getFullName (QString clientId) {
+    QString lName, fName, mName;
+
+    QSqlQuery nameQuery = dbManager->getFullName(clientId);
+    qDebug() << nameQuery.lastError();
+    nameQuery.next();
+
+    lName = nameQuery.value(0).toString();
+    fName = nameQuery.value(1).toString();
+    mName = nameQuery.value(2).toString();
+
+    qDebug() << "lname" << lName;
+    qDebug() << "fname" << fName;
+    qDebug() << "mname" << mName;
+
+    curClientName = "";
+    //MAKE FULL NAME
+    if(lName!=NULL)
+        curClientName = QString(lName.toUpper());
+    if(fName!=NULL){
+        if(curClientName!="")
+            curClientName += QString(", ");
+        curClientName += QString(fName.toUpper());
+    }
+    if(mName!=NULL){
+        if(curClientName!="")
+            curClientName += QString(" ");
+        curClientName += QString(mName.toUpper());
+    }
+
+    qDebug() << "new curclientname " << curClientName;
+}
 
 /*==============================================================================
 CHANGE PASSWORD
