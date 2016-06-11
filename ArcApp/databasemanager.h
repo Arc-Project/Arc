@@ -199,6 +199,7 @@ public:
                                           QString refund, QString payOwe);
    QSqlQuery getReceiptQuery(QString receiptid);
    QSqlQuery listReceiptQuery(QString clientid);
+   QSqlQuery getFullName(QString clientId);
 
     //Shift table
     bool updateShift(bool shiftExist, QString selectedDay, QStringList *shiftList);
