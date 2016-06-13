@@ -6203,17 +6203,17 @@ void MainWindow::printRegistry(const int recNo, const QString paramName, QVarian
          paramValue = ui->editLookupTable->item(recNo, 4)->text();
          qDebug() << "printed col 4";
 
-    } else if (paramName == "cost"){
-        qDebug() << "param cost";
-        if (ui->editLookupTable->item(recNo, 5) == 0 ) return;
-         paramValue = ui->editLookupTable->item(recNo, 5)->text();
-         qDebug() << "printed col 5";
+//    } else if (paramName == "cost"){
+//        qDebug() << "param cost";
+//        if (ui->editLookupTable->item(recNo, 5) == 0 ) return;
+//         paramValue = ui->editLookupTable->item(recNo, 5)->text();
+//         qDebug() << "printed col 5";
 
-    } else if (paramName == "rate"){
-        qDebug() << "param rate";
-        if (ui->editLookupTable->item(recNo, 6) == 0 ) return;
-         paramValue = ui->editLookupTable->item(recNo, 6)->text();
-         qDebug() << "printed col 6";
+//    } else if (paramName == "rate"){
+//        qDebug() << "param rate";
+//        if (ui->editLookupTable->item(recNo, 6) == 0 ) return;
+//         paramValue = ui->editLookupTable->item(recNo, 6)->text();
+//         qDebug() << "printed col 6";
 
     } else if (paramName == "streetNo"){
          paramValue = getStreetNo();
