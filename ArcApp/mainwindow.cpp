@@ -5704,6 +5704,7 @@ void MainWindow::on_actionExport_to_PDF_triggered()
     if (ui->stackedWidget->currentIndex() == EDITBOOKING) {
         rptTemplate = ":/templates/pdf/registry.xml";
         report->recordCount << ui->editLookupTable->rowCount();
+        qDebug() << "rows: " << ui->editLookupTable->rowCount();
     }
 
     report->loadReport(rptTemplate);
@@ -6100,124 +6101,120 @@ void MainWindow::printStaySummary(const int recNo, const QString paramName, QVar
     Q_UNUSED(recNo);
     Q_UNUSED(reportPage);
 
-//    QString receiptid, date, time, clientName, startDate, endDate, numNights, bedType, roomNo, prog, descr, streetNo,
-//            streetName, city, province, zip, org, totalCost, payType, payTotal, refund, payOwe;
-
-//    QSqlQuery result = dbManager->getReceiptQuery(receiptid);
-//    result.next();
-
     if (paramName == "receiptid") {
-//        paramValue = result.value(0).toString();
         paramValue = curReceipt[0];
     }
 
     if (paramName == "date") {
-//        paramValue = result.value(1).toString();
         paramValue = curReceipt[1];
     }
 
     if (paramName == "time") {
-//        paramValue = result.value(2).toString();
         paramValue = curReceipt[2];
     }
 
     if (paramName == "lastFirst") {
-//        paramValue = result.value(3).toString();
         paramValue = curReceipt[3];
 
     } else if (paramName == "start") {
-//        paramValue = result.value(4).toString();
         paramValue = curReceipt[4];
 
     } else if (paramName == "end") {
-//        paramValue = result.value(5).toString();
         paramValue = curReceipt[5];
 
     } else if (paramName == "numNights") {
-//        paramValue = result.value(6).toString();
         paramValue = curReceipt[6];
 
     } else if (paramName == "bedType") {
-//        paramValue = result.value(7).toString();
         paramValue = curReceipt[7];
 
     } else if (paramName == "roomNo") {
-//        paramValue = result.value(8).toString();
         paramValue = curReceipt[8];
 
     } else if (paramName == "prog") {
-//        paramValue = result.value(9).toString();
         paramValue = curReceipt[9];
 
     } else if (paramName == "desc") {
-//        paramValue = result.value(10).toString();
         paramValue = curReceipt[10];
 
     } else if (paramName == "streetNo"){
-//        paramValue = result.value(11).toString();
         paramValue = curReceipt[11];
 
     } else if (paramName == "streetName"){
-//        paramValue = result.value(12).toString();
         paramValue = curReceipt[12];
 
     } else if (paramName == "city"){
-//        paramValue = result.value(13).toString();
         paramValue = curReceipt[13];
 
     } else if (paramName == "province"){
-//        paramValue = result.value(14).toString();
         paramValue = curReceipt[14];
 
     } else if (paramName == "zip"){
-//        paramValue = result.value(15).toString();
         paramValue = curReceipt[15];
 
     } else if (paramName == "org"){
-//        paramValue = result.value(16).toString();
         paramValue = curReceipt[16];
 
     } else if (paramName == "totalCost") {
-//        paramValue = result.value(17).toString();
         paramValue = curReceipt[17];
 
     } else if (paramName == "payType") {
-//        paramValue = result.value(18).toString();
         paramValue = curReceipt[18];
 
     } else if (paramName == "totalPaid") {
-//        paramValue = result.value(19).toString() == "$0.00" ? "$0.00" : result.value(20).toString() + " of " + result.value(19).toString();
         paramValue = curReceipt[19] == "$0.00" ? "$0.00" : curReceipt[20] + " of " + curReceipt[19];
 
     } else if (paramName == "owing") {
-//        paramValue = result.value(21).toString();
         paramValue = curReceipt[21];
     }
 }
 
 void MainWindow::printRegistry(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
     Q_UNUSED(reportPage);
+    qDebug() << "params: recNo: " << recNo << " paramName: " << paramName << " paramValue: " << paramValue << " reportPage: " << reportPage;
+
     if (paramName == "client") {
+        qDebug() << "param client";
         if (ui->editLookupTable->item(recNo, 0) == 0 ) return;
          paramValue = ui->editLookupTable->item(recNo, 0)->text();
+         qDebug() << "printed col 0";
+
     } else if (paramName == "space") {
+        qDebug() << "param space";
         if (ui->editLookupTable->item(recNo, 1) == 0 ) return;
          paramValue = ui->editLookupTable->item(recNo, 1)->text();
+         qDebug() << "printed col 1";
+
     } else if (paramName == "start") {
+        qDebug() << "param start";
         if (ui->editLookupTable->item(recNo, 2) == 0 ) return;
          paramValue = ui->editLookupTable->item(recNo, 2)->text();
+         qDebug() << "printed col 2";
+
     } else if (paramName == "end") {
+        qDebug() << "param end";
         if (ui->editLookupTable->item(recNo, 3) == 0 ) return;
          paramValue = ui->editLookupTable->item(recNo, 0)->text();
+         qDebug() << "printed col 3";
+
     } else if (paramName == "prog"){
+        qDebug() << "param prog";
         if (ui->editLookupTable->item(recNo, 4) == 0 ) return;
          paramValue = ui->editLookupTable->item(recNo, 1)->text();
+         qDebug() << "printed col 4";
+
     } else if (paramName == "cost"){
+        qDebug() << "param cost";
         if (ui->editLookupTable->item(recNo, 5) == 0 ) return;
          paramValue = ui->editLookupTable->item(recNo, 1)->text();
+         qDebug() << "printed col 5";
+
     } else if (paramName == "rate"){
+        qDebug() << "param rate";
         if (ui->editLookupTable->item(recNo, 6) == 0 ) return;
          paramValue = ui->editLookupTable->item(recNo, 1)->text();
+         qDebug() << "printed col 6";
+
     } else if (paramName == "streetNo"){
          paramValue = getStreetNo();
          qDebug() << paramValue;
