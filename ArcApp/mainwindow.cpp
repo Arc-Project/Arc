@@ -5682,23 +5682,23 @@ void MainWindow::on_actionExport_to_PDF_triggered()
         for (auto x: pcp_tables) {
             report->recordCount << x->rowCount();
         }
-    }
+    } else
 
     // case files running notes
     if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == RUNNINGNOTE){
         rptTemplate = ":/templates/pdf/running.xml";
         report->recordCount << (int) qCeil(ui->te_notes->document()->lineCount()/30.0);
         qDebug() << "record count: " << (int) qCeil(ui->te_notes->document()->lineCount()/30.0);
-    }
+    } else
 
     // customer receipt
     if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING ||
             ui->stackedWidget->currentIndex() == CLIENTLOOKUP ||
-            ui->tabw_casefiles->currentIndex() == CL_RECEIPTS) {
+            (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == CL_RECEIPTS)) {
         rptTemplate = ":/templates/pdf/combinedRec.xml";
 //        rptTemplate = ":/templates/pdf/staysummary.xml";
         report->recordCount << 1;
-    }
+    } else
 
     // registry
     if (ui->stackedWidget->currentIndex() == EDITBOOKING) {
@@ -5755,7 +5755,7 @@ void MainWindow::setValue(const int recNo, const QString paramName, QVariant &pa
     // customer receipt
     if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING ||
             ui->stackedWidget->currentIndex() == CLIENTLOOKUP ||
-            ui->tabw_casefiles->currentIndex() == CL_RECEIPTS) {
+             (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == CL_RECEIPTS)) {
         printStaySummary(recNo, paramName, paramValue, reportPage);
     }
 
@@ -6194,25 +6194,25 @@ void MainWindow::printRegistry(const int recNo, const QString paramName, QVarian
     } else if (paramName == "end") {
         qDebug() << "param end";
         if (ui->editLookupTable->item(recNo, 3) == 0 ) return;
-         paramValue = ui->editLookupTable->item(recNo, 0)->text();
+         paramValue = ui->editLookupTable->item(recNo, 3)->text();
          qDebug() << "printed col 3";
 
     } else if (paramName == "prog"){
         qDebug() << "param prog";
         if (ui->editLookupTable->item(recNo, 4) == 0 ) return;
-         paramValue = ui->editLookupTable->item(recNo, 1)->text();
+         paramValue = ui->editLookupTable->item(recNo, 4)->text();
          qDebug() << "printed col 4";
 
     } else if (paramName == "cost"){
         qDebug() << "param cost";
         if (ui->editLookupTable->item(recNo, 5) == 0 ) return;
-         paramValue = ui->editLookupTable->item(recNo, 1)->text();
+         paramValue = ui->editLookupTable->item(recNo, 5)->text();
          qDebug() << "printed col 5";
 
     } else if (paramName == "rate"){
         qDebug() << "param rate";
         if (ui->editLookupTable->item(recNo, 6) == 0 ) return;
-         paramValue = ui->editLookupTable->item(recNo, 1)->text();
+         paramValue = ui->editLookupTable->item(recNo, 6)->text();
          qDebug() << "printed col 6";
 
     } else if (paramName == "streetNo"){
