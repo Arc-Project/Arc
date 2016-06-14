@@ -20,6 +20,7 @@
 #define STORAGEPAGE         16
 #define EDITADDRESS         17
 #define VALIDATEPAGE        18
+#define ROOMHISTORY         19
 
 
 #define DAILYREPORT         0
@@ -230,11 +231,13 @@ private slots:
     ==========================================================================*/
     void on_bookButton_clicked();
     void on_clientButton_clicked();
+    void on_roomHistoryButton_clicked();
     void on_paymentButton_clicked();
     void on_adminButton_clicked();
     void on_editbookButton_clicked();
     void on_reportsButton_clicked();
     void on_caseButton_clicked();
+
     
     /*==========================================================================
     REPORTS - slots
@@ -584,8 +587,6 @@ private slots:
     void on_tableWidget_5_clicked(const QModelIndex &index);
 
     void on_pushButton_cl_book_more_clicked();
-
-    
 
     void on_lineEdit_search_clientName_returnPressed();
 
