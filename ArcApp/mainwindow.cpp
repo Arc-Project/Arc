@@ -295,6 +295,9 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case EDITADDRESS:
             break;
+        case ROOMHISTORY:
+            break;
+
         default:
             qDebug()<<"NO information about stackWidget idx : "<<idx;
 
@@ -344,6 +347,11 @@ void MainWindow::on_editbookButton_clicked()
     on_editSearch_clicked();
 
     qDebug() << "pushed page " << MAINMENU;
+}
+
+void MainWindow::on_roomHistoryButton_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(ROOMHISTORY);
 }
 
 void MainWindow::on_caseButton_clicked()

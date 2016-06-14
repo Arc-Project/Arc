@@ -24,7 +24,7 @@
   </property>
   <property name="font">
    <font>
-    <pointsize>12</pointsize>
+    <pointsize>25</pointsize>
    </font>
   </property>
   <property name="windowTitle">
@@ -224,7 +224,7 @@ QHeaderView{
     <item row="0" column="1">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>19</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_55">
@@ -302,24 +302,12 @@ QHeaderView{
            <item row="3" column="2">
             <layout class="QHBoxLayout" name="horizontalLayout_79">
              <item>
-              <widget class="QPushButton" name="editbookButton">
+              <widget class="QPushButton" name="roomHistoryButton">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>16777215</height>
-                </size>
                </property>
                <property name="font">
                 <font>
@@ -329,7 +317,8 @@ QHeaderView{
                 </font>
                </property>
                <property name="text">
-                <string>Registry</string>
+                <string>Room
+History</string>
                </property>
               </widget>
              </item>
@@ -424,13 +413,14 @@ Payment</string>
                </property>
                <property name="font">
                 <font>
-                 <pointsize>30</pointsize>
+                 <pointsize>25</pointsize>
                  <weight>75</weight>
                  <bold>true</bold>
                 </font>
                </property>
                <property name="text">
-                <string>Client Lookup</string>
+                <string>Client
+Lookup</string>
                </property>
               </widget>
              </item>
@@ -463,6 +453,38 @@ Payment</string>
                </property>
                <property name="text">
                 <string>Book Room</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="editbookButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>25</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>Registry</string>
                </property>
               </widget>
              </item>
@@ -961,7 +983,7 @@ Payment</string>
            </font>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab_cl_general">
            <attribute name="title">
@@ -4331,7 +4353,8 @@ Payment</string>
                 </font>
                </property>
                <property name="text">
-                <string>Edit Programs</string>
+                <string>Edit
+Programs</string>
                </property>
               </widget>
              </item>
@@ -5830,8 +5853,8 @@ Balance</string>
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>1266</width>
-                 <height>1294</height>
+                 <width>718</width>
+                 <height>1381</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -10954,7 +10977,7 @@ Balance</string>
                     <string notr="true"/>
                    </property>
                    <property name="currentIndex">
-                    <number>0</number>
+                    <number>1</number>
                    </property>
                    <widget class="QWidget" name="tab_6">
                     <attribute name="title">
@@ -10973,6 +10996,9 @@ Balance</string>
                        </property>
                        <property name="selectionBehavior">
                         <enum>QAbstractItemView::SelectRows</enum>
+                       </property>
+                       <property name="sortingEnabled">
+                        <bool>true</bool>
                        </property>
                       </widget>
                      </item>
@@ -19166,6 +19192,24 @@ Balance</string>
         </property>
        </widget>
       </widget>
+      <widget class="QWidget" name="page_5">
+       <widget class="QTableWidget" name="roomHistory_tableWidget">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>51</y>
+          <width>1581</width>
+          <height>901</height>
+         </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -19176,7 +19220,7 @@ Balance</string>
      <x>0</x>
      <y>0</y>
      <width>1625</width>
-     <height>23</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="font">
