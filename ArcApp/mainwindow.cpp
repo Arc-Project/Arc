@@ -8680,7 +8680,7 @@ void MainWindow::on_btn_cf_displayReceipt_clicked()
 void MainWindow::on_tw_receipts_itemClicked(QTableWidgetItem *item)
 {
     Q_UNUSED(item);
-    if(ui->tw_receipts->rowCount() > 1){
+    if(ui->tw_receipts->rowCount() > 0){
         ui->btn_displayReceipt->setEnabled(true);
     }
 }
@@ -8688,7 +8688,7 @@ void MainWindow::on_tw_receipts_itemClicked(QTableWidgetItem *item)
 void MainWindow::on_tw_cl_receipts_itemClicked(QTableWidgetItem *item)
 {
     Q_UNUSED(item);
-    if(ui->tw_cl_receipts->rowCount() > 1){
+    if(ui->tw_cl_receipts->rowCount() > 0){
         ui->btn_cf_displayReceipt->setEnabled(true);
     }
 }
