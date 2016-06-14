@@ -5651,10 +5651,12 @@ void MainWindow::on_actionExport_to_PDF_triggered()
     // reports: shift
     if (ui->stackedWidget->currentIndex() == REPORTS && ui->swdg_reports->currentIndex() == SHIFTREPORT){
         rptTemplate = ":/templates/pdf/shift.xml";
-        report->recordCount << bookingReport->model.rows
-                            << transactionReport->model.rows
-                            << clientLogReport->model.rows
-                            << otherReport->model.rows;
+//        report->recordCount << bookingReport->model.rows
+//                            << transactionReport->model.rows
+//                            << clientLogReport->model.rows
+//                            << otherReport->model.rows;
+        report->recordCount << transactionReport->model.rows;
+
     } else
 
     // reports: float count
@@ -5682,28 +5684,30 @@ void MainWindow::on_actionExport_to_PDF_triggered()
         for (auto x: pcp_tables) {
             report->recordCount << x->rowCount();
         }
-    }
+    } else
 
     // case files running notes
     if (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == RUNNINGNOTE){
         rptTemplate = ":/templates/pdf/running.xml";
         report->recordCount << (int) qCeil(ui->te_notes->document()->lineCount()/30.0);
         qDebug() << "record count: " << (int) qCeil(ui->te_notes->document()->lineCount()/30.0);
-    }
+    } else
 
     // customer receipt
     if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING ||
             ui->stackedWidget->currentIndex() == CLIENTLOOKUP ||
-            ui->tabw_casefiles->currentIndex() == CL_RECEIPTS) {
+            ui->stackedWidget->currentIndex() == PAYMENTPAGE ||
+            (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == CL_RECEIPTS)) {
         rptTemplate = ":/templates/pdf/combinedRec.xml";
 //        rptTemplate = ":/templates/pdf/staysummary.xml";
         report->recordCount << 1;
-    }
+    } else
 
     // registry
     if (ui->stackedWidget->currentIndex() == EDITBOOKING) {
         rptTemplate = ":/templates/pdf/registry.xml";
         report->recordCount << ui->editLookupTable->rowCount();
+        qDebug() << "rows: " << ui->editLookupTable->rowCount();
     }
 
     report->loadReport(rptTemplate);
@@ -5754,7 +5758,8 @@ void MainWindow::setValue(const int recNo, const QString paramName, QVariant &pa
     // customer receipt
     if (ui->stackedWidget->currentIndex() == CONFIRMBOOKING ||
             ui->stackedWidget->currentIndex() == CLIENTLOOKUP ||
-            ui->tabw_casefiles->currentIndex() == CL_RECEIPTS) {
+            ui->stackedWidget->currentIndex() == PAYMENTPAGE ||
+             (ui->stackedWidget->currentIndex() == CASEFILE && ui->tabw_casefiles->currentIndex() == CL_RECEIPTS)) {
         printStaySummary(recNo, paramName, paramValue, reportPage);
     }
 
@@ -5839,21 +5844,43 @@ void MainWindow::printDailyReport(const int recNo, const QString paramName, QVar
 void MainWindow::printShiftReport(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage){
     if (reportPage == 0){
         if (paramName == "client") {
-            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 0);
-        } else if (paramName == "space") {
-            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 1);
-        } else if (paramName == "program") {
-            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 2);
-        } else if (paramName == "start") {
-            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 3);
-        } else if (paramName == "end") {
-            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 4);
-        } else if (paramName == "action") {
-            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 5);
-        } else if (paramName == "staff") {
-            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 6);
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 0);
+        } else if (paramName == "trans") {
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 1);
+        } else if (paramName == "type") {
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 2);
+        } else if (paramName == "msdd") {
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 4);
+        } else if (paramName == "cno") {
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 5);
+        } else if (paramName == "cdate") {
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 6);
+        } else if (paramName == "status") {
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 7);
+        } else if (paramName == "deleted") {
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 8);
+        } else if (paramName == "employee") {
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 9);
         } else if (paramName == "time") {
-            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 7);
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 10);
+        } else if (paramName == "amt") {
+            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 3);
+//        if (paramName == "client") {
+//            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 0);
+//        } else if (paramName == "space") {
+//            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 1);
+//        } else if (paramName == "program") {
+//            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 2);
+//        } else if (paramName == "start") {
+//            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 3);
+//        } else if (paramName == "end") {
+//            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 4);
+//        } else if (paramName == "action") {
+//            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 5);
+//        } else if (paramName == "staff") {
+//            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 6);
+//        } else if (paramName == "time") {
+//            paramValue = bookingReport->model.tableData->at(recNo * bookingReport->model.cols + 7);
         } else if (paramName == "sname") {
             paramValue = userLoggedIn;
         } else if (paramName == "date") {
@@ -5889,48 +5916,48 @@ void MainWindow::printShiftReport(const int recNo, const QString paramName, QVar
             paramValue = getOrgName();
             qDebug() << paramValue;
        }
-    } else if (reportPage == 1) {
-        if (paramName == "client") {
-            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 0);
-        } else if (paramName == "trans") {
-            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 1);
-        } else if (paramName == "type") {
-            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 2);
-        } else if (paramName == "msdd") {
-            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 4);
-        } else if (paramName == "cno") {
-            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 5);
-        } else if (paramName == "cdate") {
-            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 6);
-        } else if (paramName == "status") {
-            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 7);
-        } else if (paramName == "deleted") {
-            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 8);
-        } else if (paramName == "employee") {
-            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 9);
-        } else if (paramName == "time") {
-            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 10);
-        } else if (paramName == "amt") {
-            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 3);
-        }
-    } else if (reportPage == 2) {
-        if (paramName == "client") {
-            paramValue = clientLogReport->model.tableData->at(recNo * clientLogReport->model.cols + 0);
-        } else if (paramName == "action") {
-            paramValue = clientLogReport->model.tableData->at(recNo * clientLogReport->model.cols + 1);
-        } else if (paramName == "employee") {
-            paramValue = clientLogReport->model.tableData->at(recNo * clientLogReport->model.cols + 2);
-        } else if (paramName == "time") {
-            paramValue = clientLogReport->model.tableData->at(recNo * clientLogReport->model.cols + 2);
-        }
-    } else if (reportPage == 3) {
-        if (paramName == "time") {
-            paramValue = otherReport->model.tableData->at(recNo * otherReport->model.cols + 0);
-        } else if (paramName == "employee") {
-            paramValue = otherReport->model.tableData->at(recNo * otherReport->model.cols + 1);
-        } else if (paramName == "log") {
-            paramValue = otherReport->model.tableData->at(recNo * otherReport->model.cols + 2);
-        }
+//    } else if (reportPage == 1) {
+//        if (paramName == "client") {
+//            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 0);
+//        } else if (paramName == "trans") {
+//            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 1);
+//        } else if (paramName == "type") {
+//            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 2);
+//        } else if (paramName == "msdd") {
+//            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 4);
+//        } else if (paramName == "cno") {
+//            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 5);
+//        } else if (paramName == "cdate") {
+//            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 6);
+//        } else if (paramName == "status") {
+//            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 7);
+//        } else if (paramName == "deleted") {
+//            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 8);
+//        } else if (paramName == "employee") {
+//            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 9);
+//        } else if (paramName == "time") {
+//            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 10);
+//        } else if (paramName == "amt") {
+//            paramValue = transactionReport->model.tableData->at(recNo * transactionReport->model.cols + 3);
+//        }
+//    } else if (reportPage == 2) {
+//        if (paramName == "client") {
+//            paramValue = clientLogReport->model.tableData->at(recNo * clientLogReport->model.cols + 0);
+//        } else if (paramName == "action") {
+//            paramValue = clientLogReport->model.tableData->at(recNo * clientLogReport->model.cols + 1);
+//        } else if (paramName == "employee") {
+//            paramValue = clientLogReport->model.tableData->at(recNo * clientLogReport->model.cols + 2);
+//        } else if (paramName == "time") {
+//            paramValue = clientLogReport->model.tableData->at(recNo * clientLogReport->model.cols + 2);
+//        }
+//    } else if (reportPage == 3) {
+//        if (paramName == "time") {
+//            paramValue = otherReport->model.tableData->at(recNo * otherReport->model.cols + 0);
+//        } else if (paramName == "employee") {
+//            paramValue = otherReport->model.tableData->at(recNo * otherReport->model.cols + 1);
+//        } else if (paramName == "log") {
+//            paramValue = otherReport->model.tableData->at(recNo * otherReport->model.cols + 2);
+//        }
     }
 }
 
@@ -6100,124 +6127,120 @@ void MainWindow::printStaySummary(const int recNo, const QString paramName, QVar
     Q_UNUSED(recNo);
     Q_UNUSED(reportPage);
 
-//    QString receiptid, date, time, clientName, startDate, endDate, numNights, bedType, roomNo, prog, descr, streetNo,
-//            streetName, city, province, zip, org, totalCost, payType, payTotal, refund, payOwe;
-
-//    QSqlQuery result = dbManager->getReceiptQuery(receiptid);
-//    result.next();
-
     if (paramName == "receiptid") {
-//        paramValue = result.value(0).toString();
         paramValue = curReceipt[0];
     }
 
     if (paramName == "date") {
-//        paramValue = result.value(1).toString();
         paramValue = curReceipt[1];
     }
 
     if (paramName == "time") {
-//        paramValue = result.value(2).toString();
         paramValue = curReceipt[2];
     }
 
     if (paramName == "lastFirst") {
-//        paramValue = result.value(3).toString();
         paramValue = curReceipt[3];
 
     } else if (paramName == "start") {
-//        paramValue = result.value(4).toString();
         paramValue = curReceipt[4];
 
     } else if (paramName == "end") {
-//        paramValue = result.value(5).toString();
         paramValue = curReceipt[5];
 
     } else if (paramName == "numNights") {
-//        paramValue = result.value(6).toString();
         paramValue = curReceipt[6];
 
     } else if (paramName == "bedType") {
-//        paramValue = result.value(7).toString();
         paramValue = curReceipt[7];
 
     } else if (paramName == "roomNo") {
-//        paramValue = result.value(8).toString();
         paramValue = curReceipt[8];
 
     } else if (paramName == "prog") {
-//        paramValue = result.value(9).toString();
         paramValue = curReceipt[9];
 
     } else if (paramName == "desc") {
-//        paramValue = result.value(10).toString();
         paramValue = curReceipt[10];
 
     } else if (paramName == "streetNo"){
-//        paramValue = result.value(11).toString();
         paramValue = curReceipt[11];
 
     } else if (paramName == "streetName"){
-//        paramValue = result.value(12).toString();
         paramValue = curReceipt[12];
 
     } else if (paramName == "city"){
-//        paramValue = result.value(13).toString();
         paramValue = curReceipt[13];
 
     } else if (paramName == "province"){
-//        paramValue = result.value(14).toString();
         paramValue = curReceipt[14];
 
     } else if (paramName == "zip"){
-//        paramValue = result.value(15).toString();
         paramValue = curReceipt[15];
 
     } else if (paramName == "org"){
-//        paramValue = result.value(16).toString();
         paramValue = curReceipt[16];
 
     } else if (paramName == "totalCost") {
-//        paramValue = result.value(17).toString();
         paramValue = curReceipt[17];
 
     } else if (paramName == "payType") {
-//        paramValue = result.value(18).toString();
         paramValue = curReceipt[18];
 
     } else if (paramName == "totalPaid") {
-//        paramValue = result.value(19).toString() == "$0.00" ? "$0.00" : result.value(20).toString() + " of " + result.value(19).toString();
         paramValue = curReceipt[19] == "$0.00" ? "$0.00" : curReceipt[20] + " of " + curReceipt[19];
 
     } else if (paramName == "owing") {
-//        paramValue = result.value(21).toString();
         paramValue = curReceipt[21];
     }
 }
 
 void MainWindow::printRegistry(const int recNo, const QString paramName, QVariant &paramValue, const int reportPage) {
     Q_UNUSED(reportPage);
+    qDebug() << "params: recNo: " << recNo << " paramName: " << paramName << " paramValue: " << paramValue << " reportPage: " << reportPage;
+
     if (paramName == "client") {
+        qDebug() << "param client";
         if (ui->editLookupTable->item(recNo, 0) == 0 ) return;
          paramValue = ui->editLookupTable->item(recNo, 0)->text();
+         qDebug() << "printed col 0";
+
     } else if (paramName == "space") {
+        qDebug() << "param space";
         if (ui->editLookupTable->item(recNo, 1) == 0 ) return;
          paramValue = ui->editLookupTable->item(recNo, 1)->text();
+         qDebug() << "printed col 1";
+
     } else if (paramName == "start") {
+        qDebug() << "param start";
         if (ui->editLookupTable->item(recNo, 2) == 0 ) return;
          paramValue = ui->editLookupTable->item(recNo, 2)->text();
+         qDebug() << "printed col 2";
+
     } else if (paramName == "end") {
+        qDebug() << "param end";
         if (ui->editLookupTable->item(recNo, 3) == 0 ) return;
-         paramValue = ui->editLookupTable->item(recNo, 0)->text();
+         paramValue = ui->editLookupTable->item(recNo, 3)->text();
+         qDebug() << "printed col 3";
+
     } else if (paramName == "prog"){
+        qDebug() << "param prog";
         if (ui->editLookupTable->item(recNo, 4) == 0 ) return;
-         paramValue = ui->editLookupTable->item(recNo, 1)->text();
-    } else if (paramName == "cost"){
-        if (ui->editLookupTable->item(recNo, 5) == 0 ) return;
-         paramValue = ui->editLookupTable->item(recNo, 1)->text();
-    } else if (paramName == "rate"){
-        if (ui->editLookupTable->item(recNo, 6) == 0 ) return;
-         paramValue = ui->editLookupTable->item(recNo, 1)->text();
+         paramValue = ui->editLookupTable->item(recNo, 4)->text();
+         qDebug() << "printed col 4";
+
+//    } else if (paramName == "cost"){
+//        qDebug() << "param cost";
+//        if (ui->editLookupTable->item(recNo, 5) == 0 ) return;
+//         paramValue = ui->editLookupTable->item(recNo, 5)->text();
+//         qDebug() << "printed col 5";
+
+//    } else if (paramName == "rate"){
+//        qDebug() << "param rate";
+//        if (ui->editLookupTable->item(recNo, 6) == 0 ) return;
+//         paramValue = ui->editLookupTable->item(recNo, 6)->text();
+//         qDebug() << "printed col 6";
+
     } else if (paramName == "streetNo"){
          paramValue = getStreetNo();
          qDebug() << paramValue;
