@@ -341,13 +341,106 @@ void MainWindow::on_paymentButton_clicked()
 
 void MainWindow::on_editbookButton_clicked()
 {
+    const bool blocked = ui->cbo_reg_bldg->blockSignals(true);
     ui->stackedWidget->setCurrentIndex(EDITBOOKING);
     addHistory(MAINMENU);
 
     on_editSearch_clicked();
 
     qDebug() << "pushed page " << MAINMENU;
+
+    checkRegRadioSelection();
+    ui->cbo_reg_bldg->clear();
+    qDebug() << "\n\nbuilding combo data cleared";
+//    QSqlQuery results = dbManager->getBuildings();
+//    populateCombo(ui->cbo_reg_bldg, results);
+    qDebug() << "building combobox populated";
+    ui->cbo_reg_bldg->blockSignals(blocked);
+//    populateRegCombos();
 }
+void MainWindow::checkRegRadioSelection()
+{
+    qDebug() << "checking radio selection";
+    if (ui->rdo_reg_room->isChecked()) {
+        ui->cbo_reg_room->setEnabled(false);
+        ui->lbl_reg_room->setEnabled(false);
+        ui->lbl_reg_start->setText("Room Start");
+        ui->lbl_reg_end->setText("Room End");
+    } else if (ui->rdo_reg_space->isChecked()) {
+        ui->cbo_reg_room->setEnabled(true);
+        ui->lbl_reg_room->setEnabled(true);
+        ui->lbl_reg_start->setText("Space Start");
+        ui->lbl_reg_end->setText("Space End");
+    }
+}
+
+void MainWindow::clearRegCombo() {
+//        ui->cbo_reg_bldg->clear();
+//        ui->cbo_reg_floor->clear();
+//        ui->cbo_reg_room->clear();
+//        ui->cbo_reg_start->clear();
+//        ui->cbo_reg_end->clear();
+}
+
+void MainWindow::populateCombo(QComboBox *emptyCombo, QSqlQuery results) {
+//    const bool blocked = emptyCombo->blockSignals(true);
+    emptyCombo->addItem("All");
+    qDebug() << "item all added";
+    while (results.next()){
+        emptyCombo->addItem(results.value(0).toString());
+    }
+//    emptyCombo->blockSignals(blocked);
+}
+
+void MainWindow::on_rdo_reg_space_toggled(bool checked)
+{
+    Q_UNUSED(checked);
+    MainWindow::checkRegRadioSelection();
+}
+
+void MainWindow::on_cbo_reg_bldg_currentTextChanged(const QString &arg1)
+{
+    qDebug() << "building text changed";
+    const bool blocked = ui->cbo_reg_floor->blockSignals(true);
+    Q_UNUSED(arg1);
+    QSqlQuery results = dbManager->getFloors(ui->cbo_reg_bldg->currentText());
+    ui->cbo_reg_floor->clear();
+    qDebug() << "floor combo data cleared";
+    populateCombo(ui->cbo_reg_floor, results);
+    qDebug() << "floor combo populated";
+    ui->cbo_reg_floor->blockSignals(blocked);
+
+}
+
+void MainWindow::on_cbo_reg_floor_currentTextChanged(const QString &arg1)
+{
+    qDebug() << "floor text changed";
+    const bool blocked = ui->cbo_reg_room->blockSignals(true);
+    Q_UNUSED(arg1);
+    QSqlQuery results = dbManager->getRooms(ui->cbo_reg_floor->currentText());
+    ui->cbo_reg_room->clear();
+    qDebug() << "room combo data cleared";
+    populateCombo(ui->cbo_reg_room, results);
+    qDebug() << "room combo populated";
+    ui->cbo_reg_room->blockSignals(blocked);
+}
+
+void MainWindow::on_cbo_reg_room_currentTextChanged(const QString &arg1)
+{
+    qDebug() << "room text changed";
+    Q_UNUSED(arg1);
+    QSqlQuery results = dbManager->getFRS("Space", "Room", ui->cbo_reg_room->currentText());
+    ui->cbo_reg_start->clear();
+    ui->cbo_reg_end->clear();
+    qDebug() << "space combo data cleared";
+    populateCombo(ui->cbo_reg_start, results);
+    populateCombo(ui->cbo_reg_end, results);
+    qDebug() << "room combo populated";
+}
+
+//void MainWindow::populateRegStartEnd(QString type){
+//    qDebug() << "populate combo type: " << type;
+//}
 
 void MainWindow::on_roomHistoryButton_clicked()
 {
@@ -8706,7 +8799,7 @@ void MainWindow::on_btn_cf_displayReceipt_clicked()
 void MainWindow::on_tw_receipts_itemClicked(QTableWidgetItem *item)
 {
     Q_UNUSED(item);
-    if(ui->tw_receipts->rowCount() > 1){
+    if(ui->tw_receipts->rowCount() > 0){
         ui->btn_displayReceipt->setEnabled(true);
     }
 }
@@ -8714,7 +8807,7 @@ void MainWindow::on_tw_receipts_itemClicked(QTableWidgetItem *item)
 void MainWindow::on_tw_cl_receipts_itemClicked(QTableWidgetItem *item)
 {
     Q_UNUSED(item);
-    if(ui->tw_cl_receipts->rowCount() > 1){
+    if(ui->tw_cl_receipts->rowCount() > 0){
         ui->btn_cf_displayReceipt->setEnabled(true);
     }
 }
@@ -8785,6 +8878,4 @@ void MainWindow::changeUserPw(QString newPw){
 /*==============================================================================
 END CHANGE PASSWORD
 ==============================================================================*/
-
-
 
