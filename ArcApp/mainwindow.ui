@@ -8815,7 +8815,7 @@ Balance</string>
                <item>
                 <widget class="QPushButton" name="btn_reg_searchRS">
                  <property name="enabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="minimumSize">
                   <size>
@@ -8845,20 +8845,8 @@ Balance</string>
             </widget>
            </item>
           </layout>
-          <zorder>rdo_reg_room</zorder>
-          <zorder>rdo_reg_space</zorder>
-          <zorder>lbl_reg_start</zorder>
-          <zorder>lbl_reg_room</zorder>
-          <zorder>lbl_reg_bldg</zorder>
-          <zorder>lbl_reg_end</zorder>
-          <zorder>cbo_reg_bldg</zorder>
-          <zorder>cbo_reg_room</zorder>
-          <zorder>cbo_reg_start</zorder>
-          <zorder>cbo_reg_end</zorder>
+          <zorder>line</zorder>
           <zorder></zorder>
-          <zorder></zorder>
-          <zorder></zorder>
-          <zorder>layoutWidget</zorder>
          </widget>
         </item>
         <item row="0" column="2">
@@ -11233,7 +11221,7 @@ Balance</string>
                       <number>1</number>
                      </property>
                      <property name="maximum">
-                      <number>3</number>
+                      <number>5</number>
                      </property>
                     </widget>
                    </item>
@@ -11674,7 +11662,7 @@ Balance</string>
                       <number>1</number>
                      </property>
                      <property name="maximum">
-                      <number>3</number>
+                      <number>5</number>
                      </property>
                     </widget>
                    </item>
