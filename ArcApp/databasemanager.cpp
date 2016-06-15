@@ -2522,3 +2522,66 @@ QSqlQuery DatabaseManager::getFullName(QString clientId) {
     query.exec(result);
     return query;
 }
+
+QSqlQuery DatabaseManager::getBuildings() {
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+
+    QString result = "SELECT BuildingNo "
+                     "FROM Building "
+                     "ORDER BY BuildingNo ASC";
+    qDebug() << result;
+    query.exec(result);
+    qDebug() << query.lastError();
+    return query;
+}
+
+QSqlQuery DatabaseManager::getFloors(QString building) {
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    qDebug() << "building param: " << building;
+    QString result = "SELECT DISTINCT FloorNo, FloorId FROM Floor "
+                     "INNER JOIN Building "
+                     "ON floor.BuildingId = Building.BuildingId ";
+
+    result += building == "All" ? "" : "WHERE Building.BuildingNo = " + building;
+    result += " ORDER BY FloorNo ASC";
+
+    qDebug() << result;
+    query.exec(result);
+    qDebug() << query.lastError();
+    return query;
+}
+
+QSqlQuery DatabaseManager::getRooms(QString floor) {
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    qDebug() << "floor param: " << floor;
+    QString result = "SELECT DISTINCT RoomNo, RoomId FROM Room "
+                     "INNER JOIN Floor "
+                     "ON Room.FloorId = Floor.FloorId ";
+
+    result += floor == "All" ? "" : "WHERE Floor.FloorNo = " + floor;
+    result += " ORDER BY RoomNo ASC";
+
+    qDebug() << result;
+    query.exec(result);
+    qDebug() << query.lastError();
+    return query;
+}
+
+QSqlQuery DatabaseManager::getFRS(QString curLevel, QString upLevel, QString upLevelVal) {
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    QString result = "SELECT DISTINCT " + curLevel + "No FROM " + curLevel +
+                     " INNER JOIN " + upLevel +
+                     " ON " + curLevel + "." + upLevel + "Id = " + upLevel + "." + upLevel + "Id ";
+
+    result += upLevelVal == "All" ? "" : "WHERE " + upLevel +"." + upLevel + "No = " + upLevelVal;
+    result += " ORDER BY " + curLevel + "No ASC";
+
+    qDebug() << result;
+    query.exec(result);
+    qDebug() << query.lastError();
+    return query;
+}
