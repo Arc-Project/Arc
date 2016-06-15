@@ -8568,38 +8568,6 @@ Balance</string>
           </layout>
          </widget>
         </item>
-        <item row="0" column="4">
-         <widget class="QGroupBox" name="groupBox_10">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-           </font>
-          </property>
-          <property name="title">
-           <string>Storage</string>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_86">
-           <item row="0" column="0">
-            <widget class="QPushButton" name="storage">
-             <property name="minimumSize">
-              <size>
-               <width>160</width>
-               <height>35</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>14</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>View Storage</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
         <item row="0" column="1">
          <widget class="QGroupBox" name="groupBox_9">
           <property name="font">
@@ -8611,7 +8579,7 @@ Balance</string>
            <string>Search range of room/space</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_85">
-           <item row="0" column="0">
+           <item row="0" column="0" rowspan="2" colspan="2">
             <layout class="QHBoxLayout" name="horizontalLayout_62">
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_17">
@@ -8657,13 +8625,6 @@ Balance</string>
               </layout>
              </item>
              <item>
-              <widget class="Line" name="line">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-              </widget>
-             </item>
-             <item>
               <layout class="QVBoxLayout" name="verticalLayout_19">
                <item>
                 <widget class="QLabel" name="lbl_reg_bldg">
@@ -8685,6 +8646,37 @@ Balance</string>
                </item>
                <item>
                 <widget class="QComboBox" name="cbo_reg_bldg">
+                 <property name="font">
+                  <font>
+                   <pointsize>15</pointsize>
+                  </font>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_25">
+               <item>
+                <widget class="QLabel" name="lbl_reg_floor">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>35</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>15</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Floor</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="cbo_reg_floor">
                  <property name="font">
                   <font>
                    <pointsize>15</pointsize>
@@ -8802,47 +8794,143 @@ Balance</string>
                </item>
               </layout>
              </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_24">
+               <item>
+                <spacer name="verticalSpacer_58">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeType">
+                  <enum>QSizePolicy::Minimum</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="btn_reg_searchRS">
+                 <property name="minimumSize">
+                  <size>
+                   <width>120</width>
+                   <height>35</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>14</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Search</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
             </layout>
            </item>
-           <item row="0" column="1">
-            <layout class="QVBoxLayout" name="verticalLayout_24">
-             <item>
-              <spacer name="verticalSpacer_58">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeType">
-                <enum>QSizePolicy::Minimum</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QPushButton" name="btn_reg_searchRS">
-               <property name="minimumSize">
-                <size>
-                 <width>120</width>
-                 <height>35</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>14</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>Search</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
+           <item row="1" column="1">
+            <widget class="Line" name="line">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+            </widget>
            </item>
           </layout>
+          <zorder>rdo_reg_room</zorder>
+          <zorder>rdo_reg_space</zorder>
+          <zorder>lbl_reg_start</zorder>
+          <zorder>lbl_reg_room</zorder>
+          <zorder>lbl_reg_bldg</zorder>
+          <zorder>lbl_reg_end</zorder>
+          <zorder>cbo_reg_bldg</zorder>
+          <zorder>cbo_reg_room</zorder>
+          <zorder>cbo_reg_start</zorder>
+          <zorder>cbo_reg_end</zorder>
+          <zorder></zorder>
+          <zorder></zorder>
+          <zorder></zorder>
+          <zorder>layoutWidget</zorder>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <spacer name="horizontalSpacer_65">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="4">
+         <widget class="QGroupBox" name="groupBox_10">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="title">
+           <string>Storage</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_86">
+           <item row="0" column="0">
+            <widget class="QPushButton" name="storage">
+             <property name="minimumSize">
+              <size>
+               <width>160</width>
+               <height>35</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>14</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>View Storage</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="5">
+         <widget class="QTableWidget" name="editLookupTable">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
+          <property name="sizeAdjustPolicy">
+           <enum>QAbstractScrollArea::AdjustToContents</enum>
+          </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
+          <property name="columnCount">
+           <number>12</number>
+          </property>
+          <column/>
+          <column/>
+          <column/>
+          <column/>
+          <column/>
+          <column/>
+          <column/>
+          <column/>
+          <column/>
+          <column/>
+          <column/>
+          <column/>
          </widget>
         </item>
         <item row="2" column="0">
@@ -8878,49 +8966,6 @@ Balance</string>
            <string>Search Room</string>
           </property>
          </widget>
-        </item>
-        <item row="1" column="0" colspan="5">
-         <widget class="QTableWidget" name="editLookupTable">
-          <property name="font">
-           <font>
-            <pointsize>11</pointsize>
-           </font>
-          </property>
-          <property name="sizeAdjustPolicy">
-           <enum>QAbstractScrollArea::AdjustToContents</enum>
-          </property>
-          <property name="sortingEnabled">
-           <bool>true</bool>
-          </property>
-          <property name="columnCount">
-           <number>12</number>
-          </property>
-          <column/>
-          <column/>
-          <column/>
-          <column/>
-          <column/>
-          <column/>
-          <column/>
-          <column/>
-          <column/>
-          <column/>
-          <column/>
-          <column/>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <spacer name="horizontalSpacer_65">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
         </item>
         <item row="2" column="3">
          <widget class="QPushButton" name="editDelete">

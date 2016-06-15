@@ -59,8 +59,6 @@
 #define     FRI     6
 #define     SAT     7
 
-
-
 #include <QMainWindow>
 #include <QDebug>
 #include <QProgressBar>
@@ -801,6 +799,22 @@ private slots:
     void getFullName (QString clientId);
 
     void setCurReceipt(QStringList receipt, bool conn);
+
+    void populateCombo(QComboBox *emptyCombo, QSqlQuery results);
+
+//    void populateRegStartEnd(QString type);
+
+    void checkRegRadioSelection();
+
+    void on_rdo_reg_space_toggled(bool checked);
+
+    void on_cbo_reg_bldg_currentTextChanged(const QString &arg1);
+
+    void on_cbo_reg_floor_currentTextChanged(const QString &arg1);
+
+    void on_cbo_reg_room_currentTextChanged(const QString &arg1);
+
+    void clearRegCombo();
 
 private:
 

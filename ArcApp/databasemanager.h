@@ -209,6 +209,11 @@ public:
     //change user PW
     bool changePassword(QString userName, QString newPassword);
 
+    QSqlQuery getBuildings();
+    QSqlQuery getFloors(QString building);
+    QSqlQuery getRooms(QString floor);
+    QSqlQuery getFRS(QString curLevel, QString upLevel, QString upLevelVal);
+
 
 signals:
     void dailyReportStatsChanged(QList<int> list, bool conn);
