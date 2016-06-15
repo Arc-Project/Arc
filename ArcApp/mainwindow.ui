@@ -8815,7 +8815,7 @@ Balance</string>
                <item>
                 <widget class="QPushButton" name="btn_reg_searchRS">
                  <property name="enabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="minimumSize">
                   <size>
@@ -11221,7 +11221,7 @@ Balance</string>
                       <number>1</number>
                      </property>
                      <property name="maximum">
-                      <number>3</number>
+                      <number>5</number>
                      </property>
                     </widget>
                    </item>
@@ -11662,7 +11662,7 @@ Balance</string>
                       <number>1</number>
                      </property>
                      <property name="maximum">
-                      <number>3</number>
+                      <number>5</number>
                      </property>
                     </widget>
                    </item>

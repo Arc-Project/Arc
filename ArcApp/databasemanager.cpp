@@ -2571,8 +2571,8 @@ QSqlQuery DatabaseManager::getBuildings() {
 QSqlQuery DatabaseManager::getFloors(QString building) {
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
-    qDebug() << "building param: " << building;
-    QString result = "SELECT DISTINCT FloorNo, FloorId FROM Floor "
+//    qDebug() << "building param: " << building;
+    QString result = "SELECT DISTINCT FloorNo FROM Floor "
                      "INNER JOIN Building "
                      "ON floor.BuildingId = Building.BuildingId ";
 
@@ -2585,16 +2585,24 @@ QSqlQuery DatabaseManager::getFloors(QString building) {
     return query;
 }
 
-QSqlQuery DatabaseManager::getRooms(QString floor) {
+QSqlQuery DatabaseManager::getRooms(QString building, QString floor) {
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
-    qDebug() << "floor param: " << floor;
-    QString result = "SELECT DISTINCT RoomNo, RoomId FROM Room "
-                     "INNER JOIN Floor "
-                     "ON Room.FloorId = Floor.FloorId ";
+//    qDebug() << "floor param: " << floor;
+    QString result = "SELECT DISTINCT r.RoomNo "
+                     "FROM Room r "
+                     "INNER JOIN Floor f "
+                     "ON r.FloorId = f.FloorId "
+                     "INNER JOIN Building b "
+                     "ON b.BuildingId = f.BuildingId ";
 
-    result += floor == "All" ? "" : "WHERE Floor.FloorNo = " + floor;
-    result += " ORDER BY RoomNo ASC";
+    result += floor == "All" ? "" : "WHERE f.FloorNo = " + floor;
+    if (building != "All") {
+        result += floor == "All" ? "WHERE" : "AND";
+        result += "b.BuildingNo = " + building;
+    }
+
+    result += " ORDER BY r.RoomNo ASC";
 
     qDebug() << result;
     query.exec(result);
@@ -2602,18 +2610,52 @@ QSqlQuery DatabaseManager::getRooms(QString floor) {
     return query;
 }
 
-QSqlQuery DatabaseManager::getFRS(QString curLevel, QString upLevel, QString upLevelVal) {
+QSqlQuery DatabaseManager::getSpaces(QString building, QString floor, QString room) {
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
-    QString result = "SELECT DISTINCT " + curLevel + "No FROM " + curLevel +
-                     " INNER JOIN " + upLevel +
-                     " ON " + curLevel + "." + upLevel + "Id = " + upLevel + "." + upLevel + "Id ";
+//    qDebug() << "floor param: " << floor;
+    QString result = "SELECT DISTINCT s.SpaceNo "
+                     "FROM Space s"
+                     "INNER JOIN Room r "
+                     "ON r.RoomId = s.RoomId "
+                     "INNER JOIN Floor f"
+                     "ON f.FloorId = r.FloorId"
+                     "INNER JOIN Building b "
+                     "ON b.BuildingId = f.BuildingId";
 
-    result += upLevelVal == "All" ? "" : "WHERE " + upLevel +"." + upLevel + "No = " + upLevelVal;
-    result += " ORDER BY " + curLevel + "No ASC";
+    result += floor == "All" ? "" : "WHERE f.FloorNo = " + floor;
+
+    if (building != "All") {
+        result += floor == "All" ? "WHERE" : "AND";
+        result += "b.BuildingNo = " + building;
+    }
+
+
+
+
+
+
+
+    result += " ORDER BY r.RoomNo ASC";
 
     qDebug() << result;
     query.exec(result);
     qDebug() << query.lastError();
     return query;
 }
+
+//QSqlQuery DatabaseManager::getFRS(QString curLevel, QString upLevel, QString upLevelVal) {
+//    DatabaseManager::checkDatabaseConnection(&db);
+//    QSqlQuery query(db);
+//    QString result = "SELECT DISTINCT " + curLevel + "No FROM " + curLevel +
+//                     " INNER JOIN " + upLevel +
+//                     " ON " + curLevel + "." + upLevel + "Id = " + upLevel + "." + upLevel + "Id ";
+
+//    result += upLevelVal == "All" ? "" : "WHERE " + upLevel +"." + upLevel + "No = " + upLevelVal;
+//    result += " ORDER BY " + curLevel + "No ASC";
+
+//    qDebug() << result;
+//    query.exec(result);
+//    qDebug() << query.lastError();
+//    return query;
+//}
