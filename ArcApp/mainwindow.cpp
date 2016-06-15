@@ -1304,17 +1304,34 @@ bool MainWindow::checkNumber(QString num){
     return true;
 }
 bool MainWindow::updateBooking(Booking b){
+    qDebug() << "updateBooking called";
     QString query;
     QString monthly;
     curBook->monthly == true ? monthly = "YES" : monthly = "NO";
+    QStringList spaceInfo = dbManager->getSpaceInfoFromId(b.roomId.toInt());
+    QString addSpaceInfoString = "";
+    if (spaceInfo.isEmpty())
+    {
+        qDebug() << "Empty spaceInfo list";
+    }
+    else
+    {
+        addSpaceInfoString = QString("BuildingNo = '" + spaceInfo.at(0) + "', ")    
+            + QString("FloorNo = '" + spaceInfo.at(1) + "', ")
+            + QString("RoomNo = '" + spaceInfo.at(2) + "', ")
+            + QString("SpaceNo = '" + spaceInfo.at(3) + "', ")
+            + QString("SpaceCode = '" + spaceInfo.at(4) + "', ");
+    }
+
     query = "UPDATE BOOKING SET " +
-            QString("SpaceID = '") + b.roomId + "', " +
+            QString("SpaceID = '") + b.roomId + "', " + //addSpaceInfoString +
             QString("ProgramCode = '") + b.program + "', " +
             QString("Cost = '") + QString::number(b.cost) + + "', " +
             QString("EndDate = '") + b.stringEnd + "', " +
             QString("Monthly = '") + monthly + "'" +
             QString(" WHERE BookingId = '") +
             b.bookID + "'";
+    //qDebug() << query;
     return dbManager->updateBooking(query);
 }
 void MainWindow::on_btn_payDelete_clicked()
