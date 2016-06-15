@@ -89,6 +89,7 @@ public:
     int getDailyReportTotalVacancies(QDate date);
     void getDailyReportStatsThread(QDate date);
     int getIntFromQuery(QString queryString);
+    QStringList getSpaceInfoFromId(int spaceId);
     bool getShiftReportBookingQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
     bool getShiftReportTransactionQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
     bool getShiftReportTotal(QDate date, int shiftNo, QString payType, double* result);

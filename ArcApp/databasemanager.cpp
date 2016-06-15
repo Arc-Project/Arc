@@ -1941,7 +1941,7 @@ bool DatabaseManager::addBooking(QString stringStart, QString stringEnd, QString
 
     QString today = QDate::currentDate().toString(Qt::ISODate);
     QSqlQuery query(db);
-    query.prepare("INSERT INTO Booking (DateCreated, Date, SpaceId, ClientId, ProgramCode, Cost, StartDate, EndDate, FirstBook, Monthly, ClientName) Values(?,?,?,?,?,?,?,?,?,?,?)");
+    query.prepare("INSERT INTO Booking (DateCreated, Date, SpaceId, ClientId, ProgramCode, Cost, StartDate, EndDate, FirstBook, Monthly, ClientName, BuildingNo, FloorNo, RoomNo, SpaceNo, SpaceCode) Values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
     query.bindValue(0,today);
     query.bindValue(1,stringStart);
     query.bindValue(2,roomId);
@@ -1953,11 +1953,40 @@ bool DatabaseManager::addBooking(QString stringStart, QString stringEnd, QString
     query.bindValue(8,"YES");
     query.bindValue(9,"NO");
     query.bindValue(10,fullName);
+
+    QStringList spaceInfo = DatabaseManager::getSpaceInfoFromId(roomId.toInt());
+    if (spaceInfo.isEmpty())
+    {
+        qDebug() << "Empty spaceInfo list";
+    }
+    else
+    {
+        for (int i = 0; i < spaceInfo.size(); i++)
+        {
+            query.bindValue(i + 11, spaceInfo.at(i));
+        }    
+    }
+
     return query.exec();
+}
 
-
-
-
+QStringList DatabaseManager::getSpaceInfoFromId(int spaceId)
+{
+    QStringList spaceInfo;
+    QSqlQuery query(db);
+    QString queryString = "SELECT SpaceCode FROM Space WHERE SpaceId = " + QString::number(spaceId) + ";";
+    if (query.exec(queryString))
+    {
+        if (query.next())
+        {
+            QString spaceCode = query.value(0).toString();
+            spaceInfo = spaceCode.split("-");
+            QString spaceNo = spaceInfo.at(3).left(spaceInfo.at(3).length() - 1);
+            spaceInfo.removeLast();
+            spaceInfo << spaceNo << spaceCode;
+        }
+    }   
+    return spaceInfo;
 }
 
 QSqlQuery DatabaseManager::loginSelect(QString username, QString password) {
@@ -2014,17 +2043,20 @@ bool DatabaseManager::checkDoubleBook(QString clientId){
 }
 
 QSqlQuery DatabaseManager::getActiveBooking(QString user, bool userLook){
+    qDebug() << "getActiveBooking called";
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
     QString date = QDate::currentDate().toString(Qt::ISODate);
     QString q;
     if(!userLook){
-         q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate > '" + date + "' AND StartDate != EndDate ORDER BY ClientName ASC";
+         //q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate > '" + date + "' AND StartDate != EndDate ORDER BY ClientName ASC";
+         q = "SELECT * FROM Booking WHERE FirstBook = 'YES' AND EndDate > '" + date + "' AND StartDate != EndDate ORDER BY ClientName ASC";
     }
     else{
-         q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate > '"
+         //q = "SELECT * FROM Booking JOIN Space on Booking.SpaceId = Space.SpaceId WHERE FirstBook = 'YES' AND EndDate > '"
+         //        + date + "' AND ClientName LIKE '%" + user + "%' AND StartDate != EndDate ORDER BY ClientName ASC";
+         q = "SELECT * FROM Booking WHERE FirstBook = 'YES' AND EndDate > '"
                  + date + "' AND ClientName LIKE '%" + user + "%' AND StartDate != EndDate ORDER BY ClientName ASC";
-
     }
     qDebug() << q;
     if(query.exec(q)){

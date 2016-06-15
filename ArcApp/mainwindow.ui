@@ -224,7 +224,7 @@ QHeaderView{
     <item row="0" column="1">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>9</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_55">
@@ -5853,8 +5853,8 @@ Balance</string>
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>620</width>
-                 <height>1294</height>
+                 <width>718</width>
+                 <height>1381</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -8845,20 +8845,8 @@ Balance</string>
             </widget>
            </item>
           </layout>
-          <zorder>rdo_reg_room</zorder>
-          <zorder>rdo_reg_space</zorder>
-          <zorder>lbl_reg_start</zorder>
-          <zorder>lbl_reg_room</zorder>
-          <zorder>lbl_reg_bldg</zorder>
-          <zorder>lbl_reg_end</zorder>
-          <zorder>cbo_reg_bldg</zorder>
-          <zorder>cbo_reg_room</zorder>
-          <zorder>cbo_reg_start</zorder>
-          <zorder>cbo_reg_end</zorder>
+          <zorder>line</zorder>
           <zorder></zorder>
-          <zorder></zorder>
-          <zorder></zorder>
-          <zorder>layoutWidget</zorder>
          </widget>
         </item>
         <item row="0" column="2">
@@ -19541,7 +19529,7 @@ Balance</string>
      <x>0</x>
      <y>0</y>
      <width>1625</width>
-     <height>23</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="font">
