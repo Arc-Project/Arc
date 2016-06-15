@@ -352,8 +352,8 @@ void MainWindow::on_editbookButton_clicked()
     checkRegRadioSelection();
     ui->cbo_reg_bldg->clear();
     qDebug() << "\n\nbuilding combo data cleared";
-//    QSqlQuery results = dbManager->getBuildings();
-//    populateCombo(ui->cbo_reg_bldg, results);
+    QSqlQuery results = dbManager->getBuildings();
+    populateCombo(ui->cbo_reg_bldg, results);
     qDebug() << "building combobox populated";
     ui->cbo_reg_bldg->blockSignals(blocked);
 //    populateRegCombos();
@@ -403,7 +403,8 @@ void MainWindow::on_cbo_reg_bldg_currentTextChanged(const QString &arg1)
     qDebug() << "building text changed";
     const bool blocked = ui->cbo_reg_floor->blockSignals(true);
     Q_UNUSED(arg1);
-    QSqlQuery results = dbManager->getFloors(ui->cbo_reg_bldg->currentText());
+//    QSqlQuery results = dbManager->getFloors(ui->cbo_reg_bldg->currentText());
+    QSqlQuery results = dbManager->getFloor(ui->cbo_reg_bldg->currentText());
     ui->cbo_reg_floor->clear();
     qDebug() << "floor combo data cleared";
     populateCombo(ui->cbo_reg_floor, results);
@@ -417,7 +418,7 @@ void MainWindow::on_cbo_reg_floor_currentTextChanged(const QString &arg1)
     qDebug() << "floor text changed";
     const bool blocked = ui->cbo_reg_room->blockSignals(true);
     Q_UNUSED(arg1);
-    QSqlQuery results = dbManager->getRooms(ui->cbo_reg_floor->currentText());
+    QSqlQuery results = dbManager->getRooms(ui->cbo_reg_bldg->currentText(), ui->cbo_reg_floor->currentText());
     ui->cbo_reg_room->clear();
     qDebug() << "room combo data cleared";
     populateCombo(ui->cbo_reg_room, results);
@@ -429,7 +430,7 @@ void MainWindow::on_cbo_reg_room_currentTextChanged(const QString &arg1)
 {
     qDebug() << "room text changed";
     Q_UNUSED(arg1);
-    QSqlQuery results = dbManager->getFRS("Space", "Room", ui->cbo_reg_room->currentText());
+    QSqlQuery results = dbManager->getSpaces(ui->cbo_reg_bldg->currentText(), ui->cbo_reg_floor->currentText(), ui->cbo_reg_room->currentText());
     ui->cbo_reg_start->clear();
     ui->cbo_reg_end->clear();
     qDebug() << "space combo data cleared";

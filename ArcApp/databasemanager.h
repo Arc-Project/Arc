@@ -213,8 +213,9 @@ public:
 
     QSqlQuery getBuildings();
     QSqlQuery getFloors(QString building);
-    QSqlQuery getRooms(QString floor);
-    QSqlQuery getFRS(QString curLevel, QString upLevel, QString upLevelVal);
+    QSqlQuery getRooms(QString building, QString floor);
+    QSqlQuery getSpaces(QString building, QString floor, QString room);
+//    QSqlQuery getFRS(QString curLevel, QString upLevel, QString upLevelVal);
 
 
 signals:
