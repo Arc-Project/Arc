@@ -8814,6 +8814,9 @@ Balance</string>
                </item>
                <item>
                 <widget class="QPushButton" name="btn_reg_searchRS">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
                  <property name="minimumSize">
                   <size>
                    <width>120</width>
