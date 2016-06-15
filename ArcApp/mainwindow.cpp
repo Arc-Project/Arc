@@ -352,6 +352,24 @@ void MainWindow::on_editbookButton_clicked()
 void MainWindow::on_roomHistoryButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(ROOMHISTORY);
+    
+    int buildingNo = 1;
+    int floorNo = 1;
+    int roomNo = 1;
+    int spaceNo = 3;
+
+    QSqlQuery query;
+    if (dbManager->getRoomHistory(&query, buildingNo, floorNo, roomNo, spaceNo))
+    {
+        QStringList header;
+        QStringList cols;
+        header << "Client" << "Space Code" << "Program" << "Date" << "Start Date" 
+               << "End Date" << "Action" << "Employee" << "Shift #" << "Time";
+        cols << "ClientName" << "SpaceCode" << "ProgramCode" << "Date" << "StartDate" 
+             << "EndDate" << "Action" << "EmpName" << "ShiftNo" << "Time";
+        populateATable(ui->roomHistory_tableWidget, header, cols, query, false);
+        resizeTableView(ui->roomHistory_tableWidget);  
+    }
 }
 
 void MainWindow::on_caseButton_clicked()

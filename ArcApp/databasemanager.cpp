@@ -724,14 +724,15 @@ bool DatabaseManager::uploadProfilePic(QSqlDatabase* tempDbPtr, QString connName
     return false;
 }
 
-
-
 bool DatabaseManager::insertIntoBookingHistory(QString clientName, QString spaceId, QString program, QString start, QString end, QString action, QString emp, QString shift, QString clientId){
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
     QString time = QTime::currentTime().toString();
     QString today = QDate::currentDate().toString(Qt::ISODate);
-    query.prepare("INSERT INTO BookingHistory (ClientName, SpaceCode, ProgramCode, Date, StartDate, EndDate, Action, Status, EmpName, ShiftNo, Time, ClientId) Values(?,?,?,?,?,?,?,?,?,?,?,?)");
+    QStringList SpaceCodeTokens = spaceId.split("-");
+    int spaceNo = SpaceCodeTokens.at(3).left(SpaceCodeTokens.at(3).length() - 1).toInt();
+    QString spaceType = SpaceCodeTokens.at(3).right(1);
+    query.prepare("INSERT INTO BookingHistory (ClientName, SpaceCode, ProgramCode, Date, StartDate, EndDate, Action, Status, EmpName, ShiftNo, Time, ClientId, BuildingNo, FloorNo, RoomNo, SpaceNo, SpaceType) Values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
     query.bindValue(0,clientName);
     query.bindValue(1,spaceId);
     query.bindValue(2,program);
@@ -744,6 +745,16 @@ bool DatabaseManager::insertIntoBookingHistory(QString clientName, QString space
     query.bindValue(9,shift);
     query.bindValue(10,time);
     query.bindValue(11,clientId);
+    query.bindValue(12,SpaceCodeTokens.at(0).toInt());
+    query.bindValue(13,SpaceCodeTokens.at(1).toInt());
+    query.bindValue(14,SpaceCodeTokens.at(2).toInt());
+    query.bindValue(15,spaceNo);
+    query.bindValue(16,spaceType);
+    qDebug() << SpaceCodeTokens.at(0).toInt();
+    qDebug() << SpaceCodeTokens.at(1).toInt();
+    qDebug() << SpaceCodeTokens.at(2).toInt();
+    qDebug() << spaceNo;
+    qDebug() << spaceType;
     return query.exec();
     QString q = "INSERT INTO BookingHistory VALUES ('" +clientName + "','" +
             spaceId + "','" + program + "','" + QDate::currentDate().toString(Qt::ISODate)
@@ -1739,10 +1750,30 @@ bool DatabaseManager::getDoubleFromQuery(QString queryString, double* result)
     return ret;
 }
 
-
-
 /*==============================================================================
 REPORT QUERYS (END)
+==============================================================================*/
+
+/*==============================================================================
+ROOM HISTORY (START)
+==============================================================================*/
+bool DatabaseManager::getRoomHistory(QSqlQuery* queryResults, int buildingNo,
+    int floorNo, int roomNo, int spaceNo)
+{
+    //queryResults = queryResults(db);
+    QString queryString =
+        QString("SELECT ClientName, SpaceCode, ProgramCode, Date, StartDate, EndDate, Action, EmpName, ShiftNo, ")
+        + QString("CONVERT(VARCHAR(15), Time, 100) as Time ")
+        + QString("FROM BookingHistory ")
+        + QString("WHERE BuildingNo = " + QString::number(buildingNo) + " AND FloorNo = " + QString::number(floorNo))
+        + QString(" AND RoomNo = " + QString::number(roomNo) + " AND SpaceNo = " + QString::number(spaceNo))
+        + QString(" ORDER BY Date DESC, Time DESC");
+
+        qDebug() << queryString;
+    return queryResults->exec(queryString);
+}
+/*==============================================================================
+ROOM HISTORY (FALSE)
 ==============================================================================*/
 
 QSqlQuery DatabaseManager::getPrograms(){

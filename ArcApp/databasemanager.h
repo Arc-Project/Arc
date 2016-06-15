@@ -108,6 +108,8 @@ public:
     bool getDoubleFromQuery(QString queryString, double* result);
     void reconnectToDatabase();
     void reconnectToDatabase(QSqlDatabase* database);
+    bool getRoomHistory(QSqlQuery* queryResults, int buildingNo, int floorNo, 
+        int roomNo, int spaceNo);
 
     //COLIN STUFF/////////////////////////////////////////////////////////////
     QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);
