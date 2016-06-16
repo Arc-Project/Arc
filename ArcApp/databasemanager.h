@@ -89,6 +89,7 @@ public:
     int getDailyReportTotalVacancies(QDate date);
     void getDailyReportStatsThread(QDate date);
     int getIntFromQuery(QString queryString);
+    QStringList getSpaceInfoFromId(int spaceId);
     bool getShiftReportBookingQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
     bool getShiftReportTransactionQuery(QSqlQuery* queryResults, QDate date, int shiftNo);
     bool getShiftReportTotal(QDate date, int shiftNo, QString payType, double* result);
@@ -159,7 +160,7 @@ public:
     bool updateStoreDate(QString storeId);
     QSqlQuery getFullStorage();
     bool removeStorage(QString storeId);
-    bool deleteBooking(QString id);
+    bool deleteBooking(QString id, QString currEmpName, int currShift);
     QSqlQuery getRole(QString empName);
     double getBookingCost(QString bookId);
     double getDoubleBalance(QString clientId);

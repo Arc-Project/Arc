@@ -463,10 +463,10 @@ void MainWindow::on_roomHistoryButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(ROOMHISTORY);
     
-    int buildingNo = 1;
-    int floorNo = 1;
-    int roomNo = 1;
-    int spaceNo = 3;
+    int buildingNo = -1;
+    int floorNo = -1;
+    int roomNo = -1;
+    int spaceNo = -1;
 
     QSqlQuery query;
     if (dbManager->getRoomHistory(&query, buildingNo, floorNo, roomNo, spaceNo))
@@ -1321,17 +1321,34 @@ bool MainWindow::checkNumber(QString num){
     return true;
 }
 bool MainWindow::updateBooking(Booking b){
+    qDebug() << "updateBooking called";
     QString query;
     QString monthly;
     curBook->monthly == true ? monthly = "YES" : monthly = "NO";
+    QStringList spaceInfo = dbManager->getSpaceInfoFromId(b.roomId.toInt());
+    QString addSpaceInfoString = "";
+    if (spaceInfo.isEmpty())
+    {
+        qDebug() << "Empty spaceInfo list";
+    }
+    else
+    {
+        addSpaceInfoString = QString("BuildingNo = '" + spaceInfo.at(0) + "', ")    
+            + QString("FloorNo = '" + spaceInfo.at(1) + "', ")
+            + QString("RoomNo = '" + spaceInfo.at(2) + "', ")
+            + QString("SpaceNo = '" + spaceInfo.at(3) + "', ")
+            + QString("SpaceCode = '" + spaceInfo.at(4) + "', ");
+    }
+
     query = "UPDATE BOOKING SET " +
-            QString("SpaceID = '") + b.roomId + "', " +
+            QString("SpaceID = '") + b.roomId + "', " + //addSpaceInfoString +
             QString("ProgramCode = '") + b.program + "', " +
             QString("Cost = '") + QString::number(b.cost) + + "', " +
             QString("EndDate = '") + b.stringEnd + "', " +
             QString("Monthly = '") + monthly + "'" +
             QString(" WHERE BookingId = '") +
             b.bookID + "'";
+    //qDebug() << query;
     return dbManager->updateBooking(query);
 }
 void MainWindow::on_btn_payDelete_clicked()
@@ -7287,7 +7304,7 @@ void MainWindow::on_editDelete_clicked()
     if(!dbManager->updateBalance(curBal, curBook->clientId))
             qDebug() << "Error updating balance";
 
-    if(!dbManager->deleteBooking(curBook->bookID)){
+    if(!dbManager->deleteBooking(curBook->bookID, usernameLoggedIn, currentshiftid)){
         qDebug() << "Error deleting booking";
     }
     if(!dbManager->removeLunchesMulti(curBook->startDate, curBook->clientId))

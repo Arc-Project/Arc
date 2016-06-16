@@ -543,7 +543,23 @@ void EditRooms::on_editOkButton_clicked()
         costDiff = ui->curCost->text().toDouble() - curBook->cost;
         dbManager->updateBalance(curClient->balance + costDiff, curClient->clientId);
         curClient->balance+= costDiff;
-        QString q = "UPDATE Booking SET Cost='" + QString::number(curBook->cost) +"', SpaceId ='" + curBook->roomId +
+        QStringList spaceInfo = dbManager->getSpaceInfoFromId(curBook->roomId.toInt());
+        QString addSpaceInfoString = "";
+        if (spaceInfo.isEmpty())
+        {
+            qDebug() << "Empty spaceInfo list";
+        }
+        else
+        {
+            addSpaceInfoString = QString("BuildingNo = '" + spaceInfo.at(0) + "', ")    
+                + QString("FloorNo = '" + spaceInfo.at(1) + "', ")
+                + QString("RoomNo = '" + spaceInfo.at(2) + "', ")
+                + QString("SpaceNo = '" + spaceInfo.at(3) + "', ")
+                + QString("SpaceCode = '" + spaceInfo.at(4) + "', ");
+        }
+
+
+        QString q = "UPDATE Booking SET Cost='" + QString::number(curBook->cost) +"', " + addSpaceInfoString + "SpaceId ='" + curBook->roomId +
                 "' WHERE BookingId='" + curBook->bookID + "'";
         dbManager->updateBooking(q);
 
@@ -561,9 +577,40 @@ void EditRooms::on_editOkButton_clicked()
         swapCost = ui->swapFinal->text();
         if(!checkNumber(curCost) || !checkNumber(swapCost))
             return;
-        QString updateSwap = "UPDATE Booking SET SpaceId = '" + curBook->roomId +"', Cost ='" + curCost + "' WHERE BookingId = '" + swapBooks +"'";
+
+        QStringList spaceInfoSwap = dbManager->getSpaceInfoFromId(curBook->roomId.toInt());
+        QString addSpaceInfoStringSwap = "";
+        if (spaceInfoSwap.isEmpty())
+        {
+            qDebug() << "Empty spaceInfo list";
+        }
+        else
+        {
+            addSpaceInfoStringSwap = QString("BuildingNo = '" + spaceInfoSwap.at(0) + "', ")
+                + QString("FloorNo = '" + spaceInfoSwap.at(1) + "', ")
+                + QString("RoomNo = '" + spaceInfoSwap.at(2) + "', ")
+                + QString("SpaceNo = '" + spaceInfoSwap.at(3) + "', ")
+                + QString("SpaceCode = '" + spaceInfoSwap.at(4) + "', ");
+        }
+
+        QStringList spaceInfoOrig = dbManager->getSpaceInfoFromId(swapRoom.toInt());
+        QString addSpaceInfoStringOrig = "";
+        if (spaceInfoOrig.isEmpty())
+        {
+            qDebug() << "Empty spaceInfo list";
+        }
+        else
+        {
+            addSpaceInfoStringOrig = QString("BuildingNo = '" + spaceInfoOrig.at(0) + "', ")
+                + QString("FloorNo = '" + spaceInfoOrig.at(1) + "', ")
+                + QString("RoomNo = '" + spaceInfoOrig.at(2) + "', ")
+                + QString("SpaceNo = '" + spaceInfoOrig.at(3) + "', ")
+                + QString("SpaceCode = '" + spaceInfoOrig.at(4) + "', ");
+        }
+
+        QString updateSwap = "UPDATE Booking SET SpaceId = '" + curBook->roomId +"', " + addSpaceInfoStringSwap + "Cost ='" + curCost + "' WHERE BookingId = '" + swapBooks +"'";
         if(dbManager->updateBooking(updateSwap)){
-            QString updateOrig = "UPDATE Booking SET SpaceId = '" + swapRoom +"', Cost='" + swapCost + "' WHERE BookingId = '" + curBook->bookID + "'";
+            QString updateOrig = "UPDATE Booking SET SpaceId = '" + swapRoom +"', " + addSpaceInfoStringOrig + "Cost='" + swapCost + "' WHERE BookingId = '" + curBook->bookID + "'";
             if(dbManager->updateBooking(updateOrig)){
                 curBook->roomId = swapRoom;
             if(!dbManager->updateWakeupRoom(QDate::currentDate(), swapBook->endDate, swapClient->clientId, curBook->room))
