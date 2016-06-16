@@ -372,6 +372,9 @@ void MainWindow::checkRegRadioSelection()
         ui->lbl_reg_start->setText("Space Start");
         ui->lbl_reg_end->setText("Space End");
     }
+    ui->cbo_reg_start->clear();
+    ui->cbo_reg_end->clear();
+    ui->cbo_reg_floor->setCurrentIndex(0);
 }
 
 void MainWindow::populateCombo(QComboBox *emptyCombo, QSqlQuery results) {
@@ -412,10 +415,20 @@ void MainWindow::on_cbo_reg_floor_currentTextChanged(const QString &arg1)
     const bool blocked = ui->cbo_reg_room->blockSignals(true);
     Q_UNUSED(arg1);
     QSqlQuery results = dbManager->getRooms(ui->cbo_reg_bldg->currentText(), ui->cbo_reg_floor->currentText());
-    ui->cbo_reg_room->clear();
-    qDebug() << "room combo data cleared";
-    populateCombo(ui->cbo_reg_room, results);
-    qDebug() << "room combo populated";
+    if (ui->rdo_reg_room->isChecked()) {
+        ui->cbo_reg_start->clear();
+        ui->cbo_reg_end->clear();
+        qDebug() << "start and end cleared";
+        populateCombo(ui->cbo_reg_start, results);
+        results.seek(0);
+        populateCombo(ui->cbo_reg_end, results);
+        qDebug() << "room start end populated";
+    } else {
+        ui->cbo_reg_room->clear();
+        qDebug() << "room combo data cleared";
+        populateCombo(ui->cbo_reg_room, results);
+        qDebug() << "room combo populated";
+    }
     ui->cbo_reg_room->blockSignals(blocked);
 }
 
@@ -426,11 +439,11 @@ void MainWindow::on_cbo_reg_room_currentTextChanged(const QString &arg1)
     QSqlQuery results = dbManager->getSpaces(ui->cbo_reg_bldg->currentText(), ui->cbo_reg_floor->currentText(), ui->cbo_reg_room->currentText());
     ui->cbo_reg_start->clear();
     ui->cbo_reg_end->clear();
-    qDebug() << "space combo data cleared";
+    qDebug() << "start and end cleared";
     populateCombo(ui->cbo_reg_start, results);
     results.seek(0);
     populateCombo(ui->cbo_reg_end, results);
-    qDebug() << "room combo populated";
+    qDebug() << "space start end populated";
 }
 
 //void MainWindow::populateRegStartEnd(QString type){
