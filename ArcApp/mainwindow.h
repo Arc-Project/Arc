@@ -814,8 +814,6 @@ private slots:
 
     void on_cbo_reg_room_currentTextChanged(const QString &arg1);
 
-    void clearRegCombo();
-
 private:
 
     Ui::MainWindow *ui;
