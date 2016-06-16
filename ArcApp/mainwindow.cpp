@@ -354,6 +354,7 @@ void MainWindow::on_editbookButton_clicked()
     qDebug() << "\n\nbuilding combo data cleared";
     QSqlQuery results = dbManager->getBuildings();
     populateCombo(ui->cbo_reg_bldg, results);
+    on_cbo_reg_floor_currentTextChanged("");
     qDebug() << "building combobox populated";
     ui->cbo_reg_bldg->blockSignals(blocked);
 //    populateRegCombos();
@@ -373,18 +374,25 @@ void MainWindow::checkRegRadioSelection()
         ui->lbl_reg_end->setText("Space End");
     }
     ui->cbo_reg_start->clear();
+    ui->cbo_reg_start->addItem("All");
     ui->cbo_reg_end->clear();
+    ui->cbo_reg_end->addItem("All");
     ui->cbo_reg_floor->setCurrentIndex(0);
 }
 
 void MainWindow::populateCombo(QComboBox *emptyCombo, QSqlQuery results) {
+    emptyCombo->setEnabled(true);
     emptyCombo->addItem("All");
     qDebug() << "item all added";
-    while (results.next()){
+    if (results.next()) {
         emptyCombo->addItem(results.value(0).toString());
-    }
-    if (results.record().count() == 0 || results.record().count() == -1) {
+        while (results.next()){
+            emptyCombo->addItem(results.value(0).toString());
+        }
+    } else {
         emptyCombo->clear();
+        emptyCombo->addItem("Invalid");
+        emptyCombo->setEnabled(false);
     }
 }
 
@@ -420,7 +428,7 @@ void MainWindow::on_cbo_reg_floor_currentTextChanged(const QString &arg1)
         ui->cbo_reg_end->clear();
         qDebug() << "start and end cleared";
         populateCombo(ui->cbo_reg_start, results);
-        results.seek(0);
+        results.seek(-1);
         populateCombo(ui->cbo_reg_end, results);
         qDebug() << "room start end populated";
     } else {
@@ -428,6 +436,7 @@ void MainWindow::on_cbo_reg_floor_currentTextChanged(const QString &arg1)
         qDebug() << "room combo data cleared";
         populateCombo(ui->cbo_reg_room, results);
         qDebug() << "room combo populated";
+        on_cbo_reg_room_currentTextChanged("");
     }
     ui->cbo_reg_room->blockSignals(blocked);
 }
@@ -441,7 +450,7 @@ void MainWindow::on_cbo_reg_room_currentTextChanged(const QString &arg1)
     ui->cbo_reg_end->clear();
     qDebug() << "start and end cleared";
     populateCombo(ui->cbo_reg_start, results);
-    results.seek(0);
+    results.seek(-1);
     populateCombo(ui->cbo_reg_end, results);
     qDebug() << "space start end populated";
 }
