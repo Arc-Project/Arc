@@ -816,6 +816,12 @@ private slots:
 
     void on_roomHistory_search_btn_clicked();
 
+    void on_floor_cbox_currentTextChanged(const QString &arg1);
+
+    void on_room_cbox_currentTextChanged(const QString &arg1);
+
+    void on_building_cbox_currentTextChanged(const QString &arg1);
+
 private:
 
     Ui::MainWindow *ui;
