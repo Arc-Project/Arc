@@ -814,6 +814,14 @@ private slots:
 
     void on_cbo_reg_room_currentTextChanged(const QString &arg1);
 
+    void on_btn_reg_searchRS_clicked();
+
+    void on_btn_regCurDay_clicked();
+
+    void on_btn_regGo_clicked();
+
+    void on_btn_regFutureBookings_clicked();
+
 private:
 
     Ui::MainWindow *ui;
