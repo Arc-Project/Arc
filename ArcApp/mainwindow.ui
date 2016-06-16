@@ -8646,6 +8646,12 @@ Balance</string>
                </item>
                <item>
                 <widget class="QComboBox" name="cbo_reg_bldg">
+                 <property name="minimumSize">
+                  <size>
+                   <width>90</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <property name="font">
                   <font>
                    <pointsize>15</pointsize>
@@ -8677,11 +8683,22 @@ Balance</string>
                </item>
                <item>
                 <widget class="QComboBox" name="cbo_reg_floor">
+                 <property name="minimumSize">
+                  <size>
+                   <width>90</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <property name="font">
                   <font>
                    <pointsize>15</pointsize>
                   </font>
                  </property>
+                 <item>
+                  <property name="text">
+                   <string>All</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
               </layout>
@@ -8711,11 +8728,22 @@ Balance</string>
                  <property name="enabled">
                   <bool>false</bool>
                  </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>90</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <property name="font">
                   <font>
                    <pointsize>15</pointsize>
                   </font>
                  </property>
+                 <item>
+                  <property name="text">
+                   <string>All</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
               </layout>
@@ -8753,6 +8781,11 @@ Balance</string>
                    <pointsize>15</pointsize>
                   </font>
                  </property>
+                 <item>
+                  <property name="text">
+                   <string>All</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
               </layout>
@@ -8790,6 +8823,11 @@ Balance</string>
                    <pointsize>15</pointsize>
                   </font>
                  </property>
+                 <item>
+                  <property name="text">
+                   <string>All</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
               </layout>
