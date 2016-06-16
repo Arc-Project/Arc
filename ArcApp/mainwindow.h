@@ -814,6 +814,14 @@ private slots:
 
     void on_cbo_reg_room_currentTextChanged(const QString &arg1);
 
+    void on_btn_reg_searchRS_clicked();
+
+    void on_btn_regCurDay_clicked();
+
+    void on_btn_regGo_clicked();
+
+    void on_btn_regFutureBookings_clicked();
+
     void on_roomHistory_search_btn_clicked();
 
     void on_floor_cbox_currentTextChanged(const QString &arg1);
@@ -821,6 +829,7 @@ private slots:
     void on_room_cbox_currentTextChanged(const QString &arg1);
 
     void on_building_cbox_currentTextChanged(const QString &arg1);
+
 
 private:
 
