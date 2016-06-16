@@ -461,13 +461,19 @@ void MainWindow::on_cbo_reg_room_currentTextChanged(const QString &arg1)
 
 void MainWindow::on_roomHistoryButton_clicked()
 {
-    ui->stackedWidget->setCurrentIndex(ROOMHISTORY);
+    //ui->stackedWidget->setCurrentIndex(ROOMHISTORY);
     
-    int buildingNo = -1;
-    int floorNo = -1;
-    int roomNo = -1;
-    int spaceNo = -1;
+    //int buildingNo = -1;
+    //int floorNo = -1;
+    //int roomNo = -1;
+    //int spaceNo = -1;
 
+    const bool blocked = ui->building_cbox->blockSignals(true);
+    ui->stackedWidget->setCurrentIndex(ROOMHISTORY);
+    addHistory(MAINMENU);
+
+    MainWindow::on_roomHistory_search_btn_clicked();
+    /*
     QSqlQuery query;
     if (dbManager->getRoomHistory(&query, buildingNo, floorNo, roomNo, spaceNo))
     {
@@ -479,7 +485,20 @@ void MainWindow::on_roomHistoryButton_clicked()
              << "EndDate" << "Action" << "EmpName" << "ShiftNo" << "Time";
         populateATable(ui->roomHistory_tableWidget, header, cols, query, false);
         resizeTableView(ui->roomHistory_tableWidget);  
-    }
+    }*/
+
+    //on_editSearch_clicked();
+
+    qDebug() << "pushed page " << MAINMENU;
+
+    //checkRegRadioSelection();
+    ui->building_cbox->clear();
+    qDebug() << "\n\nbuilding combo data cleared";
+    QSqlQuery results = dbManager->getBuildings();
+    populateCombo(ui->building_cbox, results);
+    on_building_cbox_currentTextChanged("");
+    qDebug() << "building combobox populated";
+    ui->building_cbox->blockSignals(blocked);
 }
 
 void MainWindow::on_caseButton_clicked()
@@ -8918,7 +8937,67 @@ ROOM HISTORY (START)
 ==============================================================================*/
 void MainWindow::on_roomHistory_search_btn_clicked()
 {
+    int buildingNo = ui->building_cbox->currentText() == "All" ? -1 : ui->building_cbox->currentText().toInt();
+    int floorNo = ui->floor_cbox->currentText() == "All" ? -1 : ui->floor_cbox->currentText().toInt();
+    int roomNo = ui->room_cbox->currentText() == "All" ? -1 : ui->room_cbox->currentText().toInt();
+    int spaceNo = ui->space_cbox->currentText() == "All" ? -1 : ui->space_cbox->currentText().toInt();
 
+    QSqlQuery query;
+    if (dbManager->getRoomHistory(&query, buildingNo, floorNo, roomNo, spaceNo))
+    {
+        QStringList header;
+        QStringList cols;
+        header << "Client" << "Space Code" << "Program" << "Date" << "Start Date"
+               << "End Date" << "Action" << "Employee" << "Shift #" << "Time";
+        cols << "ClientName" << "SpaceCode" << "ProgramCode" << "Date" << "StartDate"
+             << "EndDate" << "Action" << "EmpName" << "ShiftNo" << "Time";
+        populateATable(ui->roomHistory_tableWidget, header, cols, query, false);
+        resizeTableView(ui->roomHistory_tableWidget);
+    }
+}
+
+void MainWindow::on_building_cbox_currentTextChanged(const QString &arg1)
+{
+    qDebug() << "building text changed";
+    const bool blocked = ui->floor_cbox->blockSignals(true);
+    Q_UNUSED(arg1);
+
+    QSqlQuery results = dbManager->getFloors(ui->building_cbox->currentText());
+    ui->floor_cbox->clear();
+    qDebug() << "floor combo data cleared";
+    populateCombo(ui->floor_cbox, results);
+    qDebug() << "floor combo populated";
+    on_floor_cbox_currentTextChanged("");
+    ui->floor_cbox->blockSignals(blocked);
+}
+
+void MainWindow::on_floor_cbox_currentTextChanged(const QString &arg1)
+{
+    qDebug() << "floor text changed";
+    const bool blocked = ui->room_cbox->blockSignals(true);
+    Q_UNUSED(arg1);
+    QSqlQuery results = dbManager->getRooms(ui->building_cbox->currentText(), ui->floor_cbox->currentText());
+    
+    ui->room_cbox->clear();
+    qDebug() << "room combo data cleared";
+    populateCombo(ui->room_cbox, results);
+    qDebug() << "room combo populated";
+    on_room_cbox_currentTextChanged("");
+    
+    ui->room_cbox->blockSignals(blocked);
+}
+
+void MainWindow::on_room_cbox_currentTextChanged(const QString &arg1)
+{
+    qDebug() << "room text changed";
+    Q_UNUSED(arg1);
+    QSqlQuery results = dbManager->getSpaces(ui->building_cbox->currentText(), ui->floor_cbox->currentText(), ui->room_cbox->currentText());
+    ui->space_cbox->clear();
+    qDebug() << "space cleared";
+    populateCombo(ui->space_cbox, results);
+    //results.seek(-1);
+    //populateCombo(ui->cbo_reg_end, results);
+    qDebug() << "space start end populated";
 }
 /*==============================================================================
 ROOM HISTORY (END)
