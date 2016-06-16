@@ -454,10 +454,10 @@ void MainWindow::on_roomHistoryButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(ROOMHISTORY);
     
-    int buildingNo = 1;
-    int floorNo = 1;
-    int roomNo = 1;
-    int spaceNo = 3;
+    int buildingNo = -1;
+    int floorNo = -1;
+    int roomNo = -1;
+    int spaceNo = -1;
 
     QSqlQuery query;
     if (dbManager->getRoomHistory(&query, buildingNo, floorNo, roomNo, spaceNo))
@@ -7295,7 +7295,7 @@ void MainWindow::on_editDelete_clicked()
     if(!dbManager->updateBalance(curBal, curBook->clientId))
             qDebug() << "Error updating balance";
 
-    if(!dbManager->deleteBooking(curBook->bookID)){
+    if(!dbManager->deleteBooking(curBook->bookID, usernameLoggedIn, currentshiftid)){
         qDebug() << "Error deleting booking";
     }
     if(!dbManager->removeLunchesMulti(curBook->startDate, curBook->clientId))

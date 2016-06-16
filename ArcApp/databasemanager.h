@@ -160,7 +160,7 @@ public:
     bool updateStoreDate(QString storeId);
     QSqlQuery getFullStorage();
     bool removeStorage(QString storeId);
-    bool deleteBooking(QString id);
+    bool deleteBooking(QString id, QString currEmpName, int currShift);
     QSqlQuery getRole(QString empName);
     double getBookingCost(QString bookId);
     double getDoubleBalance(QString clientId);
