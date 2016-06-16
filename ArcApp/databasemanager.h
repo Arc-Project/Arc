@@ -215,8 +215,6 @@ public:
     QSqlQuery getFloors(QString building);
     QSqlQuery getRooms(QString building, QString floor);
     QSqlQuery getSpaces(QString building, QString floor, QString room);
-//    QSqlQuery getFRS(QString curLevel, QString upLevel, QString upLevelVal);
-
 
 signals:
     void dailyReportStatsChanged(QList<int> list, bool conn);

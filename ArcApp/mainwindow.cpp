@@ -374,22 +374,15 @@ void MainWindow::checkRegRadioSelection()
     }
 }
 
-void MainWindow::clearRegCombo() {
-//        ui->cbo_reg_bldg->clear();
-//        ui->cbo_reg_floor->clear();
-//        ui->cbo_reg_room->clear();
-//        ui->cbo_reg_start->clear();
-//        ui->cbo_reg_end->clear();
-}
-
 void MainWindow::populateCombo(QComboBox *emptyCombo, QSqlQuery results) {
-//    const bool blocked = emptyCombo->blockSignals(true);
     emptyCombo->addItem("All");
     qDebug() << "item all added";
     while (results.next()){
         emptyCombo->addItem(results.value(0).toString());
     }
-//    emptyCombo->blockSignals(blocked);
+    if (results.record().count() == 0 || results.record().count() == -1) {
+        emptyCombo->clear();
+    }
 }
 
 void MainWindow::on_rdo_reg_space_toggled(bool checked)
@@ -404,7 +397,7 @@ void MainWindow::on_cbo_reg_bldg_currentTextChanged(const QString &arg1)
     const bool blocked = ui->cbo_reg_floor->blockSignals(true);
     Q_UNUSED(arg1);
 //    QSqlQuery results = dbManager->getFloors(ui->cbo_reg_bldg->currentText());
-    QSqlQuery results = dbManager->getFloor(ui->cbo_reg_bldg->currentText());
+    QSqlQuery results = dbManager->getFloors(ui->cbo_reg_bldg->currentText());
     ui->cbo_reg_floor->clear();
     qDebug() << "floor combo data cleared";
     populateCombo(ui->cbo_reg_floor, results);
@@ -435,6 +428,7 @@ void MainWindow::on_cbo_reg_room_currentTextChanged(const QString &arg1)
     ui->cbo_reg_end->clear();
     qDebug() << "space combo data cleared";
     populateCombo(ui->cbo_reg_start, results);
+    results.seek(0);
     populateCombo(ui->cbo_reg_end, results);
     qDebug() << "room combo populated";
 }
