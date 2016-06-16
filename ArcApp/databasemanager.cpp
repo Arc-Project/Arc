@@ -197,12 +197,62 @@ QSqlQuery DatabaseManager::getClientTransactions(QString clientId){
     return query;
 }
 
-bool DatabaseManager::deleteBooking(QString id){
-    QSqlQuery query(db);
-    QString q = "DELETE FROM Booking WHERE BookingId ='" + id + "'";
-    qDebug() << q;
-    return query.exec(q);
+bool DatabaseManager::deleteBooking(QString id, QString currEmpName, int currShift){
+//    QSqlQuery query(db);
+//    QString q = "DELETE FROM Booking WHERE BookingId ='" + id + "'";
+//    qDebug() << q;
+//    return query.exec(q);
+    qDebug() << "delete booking called";
+    
+    QSqlDatabase::database().transaction();
+
+    QString connName = QString::number(DatabaseManager::getDbCounter());
+    {
+        QSqlDatabase tempDb = QSqlDatabase::database();
+        if (DatabaseManager::createDatabase(&tempDb, connName))
+        {
+            QSqlQuery query(tempDb);
+            if (!query.exec("SELECT ClientName, SpaceCode, ProgramCode, StartDate, EndDate, ClientId "
+               "FROM Booking WHERE BookingId = " + id + ";"))
+            {
+                return false;
+            }
+            if (!query.next())
+            {
+                return false;
+            }
+            qDebug() << "get old booking data ok";
+
+            QString clientName =  query.value("ClientName").toString();
+            QString spaceCode = query.value("SpaceCode").toString();
+            QString programCode = query.value("ProgramCode").toString();
+            QString startDate = query.value("StartDate").toString();
+            QString endDate = query.value("EndDate").toString();
+            QString clientId = query.value("ClientId").toString();
+
+            if (!query.exec("DELETE FROM Booking WHERE BookingId ='" + id + "';"))
+            {
+                return false;
+            }
+            qDebug() << "delete booking ok";
+
+            if (!DatabaseManager::insertIntoBookingHistory(clientName, spaceCode, programCode,
+                startDate, endDate, "DELETE", currEmpName, QString::number(currShift), clientId))
+            {
+                return false;
+            }
+            qDebug() << "insert bookingTable ok";
+        }
+        tempDb.close();
+    } // Necessary braces: tempDb and query are destroyed because out of scope
+    QSqlDatabase::removeDatabase(connName);
+
+    QSqlDatabase::database().commit();
+
+    qDebug() << "delete booking finished";
+    return true;
 }
+
 QSqlQuery DatabaseManager::getRole(QString empName){
     QSqlQuery query(db);
     QString q = "SELECT * FROM Employee WHERE Username ='" + empName + "'";
@@ -730,7 +780,9 @@ bool DatabaseManager::insertIntoBookingHistory(QString clientName, QString space
     QString time = QTime::currentTime().toString();
     QString today = QDate::currentDate().toString(Qt::ISODate);
     QStringList SpaceCodeTokens = spaceId.split("-");
+    qDebug() << spaceId;
     int spaceNo = SpaceCodeTokens.at(3).left(SpaceCodeTokens.at(3).length() - 1).toInt();
+    qDebug() << "after getting space no";
     QString spaceType = SpaceCodeTokens.at(3).right(1);
     query.prepare("INSERT INTO BookingHistory (ClientName, SpaceCode, ProgramCode, Date, StartDate, EndDate, Action, Status, EmpName, ShiftNo, Time, ClientId, BuildingNo, FloorNo, RoomNo, SpaceNo, SpaceType) Values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
     query.bindValue(0,clientName);
@@ -1322,7 +1374,7 @@ void DatabaseManager::getDailyReportStatsThread(QDate date)
     bool conn = false;
     QList<int> list;
     int numEspCheckouts, numTotalCheckouts, numEspVacancies, numTotalVacancies;
-    if ((numEspCheckouts = DatabaseManager::getDailyReportEspCheckouts(date)) != -1) 
+    if ((numEspCheckouts = DatabaseManager::getDailyReportEspCheckouts(date)) != -1)
     {
         if ((numTotalCheckouts = DatabaseManager::getDailyReportTotalCheckouts(date)) != -1)
         {
@@ -1333,18 +1385,18 @@ void DatabaseManager::getDailyReportStatsThread(QDate date)
                     list << numEspCheckouts << numTotalCheckouts << numEspVacancies
                          << numTotalVacancies;
                     conn = true;
-                }        
+                }
             }
         }
     }
-    
+
     emit DatabaseManager::dailyReportStatsChanged(list, conn);
 }
 
 bool DatabaseManager::getShiftReportTotal(QDate date, int shiftNo, QString payType,
     double* result)
 {
-    QString queryString = 
+    QString queryString =
         QString("SELECT ISNULL(p.total, 0) - ISNULL(r.total, 0) ")
         + QString("FROM ")
         + QString("(SELECT SUM(Amount) as total ")
@@ -1388,8 +1440,8 @@ void DatabaseManager::getShiftReportStatsThread(QDate date, int shiftNo)
                 list << QString("%1%2").arg(cashTotal + electronicTotal + chequeTotal >= 0 ? "$" : "-$").
                     arg(QString::number(fabs(cashTotal + electronicTotal + chequeTotal), 'f', 2));
                 conn = true;
-            }        
-        }    
+            }
+        }
     }
     emit DatabaseManager::shiftReportStatsChanged(list, conn);
 }
@@ -1410,7 +1462,7 @@ bool DatabaseManager::getShiftReportClientLogQuery(QSqlQuery* queryResults,
 bool DatabaseManager::getShiftReportOtherQuery(QSqlQuery* queryResults,
     QDate date, int shiftNo)
 {
-    QString queryString = 
+    QString queryString =
         QString("SELECT CONVERT(VARCHAR(15), Time, 100), EmpName, Log ")
         + QString("FROM OtherLog ")
         + QString("WHERE Date = '" + date.toString(Qt::ISODate) + "' AND ")
@@ -1432,13 +1484,13 @@ bool DatabaseManager::insertOtherLog(QString empName, int shiftNo, QString logTe
     query.addBindValue(QTime::currentTime().toString("hh:mm:ss"));
     query.addBindValue(empName);
     query.addBindValue(logText);
-    
+
     return query.exec();
 }
 
 bool DatabaseManager::getCashFloatReportQuery(QSqlQuery* queryResults, QDate date, int shiftNo)
 {
-    QString queryString = 
+    QString queryString =
         QString("SELECT EmpName, DateEdited, CONVERT(VARCHAR(15), TimeEdited, 100), ")
         + QString("Comments, Nickels, Dimes, Quarters, Loonies, Toonies, ")
         + QString("Fives, Tens, Twenties, Fifties, Hundreds ")
@@ -1509,7 +1561,7 @@ void DatabaseManager::getCashFloatThread(QDate date, int shiftNo)
         {
             tempDb.close();
             conn = false;
-        }   
+        }
     } // Necessary braces: tempDb and query are destroyed because out of scope
     QSqlDatabase::removeDatabase(connName);
 
@@ -1570,7 +1622,7 @@ bool DatabaseManager::insertCashFloat(QDate date, int shiftNo, QString empName,
                 query.addBindValue(currentDateStr);
                 query.addBindValue(currentTimeStr);
                 query.addBindValue(comments);
-                
+
                 for (int i = 0; i < coins.size(); ++i)
                 {
                     query.addBindValue(coins.at(i));
@@ -1584,7 +1636,7 @@ bool DatabaseManager::insertCashFloat(QDate date, int shiftNo, QString empName,
                 else
                 {
                     qDebug() << "inserting and updating cashfloat failed";
-                } 
+                }
             }
             tempDb.close();
         }
@@ -1593,7 +1645,7 @@ bool DatabaseManager::insertCashFloat(QDate date, int shiftNo, QString empName,
             tempDb.close();
             return false;
         }
-        
+
     } // Necessary braces: tempDb and query are destroyed because out of scope
     QSqlDatabase::removeDatabase(connName);
     if (ret)
@@ -1605,7 +1657,7 @@ bool DatabaseManager::insertCashFloat(QDate date, int shiftNo, QString empName,
 
 bool DatabaseManager::getMonthlyReportQuery(QSqlQuery* queryResults, int month, int year)
 {
-    QString queryString = 
+    QString queryString =
         QString("SELECT SUM(NumBedsUsed), SUM(NumVacancies), SUM(numSpaces), ")
         + QString("SUM(NumNewClients) ")
         + QString("FROM DailyStats ")
@@ -1692,7 +1744,7 @@ void DatabaseManager::getMonthlyReportThread(int month, int year)
         {
             tempDb.close();
             conn = false;
-        } 
+        }
     } // Necessary braces: tempDb and query are destroyed because out of scope
     QSqlDatabase::removeDatabase(connName);
 
@@ -1714,7 +1766,7 @@ int DatabaseManager::getIntFromQuery(QString queryString)
             {
                 if (query.next())
                 {
-                    result = query.value(0).toInt();    
+                    result = query.value(0).toInt();
                 }
             }
         }
@@ -1761,14 +1813,40 @@ bool DatabaseManager::getRoomHistory(QSqlQuery* queryResults, int buildingNo,
     int floorNo, int roomNo, int spaceNo)
 {
     //queryResults = queryResults(db);
+    QString whereString = "";
+    if (buildingNo != -1 || floorNo != -1 || roomNo != -1 || spaceNo != -1)
+    {
+        whereString = "WHERE ";
+        if (buildingNo != -1)
+        {
+            whereString += "BuildingNo = " + QString::number(buildingNo) + " AND ";
+        }
+        if (floorNo != -1)
+        {
+            whereString += "FloorNo = " + QString::number(floorNo) + " AND ";
+        }
+        if (roomNo != -1)
+        {
+            whereString += "RoomNo = " + QString::number(roomNo) + " AND ";
+        }
+        if (spaceNo != -1)
+        {
+            whereString += "SpaceNo = " + QString::number(spaceNo) + " AND ";
+        }
+        whereString = whereString.left(whereString.length() - 5);
+    }
+
+    qDebug() << "whereString = " + whereString;
+
     QString queryString =
         QString("SELECT ClientName, SpaceCode, ProgramCode, Date, StartDate, EndDate, Action, EmpName, ShiftNo, ")
-        + QString("CONVERT(VARCHAR(15), Time, 100) as Time ")
-        + QString("FROM BookingHistory ")
-        + QString("WHERE BuildingNo = " + QString::number(buildingNo) + " AND FloorNo = " + QString::number(floorNo))
-        + QString(" AND RoomNo = " + QString::number(roomNo) + " AND SpaceNo = " + QString::number(spaceNo))
-        + QString(" ORDER BY Date DESC, Time DESC");
-
+        //+ QString("CONVERT(VARCHAR(15), Time, 100) as Time ")
+        + QString("CONVERT(VARCHAR(7), Time, 0) as Time ")
+        + QString("FROM BookingHistory ") + whereString
+        //+ QString("WHERE BuildingNo = " + QString::number(buildingNo) + " AND FloorNo = " + QString::number(floorNo))
+        //+ QString(" AND RoomNo = " + QString::number(roomNo) + " AND SpaceNo = " + QString::number(spaceNo))
+        //+ QString(" ORDER BY Date DESC, Time DESC");
+        + QString(" ORDER BY BookHistId DESC");
         qDebug() << queryString;
     return queryResults->exec(queryString);
 }
@@ -1964,7 +2042,7 @@ bool DatabaseManager::addBooking(QString stringStart, QString stringEnd, QString
         for (int i = 0; i < spaceInfo.size(); i++)
         {
             query.bindValue(i + 11, spaceInfo.at(i));
-        }    
+        }
     }
 
     return query.exec();
@@ -1985,7 +2063,7 @@ QStringList DatabaseManager::getSpaceInfoFromId(int spaceId)
             spaceInfo.removeLast();
             spaceInfo << spaceNo << spaceCode;
         }
-    }   
+    }
     return spaceInfo;
 }
 
