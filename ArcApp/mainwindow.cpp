@@ -8954,30 +8954,19 @@ void MainWindow::on_btn_regCurDay_clicked()
 void MainWindow::on_btn_regGo_clicked()
 {
     ui->editLookupTable->setSortingEnabled(false);
-
-    QStringList headers, cols;
     QSqlQuery results = dbManager->populatePastRegistry(ui->de_regDate->date());
-    headers << "Client" << "Space #" << "Start Date" << "Checkout Date" <<
-               "Program" << "Cost" << "Monthly" << "RoomNo" << "SpaceNo";
-    cols << "ClientName" << "SpaceCode" << "StartDate" << "EndDate" <<
-            "ProgramCode" << "Cost" << "Monthly" << "RoomNo" << "SpaceNo";
-    populateATable(ui->editLookupTable, headers, cols, results, false);
-
-    addCurrencyToTableWidget(ui->editLookupTable, 5);
-    //hide SpaceNo
-    ui->editLookupTable->hideColumn(7);
-    ui->editLookupTable->hideColumn(8);
-    MainWindow::resizeTableView(ui->editLookupTable);
-
-    ui->editLookupTable->setSortingEnabled(true);
+    populateRegistry(results);
 }
 
 void MainWindow::on_btn_regFutureBookings_clicked()
 {
     ui->editLookupTable->setSortingEnabled(false);
-
-    QStringList headers, cols;
     QSqlQuery results = dbManager->populateFutureRegistry();
+    populateRegistry(results);
+}
+
+void MainWindow::populateRegistry(QSqlQuery results) {
+    QStringList headers, cols;
     headers << "Client" << "Space #" << "Start Date" << "Checkout Date" <<
                "Program" << "Cost" << "Monthly" << "RoomNo" << "SpaceNo";
     cols << "ClientName" << "SpaceCode" << "StartDate" << "EndDate" <<
