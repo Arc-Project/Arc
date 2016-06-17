@@ -1845,7 +1845,7 @@ bool DatabaseManager::getRoomHistory(QSqlQuery* queryResults, int buildingNo,
                           "SELECT ClientName, SpaceCode, ProgramCode, Date, "
                           "StartDate, EndDate, Action, EmpName, ShiftNo, Time, "
                           "ROW_NUMBER() OVER (ORDER BY BookHistId DESC) AS RowNum "
-                          "FROM BookingHistory "
+                          "FROM BookingHistory " + whereString +
                           ") AS MyDerivedTable "
                           "WHERE MyDerivedTable.RowNum BETWEEN " + QString::number(startRow) +
                           " AND " + QString::number(endRow);

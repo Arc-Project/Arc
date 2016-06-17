@@ -5853,8 +5853,8 @@ Balance</string>
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>620</width>
-                 <height>1294</height>
+                 <width>718</width>
+                 <height>1381</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -11509,7 +11509,7 @@ Balance</string>
                     <string notr="true"/>
                    </property>
                    <property name="currentIndex">
-                    <number>1</number>
+                    <number>0</number>
                    </property>
                    <widget class="QWidget" name="tab_6">
                     <attribute name="title">
@@ -19936,9 +19936,7 @@ Balance</string>
         </item>
        </layout>
        <zorder>roomHistory_tableWidget</zorder>
-       <zorder>horizontalLayoutWidget</zorder>
        <zorder>horizontalSpacer_104</zorder>
-       <zorder>pushButton</zorder>
        <zorder>roomHist_loadNext_button</zorder>
       </widget>
      </widget>
@@ -19974,7 +19972,7 @@ Balance</string>
      <x>0</x>
      <y>0</y>
      <width>1625</width>
-     <height>23</height>
+     <height>29</height>
     </rect>
    </property>
    <property name="font">
