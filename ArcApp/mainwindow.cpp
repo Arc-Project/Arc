@@ -346,8 +346,11 @@ void MainWindow::on_editbookButton_clicked()
     const bool blocked = ui->cbo_reg_bldg->blockSignals(true);
     ui->stackedWidget->setCurrentIndex(EDITBOOKING);
     addHistory(MAINMENU);
+    ui->lbl_regDateVal->setText(QDate::currentDate().toString(Qt::ISODate));
+    ui->de_regDate->setDate(QDate::currentDate());
 
-    on_editSearch_clicked();
+//    on_editSearch_clicked();
+    on_btn_regGo_clicked();
 
     qDebug() << "pushed page " << MAINMENU;
 
@@ -356,22 +359,22 @@ void MainWindow::on_editbookButton_clicked()
     qDebug() << "\n\nbuilding combo data cleared";
     QSqlQuery results = dbManager->getBuildings();
     populateCombo(ui->cbo_reg_bldg, results);
-    on_cbo_reg_floor_currentTextChanged("");
+    on_cbo_reg_bldg_currentTextChanged("");
     qDebug() << "building combobox populated";
     ui->cbo_reg_bldg->blockSignals(blocked);
-//    populateRegCombos();
+
+    ui->de_regDate->setMaximumDate(QDate::currentDate());
+
 }
 void MainWindow::checkRegRadioSelection()
 {
     qDebug() << "checking radio selection";
     if (ui->rdo_reg_room->isChecked()) {
         ui->cbo_reg_room->setEnabled(false);
-        ui->lbl_reg_room->setEnabled(false);
         ui->lbl_reg_start->setText("Room Start");
         ui->lbl_reg_end->setText("Room End");
     } else if (ui->rdo_reg_space->isChecked()) {
         ui->cbo_reg_room->setEnabled(true);
-        ui->lbl_reg_room->setEnabled(true);
         ui->lbl_reg_start->setText("Space Start");
         ui->lbl_reg_end->setText("Space End");
     }
@@ -416,7 +419,7 @@ void MainWindow::on_cbo_reg_bldg_currentTextChanged(const QString &arg1)
     populateCombo(ui->cbo_reg_floor, results);
     qDebug() << "floor combo populated";
     ui->cbo_reg_floor->blockSignals(blocked);
-
+    on_cbo_reg_floor_currentTextChanged("");
 }
 
 void MainWindow::on_cbo_reg_floor_currentTextChanged(const QString &arg1)
@@ -8934,6 +8937,62 @@ void MainWindow::changeUserPw(QString newPw){
 END CHANGE PASSWORD
 ==============================================================================*/
 
+
+void MainWindow::on_btn_reg_searchRS_clicked()
+{
+    QString building, floor, room, start, end;
+    QDate date = ui->de_regDate->date();
+    building = ui->cbo_reg_bldg->currentText();
+    floor = ui->cbo_reg_floor->currentText();
+    if (ui->rdo_reg_room->isChecked()) {
+        room = -1;
+        start = ui->cbo_reg_start->currentText();
+        end = ui->cbo_reg_end->currentText();
+    } else {
+        room = ui->cbo_reg_floor->currentText();
+        start = ui->cbo_reg_start->currentText();
+        end = ui->cbo_reg_end->currentText();
+    }
+
+}
+
+void MainWindow::on_btn_regCurDay_clicked()
+{
+    ui->de_regDate->setDate(QDate::currentDate());
+}
+
+void MainWindow::on_btn_regGo_clicked()
+{
+    ui->editLookupTable->setSortingEnabled(false);
+
+    QStringList headers, cols;
+    QSqlQuery results = dbManager->populatePastRegistry(ui->de_regDate->date());
+    headers << "Client" << "Space #" << "Start Date" << "Checkout Date" << "Program" << "Cost" << "Monthly";
+    cols << "ClientName" << "SpaceCode" << "StartDate" << "EndDate" << "ProgramCode" << "Cost" << "Monthly";
+    populateATable(ui->editLookupTable, headers, cols, results, false);
+
+    addCurrencyToTableWidget(ui->editLookupTable, 5);
+    MainWindow::resizeTableView(ui->editLookupTable);
+
+    ui->editLookupTable->setSortingEnabled(true);
+}
+
+void MainWindow::on_btn_regFutureBookings_clicked()
+{
+    ui->editLookupTable->setSortingEnabled(false);
+
+    QStringList headers, cols;
+    QSqlQuery results = dbManager->populateFutureRegistry();
+    headers << "Client" << "Space #" << "Start Date" << "Checkout Date" << "Program" << "Cost" << "Monthly";
+    cols << "ClientName" << "SpaceCode" << "StartDate" << "EndDate" << "ProgramCode" << "Cost" << "Monthly";
+    populateATable(ui->editLookupTable, headers, cols, results, false);
+
+    addCurrencyToTableWidget(ui->editLookupTable, 5);
+    MainWindow::resizeTableView(ui->editLookupTable);
+
+    ui->editLookupTable->setSortingEnabled(true);
+}
+
 /*==============================================================================
 ROOM HISTORY (START)
 ==============================================================================*/
@@ -9060,5 +9119,4 @@ void MainWindow::on_roomHist_loadNext_button_clicked()
 /*==============================================================================
 ROOM HISTORY (END)
 ==============================================================================*/
-
 

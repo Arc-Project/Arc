@@ -2741,3 +2741,33 @@ QSqlQuery DatabaseManager::getSpaces(QString building, QString floor, QString ro
     qDebug() << query.lastError();
     return query;
 }
+
+QSqlQuery DatabaseManager::populatePastRegistry(QDate date) {
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    QString dateStr = date.toString(Qt::ISODate);
+    QString curDate = QDate::currentDate().toString(Qt::ISODate);
+    QString result = "SELECT ClientName, SpaceCode, StartDate, EndDate, ProgramCode, Cost, Monthly ";
+    //use Booking for current day registry data, use RegistryHistory for past day's registry data
+    result += date < QDate::currentDate() ? "FROM RegistryHistory " : "FROM Booking ";
+    result += "WHERE Startdate <= '" + dateStr + "' AND EndDate > '" + dateStr + "'";
+
+    qDebug() << result;
+    query.exec(result);
+    qDebug() << query.lastError();
+    return query;
+}
+
+QSqlQuery DatabaseManager::populateFutureRegistry() {
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    QString curDate = QDate::currentDate().toString(Qt::ISODate);
+    QString result = "SELECT ClientName, SpaceCode, StartDate, EndDate, ProgramCode, Cost, Monthly "
+                     "FROM Booking ";
+    result += "WHERE Startdate > '" + curDate + "'";
+
+    qDebug() << result;
+    query.exec(result);
+    qDebug() << query.lastError();
+    return query;
+}

@@ -217,6 +217,8 @@ public:
     QSqlQuery getFloors(QString building);
     QSqlQuery getRooms(QString building, QString floor);
     QSqlQuery getSpaces(QString building, QString floor, QString room);
+    QSqlQuery populatePastRegistry(QDate date);
+    QSqlQuery populateFutureRegistry();
 
 signals:
     void dailyReportStatsChanged(QList<int> list, bool conn);
