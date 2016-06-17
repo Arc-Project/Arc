@@ -4998,11 +4998,11 @@ void MainWindow::on_actionBack_triggered()
         ui->stackedWidget->setCurrentIndex(page);
         ui->actionForward->setEnabled(true);
 
-//        switch(page) {
-//        case EDITBOOKING:
-//            on_editSearch_clicked();
-//            break;
-//        }
+        switch(page) {
+        case EDITBOOKING:
+            on_btn_regCurDay_clicked();
+            break;
+        }
     }
 }
 
@@ -8721,32 +8721,6 @@ void MainWindow::on_adminVal_clicked()
     doValidate();
 }
 
-void MainWindow::on_registryRoomLook_clicked()
-{
-    ui->editLookupTable->setSortingEnabled(false);
-    QSqlQuery result;
-    QString user = "";
-    user = ui->registryRoom->text();
-
-    result = dbManager->getRoomBooking(user);
-//    int numCols = result.record().count();
-
-    QStringList headers;
-    QStringList cols;
-    headers << "Client" << "Space #" << "Start Date" << "Checkout Date" << "Program" << "Cost" << "Monthly" << "" << "" << "";
-    cols << "ClientName" << "SpaceCode" << "StartDate" << "EndDate" << "ProgramCode" << "Cost" << "Monthly" << "BookingId" << "ClientId" << "SpaceId";
-    populateATable(ui->editLookupTable, headers, cols, result, false);
-    ui->editLookupTable->hideColumn(7);
-    ui->editLookupTable->hideColumn(8);
-    ui->editLookupTable->hideColumn(9);
-
-    addCurrencyToTableWidget(ui->editLookupTable, 5);
-    ui->editLookupTable->setSortingEnabled(true);
-    //dbManager->printAll(result);
-
-    MainWindow::resizeTableView(ui->editLookupTable);
-}
-
 void MainWindow::on_valUpdate_clicked()
 {
     int selected = ui->valTable->selectionModel()->currentIndex().row();
@@ -8960,8 +8934,8 @@ void MainWindow::on_btn_reg_searchRS_clicked()
         if (start != "All" && match) {
             int startNo = start.toInt();
             int endNo = end.toInt();
-            int itemNo = ui->rdo_reg_room->isChecked() ? ui->editLookupTable->item(i,7)->text().toInt() :
-                                                     ui->editLookupTable->item(i,8)->text().toInt();
+            int itemNo = ui->rdo_reg_room->isChecked() ? ui->editLookupTable->item(i,1)->text().toInt() :
+                                                     ui->editLookupTable->item(i,12)->text().toInt();
             if (itemNo < startNo || itemNo > endNo) {
                 match = false;
             }
@@ -8981,9 +8955,14 @@ void MainWindow::on_btn_regCurDay_clicked()
 
 void MainWindow::on_btn_regGo_clicked()
 {
+    QSqlQuery results;
     ui->editLookupTable->setSortingEnabled(false);
-    QSqlQuery results = dbManager->populatePastRegistry(ui->de_regDate->date());
+    results = ui->de_regDate->date() < QDate::currentDate() ? dbManager->populatePastRegistry(ui->de_regDate->date()) :
+                                                              dbManager->populateCurrentRegistry();
     populateRegistry(results);
+    bool pastDate = ui->de_regDate->date() < QDate::currentDate();
+    ui->editDelete->setEnabled(!pastDate);
+    ui->editButton->setEnabled(!pastDate);
 }
 
 void MainWindow::on_btn_regFutureBookings_clicked()
@@ -8991,20 +8970,24 @@ void MainWindow::on_btn_regFutureBookings_clicked()
     ui->editLookupTable->setSortingEnabled(false);
     QSqlQuery results = dbManager->populateFutureRegistry();
     populateRegistry(results);
+    ui->editDelete->setEnabled(true);
+    ui->editButton->setEnabled(true);
 }
 
 void MainWindow::populateRegistry(QSqlQuery results) {
     QStringList headers, cols;
     headers << "Client" << "Space #" << "Start Date" << "Checkout Date" <<
-               "Program" << "Cost" << "Monthly" << "RoomNo" << "SpaceNo";
+               "Program" << "Cost" << "Monthly" << "" << "" << "" << "RoomNo" << "SpaceNo";
     cols << "ClientName" << "SpaceCode" << "StartDate" << "EndDate" <<
-            "ProgramCode" << "Cost" << "Monthly" << "RoomNo" << "SpaceNo";
+            "ProgramCode" << "Cost" << "Monthly" << "BookingId" << "ClientId" << "SpaceId" << "RoomNo" << "SpaceNo";
     populateATable(ui->editLookupTable, headers, cols, results, false);
 
     addCurrencyToTableWidget(ui->editLookupTable, 5);
-    //hide RoomNo and SpaceNo
-    ui->editLookupTable->hideColumn(7);
-    ui->editLookupTable->hideColumn(8);
+
+    //hide BookingId, ClientId, SpaceId, RoomNo and SpaceNo
+    for (int i = 7; i < 12; i++)
+        ui->editLookupTable->hideColumn(i);
+
     MainWindow::resizeTableView(ui->editLookupTable);
 
     ui->editLookupTable->setSortingEnabled(true);
@@ -9014,7 +8997,7 @@ void MainWindow::populateRegistry(QSqlQuery results) {
 ROOM HISTORY (START)
 ==============================================================================*/
 void MainWindow::on_roomHistory_search_btn_clicked()
-{
+{    
     roomHistStruct.buildingNo = ui->building_cbox->currentText() == "All" ? -1 : ui->building_cbox->currentText().toInt();
     roomHistStruct.floorNo = ui->floor_cbox->currentText() == "All" ? -1 : ui->floor_cbox->currentText().toInt();
     roomHistStruct.roomNo = ui->room_cbox->currentText() == "All" ? -1 : ui->room_cbox->currentText().toInt();
