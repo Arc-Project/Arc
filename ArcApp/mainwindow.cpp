@@ -767,6 +767,7 @@ void MainWindow::on_editButton_clicked()
     ui->editRoom->setEnabled(true);
     curBook = new Booking();
     bNew = true;
+
     popBookFromRow();
     popClientFromId(curBook->clientId);
     ui->editUpdate->setEnabled(false);
@@ -960,8 +961,6 @@ void MainWindow::doValidate(){
     table->clear();
     table->setRowCount(0);
 
-
-    table->horizontalHeader()->setStretchLastSection(true);
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     table->verticalHeader()->hide();
     table->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -978,7 +977,7 @@ void MainWindow::doValidate(){
         expected = dbManager->validateMoney(clientId);
         real = result.value("Balance").toString().toDouble();
         if(expected == real){
-            return;
+            break;
         }
         table->insertRow(x);
         qDebug() << "Adding Client" << clientId;
@@ -990,6 +989,7 @@ void MainWindow::doValidate(){
         x++;
     }
 
+    MainWindow::resizeTableView(table);
 }
 
 void MainWindow::on_btn_payListAllUsers_clicked()
@@ -8732,7 +8732,6 @@ void MainWindow::on_valUpdate_clicked()
     double expected = ui->valTable->item(selected, 3)->text().toDouble();
     Validate * validate = new Validate(this, clientId, real,expected, usernameLoggedIn, QString::number(currentshiftid));
     validate->exec();
-
 }
 
 //search receipt history when receipt tab is clicked
