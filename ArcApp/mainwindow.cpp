@@ -284,6 +284,7 @@ void MainWindow::initCurrentWidget(int idx){
             MainWindow::getCashFloat(QDate::currentDate(), currentshiftid);
             MainWindow::getMonthlyReport(QDate::currentDate().month(), QDate::currentDate().year());
             MainWindow::updateRestrictionTables();
+            MainWindow::setReportsDateEditMax();
             ui->actionExport_to_PDF->setEnabled(true);
             break;
         case EDITSHIFT:  //WIDGET15
@@ -394,6 +395,8 @@ void MainWindow::populateCombo(QComboBox *emptyCombo, QSqlQuery results) {
     emptyCombo->addItem("All");
     qDebug() << "item all added";
     if (results.next()) {
+        ui->roomHistory_search_btn->setEnabled(true);
+        ui->btn_reg_searchRS->setEnabled(true);
         emptyCombo->addItem(results.value(0).toString());
         while (results.next()){
             emptyCombo->addItem(results.value(0).toString());
@@ -402,6 +405,8 @@ void MainWindow::populateCombo(QComboBox *emptyCombo, QSqlQuery results) {
         emptyCombo->clear();
         emptyCombo->addItem("Invalid");
         emptyCombo->setEnabled(false);
+        ui->roomHistory_search_btn->setEnabled(false);
+        ui->btn_reg_searchRS->setEnabled(false);
     }
 }
 
@@ -4959,6 +4964,14 @@ void MainWindow::on_noDatabaseConnection(QSqlDatabase* database)
     {
         statusBar()->showMessage(tr("No database connection"));
     }
+}
+
+void MainWindow::setReportsDateEditMax()
+{
+    ui->dailyReport_dateEdit->setMaximumDate(QDate::currentDate());
+    ui->shiftReport_dateEdit->setMaximumDate(QDate::currentDate());
+    ui->cashFloat_dateEdit->setMaximumDate(QDate::currentDate());
+    ui->cashFloat_dateEdit->setMaximumDate(QDate::currentDate());
 }
 
 void MainWindow::on_reconnectedToDatabase()
