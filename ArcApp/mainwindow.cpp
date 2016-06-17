@@ -349,7 +349,6 @@ void MainWindow::on_editbookButton_clicked()
     ui->lbl_regDateVal->setText(QDate::currentDate().toString(Qt::ISODate));
     ui->de_regDate->setDate(QDate::currentDate());
 
-//    on_editSearch_clicked();
     on_btn_regGo_clicked();
 
     qDebug() << "pushed page " << MAINMENU;
@@ -1002,70 +1001,21 @@ void MainWindow::on_btn_payListAllUsers_clicked()
 
 void MainWindow::on_editSearch_clicked()
 {
-    ui->editLookupTable->setSortingEnabled(false);
-    ui->editLookupTable->clearContents();
-    ui->editLookupTable->setRowCount(0);
-    ui->editLookupTable->sortByColumn(0);
-    qDebug() << "editlookup table cleared";
-    /*ui->editLookupTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->editLookupTable->verticalHeader()->hide();
-    ui->editLookupTable->horizontalHeader()->setStretchLastSection(true);
-    ui->editLookupTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->editLookupTable->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->editLookupTable->setRowCount(0);
-    ui->editLookupTable->clear();
-    ui->editLookupTable->setHorizontalHeaderLabels(QStringList()
-                                                << "Created" << "Start" << "End" << "Monthly" << "Room" << "Client" << "Program" << "Cost"
-                                                 << "Lunch" << "Wakeup" << "" << "");
-    ui->editLookupTable->setColumnHidden(10, true);
-    ui->editLookupTable->setColumnHidden(11, true);
-*/
-    QSqlQuery result;
-    QString user = "";
-    if(ui->editClient->text() != ""){
-        user = ui->editClient->text();
+    QString name = ui->editClient->text();
+
+    QRegularExpression pattern(name, QRegularExpression::CaseInsensitiveOption);
+    for( int i = 0; i < ui->editLookupTable->rowCount(); ++i ) {
+        bool match = false;
+        QTableWidgetItem *item = ui->editLookupTable->item( i, 0 );
+
+        match = pattern.match(item->text()).hasMatch();
+
+        qDebug() << "match at row " << i << ": " << match;
+
+        //hide rows that don't match pattern
+        ui->editLookupTable->setRowHidden( i, !match );
     }
 
-    result = dbManager->getActiveBooking(user, true);
-//    int numCols = result.record().count();
-
-    QStringList headers;
-    QStringList cols;
-    headers << "Client" << "Space #" << "Start Date" << "Checkout Date" << "Program" << "Cost" << "Monthly" << "" << "" << "";
-    cols << "ClientName" << "SpaceCode" << "StartDate" << "EndDate" << "ProgramCode" << "Cost" << "Monthly" << "BookingId" << "ClientId" << "SpaceId";
-    populateATable(ui->editLookupTable, headers, cols, result, false);
-    ui->editLookupTable->hideColumn(7);
-    ui->editLookupTable->hideColumn(8);
-    ui->editLookupTable->hideColumn(9);
-
-
-    addCurrencyToTableWidget(ui->editLookupTable, 5);
-    ui->editLookupTable->setSortingEnabled(true);
-    //dbManager->printAll(result);
-
-    MainWindow::resizeTableView(ui->editLookupTable);
-
-
-
-
-    /*while (result.next()) {
-        ui->editLookupTable->insertRow(x);
-
-
-        QStringList row;
-        row << result.value(1).toString() << result.value(7).toString() << result.value(8).toString() << result.value(12).toString()
-            << result.value(3).toString() << result.value(13).toString() << result.value(5).toString() << result.value(6).toString()
-                  << result.value(9).toString() << result.value(10).toString() << result.value(4).toString() << result.value(0).toString();
-        for (int i = 0; i < 12; ++i)
-        {
-            ui->editLookupTable->setItem(x,i, new QTableWidgetItem(row.at(i)));
-
-
-        }
-        x++;
-
-
-    }*/
 }
 void MainWindow::on_bookingSearchButton_clicked()
 {
@@ -5022,11 +4972,11 @@ void MainWindow::on_actionBack_triggered()
         ui->stackedWidget->setCurrentIndex(page);
         ui->actionForward->setEnabled(true);
 
-        switch(page) {
-        case EDITBOOKING:
-            on_editSearch_clicked();
-            break;
-        }
+//        switch(page) {
+//        case EDITBOOKING:
+//            on_editSearch_clicked();
+//            break;
+//        }
     }
 }
 
@@ -5176,7 +5126,13 @@ void MainWindow::on_btn_pcpKeySave_clicked()
 
 void MainWindow::on_actionPcptables_triggered()
 {
-//    MainWindow::createTextReceipt(QString totalCost, QString payType, QString payTotal, QString start, QString end, QString length, bool stay);
+
+//    QRegularExpression re(".+-.+-.+-[\\d\\d?\\d?\\d?]");
+    QRegularExpression re("2-1-[2-2]");
+    QRegularExpressionMatch match = re.match("2-1-1-2B");
+    bool hasMatch = match.hasMatch(); // true
+    qDebug() << hasMatch << " " << match.capturedTexts();
+
 }
 
 void MainWindow::reloadPcpTable(int table){
@@ -8940,20 +8896,56 @@ END CHANGE PASSWORD
 
 void MainWindow::on_btn_reg_searchRS_clicked()
 {
-    QString building, floor, room, start, end;
-    QDate date = ui->de_regDate->date();
+    QString building, floor, room, start, end, regEx = "^";
+
     building = ui->cbo_reg_bldg->currentText();
     floor = ui->cbo_reg_floor->currentText();
-    if (ui->rdo_reg_room->isChecked()) {
-        room = -1;
-        start = ui->cbo_reg_start->currentText();
-        end = ui->cbo_reg_end->currentText();
-    } else {
+
+    //build regex pattern
+    regEx += building == "All" ? ".+-" : building + "-";
+    regEx += floor == "All" ? ".+-" : floor + "-";
+
+    if (!ui->rdo_reg_room->isChecked()) {
         room = ui->cbo_reg_floor->currentText();
-        start = ui->cbo_reg_start->currentText();
-        end = ui->cbo_reg_end->currentText();
+
+        regEx += room == "All" ? ".+-" : room + "-";
     }
 
+    start = ui->cbo_reg_start->currentText();
+    end = ui->cbo_reg_end->currentText();
+
+    //handle end range is smaller than start range
+    if (start != "All") {
+        if (start.toInt() > end.toInt()) {
+            regEx = "invalid query";
+        }
+    }
+
+    //perform pattern matching for the spacecode
+    QRegularExpression pattern(regEx);
+    qDebug() << "regex: " << regEx;
+
+    for( int i = 0; i < ui->editLookupTable->rowCount(); ++i ) {
+        bool match = false;
+        QTableWidgetItem *item = ui->editLookupTable->item( i, 1 );
+        //match the b-f-[r]-
+        match = pattern.match(item->text()).hasMatch();
+
+        //match the start end range
+        if (start != "All" && match) {
+            int startNo = start.toInt();
+            int endNo = end.toInt();
+            int itemNo = ui->rdo_reg_room->isChecked() ? ui->editLookupTable->item(i,7)->text().toInt() :
+                                                     ui->editLookupTable->item(i,8)->text().toInt();
+            if (itemNo < startNo || itemNo > endNo) {
+                match = false;
+            }
+        }
+        qDebug() << "match at row " << i << ": " << match;
+
+        //hide rows that don't match pattern
+        ui->editLookupTable->setRowHidden( i, !match );
+    }
 }
 
 void MainWindow::on_btn_regCurDay_clicked()
@@ -8964,30 +8956,29 @@ void MainWindow::on_btn_regCurDay_clicked()
 void MainWindow::on_btn_regGo_clicked()
 {
     ui->editLookupTable->setSortingEnabled(false);
-
-    QStringList headers, cols;
     QSqlQuery results = dbManager->populatePastRegistry(ui->de_regDate->date());
-    headers << "Client" << "Space #" << "Start Date" << "Checkout Date" << "Program" << "Cost" << "Monthly";
-    cols << "ClientName" << "SpaceCode" << "StartDate" << "EndDate" << "ProgramCode" << "Cost" << "Monthly";
-    populateATable(ui->editLookupTable, headers, cols, results, false);
-
-    addCurrencyToTableWidget(ui->editLookupTable, 5);
-    MainWindow::resizeTableView(ui->editLookupTable);
-
-    ui->editLookupTable->setSortingEnabled(true);
+    populateRegistry(results);
 }
 
 void MainWindow::on_btn_regFutureBookings_clicked()
 {
     ui->editLookupTable->setSortingEnabled(false);
-
-    QStringList headers, cols;
     QSqlQuery results = dbManager->populateFutureRegistry();
-    headers << "Client" << "Space #" << "Start Date" << "Checkout Date" << "Program" << "Cost" << "Monthly";
-    cols << "ClientName" << "SpaceCode" << "StartDate" << "EndDate" << "ProgramCode" << "Cost" << "Monthly";
+    populateRegistry(results);
+}
+
+void MainWindow::populateRegistry(QSqlQuery results) {
+    QStringList headers, cols;
+    headers << "Client" << "Space #" << "Start Date" << "Checkout Date" <<
+               "Program" << "Cost" << "Monthly" << "RoomNo" << "SpaceNo";
+    cols << "ClientName" << "SpaceCode" << "StartDate" << "EndDate" <<
+            "ProgramCode" << "Cost" << "Monthly" << "RoomNo" << "SpaceNo";
     populateATable(ui->editLookupTable, headers, cols, results, false);
 
     addCurrencyToTableWidget(ui->editLookupTable, 5);
+    //hide RoomNo and SpaceNo
+    ui->editLookupTable->hideColumn(7);
+    ui->editLookupTable->hideColumn(8);
     MainWindow::resizeTableView(ui->editLookupTable);
 
     ui->editLookupTable->setSortingEnabled(true);
@@ -9120,3 +9111,15 @@ void MainWindow::on_roomHist_loadNext_button_clicked()
 ROOM HISTORY (END)
 ==============================================================================*/
 
+
+void MainWindow::on_cbo_reg_start_currentTextChanged(const QString &arg1)
+{
+    ui->cbo_reg_end->setEnabled(arg1 != "All");
+    ui->lbl_reg_end->setEnabled(arg1 != "All");
+}
+
+void MainWindow::on_cbo_reg_end_currentTextChanged(const QString &arg1)
+{
+    Q_UNUSED(arg1);
+    ui->cbo_reg_end->removeItem(ui->cbo_reg_end->findText("All"));
+}

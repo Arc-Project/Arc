@@ -107,7 +107,7 @@ public:
     int currentrole = STANDARD;
     int currentshiftid = 0;
 
-    const QString versionNo = "1.03";
+    const QString versionNo = "1.10";
 
     bool resettingfromcode = false;
 
@@ -841,8 +841,13 @@ private slots:
 
     void on_building_cbox_currentTextChanged(const QString &arg1);
 
-    void on_roomHist_loadNext_button_clicked();
+    void on_cbo_reg_start_currentTextChanged(const QString &arg1);
 
+    void on_cbo_reg_end_currentTextChanged(const QString &arg1);
+
+    void populateRegistry(QSqlQuery results);
+
+    void on_roomHist_loadNext_button_clicked();
 
 private:
 

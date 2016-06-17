@@ -2747,7 +2747,7 @@ QSqlQuery DatabaseManager::populatePastRegistry(QDate date) {
     QSqlQuery query(db);
     QString dateStr = date.toString(Qt::ISODate);
     QString curDate = QDate::currentDate().toString(Qt::ISODate);
-    QString result = "SELECT ClientName, SpaceCode, StartDate, EndDate, ProgramCode, Cost, Monthly ";
+    QString result = "SELECT ClientName, SpaceCode, StartDate, EndDate, ProgramCode, Cost, Monthly, RoomNo, SpaceNo ";
     //use Booking for current day registry data, use RegistryHistory for past day's registry data
     result += date < QDate::currentDate() ? "FROM RegistryHistory " : "FROM Booking ";
     result += "WHERE Startdate <= '" + dateStr + "' AND EndDate > '" + dateStr + "'";
@@ -2762,7 +2762,7 @@ QSqlQuery DatabaseManager::populateFutureRegistry() {
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
     QString curDate = QDate::currentDate().toString(Qt::ISODate);
-    QString result = "SELECT ClientName, SpaceCode, StartDate, EndDate, ProgramCode, Cost, Monthly "
+    QString result = "SELECT ClientName, SpaceCode, StartDate, EndDate, ProgramCode, Cost, Monthly, RoomNo, SpaceNo "
                      "FROM Booking ";
     result += "WHERE Startdate > '" + curDate + "'";
 
