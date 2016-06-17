@@ -1000,13 +1000,20 @@ void MainWindow::on_btn_payListAllUsers_clicked()
 void MainWindow::on_editSearch_clicked()
 {
     QString name = ui->editClient->text();
-    QList<QTableWidgetItem *> list = ui->editLookupTable->findItems(name, Qt::MatchContains);
-    for (int i=0; i < ui->editLookupTable->rowCount(); i++) {
-        ui->editLookupTable->hideRow(i);
+
+    QRegularExpression pattern(name, QRegularExpression::CaseInsensitiveOption);
+    for( int i = 0; i < ui->editLookupTable->rowCount(); ++i ) {
+        bool match = false;
+        QTableWidgetItem *item = ui->editLookupTable->item( i, 0 );
+
+        match = pattern.match(item->text()).hasMatch();
+
+        qDebug() << "match at row " << i << ": " << match;
+
+        //hide rows that don't match pattern
+        ui->editLookupTable->setRowHidden( i, !match );
     }
-    for (auto item : list) {
-        ui->editLookupTable->setRowHidden(item->row(), false);
-    }
+
 }
 void MainWindow::on_bookingSearchButton_clicked()
 {
@@ -8892,6 +8899,7 @@ void MainWindow::on_btn_reg_searchRS_clicked()
     building = ui->cbo_reg_bldg->currentText();
     floor = ui->cbo_reg_floor->currentText();
 
+    //build regex pattern
     regEx += building == "All" ? ".+-" : building + "-";
     regEx += floor == "All" ? ".+-" : floor + "-";
 
@@ -8930,9 +8938,10 @@ void MainWindow::on_btn_reg_searchRS_clicked()
             if (itemNo < startNo || itemNo > endNo) {
                 match = false;
             }
-
         }
         qDebug() << "match at row " << i << ": " << match;
+
+        //hide rows that don't match pattern
         ui->editLookupTable->setRowHidden( i, !match );
     }
 }
