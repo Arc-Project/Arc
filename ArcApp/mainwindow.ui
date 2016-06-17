@@ -224,7 +224,7 @@ QHeaderView{
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>19</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="mainMenu">
        <layout class="QGridLayout" name="gridLayout_55">
@@ -19725,6 +19725,19 @@ Balance</string>
       </widget>
       <widget class="QWidget" name="page_5">
        <layout class="QGridLayout" name="gridLayout_88">
+        <item row="0" column="2">
+         <spacer name="horizontalSpacer_104">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
         <item row="1" column="0" colspan="10">
          <widget class="QTableWidget" name="roomHistory_tableWidget">
           <property name="sizePolicy">
@@ -19896,20 +19909,36 @@ Balance</string>
           </item>
          </layout>
         </item>
-        <item row="0" column="2">
-         <spacer name="horizontalSpacer_104">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
+        <item row="2" column="1">
+         <widget class="QPushButton" name="roomHist_loadNext_button">
+          <property name="minimumSize">
            <size>
-            <width>40</width>
-            <height>20</height>
+            <width>200</width>
+            <height>35</height>
            </size>
           </property>
-         </spacer>
+          <property name="maximumSize">
+           <size>
+            <width>200</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Load Next 100</string>
+          </property>
+         </widget>
         </item>
        </layout>
+       <zorder>roomHistory_tableWidget</zorder>
+       <zorder>horizontalLayoutWidget</zorder>
+       <zorder>horizontalSpacer_104</zorder>
+       <zorder>pushButton</zorder>
+       <zorder>roomHist_loadNext_button</zorder>
       </widget>
      </widget>
     </item>

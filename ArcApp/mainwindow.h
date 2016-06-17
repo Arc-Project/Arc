@@ -170,6 +170,17 @@ public:
     DEV TESTING AUXILIARY FUNCTIONS
     ==========================================================================*/
     QString browse();
+    
+    typedef struct RoomHistoryStruct
+    {
+        int startRow;
+        int endRow;
+        int buildingNo;
+        int floorNo;
+        int roomNo;
+        int spaceNo;
+        int totalRowCount;
+    } RoomHistoryStruct;
 
 public slots:
     void setShift();
@@ -822,6 +833,8 @@ private slots:
 
     void on_building_cbox_currentTextChanged(const QString &arg1);
 
+    void on_roomHist_loadNext_button_clicked();
+
 private:
 
     Ui::MainWindow *ui;
@@ -837,7 +850,7 @@ private:
     int numShift;
 
     bool caseWorkerUpdated = true;
-   QImage profilePic;
+    QImage profilePic;
     QMap <QString, int> caseWorkerList;    //caseworker list
 
     QDir dir;
@@ -849,6 +862,8 @@ private:
     int     shiftSize;
     QVector<QStringList> mon,tue,wed,thur,fri,sat,sun;
     bool shiftExist;
+
+    
 
 
     /*==========================================================================

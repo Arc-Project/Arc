@@ -1810,7 +1810,7 @@ REPORT QUERYS (END)
 ROOM HISTORY (START)
 ==============================================================================*/
 bool DatabaseManager::getRoomHistory(QSqlQuery* queryResults, int buildingNo,
-    int floorNo, int roomNo, int spaceNo)
+    int floorNo, int roomNo, int spaceNo, int startRow, int endRow)
 {
     //queryResults = queryResults(db);
     QString whereString = "";
@@ -1838,17 +1838,36 @@ bool DatabaseManager::getRoomHistory(QSqlQuery* queryResults, int buildingNo,
 
     qDebug() << "whereString = " + whereString;
 
-    QString queryString =
-        QString("SELECT ClientName, SpaceCode, ProgramCode, Date, StartDate, EndDate, Action, EmpName, ShiftNo, ")
-        //+ QString("CONVERT(VARCHAR(15), Time, 100) as Time ")
-        + QString("CONVERT(VARCHAR(7), Time, 0) as Time ")
-        + QString("FROM BookingHistory ") + whereString
-        //+ QString("WHERE BuildingNo = " + QString::number(buildingNo) + " AND FloorNo = " + QString::number(floorNo))
-        //+ QString(" AND RoomNo = " + QString::number(roomNo) + " AND SpaceNo = " + QString::number(spaceNo))
-        //+ QString(" ORDER BY Date DESC, Time DESC");
-        + QString(" ORDER BY BookHistId DESC");
+    QString queryString = "SELECT ClientName, SpaceCode, ProgramCode, Date, "
+                          "StartDate, EndDate, Action, EmpName, ShiftNo, "
+                          "CONVERT(VARCHAR(7), Time, 0) as Time "
+                          "FROM ("
+                          "SELECT ClientName, SpaceCode, ProgramCode, Date, "
+                          "StartDate, EndDate, Action, EmpName, ShiftNo, Time, "
+                          "ROW_NUMBER() OVER (ORDER BY BookHistId DESC) AS RowNum "
+                          "FROM BookingHistory "
+                          ") AS MyDerivedTable "
+                          "WHERE MyDerivedTable.RowNum BETWEEN " + QString::number(startRow) +
+                          " AND " + QString::number(endRow);
+        //+ QString("CONVERT(VARCHAR(7), Time, 0) as Time ")
+        //+ QString("FROM BookingHistory ") + whereString
+        //+ QString(" ORDER BY BookHistId DESC");
         qDebug() << queryString;
     return queryResults->exec(queryString);
+}
+
+int DatabaseManager::bookingHistoryRowCount()
+{
+    QSqlQuery query(db);
+    if (!query.exec("SELECT COUNT(*) FROM BookingHistory"))
+    {
+        return -1;
+    }
+    if (!query.next())
+    {
+        return -1;
+    }
+    return query.value(0).toInt();
 }
 /*==============================================================================
 ROOM HISTORY (FALSE)
