@@ -4361,7 +4361,7 @@ Programs</string>
              <item>
               <widget class="QPushButton" name="adminVal">
                <property name="enabled">
-                <bool>false</bool>
+                <bool>true</bool>
                </property>
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -19700,29 +19700,41 @@ Balance</string>
        </layout>
       </widget>
       <widget class="QWidget" name="validate">
-       <widget class="QPushButton" name="valUpdate">
-        <property name="geometry">
-         <rect>
-          <x>1470</x>
-          <y>910</y>
-          <width>93</width>
-          <height>28</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>View</string>
-        </property>
-       </widget>
-       <widget class="QTableWidget" name="valTable">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>1441</width>
-          <height>951</height>
-         </rect>
-        </property>
-       </widget>
+       <layout class="QGridLayout" name="gridLayout_89">
+        <item row="0" column="0">
+         <widget class="QTableWidget" name="valTable">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QPushButton" name="valUpdate">
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>35</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>100</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>View</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="page_5">
        <layout class="QGridLayout" name="gridLayout_88">
@@ -19751,6 +19763,12 @@ Balance</string>
            <font>
             <pointsize>11</pointsize>
            </font>
+          </property>
+          <property name="sortingEnabled">
+           <bool>false</bool>
+          </property>
+          <property name="columnCount">
+           <number>0</number>
           </property>
          </widget>
         </item>

@@ -184,14 +184,15 @@ void DatabaseManager::printAll(QSqlQuery queryResults)
 }
 QSqlQuery DatabaseManager::getClientBooking(QString clientId){
     QSqlQuery query(db);
-    QString q = "SELECT * FROM Booking WHERE ClientId = " + clientId;
+    QString q = "SELECT StartDate, EndDate, CONVERT(VARCHAR, Cost, 0) AS Cost FROM Booking WHERE ClientId = " + clientId;
     qDebug() << q;
     query.exec(q);
     return query;
 }
 QSqlQuery DatabaseManager::getClientTransactions(QString clientId){
     QSqlQuery query(db);
-    QString q = "SELECT * FROM Transac WHERE ClientId = " + clientId;
+    //QString q = "SELECT * FROM Transac WHERE ClientId = " + clientId;
+    QString q = "SELECT Date, TransType, Notes, CONVERT(VARCHAR, Amount, 0) AS Amount  from Transac WHERE ClientId = " + clientId;
     qDebug() << q;
     query.exec(q);
     return query;

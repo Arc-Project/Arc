@@ -22,7 +22,6 @@ public:
     void populateATable(QTableWidget * table, QStringList headers, QStringList items, QSqlQuery result, bool stretch, bool trans);
     bool doMessageBox(QString message);
 
-
 private slots:
     void on_valFix_clicked();
 
@@ -32,6 +31,8 @@ private:
     Ui::Validate *ui;
     double curBal, fixBal;
     QString clientId, employee, shift;
+    void resizeTableView(QTableView* tableView);
+    void showEvent( QShowEvent* event );
 };
 
 #endif // VALIDATE_H

@@ -30,20 +30,25 @@ void Validate::setupUi(){
     QStringList headers,cols;
     headers << "Start" << "Checkout" << "Cost";
     cols << "StartDate" << "EndDate" << "Cost";
-    populateATable(ui->valBook, headers,cols, result, true, false);
+    populateATable(ui->valBook, headers,cols, result, false, false);
     result = dbManager->getClientTransactions(clientId);
     headers.clear();
     cols.clear();
     headers << "Date" << "Type" << "Notes" << "Amount";
     cols << "Date" << "TransType" << "Notes" << "Amount";
-    populateATable(ui->valTrans, headers, cols, result, true, true);
+    populateATable(ui->valTrans, headers, cols, result, false, true);
     ui->valCur->setText(QString::number(curBal, 'f',2));
     ui->valExpect->setText(QString::number(fixBal, 'f', 2));
-
 }
 bool Validate::doMessageBox(QString message){
+    QString tmpStyleSheet=parentWidget()->styleSheet();
+    parentWidget()->setStyleSheet("");
+
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, "Confirm", message, QMessageBox::Yes | QMessageBox::No);
+    
+    parentWidget()->setStyleSheet(tmpStyleSheet);
+    
     if(reply == QMessageBox::Yes){
         return true;
     }
@@ -119,7 +124,52 @@ void Validate::populateATable(QTableWidget * table, QStringList headers, QString
 
 }
 
+void Validate::resizeTableView(QTableView* tableView)
+{
+    tableView->setVisible(false);
+    tableView->resizeColumnsToContents();
+
+    int cols = tableView->horizontalHeader()->count();
+    double width = tableView->horizontalHeader()->size().width();
+    double currentWidth = 0;
+    int hiddenColCount = 0;
+    for (int i = 0; i < cols; ++i)
+    {
+        double colWidth = tableView->columnWidth(i);
+        if (colWidth == 0)
+        {
+            hiddenColCount++;
+        }
+        currentWidth +=  colWidth;
+    }
+    double diff = width - currentWidth;
+    if (diff > 0)
+    {
+        double sizeIncrease = diff / (cols - hiddenColCount);
+
+        for (int i = 0; i < cols; ++i)
+        {
+            if (diff > currentWidth * 1.5f)
+            {
+                sizeIncrease = tableView->columnWidth(i) * 0.75f;
+            }
+            if (tableView->columnWidth(i) != 0)
+            {
+                tableView->setColumnWidth(i, tableView->columnWidth(i) + sizeIncrease);
+            }
+        }
+    }
+
+    tableView->setVisible(true);
+}
+
 void Validate::on_valExit_clicked()
 {
     close();
 }
+
+void Validate::showEvent( QShowEvent* event ) {
+    QWidget::showEvent( event );
+    resizeTableView(ui->valTrans);
+    resizeTableView(ui->valBook);
+} 
