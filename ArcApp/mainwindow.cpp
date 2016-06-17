@@ -1001,16 +1001,22 @@ void MainWindow::on_btn_payListAllUsers_clicked()
 
 void MainWindow::on_editSearch_clicked()
 {
-    QString name = ui->editClient->text();
+    QStringList nameList = ui->editClient->text().split(" ");
+//    QString name = ui->editClient->text();
 
-    QRegularExpression pattern(name, QRegularExpression::CaseInsensitiveOption);
-    for( int i = 0; i < ui->editLookupTable->rowCount(); ++i ) {
-        bool match = false;
+
+    for(int i = 0; i < ui->editLookupTable->rowCount(); ++i) {
+        bool match = true;
         QTableWidgetItem *item = ui->editLookupTable->item( i, 0 );
 
-        match = pattern.match(item->text()).hasMatch();
-
-        qDebug() << "match at row " << i << ": " << match;
+        for (int j = 0; j < nameList.size(); ++j) {
+            QRegularExpression pattern(nameList[j], QRegularExpression::CaseInsensitiveOption);
+            if (!pattern.match(item->text()).hasMatch()){
+                match = false;
+                break;
+            }
+            qDebug() << "match at row " << i << ": " << match;
+        }
 
         //hide rows that don't match pattern
         ui->editLookupTable->setRowHidden( i, !match );
