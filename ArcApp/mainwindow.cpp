@@ -368,6 +368,13 @@ void MainWindow::on_editbookButton_clicked()
 void MainWindow::checkRegRadioSelection()
 {
     qDebug() << "checking radio selection";
+
+    ui->cbo_reg_start->clear();
+    ui->cbo_reg_start->addItem("All");
+    ui->cbo_reg_end->clear();
+    ui->cbo_reg_end->addItem("All");
+    ui->cbo_reg_floor->setCurrentIndex(0);
+
     if (ui->rdo_reg_room->isChecked()) {
         ui->cbo_reg_room->setEnabled(false);
         ui->lbl_reg_start->setText("Room Start");
@@ -377,11 +384,9 @@ void MainWindow::checkRegRadioSelection()
         ui->lbl_reg_start->setText("Space Start");
         ui->lbl_reg_end->setText("Space End");
     }
-    ui->cbo_reg_start->clear();
-    ui->cbo_reg_start->addItem("All");
-    ui->cbo_reg_end->clear();
-    ui->cbo_reg_end->addItem("All");
-    ui->cbo_reg_floor->setCurrentIndex(0);
+
+    on_cbo_reg_floor_currentTextChanged("");
+
 }
 
 void MainWindow::populateCombo(QComboBox *emptyCombo, QSqlQuery results) {
@@ -411,7 +416,6 @@ void MainWindow::on_cbo_reg_bldg_currentTextChanged(const QString &arg1)
     qDebug() << "building text changed";
     const bool blocked = ui->cbo_reg_floor->blockSignals(true);
     Q_UNUSED(arg1);
-//    QSqlQuery results = dbManager->getFloors(ui->cbo_reg_bldg->currentText());
     QSqlQuery results = dbManager->getFloors(ui->cbo_reg_bldg->currentText());
     ui->cbo_reg_floor->clear();
     qDebug() << "floor combo data cleared";
@@ -8957,6 +8961,7 @@ void MainWindow::on_btn_reg_searchRS_clicked()
 void MainWindow::on_btn_regCurDay_clicked()
 {
     ui->de_regDate->setDate(QDate::currentDate());
+    on_btn_regGo_clicked();
 }
 
 void MainWindow::on_btn_regGo_clicked()
@@ -9128,4 +9133,5 @@ void MainWindow::on_cbo_reg_end_currentTextChanged(const QString &arg1)
 {
     Q_UNUSED(arg1);
     ui->cbo_reg_end->removeItem(ui->cbo_reg_end->findText("All"));
+    on_cbo_reg_start_currentTextChanged(ui->cbo_reg_start->currentText());
 }

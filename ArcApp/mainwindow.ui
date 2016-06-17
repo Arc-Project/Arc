@@ -19936,9 +19936,7 @@ Balance</string>
         </item>
        </layout>
        <zorder>roomHistory_tableWidget</zorder>
-       <zorder>horizontalLayoutWidget</zorder>
        <zorder>horizontalSpacer_104</zorder>
-       <zorder>pushButton</zorder>
        <zorder>roomHist_loadNext_button</zorder>
       </widget>
      </widget>
@@ -20021,7 +20019,6 @@ Balance</string>
      <string>Export</string>
     </property>
     <addaction name="separator"/>
-    <addaction name="actionReceipt"/>
     <addaction name="actionExport_to_PDF"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
