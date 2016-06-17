@@ -4998,11 +4998,11 @@ void MainWindow::on_actionBack_triggered()
         ui->stackedWidget->setCurrentIndex(page);
         ui->actionForward->setEnabled(true);
 
-//        switch(page) {
-//        case EDITBOOKING:
-//            on_editSearch_clicked();
-//            break;
-//        }
+        switch(page) {
+        case EDITBOOKING:
+            on_btn_regCurDay_clicked();
+            break;
+        }
     }
 }
 
