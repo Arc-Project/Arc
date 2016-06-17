@@ -12,6 +12,8 @@
 #include "changepassword.h"
 #include "duplicateclients.h"
 
+MainWindow::RoomHistoryStruct roomHistStruct;
+
 QLabel *lbl_curUser;
 QLabel *lbl_curShift;
 
@@ -474,7 +476,6 @@ void MainWindow::on_roomHistoryButton_clicked()
     ui->stackedWidget->setCurrentIndex(ROOMHISTORY);
     addHistory(MAINMENU);
 
-    MainWindow::on_roomHistory_search_btn_clicked();
     /*
     QSqlQuery query;
     if (dbManager->getRoomHistory(&query, buildingNo, floorNo, roomNo, spaceNo))
@@ -501,6 +502,7 @@ void MainWindow::on_roomHistoryButton_clicked()
     on_building_cbox_currentTextChanged("");
     qDebug() << "building combobox populated";
     ui->building_cbox->blockSignals(blocked);
+    MainWindow::on_roomHistory_search_btn_clicked();
 }
 
 void MainWindow::on_caseButton_clicked()
@@ -8987,13 +8989,17 @@ ROOM HISTORY (START)
 ==============================================================================*/
 void MainWindow::on_roomHistory_search_btn_clicked()
 {
-    int buildingNo = ui->building_cbox->currentText() == "All" ? -1 : ui->building_cbox->currentText().toInt();
-    int floorNo = ui->floor_cbox->currentText() == "All" ? -1 : ui->floor_cbox->currentText().toInt();
-    int roomNo = ui->room_cbox->currentText() == "All" ? -1 : ui->room_cbox->currentText().toInt();
-    int spaceNo = ui->space_cbox->currentText() == "All" ? -1 : ui->space_cbox->currentText().toInt();
+    roomHistStruct.buildingNo = ui->building_cbox->currentText() == "All" ? -1 : ui->building_cbox->currentText().toInt();
+    roomHistStruct.floorNo = ui->floor_cbox->currentText() == "All" ? -1 : ui->floor_cbox->currentText().toInt();
+    roomHistStruct.roomNo = ui->room_cbox->currentText() == "All" ? -1 : ui->room_cbox->currentText().toInt();
+    roomHistStruct.spaceNo = ui->space_cbox->currentText() == "All" ? -1 : ui->space_cbox->currentText().toInt();
+    roomHistStruct.startRow = 1;
+    roomHistStruct.endRow = 100;
 
     QSqlQuery query;
-    if (dbManager->getRoomHistory(&query, buildingNo, floorNo, roomNo, spaceNo))
+    if (dbManager->getRoomHistory(&query, roomHistStruct.buildingNo, 
+        roomHistStruct.floorNo, roomHistStruct.roomNo, roomHistStruct.spaceNo, 
+        roomHistStruct.startRow, roomHistStruct.endRow))
     {
         QStringList header;
         QStringList cols;
@@ -9003,6 +9009,17 @@ void MainWindow::on_roomHistory_search_btn_clicked()
              << "EndDate" << "Action" << "EmpName" << "ShiftNo" << "Time";
         populateATable(ui->roomHistory_tableWidget, header, cols, query, false);
         resizeTableView(ui->roomHistory_tableWidget);
+    }
+
+    roomHistStruct.totalRowCount = dbManager->bookingHistoryRowCount();
+    qDebug() << "booking history row count = " << roomHistStruct.totalRowCount;
+    if (roomHistStruct.endRow < roomHistStruct.totalRowCount)
+    {
+        ui->roomHist_loadNext_button->setEnabled(true);
+    }
+    else
+    {
+        ui->roomHist_loadNext_button->setEnabled(false);
     }
 }
 
@@ -9048,6 +9065,47 @@ void MainWindow::on_room_cbox_currentTextChanged(const QString &arg1)
     //results.seek(-1);
     //populateCombo(ui->cbo_reg_end, results);
     qDebug() << "space start end populated";
+}
+
+void MainWindow::on_roomHist_loadNext_button_clicked()
+{
+    roomHistStruct.startRow += 100;
+    roomHistStruct.endRow += 100;
+
+    QSqlQuery query;
+    if (dbManager->getRoomHistory(&query, roomHistStruct.buildingNo, 
+        roomHistStruct.floorNo, roomHistStruct.roomNo, roomHistStruct.spaceNo, 
+        roomHistStruct.startRow, roomHistStruct.endRow))
+    {
+        // QStringList header;
+        // QStringList cols;
+        // header << "Client" << "Space Code" << "Program" << "Date" << "Start Date"
+        //        << "End Date" << "Action" << "Employee" << "Shift #" << "Time";
+        // cols << "ClientName" << "SpaceCode" << "ProgramCode" << "Date" << "StartDate"
+        //      << "EndDate" << "Action" << "EmpName" << "ShiftNo" << "Time";
+        //populateATable(ui->roomHistory_tableWidget, header, cols, query, false);
+        int row = roomHistStruct.startRow - 1;
+        while(query.next())
+        {
+            ui->roomHistory_tableWidget->insertRow(row);
+            for(int i = 0; i < query.record().count(); i++){
+                ui->roomHistory_tableWidget->setItem(row, i, new QTableWidgetItem(query.value(i).toString()));
+            }
+            row++;
+        }
+
+        resizeTableView(ui->roomHistory_tableWidget);
+    }
+
+    if (roomHistStruct.endRow < roomHistStruct.totalRowCount)
+    {
+        ui->roomHist_loadNext_button->setEnabled(true);
+    }
+    else
+    {
+        ui->roomHist_loadNext_button->setEnabled(false);
+    }
+
 }
 /*==============================================================================
 ROOM HISTORY (END)
