@@ -4710,6 +4710,7 @@ void MainWindow::on_dailyReportGo_btn_clicked()
 void MainWindow::on_dailyReportCurrent_btn_clicked()
 {
     ui->dailyReport_dateEdit->setDate(QDate::currentDate());
+    MainWindow::on_dailyReportGo_btn_clicked();
 }
 
 void MainWindow::on_shiftReportGo_btn_clicked()
@@ -4725,6 +4726,7 @@ void MainWindow::on_shiftReportCurrent_btn_clicked()
 {
     ui->shiftReport_dateEdit->setDate(QDate::currentDate());
     ui->shiftReport_spinBox->setValue(currentshiftid);
+    MainWindow::on_shiftReportGo_btn_clicked();
 }
 
 void MainWindow::on_other_lineEdit_textEdited(const QString &text)
@@ -4893,6 +4895,7 @@ void MainWindow::on_cashFloatCurrent_btn_clicked()
 {
     ui->cashFloat_dateEdit->setDate(QDate::currentDate());
     ui->cashFloat_spinBox->setValue(currentshiftid);
+    MainWindow::on_cashFloatGo_btn_clicked();
 }
 
 void MainWindow::updateCashFloatLastEditedLabels(QString empName,
