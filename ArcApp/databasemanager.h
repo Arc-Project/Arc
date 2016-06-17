@@ -110,7 +110,8 @@ public:
     void reconnectToDatabase();
     void reconnectToDatabase(QSqlDatabase* database);
     bool getRoomHistory(QSqlQuery* queryResults, int buildingNo, int floorNo, 
-        int roomNo, int spaceNo);
+        int roomNo, int spaceNo, int startRow, int endRow);
+    int bookingHistoryRowCount();
 
     //COLIN STUFF/////////////////////////////////////////////////////////////
     QSqlQuery getCurrentBooking(QDate start, QDate end, QString program);
