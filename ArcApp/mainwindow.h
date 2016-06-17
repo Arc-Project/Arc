@@ -789,8 +789,6 @@ private slots:
 
     void on_adminVal_clicked();
 
-    void on_registryRoomLook_clicked();
-
     void on_valUpdate_clicked();
 
   //CHANGE PASSWORD
@@ -812,8 +810,6 @@ private slots:
     void setCurReceipt(QStringList receipt, bool conn);
 
     void populateCombo(QComboBox *emptyCombo, QSqlQuery results);
-
-//    void populateRegStartEnd(QString type);
 
     void checkRegRadioSelection();
 

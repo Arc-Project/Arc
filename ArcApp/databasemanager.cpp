@@ -203,7 +203,7 @@ bool DatabaseManager::deleteBooking(QString id, QString currEmpName, int currShi
 //    qDebug() << q;
 //    return query.exec(q);
     qDebug() << "delete booking called";
-    
+
     QSqlDatabase::database().transaction();
 
     QString connName = QString::number(DatabaseManager::getDbCounter());
@@ -2746,11 +2746,25 @@ QSqlQuery DatabaseManager::populatePastRegistry(QDate date) {
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
     QString dateStr = date.toString(Qt::ISODate);
-    QString curDate = QDate::currentDate().toString(Qt::ISODate);
-    QString result = "SELECT ClientName, SpaceCode, StartDate, EndDate, ProgramCode, Cost, Monthly, RoomNo, SpaceNo ";
-    //use Booking for current day registry data, use RegistryHistory for past day's registry data
-    result += date < QDate::currentDate() ? "FROM RegistryHistory " : "FROM Booking ";
+    QString result = "SELECT ClientName, SpaceCode, StartDate, EndDate, ProgramCode, Cost, Monthly, "
+                     "'', '', '', RoomNo, SpaceNo "
+                     "FROM RegistryHistory ";
     result += "WHERE Startdate <= '" + dateStr + "' AND EndDate > '" + dateStr + "'";
+
+    qDebug() << result;
+    query.exec(result);
+    qDebug() << query.lastError();
+    return query;
+}
+
+QSqlQuery DatabaseManager::populateCurrentRegistry() {
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    QString curDate = QDate::currentDate().toString(Qt::ISODate);
+    QString result = "SELECT ClientName, SpaceCode, StartDate, EndDate, ProgramCode, Cost, Monthly, "
+                     "BookingId, ClientId, SpaceId, RoomNo, SpaceNo "
+                     "FROM Booking ";
+    result += "WHERE Startdate <= '" + curDate + "' AND EndDate > '" + curDate + "'";
 
     qDebug() << result;
     query.exec(result);
@@ -2762,7 +2776,8 @@ QSqlQuery DatabaseManager::populateFutureRegistry() {
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
     QString curDate = QDate::currentDate().toString(Qt::ISODate);
-    QString result = "SELECT ClientName, SpaceCode, StartDate, EndDate, ProgramCode, Cost, Monthly, RoomNo, SpaceNo "
+    QString result = "SELECT ClientName, SpaceCode, StartDate, EndDate, ProgramCode, Cost, Monthly, "
+                     "BookingId, ClientId, SpaceId, RoomNo, SpaceNo "
                      "FROM Booking ";
     result += "WHERE Startdate > '" + curDate + "'";
 

@@ -109,7 +109,7 @@ public:
     bool getDoubleFromQuery(QString queryString, double* result);
     void reconnectToDatabase();
     void reconnectToDatabase(QSqlDatabase* database);
-    bool getRoomHistory(QSqlQuery* queryResults, int buildingNo, int floorNo, 
+    bool getRoomHistory(QSqlQuery* queryResults, int buildingNo, int floorNo,
         int roomNo, int spaceNo, int startRow, int endRow);
     int bookingHistoryRowCount();
 
@@ -219,12 +219,13 @@ public:
     QSqlQuery getSpaces(QString building, QString floor, QString room);
     QSqlQuery populatePastRegistry(QDate date);
     QSqlQuery populateFutureRegistry();
+    QSqlQuery populateCurrentRegistry();
 
 signals:
     void dailyReportStatsChanged(QList<int> list, bool conn);
     void shiftReportStatsChanged(QStringList list, bool conn);
     void cashFloatChanged(QDate date, int shiftNo, QStringList list, bool conn);
-    void cashFloatInserted(QString empName, QString currentDateStr, 
+    void cashFloatInserted(QString empName, QString currentDateStr,
         QString currentTimeStr);
     void monthlyReportChanged(QStringList list, bool conn);
     void noDatabaseConnection(QSqlDatabase* database);
