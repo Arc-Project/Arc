@@ -831,6 +831,10 @@ private slots:
     void on_building_cbox_currentTextChanged(const QString &arg1);
 
 
+    void on_cbo_reg_start_currentTextChanged(const QString &arg1);
+
+    void on_cbo_reg_end_currentTextChanged(const QString &arg1);
+
 private:
 
     Ui::MainWindow *ui;
