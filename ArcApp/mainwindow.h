@@ -891,7 +891,7 @@ private:
     void getCashFloat(QDate date, int shiftNo);
     void getMonthlyReport(int month, int year);
     void updateRestrictionTables();
-
+    void setReportsDateEditMax();
 
 
     QModelIndex lastprogramclicked = QModelIndex();
