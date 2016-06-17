@@ -20019,7 +20019,6 @@ Balance</string>
      <string>Export</string>
     </property>
     <addaction name="separator"/>
-    <addaction name="actionReceipt"/>
     <addaction name="actionExport_to_PDF"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
