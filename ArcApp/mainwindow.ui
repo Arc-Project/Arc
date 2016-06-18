@@ -5853,8 +5853,8 @@ Balance</string>
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>718</width>
-                 <height>1381</height>
+                 <width>620</width>
+                 <height>1294</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_47">
@@ -9096,40 +9096,6 @@ Balance</string>
           <zorder></zorder>
          </widget>
         </item>
-        <item row="3" column="1">
-         <widget class="QPushButton" name="registryRoomLook">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>35</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>14</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Search Room</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLineEdit" name="registryRoom">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>35</height>
-           </size>
-          </property>
-         </widget>
-        </item>
         <item row="2" column="0" colspan="7">
          <widget class="QTableWidget" name="editLookupTable">
           <property name="font">
@@ -9220,8 +9186,6 @@ Balance</string>
        <zorder>groupBox_9</zorder>
        <zorder>groupBox_10</zorder>
        <zorder>editLookupTable</zorder>
-       <zorder>registryRoom</zorder>
-       <zorder>registryRoomLook</zorder>
        <zorder>editButton</zorder>
        <zorder>editDelete</zorder>
       </widget>
@@ -19990,7 +19954,7 @@ Balance</string>
      <x>0</x>
      <y>0</y>
      <width>1625</width>
-     <height>29</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="font">

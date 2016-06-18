@@ -976,9 +976,12 @@ void MainWindow::doValidate(){
         QString clientId = result.value("ClientId").toString();
         expected = dbManager->validateMoney(clientId);
         real = result.value("Balance").toString().toDouble();
+        double tmp = QString::number(expected, 'f', 2).toDouble();
+        expected = tmp;
         if(expected == real){
-            break;
+            continue;
         }
+        qDebug() << "\n\n Clientid: " << clientId << " expected: " << expected << " real: " << real;
         table->insertRow(x);
         qDebug() << "Adding Client" << clientId;
         QString fullName = result.value("FirstName").toString() + result.value("LastName").toString();
