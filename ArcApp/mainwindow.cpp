@@ -8909,7 +8909,7 @@ void MainWindow::on_btn_reg_searchRS_clicked()
     regEx += floor == "All" ? ".+-" : floor + "-";
 
     if (!ui->rdo_reg_room->isChecked()) {
-        room = ui->cbo_reg_floor->currentText();
+        room = ui->cbo_reg_room->currentText();
 
         regEx += room == "All" ? ".+-" : room + "-";
     }
@@ -8938,11 +8938,14 @@ void MainWindow::on_btn_reg_searchRS_clicked()
         if (start != "All" && match) {
             int startNo = start.toInt();
             int endNo = end.toInt();
-            int itemNo = ui->rdo_reg_room->isChecked() ? ui->editLookupTable->item(i,1)->text().toInt() :
-                                                     ui->editLookupTable->item(i,12)->text().toInt();
+            qDebug() << "set startNo and endNo";
+            int itemNo = ui->rdo_reg_room->isChecked() ? ui->editLookupTable->item(i,10)->text().toInt() :
+                                                     ui->editLookupTable->item(i,11)->text().toInt();
+            qDebug() << "set itemNo";
             if (itemNo < startNo || itemNo > endNo) {
                 match = false;
             }
+            qDebug() << "checked range of itemNo against startNo and endNo";
         }
         qDebug() << "match at row " << i << ": " << match;
 
