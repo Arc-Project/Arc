@@ -5853,7 +5853,7 @@ Balance</string>
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>620</width>
+                 <width>1266</width>
                  <height>1294</height>
                 </rect>
                </property>
@@ -19688,6 +19688,36 @@ Balance</string>
            <font>
             <pointsize>11</pointsize>
            </font>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="label_92">
+          <property name="maximumSize">
+           <size>
+            <width>200</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>The clients displayed here have a discrepancy between the balance shown on the client profile and the sum of their transactions. 
+
+ If everything is working as expected, nothing should be displayed here. 
+
+ 1. Select a client and click &quot;View&quot; to see their list of transactions and bookings. From the list of transactions, you can determine if the balance shown is correct.
+
+ 2. Click &quot;Fix&quot; to update their balance to the expected amount, or click &quot;Exit&quot; to not make any changes.</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
