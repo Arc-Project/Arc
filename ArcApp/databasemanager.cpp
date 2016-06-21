@@ -599,13 +599,13 @@ QSqlQuery DatabaseManager::searchClientList(QString ClientName){
     QSqlQuery query(db);
 
     //default select query
-    QString searchQuery = QString("SELECT ClientId, LastName, FirstName, MiddleName, Dob, Balance ")
+    QString searchQuery = QString("SELECT ClientId, ISNULL(LastName, ''), ISNULL(FirstName, ''), ISNULL(MiddleName, ''), Dob, Balance ")
             + QString("FROM Client ");
     QStringList clientNames;
     if(ClientName.toLower() == "anonymous"){
             qDebug()<<"case: " + ClientName.toLower();
-            searchQuery += QString("WHERE FirstName Like '"+ ClientName.toLower() + "' ")
-                         + QString("OR LastName Like '"+ ClientName.toLower() + "' ");
+            searchQuery += QString("WHERE ISNULL(FirstName, '') Like '"+ ClientName.toLower() + "' ")
+                         + QString("OR ISNULL(LastName, '') Like '"+ ClientName.toLower() + "' ");
 
     }
     else if(ClientName != ""){
@@ -614,16 +614,16 @@ QSqlQuery DatabaseManager::searchClientList(QString ClientName){
 
     if(clientNames.count() == 1){
         qDebug()<<"Name 1 words";
-        searchQuery += QString("WHERE (FirstName LIKE '"+clientNames.at(0) + "%' ")
-                     + QString("OR LastName Like '"+clientNames.at(0)+"%') ")
-                     + QString("AND NOT FirstName = 'anonymous' ");
+        searchQuery += QString("WHERE (ISNULL(FirstName, '') LIKE '"+clientNames.at(0) + "%' ")
+                     + QString("OR ISNULL(LastName, '') Like '"+clientNames.at(0)+"%') ")
+                     + QString("AND NOT ISNULL(FirstName, '') = 'anonymous' ");
     }
     //if 2 word name, match first name and last name
     else if(clientNames.count() == 2){
         qDebug() << "Name 2 words";
-        searchQuery += QString("WHERE (LastName LIKE '"+clientNames.at(0) + "%' AND FirstName LIKE '" + clientNames.at(1) + "%') ")
-                     + QString("OR (FirstName Like '"+clientNames.at(0)+"%' AND LastName LIKE '" + clientNames.at(1) + "%') ")
-                     + QString("AND NOT FirstName = 'anonymous' ");
+        searchQuery += QString("WHERE (ISNULL(LastName, '') LIKE '"+clientNames.at(0) + "%' AND FirstName LIKE '" + clientNames.at(1) + "%') ")
+                     + QString("OR (ISNULL(FirstName, '') Like '"+clientNames.at(0)+"%' AND LastName LIKE '" + clientNames.at(1) + "%') ")
+                     + QString("AND NOT ISNULL(FirstName, '') = 'anonymous' ");
     }
     else{
         if(ClientName ==""){
@@ -633,6 +633,7 @@ QSqlQuery DatabaseManager::searchClientList(QString ClientName){
             qDebug()<<"Wrong name";
     }
     searchQuery += QString("ORDER BY LastName ASC, FirstName ASC");
+    qDebug() << searchQuery;
     query.prepare(searchQuery);
     query.exec();
     return query;
