@@ -173,7 +173,7 @@ void MainWindow::initCurrentWidget(int idx){
             break;
         case CLIENTLOOKUP:  //WIDGET 1
 
-            curClientName="";
+//            curClientName="";
             qDebug()<<"curclient id in clientLookup before init " << curClientID;
             initClientLookupInfo();
             if(caseWorkerUpdated){
@@ -5006,6 +5006,11 @@ void MainWindow::on_actionBack_triggered()
         case EDITBOOKING:
             on_btn_regCurDay_clicked();
             break;
+        case CLIENTLOOKUP:
+            ui->pushButton_bookRoom->setEnabled(false);
+            ui->pushButton_processPaymeent->setEnabled(false);
+            ui->pushButton_editClientInfo->setEnabled(false);
+            ui->pushButton_CaseFiles->setEnabled(false);
         }
     }
 }
@@ -8722,6 +8727,7 @@ void MainWindow::saveReceipt(bool booked, QString amtPaid, bool printPDF) {
 void MainWindow::on_adminVal_clicked()
 {
     ui->stackedWidget->setCurrentIndex(VALIDATEPAGE);
+    addHistory(ADMINPAGE);
     doValidate();
 }
 
