@@ -364,6 +364,7 @@ void MainWindow::on_editbookButton_clicked()
     ui->cbo_reg_bldg->blockSignals(blocked);
 
     ui->de_regDate->setMaximumDate(QDate::currentDate());
+    ui->de_regDate->setMinimumDate(QDate(16,6,20));
 
 }
 void MainWindow::checkRegRadioSelection()
