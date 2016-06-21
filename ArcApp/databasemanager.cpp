@@ -2609,11 +2609,10 @@ void DatabaseManager::getReceiptThread(QString receiptid)
             if (DatabaseManager::getReceiptQuery(&query, receiptid))
             {
                 qDebug() << "query returned";
-                int idx = 0;
                 query.next();
                 for (int i = 0; i < 23; i++){
                     receipt << query.value(i).toString();
-                    qDebug() << "from query: added " << query.value(idx).toString();
+                    qDebug() << "from query: added " << query.value(i).toString();
                 }
             }
             tempDb.close();

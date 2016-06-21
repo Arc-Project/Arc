@@ -67,26 +67,26 @@ bool payment::makePayment(){
 
 
             values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
-                    + "','" + QString::number(transact->amount) + "','" + transact->type + "','" + transact->notes
+                    + "'," + QString::number(transact->amount) + ",'" + transact->type + "','" + transact->notes
                     + "','" + transact->chequeNo + "','" + transact->MSQ + "','" + transact->issuedString + "','" + transact->transType
                     + "', 0" + ",'" + transact->outstanding + "', '" + empId + "','" + shiftNo + "','" + QTime::currentTime().toString() + "'";
         }
         else{
         values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
-                + "','" + QString::number(transact->amount) + "','" +  transact->type + "','" + transact->notes
+                + "'," + QString::number(transact->amount) + ",'" +  transact->type + "','" + transact->notes
                 + "', NULL, NULL, NULL" + ",'" + transact->transType + "', 0" + ",'" + transact->outstanding + "', '" + empId + "','" + shiftNo + "','" + QTime::currentTime().toString() + "'";
         }
     }
     else{
         if(ui->paymentDrop->currentIndex() == 1){
             values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
-                    + "','" + QString::number(transact->amount) + "','" + transact->type + "','" + transact->notes
+                    + "'," + QString::number(transact->amount) + ",'" + transact->type + "','" + transact->notes
                     + "','" + transact->chequeNo + "','" + "NO" + "','" + transact->issuedString + "','" + transact->transType
                     + "', 0" + ",'" + "0" + "', '" + empId + "','" + shiftNo + "','" + QTime::currentTime().toString() + "'";
         }
         else{
         values = "'" + client->clientId + "','" + QDate::currentDate().toString(Qt::ISODate)
-                + "','" + QString::number(transact->amount) + "','" + transact->type + "','" + transact->notes
+                + "'," + QString::number(transact->amount) + ",'" + transact->type + "','" + transact->notes
                 + "', NULL, NULL, NULL" + ",'" + transact->transType + "', 0" + ",'" + transact->outstanding + "', '" + empId + "','" + shiftNo + "','" + QTime::currentTime().toString() + "'";
 
         }
