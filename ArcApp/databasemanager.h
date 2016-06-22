@@ -220,6 +220,8 @@ public:
     QSqlQuery populatePastRegistry(QDate date);
     QSqlQuery populateFutureRegistry();
     QSqlQuery populateCurrentRegistry();
+    QSqlQuery getCaseFilePath(QString clientId);
+    bool setCaseFilePath(QString clientId, QString path);
 
 signals:
     void dailyReportStatsChanged(QList<int> list, bool conn);

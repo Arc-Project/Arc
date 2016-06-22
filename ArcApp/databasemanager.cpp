@@ -2541,7 +2541,7 @@ bool DatabaseManager::addReceiptQuery(QString receiptid, QString date, QString t
         qDebug() << query.lastQuery();
         return true;
     }
-    qDebug() << query.lastError();
+    qDebug() << "add receipt last error: " << query.lastError();
     return false;
 }
 
@@ -2584,7 +2584,7 @@ bool DatabaseManager::updateReceiptQuery(QString receiptid, QString date, QStrin
         qDebug() << query.lastQuery();
         return true;
     }
-    qDebug() << query.lastError();
+    qDebug() << "update receipt last error: " << query.lastError();
     return false;
 }
 
@@ -2662,7 +2662,7 @@ QSqlQuery DatabaseManager::getBuildings() {
                      "ORDER BY BuildingNo ASC";
     qDebug() << result;
     query.exec(result);
-    qDebug() << query.lastError();
+    qDebug() << "getBuildings last error: " << query.lastError();
     return query;
 }
 
@@ -2679,7 +2679,7 @@ QSqlQuery DatabaseManager::getFloors(QString building) {
 
     qDebug() << result;
     query.exec(result);
-    qDebug() << query.lastError();
+    qDebug() << "getFloors last error: " <<  query.lastError();
     return query;
 }
 
@@ -2704,7 +2704,7 @@ QSqlQuery DatabaseManager::getRooms(QString building, QString floor) {
 
     qDebug() << result;
     query.exec(result);
-    qDebug() << query.lastError();
+    qDebug() << "getRooms last error: " << query.lastError();
     return query;
 }
 
@@ -2739,7 +2739,7 @@ QSqlQuery DatabaseManager::getSpaces(QString building, QString floor, QString ro
 
     qDebug() << result;
     query.exec(result);
-    qDebug() << query.lastError();
+    qDebug() << "get spaces last error: " << query.lastError();
     return query;
 }
 
@@ -2754,7 +2754,7 @@ QSqlQuery DatabaseManager::populatePastRegistry(QDate date) {
 
     qDebug() << result;
     query.exec(result);
-    qDebug() << query.lastError();
+    qDebug() << "populate past registry last error: " << query.lastError();
     return query;
 }
 
@@ -2769,7 +2769,7 @@ QSqlQuery DatabaseManager::populateCurrentRegistry() {
 
     qDebug() << result;
     query.exec(result);
-    qDebug() << query.lastError();
+    qDebug() << "populate current registry: " << query.lastError();
     return query;
 }
 
@@ -2784,6 +2784,32 @@ QSqlQuery DatabaseManager::populateFutureRegistry() {
 
     qDebug() << result;
     query.exec(result);
-    qDebug() << query.lastError();
+    qDebug() << "populate future registry: " <<  query.lastError();
     return query;
+}
+
+QSqlQuery DatabaseManager::getCaseFilePath(QString clientId) {
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    QString result = "SELECT CaseFilePath "
+                     "FROM Client "
+                     "WHERE ClientId = " + clientId;
+
+    qDebug() << result;
+    query.exec(result);
+    qDebug() << "getCaseFilePath last sql error:" << query.lastError();
+    return query;
+}
+
+bool DatabaseManager::setCaseFilePath(QString clientId, QString path) {
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    QString result = "UPDATE CLIENT "
+                     "SET CaseFilePath = '" + path + "' "
+                     "WHERE ClientId = " + clientId;
+
+    qDebug() << result;
+    bool success = query.exec(result);
+    qDebug() << "setCaseFilePath last sql error:" << query.lastError();
+    return success;
 }

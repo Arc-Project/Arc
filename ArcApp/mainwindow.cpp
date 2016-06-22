@@ -193,6 +193,7 @@ void MainWindow::initCurrentWidget(int idx){
             //initimageview
             ui->actionExport_to_PDF->setEnabled(false);
             receiptid = "";
+            ui->le_caseDir->clear();
             break;
         case BOOKINGLOOKUP: //WIDGET 2
             qDebug()<<"###BOOKING LOOKUP Client INFO###";
@@ -3319,14 +3320,29 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
     QString curLastName = ui->tableWidget_search_client->item(nRow, 1)->text();
 
     //if dir was saved
-    if (!ui->le_caseDir->text().isEmpty()){
-    QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
-                          ui->tableWidget_search_client->item(nRow, 2)->text() + "*");
+//    if (!ui->le_caseDir->text().isEmpty()){
+//    QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+//                          ui->tableWidget_search_client->item(nRow, 2)->text() + "*");
 
-    qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
-                ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
-    ui->le_caseDir->setText(dir.path());
-    populate_tw_caseFiles(filter);
+//    qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+//                ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
+//    ui->le_caseDir->setText(dir.path());
+
+
+//    populate_tw_caseFiles(filter);
+//    }
+
+    //read saved path from db and populate
+    QSqlQuery results = dbManager->getCaseFilePath(curClientID);
+    results.next();
+    dir = results.value(0).toString();
+    //check if path exists
+    if (dir.exists()) {
+        qDebug() << "path exists. using path to populate files";
+        ui->le_caseDir->setText(dir.path());
+        populate_tw_caseFiles();
+    } else {
+        qDebug() << "path does not exist. not populating files.";
     }
 
     ui->lbl_caseClientName->setText(curFirstName + " " + curMiddleName + curLastName + "'s Case Files");
@@ -3336,7 +3352,7 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
 
     //running notes: move to another function
     QSqlQuery noteResult = dbManager->readNote(curClientID);
-    qDebug() << noteResult.lastError();
+    qDebug() << "read note last error: " << noteResult.lastError();
     ui->te_notes->document()->clear();
     noteResult.next();
     ui->te_notes->document()->setPlainText(noteResult.value(0).toString());
@@ -4071,25 +4087,21 @@ void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
 // set case files directory
 void MainWindow::on_pushButton_3_clicked()
 {
-    const QString DEFAULT_DIR_KEY("default_dir");
-    QSettings mruDir;
+//    const QString DEFAULT_DIR_KEY("default_dir");
+//    QSettings mruDir;
     QString tempDir = QFileDialog::getExistingDirectory(
                     this,
-                    tr("Select Directory"),
-                    mruDir.value(DEFAULT_DIR_KEY).toString()
+                    tr("Select Directory")
+//                    mruDir.value(DEFAULT_DIR_KEY).toString()
                 );
     if (!tempDir.isEmpty()) {
         dir = tempDir;
-        mruDir.setValue(DEFAULT_DIR_KEY, tempDir);
-//        int nRow = ui->tableWidget_search_client->currentRow();
-
-//        QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
-//                              ui->tableWidget_search_client->item(nRow, 2)->text() + "*");
-
-//        qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
-//                    ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
+        //try 3 times to save path to db
+        for (int i = 0; i < 3; i++) {
+            if (dbManager->setCaseFilePath(curClientID, tempDir)) break;
+        }
+//        mruDir.setValue(DEFAULT_DIR_KEY, tempDir);
         ui->le_caseDir->setText(dir.path());
-//        populate_tw_caseFiles(filter);
         populate_tw_caseFiles();
     }
     connect(ui->tw_caseFiles, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(on_tw_caseFiles_cellDoubleClicked(int,int)), Qt::UniqueConnection);
@@ -5095,7 +5107,7 @@ void MainWindow::insertPcp(QTableWidget *tw, QString type){
 //        QSqlQuery delResult = dbManager->deletePcpRow(i, type);
 //        qDebug() << delResult.lastError();
         QSqlQuery addResult = dbManager->addPcp(i, curClientID, type, goal, strategy, date);
-        qDebug() << addResult.lastError();
+        qDebug() << "add pcp last error: "<< addResult.lastError();
     }
 }
 
@@ -5259,7 +5271,7 @@ void MainWindow::on_btn_notesSave_clicked()
 //        ui->lbl_noteWarning->setStyleSheet("QLabel#lbl_noteWarning {color = red;}");
 //        ui->lbl_noteWarning->setText(result.lastError().text());
         QSqlQuery result2 = dbManager->updateNote(curClientID, notes);
-        qDebug() << result2.lastError();
+        qDebug() << "update note last error: " << result2.lastError();
 
     }
 }
@@ -5267,7 +5279,7 @@ void MainWindow::on_btn_notesSave_clicked()
 void MainWindow::on_btn_notesUndo_clicked()
 {
     QSqlQuery result = dbManager->readNote(curClientID);
-    qDebug() << result.lastError();
+    qDebug() << "read note last error: "<< result.lastError();
     while (result.next()) {
         ui->te_notes->document()->setPlainText(result.value(0).toString());
     }
@@ -8839,7 +8851,7 @@ void MainWindow::getFullName (QString clientId) {
     QString lName, fName, mName;
 
     QSqlQuery nameQuery = dbManager->getFullName(clientId);
-    qDebug() << nameQuery.lastError();
+    qDebug() << "getFullName last error: " << nameQuery.lastError();
     nameQuery.next();
 
     lName = nameQuery.value(0).toString();
