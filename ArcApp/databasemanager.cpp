@@ -987,21 +987,50 @@ QSqlQuery DatabaseManager::getCaseWorkerList(){
     return query;
 }
 
-//QSqlQuery DatabaseManager::checkUniqueClient(QStringList* infoList){
-//    DatabaseManager::checkDatabaseConnection(&db);
-//    QSqlQuery query(db);
-//    QString queryString = QString("SELECT LastName, FirstName, MiddleName, Dob, SinNo, ClientId ")
-//        + QString("FROM Client ")
-//        + QString("WHERE LastName = '"+infoList->at(0)+"' ")
-//        + QString("AND FirstName = '"+infoList->at(1)+"' ");
-
-//    if(infoList->size() == 3){
-//        queryString += QString("AND SinNo = '"+infoList->at(2)+"' ");
+QSqlQuery DatabaseManager::checkUniqueClient(QString fname, QString mname, QString lname, QString dob){
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    QString queryString = "SELECT LastName, FirstName, MiddleName, Dob, SinNo, ClientId "
+                          "FROM Client ";
+    //build where conditions depending on what was provided
+    QString whereString = "WHERE ";
+    if (fname != 0) {
+        whereString += "FirstName = '" + fname + "' AND ";
+    }
+    if (mname != 0) {
+        whereString += " MiddleName = '" + mname + "' AND ";
+    }
+    if (lname != 0) {
+        whereString += " LastName = '" + lname + "' AND ";
+    }
+//    if (dob != 0) {
+//        whereString += " Dob = '" + dob + "' AND ";
 //    }
-//    qDebug()<<"SELECT QUERY TO CHECK UNIQUE : " << queryString;
-//    query.exec(queryString);
-//    return query;
-//}
+    whereString.chop(5);
+    queryString += whereString;
+
+    qDebug()<<"SELECT query to check unique clients : " << queryString;
+    query.exec(queryString);
+    qDebug() << "check unique last error: " << query.lastError();
+    return query;
+}
+
+QSqlQuery DatabaseManager::checkUniqueSIN(QString sin){
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    QString queryString = "SELECT COUNT (*) "
+                          "FROM ( "
+                                "SELECT LastName, FirstName, MiddleName "
+                                "FROM Client "
+                                "WHERE SinNo = '" + sin + "'"
+                          ") AS clientCount";
+
+    qDebug()<<"SELECT query to check unique SIN: " << queryString;
+    query.exec(queryString);
+    qDebug() << "check unique last error: " << query.lastError();
+    return query;
+}
+
 
 /* .............................................................
          CLIENT REGISTER FINISHED
@@ -2814,46 +2843,3 @@ bool DatabaseManager::setCaseFilePath(QString clientId, QString path) {
     return success;
 }
 
-QSqlQuery DatabaseManager::checkUniqueClient(QString fname, QString mname, QString lname, QString dob){
-    DatabaseManager::checkDatabaseConnection(&db);
-    QSqlQuery query(db);
-    QString queryString = "SELECT LastName, FirstName, MiddleName, Dob, SinNo, ClientId "
-                          "FROM Client ";
-    //build where conditions depending on what was provided
-    QString whereString = "WHERE ";
-    if (fname != 0) {
-        whereString += "FirstName = '" + fname + "' AND ";
-    }
-    if (mname != 0) {
-        whereString += " MiddleName = '" + mname + "' AND ";
-    }
-    if (lname != 0) {
-        whereString += " LastName = '" + lname + "' AND ";
-    }
-    if (dob != 0) {
-        whereString += " Dob = '" + dob + "' AND ";
-    }
-    whereString.chop(5);
-    queryString += whereString;
-
-    qDebug()<<"SELECT query to check unique clients : " << queryString;
-    query.exec(queryString);
-    qDebug() << "check unique last error: " << query.lastError();
-    return query;
-}
-
-QSqlQuery DatabaseManager::checkUniqueSIN(QString sin){
-    DatabaseManager::checkDatabaseConnection(&db);
-    QSqlQuery query(db);
-    QString queryString = "SELECT COUNT (*) "
-                          "FROM ( "
-                                "SELECT LastName, FirstName, MiddleName "
-                                "FROM Client "
-                                "WHERE SinNo = '" + sin + "'"
-                          ") AS clientCount";
-
-    qDebug()<<"SELECT query to check unique SIN: " << queryString;
-    query.exec(queryString);
-    qDebug() << "check unique last error: " << query.lastError();
-    return query;
-}

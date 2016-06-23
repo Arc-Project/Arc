@@ -2939,52 +2939,63 @@ bool MainWindow::check_client_register_form(){
     return true;
 }
 
-//bool MainWindow::check_unique_client(){
-//    QStringList infoList;
-//    int type = -1;
+bool MainWindow::check_unique_client(){
+    QString fname, mname, lname, dob, sin;
 
-//    infoList << ui->lineEdit_cl_lName->text()
-//             << ui->lineEdit_cl_fName->text();
+    //do not allow for duplicate SIN
+    if (ui->lineEdit_cl_SIN->text() != 0) {
+        sin = ui->lineEdit_cl_SIN->text();
+        QSqlQuery results = dbManager->checkUniqueSIN(sin);
+        results.next();
+        int numClients = results.value(0).toString().toInt();
+        if (numClients > 0) {
+            QMessageBox alertBox;
+            alertBox.setText("Error: a client with the same SIN number already exists.\nCannot create a new client with this SIN number.");
 
-//    if(ui->lineEdit_cl_SIN->text() != ""){
-//        qDebug()<<"TYPE : CHECK SIN NUMBER";
-//        type = CHECKSIN;
-//        infoList << ui->lineEdit_cl_SIN->text();
+            QString tmpStyleSheet = MainWindow::styleSheet();
+            MainWindow::setStyleSheet("");
+            QMessageBox::warning(this, tr("SIN number already exists!"),
+                                           tr("Error: a client with the same SIN number already exists.\n"
+                                              "Cannot create a new client with this SIN number."),
+                                           QMessageBox::Ok);
+            MainWindow::setStyleSheet(tmpStyleSheet);
+            return false;
+        }
+    }
+    //display dialog with matching name(s)
+    if (ui->lineEdit_cl_fName->text() != 0)
+        fname = ui->lineEdit_cl_fName->text();
 
-//    }
-//    else{
-//        qDebug()<<"TYPE : CHECK NAME";
-//        type = CHECKNAME;
-//    }
+    if (ui->lineEdit_cl_mName->text() != 0)
+        mname = ui->lineEdit_cl_mName->text();
 
-//    QSqlQuery sameClient = dbManager->checkUniqueClient(&infoList);
-//    if(sameClient.numRowsAffected() <= 0){
-//        qDebug()<<"No same Client";
-//        return true;
-//    }
-//    if(type == CHECKSIN){
-//        if(doMessageBox(QString("A Client with the same SIN Number already exist.\n")
-//                      + QString("Yes - return to search Client\n")
-//                      + QString("No - modify information"))){
-//            sameClient.next();
+    if (ui->lineEdit_cl_lName->text() != 0)
+        lname = ui->lineEdit_cl_lName->text();
 
-//            readSameClientInfo(sameClient.value("ClientId").toString());
+    if (ui->dateEdit_cl_dob->date().toString(Qt::ISODate) != 0)
+        dob = ui->dateEdit_cl_dob->date().toString(Qt::ISODate);
 
-//        }
-//        return false;
-//    }
-//    else if(type == CHECKNAME){
+    qDebug() << "fname, mname, lname, dob, sin:" << fname << mname << lname << dob;
 
-//        DuplicateClients *showPossibleClient = new DuplicateClients();
-//        connect(showPossibleClient, SIGNAL(selectedUser(QString)), this, SLOT(readSameClientInfo(QString)));
-//        connect(showPossibleClient, SIGNAL(ignoreWarning()), this, SLOT(ignoreAndRegister()));
-//        showPossibleClient->show();
-//        qDebug()<<"DuplicateClients";
-//        showPossibleClient->displayList(sameClient);
-//        return false;
-//    }
-//    return false;
-//}
+    QSqlQuery results = dbManager->checkUniqueClient(fname, mname, lname, dob);
+
+    qDebug() << "num rows affected " << results.numRowsAffected();
+
+    if (results.numRowsAffected() > 0) {
+        DuplicateClients *showPossibleClient = new DuplicateClients();
+        showPossibleClient->setModal(true);
+        connect(showPossibleClient, SIGNAL(selectedUser(QString)), this, SLOT(readSameClientInfo(QString)), Qt::UniqueConnection);
+        connect(showPossibleClient, SIGNAL(ignoreWarning()), this, SLOT(ignoreAndRegister()), Qt::UniqueConnection);
+        showPossibleClient->displayList(results);
+        showPossibleClient->exec();
+        qDebug()<<"DuplicateClients";
+        qDebug() << "dialog closed";
+
+        return false;
+    }
+    return true;
+}
+
 
 void MainWindow::readSameClientInfo(QString clientID){
     qDebug()<<"ReadClientInfo " <<clientID;
@@ -9163,55 +9174,3 @@ void MainWindow::on_cbo_reg_end_currentTextChanged(const QString &arg1)
     on_cbo_reg_start_currentTextChanged(ui->cbo_reg_start->currentText());
 }
 
-bool MainWindow::check_unique_client(){
-    QString fname, mname, lname, dob, sin;
-
-    //do not allow for duplicate SIN
-    if (ui->lineEdit_cl_SIN->text() != 0) {
-        sin = ui->lineEdit_cl_SIN->text();
-        QSqlQuery results = dbManager->checkUniqueSIN(sin);
-        results.next();
-        int numClients = results.value(0).toString().toInt();
-        if (numClients > 0) {
-            QMessageBox alertBox;
-            alertBox.setText("Error: a client with the same SIN number already exists.\nCannot create a new client with this SIN number.");
-
-            QString tmpStyleSheet = MainWindow::styleSheet();
-            MainWindow::setStyleSheet("");
-            QMessageBox::warning(this, tr("SIN number already exists!"),
-                                           tr("Error: a client with the same SIN number already exists.\n"
-                                              "Cannot create a new client with this SIN number."),
-                                           QMessageBox::Ok);
-            MainWindow::setStyleSheet(tmpStyleSheet);
-            return false;
-        }
-    }
-
-    if (ui->lineEdit_cl_fName->text() != 0)
-        fname = ui->lineEdit_cl_fName->text();
-
-    if (ui->lineEdit_cl_mName->text() != 0)
-        mname = ui->lineEdit_cl_mName->text();
-
-    if (ui->lineEdit_cl_lName->text() != 0)
-        lname = ui->lineEdit_cl_lName->text();
-
-    if (ui->dateEdit_cl_dob->date().toString(Qt::ISODate) != 0)
-        dob = ui->dateEdit_cl_dob->date().toString(Qt::ISODate);
-
-    qDebug() << "fname, mname, lname, dob, sin:" << fname << mname << lname << dob;
-
-    QSqlQuery results = dbManager->checkUniqueClient(fname, mname, lname, dob);
-
-    DuplicateClients *showPossibleClient = new DuplicateClients();
-    showPossibleClient->setModal(true);
-    connect(showPossibleClient, SIGNAL(selectedUser(QString)), this, SLOT(readSameClientInfo(QString)), Qt::UniqueConnection);
-    connect(showPossibleClient, SIGNAL(ignoreWarning()), this, SLOT(ignoreAndRegister()), Qt::UniqueConnection);
-    showPossibleClient->show();
-    qDebug()<<"DuplicateClients";
-    showPossibleClient->displayList(results);
-    qDebug() << "dialog closed";
-
-    return false;
-
-}
