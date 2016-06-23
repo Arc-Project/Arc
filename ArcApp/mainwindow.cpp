@@ -2877,7 +2877,8 @@ void MainWindow::on_button_register_client_clicked()
 
         if(registerType == NEWCLIENT || ui->label_cl_infoedit_title->text() == "Register Client")
         {
-            if(check_unique_client() || ignore_duplicate){
+            bool tmp = check_unique_client();
+            if(tmp || ignore_duplicate){
                 if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
                 {
                     statusBar()->showMessage("Client Registered Sucessfully.", 5000);
@@ -2888,6 +2889,7 @@ void MainWindow::on_button_register_client_clicked()
                 }
                 else
                 {
+                  qDebug() << tmp << ignore_duplicate;
                     statusBar()->showMessage("Register Failed. Check information.", 5000);
                     qDebug() << "Could not register client";
                 }
@@ -2937,52 +2939,52 @@ bool MainWindow::check_client_register_form(){
     return true;
 }
 
-bool MainWindow::check_unique_client(){
-    QStringList infoList;
-    int type = -1;
+//bool MainWindow::check_unique_client(){
+//    QStringList infoList;
+//    int type = -1;
 
-    infoList << ui->lineEdit_cl_lName->text()
-             << ui->lineEdit_cl_fName->text();
+//    infoList << ui->lineEdit_cl_lName->text()
+//             << ui->lineEdit_cl_fName->text();
 
-    if(ui->lineEdit_cl_SIN->text() != ""){
-        qDebug()<<"TYPE : CHECK SIN NUMBER";
-        type = CHECKSIN;
-        infoList << ui->lineEdit_cl_SIN->text();
+//    if(ui->lineEdit_cl_SIN->text() != ""){
+//        qDebug()<<"TYPE : CHECK SIN NUMBER";
+//        type = CHECKSIN;
+//        infoList << ui->lineEdit_cl_SIN->text();
 
-    }
-    else{
-        qDebug()<<"TYPE : CHECK NAME";
-        type = CHECKNAME;
-    }
+//    }
+//    else{
+//        qDebug()<<"TYPE : CHECK NAME";
+//        type = CHECKNAME;
+//    }
 
-    QSqlQuery sameClient = dbManager->checkUniqueClient(&infoList);
-    if(sameClient.numRowsAffected() <= 0){
-        qDebug()<<"No same Client";
-        return true;
-    }
-    if(type == CHECKSIN){
-        if(doMessageBox(QString("A Client with the same SIN Number already exist.\n")
-                      + QString("Yes - return to search Client\n")
-                      + QString("No - modify information"))){
-            sameClient.next();
+//    QSqlQuery sameClient = dbManager->checkUniqueClient(&infoList);
+//    if(sameClient.numRowsAffected() <= 0){
+//        qDebug()<<"No same Client";
+//        return true;
+//    }
+//    if(type == CHECKSIN){
+//        if(doMessageBox(QString("A Client with the same SIN Number already exist.\n")
+//                      + QString("Yes - return to search Client\n")
+//                      + QString("No - modify information"))){
+//            sameClient.next();
 
-            readSameClientInfo(sameClient.value("ClientId").toString());
+//            readSameClientInfo(sameClient.value("ClientId").toString());
 
-        }
-        return false;
-    }
-    else if(type == CHECKNAME){
+//        }
+//        return false;
+//    }
+//    else if(type == CHECKNAME){
 
-        DuplicateClients *showPossibleClient = new DuplicateClients();
-        connect(showPossibleClient, SIGNAL(selectedUser(QString)), this, SLOT(readSameClientInfo(QString)));
-        connect(showPossibleClient, SIGNAL(ignoreWarning()), this, SLOT(ignoreAndRegister()));
-        showPossibleClient->show();
-        qDebug()<<"DuplicateClients";
-        showPossibleClient->displayList(sameClient);
-        return false;
-    }
-    return false;
-}
+//        DuplicateClients *showPossibleClient = new DuplicateClients();
+//        connect(showPossibleClient, SIGNAL(selectedUser(QString)), this, SLOT(readSameClientInfo(QString)));
+//        connect(showPossibleClient, SIGNAL(ignoreWarning()), this, SLOT(ignoreAndRegister()));
+//        showPossibleClient->show();
+//        qDebug()<<"DuplicateClients";
+//        showPossibleClient->displayList(sameClient);
+//        return false;
+//    }
+//    return false;
+//}
 
 void MainWindow::readSameClientInfo(QString clientID){
     qDebug()<<"ReadClientInfo " <<clientID;
@@ -2995,6 +2997,7 @@ void MainWindow::ignoreAndRegister(){
     qDebug()<< "PROCEED REGISTER";
     registerType = NEWCLIENT;
     ignore_duplicate = true;
+    qDebug() << "ignore_duplicate set to true";
    // on_button_register_client_clicked();
 }
 
@@ -5173,12 +5176,13 @@ void MainWindow::on_btn_pcpKeySave_clicked()
 
 void MainWindow::on_actionPcptables_triggered()
 {
-
-//    QRegularExpression re(".+-.+-.+-[\\d\\d?\\d?\\d?]");
-    QRegularExpression re("2-1-[2-2]");
-    QRegularExpressionMatch match = re.match("2-1-1-2B");
-    bool hasMatch = match.hasMatch(); // true
-    qDebug() << hasMatch << " " << match.capturedTexts();
+    QString sin;
+    if (ui->lineEdit_cl_SIN->text() != 0) {
+        sin = ui->lineEdit_cl_SIN->text();
+        QSqlQuery results = dbManager->checkUniqueSIN(sin);
+        results.next();
+        qDebug() << results.value(0).toString();
+    }
 
 }
 
@@ -9157,4 +9161,57 @@ void MainWindow::on_cbo_reg_end_currentTextChanged(const QString &arg1)
     Q_UNUSED(arg1);
     ui->cbo_reg_end->removeItem(ui->cbo_reg_end->findText("All"));
     on_cbo_reg_start_currentTextChanged(ui->cbo_reg_start->currentText());
+}
+
+bool MainWindow::check_unique_client(){
+    QString fname, mname, lname, dob, sin;
+
+    //do not allow for duplicate SIN
+    if (ui->lineEdit_cl_SIN->text() != 0) {
+        sin = ui->lineEdit_cl_SIN->text();
+        QSqlQuery results = dbManager->checkUniqueSIN(sin);
+        results.next();
+        int numClients = results.value(0).toString().toInt();
+        if (numClients > 0) {
+            QMessageBox alertBox;
+            alertBox.setText("Error: a client with the same SIN number already exists.\nCannot create a new client with this SIN number.");
+
+            QString tmpStyleSheet = MainWindow::styleSheet();
+            MainWindow::setStyleSheet("");
+            QMessageBox::warning(this, tr("SIN number already exists!"),
+                                           tr("Error: a client with the same SIN number already exists.\n"
+                                              "Cannot create a new client with this SIN number."),
+                                           QMessageBox::Ok);
+            MainWindow::setStyleSheet(tmpStyleSheet);
+            return false;
+        }
+    }
+
+    if (ui->lineEdit_cl_fName->text() != 0)
+        fname = ui->lineEdit_cl_fName->text();
+
+    if (ui->lineEdit_cl_mName->text() != 0)
+        mname = ui->lineEdit_cl_mName->text();
+
+    if (ui->lineEdit_cl_lName->text() != 0)
+        lname = ui->lineEdit_cl_lName->text();
+
+    if (ui->dateEdit_cl_dob->date().toString(Qt::ISODate) != 0)
+        dob = ui->dateEdit_cl_dob->date().toString(Qt::ISODate);
+
+    qDebug() << "fname, mname, lname, dob, sin:" << fname << mname << lname << dob;
+
+    QSqlQuery results = dbManager->checkUniqueClient(fname, mname, lname, dob);
+
+    DuplicateClients *showPossibleClient = new DuplicateClients();
+    showPossibleClient->setModal(true);
+    connect(showPossibleClient, SIGNAL(selectedUser(QString)), this, SLOT(readSameClientInfo(QString)), Qt::UniqueConnection);
+    connect(showPossibleClient, SIGNAL(ignoreWarning()), this, SLOT(ignoreAndRegister()), Qt::UniqueConnection);
+    showPossibleClient->show();
+    qDebug()<<"DuplicateClients";
+    showPossibleClient->displayList(results);
+    qDebug() << "dialog closed";
+
+    return false;
+
 }

@@ -52,6 +52,7 @@ void DuplicateClients::on_tableWidget_same_name_cellClicked(int row, int column)
 
 void DuplicateClients::on_pushButton_cl_warning_ignore_clicked()
 {
+    qDebug() << "ignore clicked";
     emit ignoreWarning();
     close();
 }
