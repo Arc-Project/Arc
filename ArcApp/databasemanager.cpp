@@ -987,21 +987,50 @@ QSqlQuery DatabaseManager::getCaseWorkerList(){
     return query;
 }
 
-QSqlQuery DatabaseManager::checkUniqueClient(QStringList* infoList){
+QSqlQuery DatabaseManager::checkUniqueClient(QString fname, QString mname, QString lname, QString dob){
     DatabaseManager::checkDatabaseConnection(&db);
     QSqlQuery query(db);
-    QString queryString = QString("SELECT LastName, FirstName, MiddleName, Dob, SinNo, ClientId ")
-        + QString("FROM Client ")
-        + QString("WHERE LastName = '"+infoList->at(0)+"' ")
-        + QString("AND FirstName = '"+infoList->at(1)+"' ");
-
-    if(infoList->size() == 3){
-        queryString += QString("AND SinNo = '"+infoList->at(2)+"' ");
+    QString queryString = "SELECT LastName, FirstName, MiddleName, Dob, SinNo, ClientId "
+                          "FROM Client ";
+    //build where conditions depending on what was provided
+    QString whereString = "WHERE ";
+    if (fname != 0) {
+        whereString += "FirstName = '" + fname + "' AND ";
     }
-    qDebug()<<"SELECT QUERY TO CHECK UNIQUE : " << queryString;
+    if (mname != 0) {
+        whereString += " MiddleName = '" + mname + "' AND ";
+    }
+    if (lname != 0) {
+        whereString += " LastName = '" + lname + "' AND ";
+    }
+//    if (dob != 0) {
+//        whereString += " Dob = '" + dob + "' AND ";
+//    }
+    whereString.chop(5);
+    queryString += whereString;
+
+    qDebug()<<"SELECT query to check unique clients : " << queryString;
     query.exec(queryString);
+    qDebug() << "check unique last error: " << query.lastError();
     return query;
 }
+
+QSqlQuery DatabaseManager::checkUniqueSIN(QString sin){
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    QString queryString = "SELECT COUNT (*) "
+                          "FROM ( "
+                                "SELECT LastName, FirstName, MiddleName "
+                                "FROM Client "
+                                "WHERE SinNo = '" + sin + "'"
+                          ") AS clientCount";
+
+    qDebug()<<"SELECT query to check unique SIN: " << queryString;
+    query.exec(queryString);
+    qDebug() << "check unique last error: " << query.lastError();
+    return query;
+}
+
 
 /* .............................................................
          CLIENT REGISTER FINISHED
@@ -2541,7 +2570,7 @@ bool DatabaseManager::addReceiptQuery(QString receiptid, QString date, QString t
         qDebug() << query.lastQuery();
         return true;
     }
-    qDebug() << query.lastError();
+    qDebug() << "add receipt last error: " << query.lastError();
     return false;
 }
 
@@ -2584,7 +2613,7 @@ bool DatabaseManager::updateReceiptQuery(QString receiptid, QString date, QStrin
         qDebug() << query.lastQuery();
         return true;
     }
-    qDebug() << query.lastError();
+    qDebug() << "update receipt last error: " << query.lastError();
     return false;
 }
 
@@ -2662,7 +2691,7 @@ QSqlQuery DatabaseManager::getBuildings() {
                      "ORDER BY BuildingNo ASC";
     qDebug() << result;
     query.exec(result);
-    qDebug() << query.lastError();
+    qDebug() << "getBuildings last error: " << query.lastError();
     return query;
 }
 
@@ -2679,7 +2708,7 @@ QSqlQuery DatabaseManager::getFloors(QString building) {
 
     qDebug() << result;
     query.exec(result);
-    qDebug() << query.lastError();
+    qDebug() << "getFloors last error: " <<  query.lastError();
     return query;
 }
 
@@ -2704,7 +2733,7 @@ QSqlQuery DatabaseManager::getRooms(QString building, QString floor) {
 
     qDebug() << result;
     query.exec(result);
-    qDebug() << query.lastError();
+    qDebug() << "getRooms last error: " << query.lastError();
     return query;
 }
 
@@ -2739,7 +2768,7 @@ QSqlQuery DatabaseManager::getSpaces(QString building, QString floor, QString ro
 
     qDebug() << result;
     query.exec(result);
-    qDebug() << query.lastError();
+    qDebug() << "get spaces last error: " << query.lastError();
     return query;
 }
 
@@ -2754,7 +2783,7 @@ QSqlQuery DatabaseManager::populatePastRegistry(QDate date) {
 
     qDebug() << result;
     query.exec(result);
-    qDebug() << query.lastError();
+    qDebug() << "populate past registry last error: " << query.lastError();
     return query;
 }
 
@@ -2769,7 +2798,7 @@ QSqlQuery DatabaseManager::populateCurrentRegistry() {
 
     qDebug() << result;
     query.exec(result);
-    qDebug() << query.lastError();
+    qDebug() << "populate current registry: " << query.lastError();
     return query;
 }
 
@@ -2784,6 +2813,33 @@ QSqlQuery DatabaseManager::populateFutureRegistry() {
 
     qDebug() << result;
     query.exec(result);
-    qDebug() << query.lastError();
+    qDebug() << "populate future registry: " <<  query.lastError();
     return query;
 }
+
+QSqlQuery DatabaseManager::getCaseFilePath(QString clientId) {
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    QString result = "SELECT CaseFilePath "
+                     "FROM Client "
+                     "WHERE ClientId = " + clientId;
+
+    qDebug() << result;
+    query.exec(result);
+    qDebug() << "getCaseFilePath last sql error:" << query.lastError();
+    return query;
+}
+
+bool DatabaseManager::setCaseFilePath(QString clientId, QString path) {
+    DatabaseManager::checkDatabaseConnection(&db);
+    QSqlQuery query(db);
+    QString result = "UPDATE CLIENT "
+                     "SET CaseFilePath = '" + path + "' "
+                     "WHERE ClientId = " + clientId;
+
+    qDebug() << result;
+    bool success = query.exec(result);
+    qDebug() << "setCaseFilePath last sql error:" << query.lastError();
+    return success;
+}
+

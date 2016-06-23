@@ -64,7 +64,9 @@ public:
     bool updateClientWithPic(QStringList* registerFieldList, QString clientId, QImage* profilePic);
     bool deleteClientFromTable(QString tableName, QString ClientId);
     QSqlQuery getCaseWorkerList();
-    QSqlQuery checkUniqueClient(QStringList* infoList);
+//    QSqlQuery checkUniqueClient(QStringList* infoList);
+    QSqlQuery checkUniqueClient(QString fname, QString mname, QString lname, QString dob);
+    QSqlQuery checkUniqueSIN(QString sin);
 
 
     QSqlQuery searchClientList(QString ClientName);
@@ -220,6 +222,8 @@ public:
     QSqlQuery populatePastRegistry(QDate date);
     QSqlQuery populateFutureRegistry();
     QSqlQuery populateCurrentRegistry();
+    QSqlQuery getCaseFilePath(QString clientId);
+    bool setCaseFilePath(QString clientId, QString path);
 
 signals:
     void dailyReportStatsChanged(QList<int> list, bool conn);

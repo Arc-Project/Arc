@@ -20056,10 +20056,17 @@ Balance</string>
     </property>
     <addaction name="actionChange_Password"/>
    </widget>
+   <widget class="QMenu" name="menuDEV">
+    <property name="title">
+     <string>DEV</string>
+    </property>
+    <addaction name="actionPcptables"/>
+   </widget>
    <addaction name="menuFle"/>
    <addaction name="menuExport"/>
    <addaction name="menuOptions"/>
    <addaction name="menuHelp"/>
+   <addaction name="menuDEV"/>
   </widget>
   <action name="actionMain_Menu">
    <property name="text">

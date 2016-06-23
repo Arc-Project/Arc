@@ -193,6 +193,7 @@ void MainWindow::initCurrentWidget(int idx){
             //initimageview
             ui->actionExport_to_PDF->setEnabled(false);
             receiptid = "";
+            ui->le_caseDir->clear();
             break;
         case BOOKINGLOOKUP: //WIDGET 2
             qDebug()<<"###BOOKING LOOKUP Client INFO###";
@@ -2876,7 +2877,8 @@ void MainWindow::on_button_register_client_clicked()
 
         if(registerType == NEWCLIENT || ui->label_cl_infoedit_title->text() == "Register Client")
         {
-            if(check_unique_client() || ignore_duplicate){
+            bool tmp = check_unique_client();
+            if(tmp || ignore_duplicate){
                 if (dbManager->insertClientWithPic(&registerFieldList, &profilePic))
                 {
                     statusBar()->showMessage("Client Registered Sucessfully.", 5000);
@@ -2887,6 +2889,7 @@ void MainWindow::on_button_register_client_clicked()
                 }
                 else
                 {
+                  qDebug() << tmp << ignore_duplicate;
                     statusBar()->showMessage("Register Failed. Check information.", 5000);
                     qDebug() << "Could not register client";
                 }
@@ -2937,51 +2940,62 @@ bool MainWindow::check_client_register_form(){
 }
 
 bool MainWindow::check_unique_client(){
-    QStringList infoList;
-    int type = -1;
+    QString fname, mname, lname, dob, sin;
 
-    infoList << ui->lineEdit_cl_lName->text()
-             << ui->lineEdit_cl_fName->text();
+    //do not allow for duplicate SIN
+    if (ui->lineEdit_cl_SIN->text() != 0) {
+        sin = ui->lineEdit_cl_SIN->text();
+        QSqlQuery results = dbManager->checkUniqueSIN(sin);
+        results.next();
+        int numClients = results.value(0).toString().toInt();
+        if (numClients > 0) {
+            QMessageBox alertBox;
+            alertBox.setText("Error: a client with the same SIN number already exists.\nCannot create a new client with this SIN number.");
 
-    if(ui->lineEdit_cl_SIN->text() != ""){
-        qDebug()<<"TYPE : CHECK SIN NUMBER";
-        type = CHECKSIN;
-        infoList << ui->lineEdit_cl_SIN->text();
-
-    }
-    else{
-        qDebug()<<"TYPE : CHECK NAME";
-        type = CHECKNAME;
-    }
-
-    QSqlQuery sameClient = dbManager->checkUniqueClient(&infoList);
-    if(sameClient.numRowsAffected() <= 0){
-        qDebug()<<"No same Client";
-        return true;
-    }
-    if(type == CHECKSIN){
-        if(doMessageBox(QString("A Client with the same SIN Number already exist.\n")
-                      + QString("Yes - return to search Client\n")
-                      + QString("No - modify information"))){
-            sameClient.next();
-
-            readSameClientInfo(sameClient.value("ClientId").toString());
-
+            QString tmpStyleSheet = MainWindow::styleSheet();
+            MainWindow::setStyleSheet("");
+            QMessageBox::warning(this, tr("SIN number already exists!"),
+                                           tr("Error: a client with the same SIN number already exists.\n"
+                                              "Cannot create a new client with this SIN number."),
+                                           QMessageBox::Ok);
+            MainWindow::setStyleSheet(tmpStyleSheet);
+            return false;
         }
-        return false;
     }
-    else if(type == CHECKNAME){
+    //display dialog with matching name(s)
+    if (ui->lineEdit_cl_fName->text() != 0)
+        fname = ui->lineEdit_cl_fName->text();
 
+    if (ui->lineEdit_cl_mName->text() != 0)
+        mname = ui->lineEdit_cl_mName->text();
+
+    if (ui->lineEdit_cl_lName->text() != 0)
+        lname = ui->lineEdit_cl_lName->text();
+
+    if (ui->dateEdit_cl_dob->date().toString(Qt::ISODate) != 0)
+        dob = ui->dateEdit_cl_dob->date().toString(Qt::ISODate);
+
+    qDebug() << "fname, mname, lname, dob, sin:" << fname << mname << lname << dob;
+
+    QSqlQuery results = dbManager->checkUniqueClient(fname, mname, lname, dob);
+
+    qDebug() << "num rows affected " << results.numRowsAffected();
+
+    if (results.numRowsAffected() > 0) {
         DuplicateClients *showPossibleClient = new DuplicateClients();
-        connect(showPossibleClient, SIGNAL(selectedUser(QString)), this, SLOT(readSameClientInfo(QString)));
-        connect(showPossibleClient, SIGNAL(ignoreWarning()), this, SLOT(ignoreAndRegister()));
-        showPossibleClient->show();
+        showPossibleClient->setModal(true);
+        connect(showPossibleClient, SIGNAL(selectedUser(QString)), this, SLOT(readSameClientInfo(QString)), Qt::UniqueConnection);
+        connect(showPossibleClient, SIGNAL(ignoreWarning()), this, SLOT(ignoreAndRegister()), Qt::UniqueConnection);
+        showPossibleClient->displayList(results);
+        showPossibleClient->exec();
         qDebug()<<"DuplicateClients";
-        showPossibleClient->displayList(sameClient);
+        qDebug() << "dialog closed";
+
         return false;
     }
-    return false;
+    return true;
 }
+
 
 void MainWindow::readSameClientInfo(QString clientID){
     qDebug()<<"ReadClientInfo " <<clientID;
@@ -2994,6 +3008,7 @@ void MainWindow::ignoreAndRegister(){
     qDebug()<< "PROCEED REGISTER";
     registerType = NEWCLIENT;
     ignore_duplicate = true;
+    qDebug() << "ignore_duplicate set to true";
    // on_button_register_client_clicked();
 }
 
@@ -3319,14 +3334,29 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
     QString curLastName = ui->tableWidget_search_client->item(nRow, 1)->text();
 
     //if dir was saved
-    if (!ui->le_caseDir->text().isEmpty()){
-    QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
-                          ui->tableWidget_search_client->item(nRow, 2)->text() + "*");
+//    if (!ui->le_caseDir->text().isEmpty()){
+//    QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+//                          ui->tableWidget_search_client->item(nRow, 2)->text() + "*");
 
-    qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
-                ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
-    ui->le_caseDir->setText(dir.path());
-    populate_tw_caseFiles(filter);
+//    qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
+//                ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
+//    ui->le_caseDir->setText(dir.path());
+
+
+//    populate_tw_caseFiles(filter);
+//    }
+
+    //read saved path from db and populate
+    QSqlQuery results = dbManager->getCaseFilePath(curClientID);
+    results.next();
+    dir = results.value(0).toString();
+    //check if path exists
+    if (dir.exists()) {
+        qDebug() << "path exists. using path to populate files";
+        ui->le_caseDir->setText(dir.path());
+        populate_tw_caseFiles();
+    } else {
+        qDebug() << "path does not exist. not populating files.";
     }
 
     ui->lbl_caseClientName->setText(curFirstName + " " + curMiddleName + curLastName + "'s Case Files");
@@ -3336,7 +3366,7 @@ void MainWindow::on_pushButton_CaseFiles_clicked()
 
     //running notes: move to another function
     QSqlQuery noteResult = dbManager->readNote(curClientID);
-    qDebug() << noteResult.lastError();
+    qDebug() << "read note last error: " << noteResult.lastError();
     ui->te_notes->document()->clear();
     noteResult.next();
     ui->te_notes->document()->setPlainText(noteResult.value(0).toString());
@@ -4071,25 +4101,21 @@ void MainWindow::on_tableWidget_2_clicked(const QModelIndex &index)
 // set case files directory
 void MainWindow::on_pushButton_3_clicked()
 {
-    const QString DEFAULT_DIR_KEY("default_dir");
-    QSettings mruDir;
+//    const QString DEFAULT_DIR_KEY("default_dir");
+//    QSettings mruDir;
     QString tempDir = QFileDialog::getExistingDirectory(
                     this,
-                    tr("Select Directory"),
-                    mruDir.value(DEFAULT_DIR_KEY).toString()
+                    tr("Select Directory")
+//                    mruDir.value(DEFAULT_DIR_KEY).toString()
                 );
     if (!tempDir.isEmpty()) {
         dir = tempDir;
-        mruDir.setValue(DEFAULT_DIR_KEY, tempDir);
-//        int nRow = ui->tableWidget_search_client->currentRow();
-
-//        QStringList filter = (QStringList() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
-//                              ui->tableWidget_search_client->item(nRow, 2)->text() + "*");
-
-//        qDebug() << "*" + ui->tableWidget_search_client->item(nRow, 1)->text() + ", " +
-//                    ui->tableWidget_search_client->item(nRow, 2)->text() + "*";
+        //try 3 times to save path to db
+        for (int i = 0; i < 3; i++) {
+            if (dbManager->setCaseFilePath(curClientID, tempDir)) break;
+        }
+//        mruDir.setValue(DEFAULT_DIR_KEY, tempDir);
         ui->le_caseDir->setText(dir.path());
-//        populate_tw_caseFiles(filter);
         populate_tw_caseFiles();
     }
     connect(ui->tw_caseFiles, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(on_tw_caseFiles_cellDoubleClicked(int,int)), Qt::UniqueConnection);
@@ -5095,7 +5121,7 @@ void MainWindow::insertPcp(QTableWidget *tw, QString type){
 //        QSqlQuery delResult = dbManager->deletePcpRow(i, type);
 //        qDebug() << delResult.lastError();
         QSqlQuery addResult = dbManager->addPcp(i, curClientID, type, goal, strategy, date);
-        qDebug() << addResult.lastError();
+        qDebug() << "add pcp last error: "<< addResult.lastError();
     }
 }
 
@@ -5161,12 +5187,13 @@ void MainWindow::on_btn_pcpKeySave_clicked()
 
 void MainWindow::on_actionPcptables_triggered()
 {
-
-//    QRegularExpression re(".+-.+-.+-[\\d\\d?\\d?\\d?]");
-    QRegularExpression re("2-1-[2-2]");
-    QRegularExpressionMatch match = re.match("2-1-1-2B");
-    bool hasMatch = match.hasMatch(); // true
-    qDebug() << hasMatch << " " << match.capturedTexts();
+    QString sin;
+    if (ui->lineEdit_cl_SIN->text() != 0) {
+        sin = ui->lineEdit_cl_SIN->text();
+        QSqlQuery results = dbManager->checkUniqueSIN(sin);
+        results.next();
+        qDebug() << results.value(0).toString();
+    }
 
 }
 
@@ -5259,7 +5286,7 @@ void MainWindow::on_btn_notesSave_clicked()
 //        ui->lbl_noteWarning->setStyleSheet("QLabel#lbl_noteWarning {color = red;}");
 //        ui->lbl_noteWarning->setText(result.lastError().text());
         QSqlQuery result2 = dbManager->updateNote(curClientID, notes);
-        qDebug() << result2.lastError();
+        qDebug() << "update note last error: " << result2.lastError();
 
     }
 }
@@ -5267,7 +5294,7 @@ void MainWindow::on_btn_notesSave_clicked()
 void MainWindow::on_btn_notesUndo_clicked()
 {
     QSqlQuery result = dbManager->readNote(curClientID);
-    qDebug() << result.lastError();
+    qDebug() << "read note last error: "<< result.lastError();
     while (result.next()) {
         ui->te_notes->document()->setPlainText(result.value(0).toString());
     }
@@ -8839,7 +8866,7 @@ void MainWindow::getFullName (QString clientId) {
     QString lName, fName, mName;
 
     QSqlQuery nameQuery = dbManager->getFullName(clientId);
-    qDebug() << nameQuery.lastError();
+    qDebug() << "getFullName last error: " << nameQuery.lastError();
     nameQuery.next();
 
     lName = nameQuery.value(0).toString();
@@ -9146,3 +9173,4 @@ void MainWindow::on_cbo_reg_end_currentTextChanged(const QString &arg1)
     ui->cbo_reg_end->removeItem(ui->cbo_reg_end->findText("All"));
     on_cbo_reg_start_currentTextChanged(ui->cbo_reg_start->currentText());
 }
+

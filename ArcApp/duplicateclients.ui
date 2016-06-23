@@ -160,7 +160,7 @@
       <widget class="QPushButton" name="pushButton_cl_warning_Select">
        <property name="minimumSize">
         <size>
-         <width>100</width>
+         <width>180</width>
          <height>0</height>
         </size>
        </property>
@@ -178,7 +178,7 @@
       <widget class="QPushButton" name="pushButton_cl_warning_ignore">
        <property name="minimumSize">
         <size>
-         <width>100</width>
+         <width>283</width>
          <height>0</height>
         </size>
        </property>
@@ -188,7 +188,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Create New Client</string>
+        <string>Proceed With Registering New Client</string>
        </property>
       </widget>
      </item>
